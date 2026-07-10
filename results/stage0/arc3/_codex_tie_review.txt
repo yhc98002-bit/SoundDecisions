@@ -1,0 +1,936 @@
+Reading additional input from stdin...
+OpenAI Codex v0.139.0
+--------
+workdir: /XYFS02/HDD_POOL/paratera_xy/pxy1289/HaocunYe/Research/SoundDecisions
+model: gpt-5.5
+provider: openai
+approval: never
+sandbox: danger-full-access
+reasoning effort: xhigh
+reasoning summaries: none
+session id: 019ee5db-a429-76d3-91bd-35074e1e8466
+--------
+user
+Read foley_cw/policy_offline.py and scripts/phase4_policy.py. In results/stage0/phase1/policy_pareto.csv the policies full_bon, diffrs_scalar, smc_scalar, final_rerank all show final_correctness 0.370 while oracle_axis_gated shows 0.785. Is this 0.370 scalar tie a GENUINE no-help result or a code bug forcing the scalar policies onto one ranking? Evidence from my reproduction over all 200 clips: full_bon and final_rerank pick the identical winner every time because both complete all candidates then take argmax of final_score (lines 254-258); full_bon and diffrs_scalar also pick the identical winner because diffrs keeps candidates with score at least the median and the global argmax is always at least the median so it always survives; but smc_scalar agrees with full_bon only 0.690 of the time with different per-axis numbers, so the policies are NOT hard-wired to one ranking. The scalar reward is the cosine of a candidate final pooled feature to the per-clip mean feature (build_pool lines 141-148); its within-pool correlation with proxy correctness is only 0.179, and the best scalar candidate is correct 0.370 versus 0.260 random and a 0.960 oracle ceiling. Verdict: genuine or bug? Any concrete file:line problem that would invalidate the genuine reading? Answer under 150 words.
+codex
+I’ll inspect the two policy files and the relevant CSV enough to verify whether the tie comes from shared ranking logic or from a masking/selection bug.
+exec
+/usr/bin/bash -lc "nl -ba scripts/phase4_policy.py | sed -n '1,360p'" in /XYFS02/HDD_POOL/paratera_xy/pxy1289/HaocunYe/Research/SoundDecisions
+exec
+/usr/bin/bash -lc 'head -20 results/stage0/phase1/policy_pareto.csv' in /XYFS02/HDD_POOL/paratera_xy/pxy1289/HaocunYe/Research/SoundDecisions
+exec
+/usr/bin/bash -lc "nl -ba foley_cw/policy_offline.py | sed -n '1,340p'" in /XYFS02/HDD_POOL/paratera_xy/pxy1289/HaocunYe/Research/SoundDecisions
+ succeeded in 194ms:
+policy,n_clips,final_correctness,correct_presence,correct_timing,correct_class,correct_material,completed_candidates,total_nfe,scoring_calls,winner_retention,false_prune_rate,regret
+full_bon,200,0.37,0.865,0.88,0.63,0.655,16.0,80000,3200,1.0,0.0,0.59
+same_compute_bon,200,0.35,0.875,0.87,0.605,0.66,9.385,46925,1877,0.6,0.395,0.61
+random_prune,200,0.33,0.885,0.89,0.605,0.64,8.0,49600,4800,0.485,0.475,0.63
+diffrs_scalar,200,0.37,0.865,0.88,0.63,0.655,8.24,50512,4848,1.0,0.21,0.59
+smc_scalar,200,0.37,0.875,0.88,0.6,0.68,10.345,58511,5269,0.69,0.35,0.59
+final_rerank,200,0.37,0.865,0.88,0.63,0.655,16.0,80000,3200,1.0,0.0,0.59
+oracle_axis_gated,200,0.785,1.0,1.0,0.995,0.785,6.055,49151,8437,0.475,0.0,0.175
+
+ succeeded in 194ms:
+     1	#!/usr/bin/env python
+     2	"""Phase 4 — OFFLINE policy Pareto (manual §9, Fig. 6). CPU-only, NO new generation.
+     3	
+     4	REPLAY gating on the cached deployed-cfg (cfg=4.5) Phase-1 independents (measurements.jsonl
+     5	role 'p1cfg45_independent'). Builds one ClipPool per clip — its up-to-16 cached candidates,
+     6	their per-axis final self-target labels, the ORACLE-PROXY per-axis correctness (agreement
+     7	with the per-clip majority self-target; see experiment/preregistered/policy_preregistration.md),
+     8	and a deterministic cache-derived scalar reward (cosine of the candidate's final-grid pooled
+     9	feature to the per-clip mean independent feature — a self-consistency reward, distinct from the
+    10	label-majority proxy). Runs every preregistered policy with matched generator-NFE AND matched
+    11	scoring-call accounting and writes:
+    12	
+    13	  results/stage0/phase1/policy_pareto.csv   one row per policy (metrics + two Pareto axes)
+    14	  results/stage0/phase1/policy_report.md    the §9 report + the proxy-correctness caveat
+    15	
+    16	Oracle gate windows come from s_commit in determination_budget_p1cfg45.csv. The eval clips are
+    17	the frozen split (split_60_40_by_clip.eval). Nothing here writes finals, features, or touches
+    18	frozen configs / certified_kernels.json. Deterministic given --seed.
+    19	
+    20	  python scripts/phase4_policy.py            # full offline run, writes csv + report
+    21	  python scripts/phase4_policy.py --split all   # use all clips, not just the eval split
+    22	"""
+    23	from __future__ import annotations
+    24	
+    25	import argparse
+    26	import collections
+    27	import csv
+    28	import json
+    29	import os
+    30	import sys
+    31	from pathlib import Path
+    32	
+    33	import numpy as np
+    34	
+    35	sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    36	
+    37	from foley_cw import policy_offline as P  # noqa: E402
+    38	
+    39	ROOT = Path(__file__).resolve().parents[1]
+    40	MEAS = ROOT / "results/stage0/measurements/measurements.jsonl"
+    41	FEATS = ROOT / "results/stage0/features"
+    42	BUDGET_CSV = ROOT / "results/stage0/phase1/determination_budget_p1cfg45.csv"
+    43	MANIFEST = ROOT / "data/manifests/phase1_manifest_frozen.json"
+    44	OUT_CSV = ROOT / "results/stage0/phase1/policy_pareto.csv"
+    45	OUT_MD = ROOT / "results/stage0/phase1/policy_report.md"
+    46	
+    47	ROLE = "p1cfg45_independent"
+    48	AXES = P.DEFAULT_AXES
+    49	PHASE1_S_GRID = (0.05, 0.15, 0.25, 0.35, 0.45, 0.60, 0.75, 0.90)
+    50	FINAL_GRID_S = 0.90               # latest cached grid point; the final-window feature source
+    51	NUM_STEPS = P.NFE_FULL_DEFAULT    # deployed cfg=4.5 integration budget
+    52	
+    53	
+    54	# ---------------------------------------------------------------------------
+    55	# Cache loading
+    56	# ---------------------------------------------------------------------------
+    57	def load_pool_records() -> dict[str, dict[int, dict[str, object]]]:
+    58	    """clip -> j -> axis_id -> (label or embedding array). One pass over the jsonl."""
+    59	    out: dict[str, dict[int, dict[str, object]]] = collections.defaultdict(
+    60	        lambda: collections.defaultdict(dict)
+    61	    )
+    62	    with open(MEAS, "r", encoding="utf-8") as fh:
+    63	        for line in fh:
+    64	            line = line.strip()
+    65	            if not line or '"p1cfg45_independent"' not in line:
+    66	                continue
+    67	            r = json.loads(line)
+    68	            ex = r.get("extra", {})
+    69	            if ex.get("role") != ROLE:
+    70	                continue
+    71	            clip = str(ex["clip"]); j = int(ex["j"]); ax = r["axis_id"]; tgt = r["target"]
+    72	            if tgt.get("embedding") is not None:
+    73	                out[clip][j][ax] = np.asarray(tgt["embedding"], dtype=float)
+    74	            else:
+    75	                out[clip][j][ax] = tgt.get("label")
+    76	    return out
+    77	
+    78	
+    79	def load_scommit() -> dict[str, float]:
+    80	    sc: dict[str, float] = {}
+    81	    with open(BUDGET_CSV, "r", encoding="utf-8") as fh:
+    82	        for row in csv.DictReader(fh):
+    83	            try:
+    84	                sc[row["axis"]] = float(row["s_commit"])
+    85	            except (KeyError, ValueError):
+    86	                pass
+    87	    return sc
+    88	
+    89	
+    90	def load_final_feature(clip: str, j: int) -> np.ndarray | None:
+    91	    p = FEATS / f"{clip}__p1cfg45_ind{j}__s{FINAL_GRID_S:.2f}.npz"
+    92	    if not p.exists():
+    93	        return None
+    94	    return np.load(p)["pooled"].astype(np.float64).ravel()
+    95	
+    96	
+    97	# ---------------------------------------------------------------------------
+    98	# Oracle proxy + cache-derived scalar reward
+    99	# ---------------------------------------------------------------------------
+   100	def _majority_label(labels: list) -> object:
+   101	    """Plurality label, ties broken by sorted string order (deterministic)."""
+   102	    cnt = collections.Counter(labels)
+   103	    best = max(cnt.values())
+   104	    winners = sorted((k for k, v in cnt.items() if v == best), key=str)
+   105	    return winners[0]
+   106	
+   107	
+   108	def build_pool(clip: str, per_j: dict[int, dict[str, object]]) -> P.ClipPool | None:
+   109	    """Build a ClipPool: proxy labels (majority agreement) + a cache-derived scalar reward."""
+   110	    js = sorted(per_j.keys())
+   111	    if len(js) < 2:
+   112	        return None
+   113	    n = len(js)
+   114	
+   115	    # ---- per-axis proxy-correctness = agreement with the per-clip majority ----
+   116	    labels: dict[str, np.ndarray] = {}
+   117	    axis_score: dict[str, np.ndarray] = {}
+   118	    for ax in AXES:
+   119	        if ax not in per_j[js[0]]:
+   120	            continue
+   121	        vals = [per_j[j].get(ax) for j in js]
+   122	        if isinstance(vals[0], np.ndarray):
+   123	            # embedding axis (material): consensus = closer-than-median to the mean embedding
+   124	            M = np.stack(vals, axis=0)
+   125	            mean = M.mean(axis=0, keepdims=True)
+   126	            mn = M / (np.linalg.norm(M, axis=1, keepdims=True) + 1e-12)
+   127	            cn = mean / (np.linalg.norm(mean) + 1e-12)
+   128	            cos = (mn @ cn.T).ravel()
+   129	            thr = float(np.median(cos))
+   130	            ok = cos >= thr
+   131	            labels[ax] = ok
+   132	            axis_score[ax] = (cos - cos.min()) / (np.ptp(cos) + 1e-12)
+   133	        else:
+   134	            maj = _majority_label(vals)
+   135	            ok = np.array([v == maj for v in vals], dtype=bool)
+   136	            labels[ax] = ok
+   137	            axis_score[ax] = ok.astype(float)
+   138	    if not labels:
+   139	        return None
+   140	
+   141	    # ---- scalar reward: cosine of the final-grid pooled feature to the clip mean ----
+   142	    feats = [load_final_feature(clip, j) for j in js]
+   143	    if all(f is not None for f in feats):
+   144	        F = np.stack(feats, axis=0)
+   145	        mean = F.mean(axis=0, keepdims=True)
+   146	        fn = F / (np.linalg.norm(F, axis=1, keepdims=True) + 1e-12)
+   147	        cn = mean / (np.linalg.norm(mean) + 1e-12)
+   148	        final_score = (fn @ cn.T).ravel()
+   149	    else:
+   150	        # feature-free fallback: number of axes on which the candidate matches consensus
+   151	        final_score = np.sum([labels[a].astype(float) for a in labels], axis=0)
+   152	
+   153	    return P.ClipPool(clip=clip, labels=labels, final_score=final_score, axis_score=axis_score)
+   154	
+   155	
+   156	def eval_clips(split: str) -> set[str] | None:
+   157	    if split == "all":
+   158	        return None
+   159	    m = json.loads(MANIFEST.read_text())
+   160	    return set(str(c) for c in m["split_60_40_by_clip"]["eval"])
+   161	
+   162	
+   163	# ---------------------------------------------------------------------------
+   164	# Main
+   165	# ---------------------------------------------------------------------------
+   166	def main() -> None:
+   167	    ap = argparse.ArgumentParser(description="Phase-4 offline policy Pareto (manual §9, Fig. 6).")
+   168	    ap.add_argument("--split", choices=["eval", "all"], default="eval",
+   169	                    help="clip set: frozen eval split (default) or all 200 clips.")
+   170	    ap.add_argument("--seed", type=int, default=0)
+   171	    ap.add_argument("--diffrs-tau", type=float, default=None,
+   172	                    help="DiffRS rejection threshold; default = global median final_score.")
+   173	    ap.add_argument("--smc-temp", type=float, default=0.1)
+   174	    ap.add_argument("--random-prune-frac", type=float, default=0.5)
+   175	    args = ap.parse_args()
+   176	
+   177	    keep = eval_clips(args.split)
+   178	    records = load_pool_records()
+   179	    s_commit = load_scommit()
+   180	    gates = P.gates_from_scommit(s_commit, PHASE1_S_GRID, AXES)
+   181	
+   182	    pools: list[P.ClipPool] = []
+   183	    for clip in sorted(records):
+   184	        if keep is not None and clip not in keep:
+   185	            continue
+   186	        pool = build_pool(clip, records[clip])
+   187	        if pool is not None:
+   188	            pools.append(pool)
+   189	    if not pools:
+   190	        raise SystemExit("phase4_policy: no eligible pools found in cache.")
+   191	
+   192	    # default DiffRS threshold = global median final_score (a frozen-by-data choice).
+   193	    if args.diffrs_tau is None:
+   194	        all_scores = np.concatenate([p.final_score for p in pools])
+   195	        diffrs_tau = float(np.median(all_scores))
+   196	    else:
+   197	        diffrs_tau = args.diffrs_tau
+   198	
+   199	    metrics = P.run_all_policies(
+   200	        pools, gates=gates, axes=AXES, num_steps=NUM_STEPS, seed=args.seed,
+   201	        diffrs_tau=diffrs_tau, smc_temp=args.smc_temp,
+   202	        random_prune_frac=args.random_prune_frac,
+   203	    )
+   204	
+   205	    # ---- write policy_pareto.csv ----
+   206	    cols = ["policy", "n_clips", "final_correctness"] + [f"correct_{a}" for a in AXES] + [
+   207	        "completed_candidates", "total_nfe", "scoring_calls",
+   208	        "winner_retention", "false_prune_rate", "regret",
+   209	    ]
+   210	    OUT_CSV.parent.mkdir(parents=True, exist_ok=True)
+   211	    with open(OUT_CSV, "w", newline="", encoding="utf-8") as fh:
+   212	        w = csv.DictWriter(fh, fieldnames=cols)
+   213	        w.writeheader()
+   214	        for policy in P.POLICIES:
+   215	            row = {c: metrics[policy].get(c, "") for c in cols}
+   216	            w.writerow(row)
+   217	
+   218	    # ---- write policy_report.md ----
+   219	    gated = metrics["oracle_axis_gated"]; scbon = metrics["same_compute_bon"]
+   220	    full = metrics["full_bon"]; rnd = metrics["random_prune"]
+   221	    lines = [
+   222	        "# Phase-4 OFFLINE policy Pareto (manual §9, Fig. 6)",
+   223	        "",
+   224	        f"Split: **{args.split}** ({len(pools)} clips). Seed {args.seed}. "
+   225	        f"Deployed cfg=4.5, num_steps={NUM_STEPS}. DiffRS τ={diffrs_tau:.4f}, "
+   226	        f"SMC T={args.smc_temp}, random-prune frac={args.random_prune_frac}.",
+   227	        "",
+   228	        "**PROXY-CORRECTNESS CAVEAT.** `correctness` here is the ORACLE PROXY = agreement with "
+   229	        "the per-clip MAJORITY self-target across independents (preregistration). It is a "
+   230	        "self-consistency proxy, NOT human/MLLM correctness-vs-video. No correctness claim "
+   231	        "follows from these numbers alone; the offline pass is a headroom screen + method "
+   232	        "illustration (manual §9, §1.7).",
+   233	        "",
+   234	        "Oracle gate windows from s_commit (determination_budget_p1cfg45.csv):",
+   235	    ]
+   236	    for g in gates:
+   237	        lines.append(f"- window s={g.s:.2f}: prune on {', '.join(g.axes)}")
+   238	    lines += [
+   239	        "",
+   240	        "| policy | final_corr | NFE | scoring | winner_ret | false_prune | regret |",
+   241	        "|---|---|---|---|---|---|---|",
+   242	    ]
+   243	    for policy in P.POLICIES:
+   244	        m = metrics[policy]
+   245	        lines.append(
+   246	            f"| {policy} | {m['final_correctness']:.3f} | {m['total_nfe']} | "
+   247	            f"{m['scoring_calls']} | {m['winner_retention']:.3f} | "
+   248	            f"{m['false_prune_rate']:.3f} | {m['regret']:.3f} |"
+   249	        )
+   250	    lines += [
+   251	        "",
+   252	        "**Two-axis Pareto points** `(generator-NFE, final proxy-correctness)` and "
+   253	        "`(scoring-calls, final proxy-correctness)`:",
+   254	        "",
+   255	        "| policy | (NFE, final_corr) | (scoring, final_corr) |",
+   256	        "|---|---|---|",
+   257	    ]
+   258	    for policy in P.POLICIES:
+   259	        m = metrics[policy]
+   260	        lines.append(
+   261	            f"| {policy} | ({m['total_nfe']}, {m['final_correctness']:.3f}) | "
+   262	            f"({m['scoring_calls']}, {m['final_correctness']:.3f}) |"
+   263	        )
+   264	    headroom = (gated["final_correctness"] >= scbon["final_correctness"]
+   265	                and gated["total_nfe"] <= scbon["total_nfe"])
+   266	    lines += [
+   267	        "",
+   268	        "## Matched-compute read (oracle_axis_gated vs same_compute_bon)",
+   269	        f"- same_compute_bon NFE budget is matched per clip to oracle_axis_gated.",
+   270	        f"- oracle_axis_gated: final_corr={gated['final_correctness']:.3f}, "
+   271	        f"NFE={gated['total_nfe']}, false_prune={gated['false_prune_rate']:.3f}.",
+   272	        f"- same_compute_bon: final_corr={scbon['final_correctness']:.3f}, "
+   273	        f"NFE={scbon['total_nfe']}.",
+   274	        f"- full_bon ceiling: final_corr={full['final_correctness']:.3f}, NFE={full['total_nfe']}.",
+   275	        f"- random_prune control: final_corr={rnd['final_correctness']:.3f}, "
+   276	        f"false_prune={rnd['false_prune_rate']:.3f}.",
+   277	        "",
+   278	        f"**Offline headroom (proxy):** "
+   279	        f"{'YES — gated matches/beats matched-compute BoN at <= its NFE' if headroom else 'NO — gated does not dominate matched-compute BoN on the proxy'}. "
+   280	        "Token routing (§9) is a human STOP decision; this report does not emit GO_POLICY / "
+   281	        "GO_RESTRICTED / DIAGNOSTIC_ONLY on its own.",
+   282	    ]
+   283	    OUT_MD.write_text("\n".join(lines) + "\n", encoding="utf-8")
+   284	
+   285	    print(f"wrote {OUT_CSV.relative_to(ROOT)} and {OUT_MD.relative_to(ROOT)} "
+   286	          f"({len(pools)} clips, {len(P.POLICIES)} policies)")
+   287	    for policy in P.POLICIES:
+   288	        m = metrics[policy]
+   289	        print(f"  {policy:18s} final_corr={m['final_correctness']:.3f} "
+   290	              f"NFE={m['total_nfe']:6d} scoring={m['scoring_calls']:5d} "
+   291	              f"regret={m['regret']:.3f}")
+   292	
+   293	
+   294	if __name__ == "__main__":
+   295	    main()
+
+ succeeded in 194ms:
+     1	"""Phase-4 OFFLINE policy simulator (manual §9, Fig. 6). Pure numpy, deterministic.
+     2	
+     3	REPLAY gating on cached deployed-cfg (cfg=4.5) Phase-1 independents — NO new generation.
+     4	A clip's pool is its up-to-16 cached independents, each with per-axis final self-target
+     5	labels and a per-(candidate,axis) running-consensus score the script extracts from the
+     6	cache. The simulator is policy-agnostic: the scalar reward and per-axis scores are INPUTS
+     7	(see ClipPool), identical across policies, so Fig. 6's two axes (generator-NFE and
+     8	scoring-calls) are matched by construction.
+     9	
+    10	CORRECTNESS here is the ORACLE PROXY of experiment/preregistered/policy_preregistration.md:
+    11	agreement with the per-clip MAJORITY self-target across that clip's independents — a
+    12	self-consistency proxy, NOT human/MLLM correctness-vs-video. Every metric inherits that caveat.
+    13	
+    14	Policies (preregistered): full_bon, same_compute_bon, random_prune, diffrs_scalar (scalar
+    15	DiffRS rejection), smc_scalar (SMC-style scalar resampling), final_rerank, oracle_axis_gated
+    16	(prune on axes whose commitment window has closed, gate s = s_commit from
+    17	determination_budget_p1cfg45.csv). Accounting (both matched, EXACT): a candidate pruned at
+    18	progress s costs round(s*num_steps) generator-NFE, a survivor costs num_steps; one scoring
+    19	call per (candidate, window) the scorer is invoked at.
+    20	"""
+    21	from __future__ import annotations
+    22	
+    23	from dataclasses import dataclass, field
+    24	from typing import Callable, Optional
+    25	
+    26	import numpy as np
+    27	
+    28	# Default deployed-cfg integration budget (mmaudio_backend num_steps at cfg=4.5).
+    29	NFE_FULL_DEFAULT: int = 25
+    30	
+    31	# In-scope axes for the offline pool (categorical + the material embedding axis).
+    32	DEFAULT_AXES: tuple[str, ...] = ("presence", "timing", "class", "material")
+    33	
+    34	# Frozen policy roster (preregistration §"Policies / baselines").
+    35	POLICIES: tuple[str, ...] = (
+    36	    "full_bon",
+    37	    "same_compute_bon",
+    38	    "random_prune",
+    39	    "diffrs_scalar",
+    40	    "smc_scalar",
+    41	    "final_rerank",
+    42	    "oracle_axis_gated",
+    43	)
+    44	
+    45	
+    46	# ---------------------------------------------------------------------------
+    47	# Pool / candidate data contract (built by the script from cached measurements)
+    48	# ---------------------------------------------------------------------------
+    49	@dataclass
+    50	class ClipPool:
+    51	    """One clip's replay pool of N cached deployed-cfg candidates.
+    52	
+    53	    All arrays are length-N and index-aligned by candidate. The simulator NEVER
+    54	    invents these; the script fills them from the cache, the test from synthetic data.
+    55	
+    56	    labels:        axis_id -> length-N proxy-correctness bool array (candidate's final
+    57	                   self-target AGREES with the per-clip majority self-target on that axis).
+    58	                   This is the ORACLE PROXY, precomputed by the caller (so the simulator
+    59	                   stays pool-agnostic and the proxy definition lives in one place).
+    60	    final_score:   length-N scalar reward at the FINAL window (used by BoN / rerank /
+    61	                   DiffRS / SMC). Higher = preferred. Deterministic, cache-derived.
+    62	    axis_score:    axis_id -> length-N scalar in [0,1], the running-consensus agreement of
+    63	                   the candidate's in-window self-target with the plurality (used by
+    64	                   oracle_axis_gated to keep window-consistent candidates). Optional; if
+    65	                   absent the gated policy keeps candidates whose labels[axis] is True.
+    66	    clip:          clip id (for reporting / seeding).
+    67	    """
+    68	
+    69	    clip: str
+    70	    labels: dict[str, np.ndarray]
+    71	    final_score: np.ndarray
+    72	    axis_score: dict[str, np.ndarray] = field(default_factory=dict)
+    73	
+    74	    @property
+    75	    def n(self) -> int:
+    76	        return int(len(self.final_score))
+    77	
+    78	    def __post_init__(self) -> None:
+    79	        self.final_score = np.asarray(self.final_score, dtype=float)
+    80	        n = self.n
+    81	        for a, v in self.labels.items():
+    82	            arr = np.asarray(v, dtype=bool)
+    83	            if arr.shape[0] != n:
+    84	                raise ValueError(f"pool {self.clip}: labels[{a}] len {arr.shape[0]} != n {n}")
+    85	            self.labels[a] = arr
+    86	        for a, v in self.axis_score.items():
+    87	            arr = np.asarray(v, dtype=float)
+    88	            if arr.shape[0] != n:
+    89	                raise ValueError(f"pool {self.clip}: axis_score[{a}] len {arr.shape[0]} != n {n}")
+    90	            self.axis_score[a] = arr
+    91	
+    92	    def final_correct(self, axes: tuple[str, ...]) -> np.ndarray:
+    93	        """Length-N bool: candidate proxy-correct on ALL in-scope axes present in the pool."""
+    94	        present = [a for a in axes if a in self.labels]
+    95	        if not present:
+    96	            return np.zeros(self.n, dtype=bool)
+    97	        out = np.ones(self.n, dtype=bool)
+    98	        for a in present:
+    99	            out &= self.labels[a]
+   100	        return out
+   101	
+   102	
+   103	@dataclass
+   104	class GateSpec:
+   105	    """A pruning window. axes = axis ids whose commitment window has closed by progress s."""
+   106	
+   107	    s: float
+   108	    axes: tuple[str, ...]
+   109	
+   110	
+   111	@dataclass
+   112	class PolicyResult:
+   113	    """Per-clip outcome of one policy on one pool (all proxy-correctness)."""
+   114	
+   115	    policy: str
+   116	    clip: str
+   117	    winner: Optional[int]            # chosen candidate index, or None if pool empty
+   118	    winner_correct: bool             # final (all-axis) proxy-correctness of the winner
+   119	    axis_correct: dict[str, bool]    # per-axis proxy-correctness of the winner
+   120	    completed: int                   # candidates run to completion
+   121	    total_nfe: int                   # EXACT generator-NFE (preregistration accounting)
+   122	    scoring_calls: int               # EXACT scoring-call count
+   123	    winner_retained: bool            # did the pool's best-final candidate survive to the end
+   124	    false_pruned: int                # # pruned candidates that were the pool's best-final winner
+   125	    regret: float                    # best-achievable all-axis proxy-correctness - achieved
+   126	
+   127	
+   128	# ---------------------------------------------------------------------------
+   129	# Gate construction from s_commit
+   130	# ---------------------------------------------------------------------------
+   131	def gates_from_scommit(
+   132	    s_commit: dict[str, float],
+   133	    s_grid: tuple[float, ...],
+   134	    axes: tuple[str, ...] = DEFAULT_AXES,
+   135	) -> list[GateSpec]:
+   136	    """Build ordered pruning windows from per-axis s_commit.
+   137	
+   138	    An axis is actionable at the EARLIEST grid point s >= its s_commit (its commitment
+   139	    window has closed there). Axes are grouped by that grid point; one GateSpec per grid
+   140	    point that owns >=1 axis, in ascending s. Axes with NaN/absent s_commit (never
+   141	    committed) are never gated. The final window (rerank) is appended separately by the
+   142	    simulator, not here.
+   143	    """
+   144	    grid = sorted(s_grid)
+   145	    bucket: dict[float, list[str]] = {}
+   146	    for a in axes:
+   147	        sc = s_commit.get(a)
+   148	        if sc is None or not np.isfinite(sc):
+   149	            continue
+   150	        # earliest grid point at or after s_commit
+   151	        g = next((s for s in grid if s >= sc), None)
+   152	        if g is None:
+   153	            continue
+   154	        bucket.setdefault(g, []).append(a)
+   155	    return [GateSpec(s=g, axes=tuple(sorted(bucket[g]))) for g in sorted(bucket)]
+   156	
+   157	
+   158	# ---------------------------------------------------------------------------
+   159	# Accounting primitives (EXACT)
+   160	# ---------------------------------------------------------------------------
+   161	def prune_nfe(s: float, num_steps: int) -> int:
+   162	    """Generator-NFE charged for a candidate pruned at progress s: round(s*num_steps)."""
+   163	    return int(round(float(s) * int(num_steps)))
+   164	
+   165	
+   166	def _argmax_by_score(idx: np.ndarray, score: np.ndarray, rng: np.random.Generator) -> int:
+   167	    """Argmax of score over candidate indices `idx`, ties broken by a seeded shuffle.
+   168	
+   169	    Deterministic given rng; never returns a non-member of idx.
+   170	    """
+   171	    sub = score[idx]
+   172	    best = float(np.max(sub))
+   173	    winners = idx[np.flatnonzero(sub >= best - 1e-12)]
+   174	    if winners.shape[0] == 1:
+   175	        return int(winners[0])
+   176	    return int(rng.choice(winners))
+   177	
+   178	
+   179	# ---------------------------------------------------------------------------
+   180	# The simulator
+   181	# ---------------------------------------------------------------------------
+   182	def simulate_policy(
+   183	    pool: ClipPool,
+   184	    policy: str,
+   185	    *,
+   186	    gates: list[GateSpec],
+   187	    axes: tuple[str, ...] = DEFAULT_AXES,
+   188	    num_steps: int = NFE_FULL_DEFAULT,
+   189	    rng: Optional[np.random.Generator] = None,
+   190	    budget_nfe: Optional[int] = None,
+   191	    diffrs_tau: float = 0.0,
+   192	    smc_temp: float = 1.0,
+   193	    random_prune_frac: float = 0.5,
+   194	) -> PolicyResult:
+   195	    """Run one policy on one pool. Deterministic given `rng`. Pure numpy.
+   196	
+   197	    `budget_nfe` caps generator-NFE for same_compute_bon (set by the script to the gated
+   198	    policy's realized NFE). The pool's "winner" reference for retention/false-prune is the
+   199	    candidate with the highest final_score (the BoN ceiling pick).
+   200	    """
+   201	    if rng is None:
+   202	        rng = np.random.default_rng(0)
+   203	    n = pool.n
+   204	    present_axes = tuple(a for a in axes if a in pool.labels)
+   205	    final_correct = pool.final_correct(axes)
+   206	    # winner_retention reference = the BoN ceiling pick = best final_score
+   207	    # (deterministic tie-break on lowest index).
+   208	    ref_winner = int(np.lexsort((np.arange(n), -pool.final_score))[0]) if n else None
+   209	    # false_prune reference = the best correct candidate the pool COULD yield =
+   210	    # best final_score AMONG the proxy-correct candidates (preregistration: a false prune
+   211	    # is pruning a candidate that was proxy-correct AND would have been the winner).
+   212	    correct_idx = np.flatnonzero(final_correct)
+   213	    if correct_idx.size:
+   214	        ref_correct = int(correct_idx[np.lexsort(
+   215	            (correct_idx, -pool.final_score[correct_idx]))[0]])
+   216	    else:
+   217	        ref_correct = None
+   218	    best_possible = float(np.max(final_correct.astype(float))) if n else 0.0
+   219	
+   220	    alive = np.arange(n)
+   221	    nfe = 0
+   222	    scoring = 0
+   223	    pruned_idx: list[int] = []
+   224	
+   225	    def _finish(winner: Optional[int], completed_idx: np.ndarray) -> PolicyResult:
+   226	        nonlocal nfe, scoring
+   227	        # survivors run to completion: charge full NFE for the remaining fraction.
+   228	        # (We accumulate prune-NFE eagerly; survivors get num_steps total here.)
+   229	        completed = int(completed_idx.shape[0])
+   230	        if winner is None:
+   231	            wcorr = False
+   232	            acorr = {a: False for a in present_axes}
+   233	            achieved = 0.0
+   234	        else:
+   235	            wcorr = bool(final_correct[winner])
+   236	            acorr = {a: bool(pool.labels[a][winner]) for a in present_axes}
+   237	            achieved = float(final_correct[winner])
+   238	        retained = (ref_winner is not None) and (ref_winner in set(completed_idx.tolist()))
+   239	        # false prune: the best correct candidate was pruned (proxy-correct AND the pool's
+   240	        # would-be correct winner). Pruning the reward-winner when it is proxy-WRONG is a
+   241	        # CORRECT prune and never counts here.
+   242	        fp = sum(1 for j in pruned_idx if ref_correct is not None and j == ref_correct)
+   243	        return PolicyResult(
+   244	            policy=policy, clip=pool.clip, winner=winner, winner_correct=wcorr,
+   245	            axis_correct=acorr, completed=completed, total_nfe=int(nfe),
+   246	            scoring_calls=int(scoring), winner_retained=bool(retained),
+   247	            false_pruned=int(fp), regret=float(best_possible - achieved),
+   248	        )
+   249	
+   250	    if n == 0:
+   251	        return _finish(None, np.array([], dtype=int))
+   252	
+   253	    # ---- full_bon / final_rerank: complete all, score at final window only ----
+   254	    if policy in ("full_bon", "final_rerank"):
+   255	        nfe = n * num_steps
+   256	        scoring = n                      # one final-window score per candidate
+   257	        winner = _argmax_by_score(alive, pool.final_score, rng)
+   258	        return _finish(winner, alive)
+   259	
+   260	    # ---- same_compute_bon: BoN under a generator-NFE budget (fewer completed) ----
+   261	    if policy == "same_compute_bon":
+   262	        cap = budget_nfe if budget_nfe is not None else n * num_steps
+   263	        k = max(1, min(n, int(cap // num_steps)))
+   264	        # deterministic candidate subset: first k by a seeded permutation of indices
+   265	        order = rng.permutation(n)
+   266	        chosen = np.sort(order[:k])
+   267	        nfe = k * num_steps
+   268	        scoring = k
+   269	        winner = _argmax_by_score(chosen, pool.final_score, rng)
+   270	        pruned_idx.extend(int(j) for j in alive if j not in set(chosen.tolist()))
+   271	        return _finish(winner, chosen)
+   272	
+   273	    # ---- random_prune: prune a fraction at the first window, complete survivors ----
+   274	    if policy == "random_prune":
+   275	        s0 = gates[0].s if gates else 0.5
+   276	        n_prune = int(round(random_prune_frac * n))
+   277	        n_prune = min(n_prune, n - 1)            # never prune the whole pool
+   278	        order = rng.permutation(n)
+   279	        pruned = np.sort(order[:n_prune])
+   280	        survivors = np.sort(order[n_prune:])
+   281	        scoring += n                              # scored once at the prune window
+   282	        for j in pruned:
+   283	            nfe += prune_nfe(s0, num_steps)
+   284	            pruned_idx.append(int(j))
+   285	        nfe += survivors.shape[0] * num_steps
+   286	        scoring += survivors.shape[0]             # final-window rerank score
+   287	        winner = _argmax_by_score(survivors, pool.final_score, rng)
+   288	        return _finish(winner, survivors)
+   289	
+   290	    # ---- diffrs_scalar: reject below threshold at first window, complete survivors ----
+   291	    if policy == "diffrs_scalar":
+   292	        s0 = gates[0].s if gates else 0.5
+   293	        scoring += n
+   294	        keep_mask = pool.final_score >= diffrs_tau
+   295	        if not keep_mask.any():
+   296	            keep_mask[int(np.argmax(pool.final_score))] = True   # keep best, never empty
+   297	        survivors = np.flatnonzero(keep_mask)
+   298	        pruned = np.flatnonzero(~keep_mask)
+   299	        for j in pruned:
+   300	            nfe += prune_nfe(s0, num_steps)
+   301	            pruned_idx.append(int(j))
+   302	        nfe += survivors.shape[0] * num_steps
+   303	        scoring += survivors.shape[0]
+   304	        winner = _argmax_by_score(survivors, pool.final_score, rng)
+   305	        return _finish(winner, survivors)
+   306	
+   307	    # ---- smc_scalar: resample population ~ softmax(score/T) at first window ----
+   308	    if policy == "smc_scalar":
+   309	        s0 = gates[0].s if gates else 0.5
+   310	        scoring += n
+   311	        logits = pool.final_score / max(smc_temp, 1e-6)
+   312	        logits = logits - np.max(logits)
+   313	        w = np.exp(logits)
+   314	        w = w / w.sum()
+   315	        resampled = rng.choice(n, size=n, replace=True, p=w)
+   316	        kept = np.unique(resampled)               # distinct survivors actually completed
+   317	        pruned = np.array([j for j in range(n) if j not in set(kept.tolist())], dtype=int)
+   318	        for j in pruned:
+   319	            nfe += prune_nfe(s0, num_steps)
+   320	            pruned_idx.append(int(j))
+   321	        nfe += kept.shape[0] * num_steps
+   322	        scoring += kept.shape[0]
+   323	        winner = _argmax_by_score(kept, pool.final_score, rng)
+   324	        return _finish(winner, kept)
+   325	
+   326	    # ---- oracle_axis_gated: stagewise prune on closed-window axes ----
+   327	    if policy == "oracle_axis_gated":
+   328	        survivors = alive.copy()
+   329	        for gate in gates:
+   330	            if survivors.shape[0] <= 1:
+   331	                break
+   332	            scoring += survivors.shape[0]         # score every survivor at this window
+   333	            keep = np.ones(survivors.shape[0], dtype=bool)
+   334	            for a in gate.axes:
+   335	                if a not in pool.labels:
+   336	                    continue
+   337	                # keep candidates whose in-window axis self-target matches consensus.
+   338	                if a in pool.axis_score:
+   339	                    a_ok = pool.axis_score[a][survivors] > 0.5
+   340	                else:
+
+codex
+The core selection paths match your reproduction so far. I’m checking the aggregation and oracle gate tail now for any line-level issue that could make the scalar result misleading.
+exec
+/usr/bin/bash -lc 'rg -n "diffrs|smc|final_score|winner|correctness|oracle_axis_gated|run_all_policies" foley_cw/policy_offline.py scripts/phase4_policy.py' in /XYFS02/HDD_POOL/paratera_xy/pxy1289/HaocunYe/Research/SoundDecisions
+exec
+/usr/bin/bash -lc "nl -ba foley_cw/policy_offline.py | sed -n '326,520p'" in /XYFS02/HDD_POOL/paratera_xy/pxy1289/HaocunYe/Research/SoundDecisions
+ succeeded in 103ms:
+   326	    # ---- oracle_axis_gated: stagewise prune on closed-window axes ----
+   327	    if policy == "oracle_axis_gated":
+   328	        survivors = alive.copy()
+   329	        for gate in gates:
+   330	            if survivors.shape[0] <= 1:
+   331	                break
+   332	            scoring += survivors.shape[0]         # score every survivor at this window
+   333	            keep = np.ones(survivors.shape[0], dtype=bool)
+   334	            for a in gate.axes:
+   335	                if a not in pool.labels:
+   336	                    continue
+   337	                # keep candidates whose in-window axis self-target matches consensus.
+   338	                if a in pool.axis_score:
+   339	                    a_ok = pool.axis_score[a][survivors] > 0.5
+   340	                else:
+   341	                    a_ok = pool.labels[a][survivors]
+   342	                keep &= a_ok
+   343	            if not keep.any():
+   344	                keep[:] = pool.labels[gate.axes[0]][survivors] if gate.axes else True
+   345	                if not keep.any():
+   346	                    keep[int(np.argmax(pool.final_score[survivors]))] = True
+   347	            newly_pruned = survivors[~keep]
+   348	            for j in newly_pruned:
+   349	                nfe += prune_nfe(gate.s, num_steps)
+   350	                pruned_idx.append(int(j))
+   351	            survivors = survivors[keep]
+   352	        nfe += survivors.shape[0] * num_steps
+   353	        scoring += survivors.shape[0]             # final rerank score
+   354	        winner = _argmax_by_score(survivors, pool.final_score, rng)
+   355	        return _finish(winner, survivors)
+   356	
+   357	    raise ValueError(f"unknown policy {policy!r}; expected one of {POLICIES}")
+   358	
+   359	
+   360	# ---------------------------------------------------------------------------
+   361	# Aggregation across clips
+   362	# ---------------------------------------------------------------------------
+   363	def aggregate(results: list[PolicyResult], axes: tuple[str, ...] = DEFAULT_AXES) -> dict:
+   364	    """Mean metrics over clips for one policy (preregistration metric set). Empty -> zeros."""
+   365	    present_axes = tuple(axes)
+   366	    if not results:
+   367	        base = {
+   368	            "policy": None, "n_clips": 0, "final_correctness": 0.0,
+   369	            "completed_candidates": 0.0, "total_nfe": 0, "scoring_calls": 0,
+   370	            "winner_retention": 0.0, "false_prune_rate": 0.0, "regret": 0.0,
+   371	        }
+   372	        for a in present_axes:
+   373	            base[f"correct_{a}"] = 0.0
+   374	        return base
+   375	    n = len(results)
+   376	    out = {
+   377	        "policy": results[0].policy,
+   378	        "n_clips": n,
+   379	        "final_correctness": float(np.mean([r.winner_correct for r in results])),
+   380	        "completed_candidates": float(np.mean([r.completed for r in results])),
+   381	        "total_nfe": int(sum(r.total_nfe for r in results)),
+   382	        "scoring_calls": int(sum(r.scoring_calls for r in results)),
+   383	        "winner_retention": float(np.mean([r.winner_retained for r in results])),
+   384	        "false_prune_rate": float(np.mean([r.false_pruned for r in results])),
+   385	        "regret": float(np.mean([r.regret for r in results])),
+   386	    }
+   387	    for a in present_axes:
+   388	        vals = [r.axis_correct[a] for r in results if a in r.axis_correct]
+   389	        out[f"correct_{a}"] = float(np.mean(vals)) if vals else 0.0
+   390	    return out
+   391	
+   392	
+   393	def run_all_policies(
+   394	    pools: list[ClipPool],
+   395	    *,
+   396	    gates: list[GateSpec],
+   397	    axes: tuple[str, ...] = DEFAULT_AXES,
+   398	    num_steps: int = NFE_FULL_DEFAULT,
+   399	    seed: int = 0,
+   400	    diffrs_tau: float = 0.0,
+   401	    smc_temp: float = 1.0,
+   402	    random_prune_frac: float = 0.5,
+   403	) -> dict[str, dict]:
+   404	    """Run every preregistered policy on all pools; return policy -> aggregate metrics.
+   405	
+   406	    same_compute_bon's NFE budget is matched, PER CLIP, to oracle_axis_gated's realized
+   407	    generator-NFE (the matched-compute x-coordinate of Fig. 6). Deterministic given `seed`:
+   408	    each (policy, clip) gets an independent sub-stream via SeedSequence.
+   409	    """
+   410	    import zlib
+   411	
+   412	    def _rng(*parts) -> np.random.Generator:
+   413	        ent = [seed] + [zlib.crc32(str(p).encode()) for p in parts]
+   414	        return np.random.default_rng(np.random.SeedSequence(ent))
+   415	
+   416	    # First pass: gated NFE per clip, to set same_compute_bon's matched budget.
+   417	    gated_nfe: dict[str, int] = {}
+   418	    per_policy: dict[str, list[PolicyResult]] = {p: [] for p in POLICIES}
+   419	    for pool in pools:
+   420	        r = simulate_policy(
+   421	            pool, "oracle_axis_gated", gates=gates, axes=axes, num_steps=num_steps,
+   422	            rng=_rng("oracle_axis_gated", pool.clip),
+   423	            diffrs_tau=diffrs_tau, smc_temp=smc_temp, random_prune_frac=random_prune_frac,
+   424	        )
+   425	        gated_nfe[pool.clip] = r.total_nfe
+   426	        per_policy["oracle_axis_gated"].append(r)
+   427	
+   428	    for pool in pools:
+   429	        for policy in POLICIES:
+   430	            if policy == "oracle_axis_gated":
+   431	                continue
+   432	            r = simulate_policy(
+   433	                pool, policy, gates=gates, axes=axes, num_steps=num_steps,
+   434	                rng=_rng(policy, pool.clip),
+   435	                budget_nfe=gated_nfe.get(pool.clip),
+   436	                diffrs_tau=diffrs_tau, smc_temp=smc_temp, random_prune_frac=random_prune_frac,
+   437	            )
+   438	            per_policy[policy].append(r)
+   439	
+   440	    return {p: aggregate(per_policy[p], axes) for p in POLICIES}
+
+ succeeded in 303ms:
+scripts/phase4_policy.py:6:their per-axis final self-target labels, the ORACLE-PROXY per-axis correctness (agreement
+scripts/phase4_policy.py:14:  results/stage0/phase1/policy_report.md    the §9 report + the proxy-correctness caveat
+scripts/phase4_policy.py:104:    winners = sorted((k for k, v in cnt.items() if v == best), key=str)
+scripts/phase4_policy.py:105:    return winners[0]
+scripts/phase4_policy.py:115:    # ---- per-axis proxy-correctness = agreement with the per-clip majority ----
+scripts/phase4_policy.py:148:        final_score = (fn @ cn.T).ravel()
+scripts/phase4_policy.py:151:        final_score = np.sum([labels[a].astype(float) for a in labels], axis=0)
+scripts/phase4_policy.py:153:    return P.ClipPool(clip=clip, labels=labels, final_score=final_score, axis_score=axis_score)
+scripts/phase4_policy.py:171:    ap.add_argument("--diffrs-tau", type=float, default=None,
+scripts/phase4_policy.py:172:                    help="DiffRS rejection threshold; default = global median final_score.")
+scripts/phase4_policy.py:173:    ap.add_argument("--smc-temp", type=float, default=0.1)
+scripts/phase4_policy.py:192:    # default DiffRS threshold = global median final_score (a frozen-by-data choice).
+scripts/phase4_policy.py:193:    if args.diffrs_tau is None:
+scripts/phase4_policy.py:194:        all_scores = np.concatenate([p.final_score for p in pools])
+scripts/phase4_policy.py:195:        diffrs_tau = float(np.median(all_scores))
+scripts/phase4_policy.py:197:        diffrs_tau = args.diffrs_tau
+scripts/phase4_policy.py:199:    metrics = P.run_all_policies(
+scripts/phase4_policy.py:201:        diffrs_tau=diffrs_tau, smc_temp=args.smc_temp,
+scripts/phase4_policy.py:206:    cols = ["policy", "n_clips", "final_correctness"] + [f"correct_{a}" for a in AXES] + [
+scripts/phase4_policy.py:208:        "winner_retention", "false_prune_rate", "regret",
+scripts/phase4_policy.py:219:    gated = metrics["oracle_axis_gated"]; scbon = metrics["same_compute_bon"]
+scripts/phase4_policy.py:225:        f"Deployed cfg=4.5, num_steps={NUM_STEPS}. DiffRS τ={diffrs_tau:.4f}, "
+scripts/phase4_policy.py:226:        f"SMC T={args.smc_temp}, random-prune frac={args.random_prune_frac}.",
+scripts/phase4_policy.py:228:        "**PROXY-CORRECTNESS CAVEAT.** `correctness` here is the ORACLE PROXY = agreement with "
+scripts/phase4_policy.py:230:        "self-consistency proxy, NOT human/MLLM correctness-vs-video. No correctness claim "
+scripts/phase4_policy.py:240:        "| policy | final_corr | NFE | scoring | winner_ret | false_prune | regret |",
+scripts/phase4_policy.py:246:            f"| {policy} | {m['final_correctness']:.3f} | {m['total_nfe']} | "
+scripts/phase4_policy.py:247:            f"{m['scoring_calls']} | {m['winner_retention']:.3f} | "
+scripts/phase4_policy.py:252:        "**Two-axis Pareto points** `(generator-NFE, final proxy-correctness)` and "
+scripts/phase4_policy.py:253:        "`(scoring-calls, final proxy-correctness)`:",
+scripts/phase4_policy.py:261:            f"| {policy} | ({m['total_nfe']}, {m['final_correctness']:.3f}) | "
+scripts/phase4_policy.py:262:            f"({m['scoring_calls']}, {m['final_correctness']:.3f}) |"
+scripts/phase4_policy.py:264:    headroom = (gated["final_correctness"] >= scbon["final_correctness"]
+scripts/phase4_policy.py:268:        "## Matched-compute read (oracle_axis_gated vs same_compute_bon)",
+scripts/phase4_policy.py:269:        f"- same_compute_bon NFE budget is matched per clip to oracle_axis_gated.",
+scripts/phase4_policy.py:270:        f"- oracle_axis_gated: final_corr={gated['final_correctness']:.3f}, "
+scripts/phase4_policy.py:272:        f"- same_compute_bon: final_corr={scbon['final_correctness']:.3f}, "
+scripts/phase4_policy.py:274:        f"- full_bon ceiling: final_corr={full['final_correctness']:.3f}, NFE={full['total_nfe']}.",
+scripts/phase4_policy.py:275:        f"- random_prune control: final_corr={rnd['final_correctness']:.3f}, "
+scripts/phase4_policy.py:289:        print(f"  {policy:18s} final_corr={m['final_correctness']:.3f} "
+foley_cw/policy_offline.py:12:self-consistency proxy, NOT human/MLLM correctness-vs-video. Every metric inherits that caveat.
+foley_cw/policy_offline.py:14:Policies (preregistered): full_bon, same_compute_bon, random_prune, diffrs_scalar (scalar
+foley_cw/policy_offline.py:15:DiffRS rejection), smc_scalar (SMC-style scalar resampling), final_rerank, oracle_axis_gated
+foley_cw/policy_offline.py:39:    "diffrs_scalar",
+foley_cw/policy_offline.py:40:    "smc_scalar",
+foley_cw/policy_offline.py:42:    "oracle_axis_gated",
+foley_cw/policy_offline.py:56:    labels:        axis_id -> length-N proxy-correctness bool array (candidate's final
+foley_cw/policy_offline.py:60:    final_score:   length-N scalar reward at the FINAL window (used by BoN / rerank /
+foley_cw/policy_offline.py:64:                   oracle_axis_gated to keep window-consistent candidates). Optional; if
+foley_cw/policy_offline.py:71:    final_score: np.ndarray
+foley_cw/policy_offline.py:76:        return int(len(self.final_score))
+foley_cw/policy_offline.py:79:        self.final_score = np.asarray(self.final_score, dtype=float)
+foley_cw/policy_offline.py:113:    """Per-clip outcome of one policy on one pool (all proxy-correctness)."""
+foley_cw/policy_offline.py:117:    winner: Optional[int]            # chosen candidate index, or None if pool empty
+foley_cw/policy_offline.py:118:    winner_correct: bool             # final (all-axis) proxy-correctness of the winner
+foley_cw/policy_offline.py:119:    axis_correct: dict[str, bool]    # per-axis proxy-correctness of the winner
+foley_cw/policy_offline.py:123:    winner_retained: bool            # did the pool's best-final candidate survive to the end
+foley_cw/policy_offline.py:124:    false_pruned: int                # # pruned candidates that were the pool's best-final winner
+foley_cw/policy_offline.py:125:    regret: float                    # best-achievable all-axis proxy-correctness - achieved
+foley_cw/policy_offline.py:173:    winners = idx[np.flatnonzero(sub >= best - 1e-12)]
+foley_cw/policy_offline.py:174:    if winners.shape[0] == 1:
+foley_cw/policy_offline.py:175:        return int(winners[0])
+foley_cw/policy_offline.py:176:    return int(rng.choice(winners))
+foley_cw/policy_offline.py:191:    diffrs_tau: float = 0.0,
+foley_cw/policy_offline.py:192:    smc_temp: float = 1.0,
+foley_cw/policy_offline.py:198:    policy's realized NFE). The pool's "winner" reference for retention/false-prune is the
+foley_cw/policy_offline.py:199:    candidate with the highest final_score (the BoN ceiling pick).
+foley_cw/policy_offline.py:206:    # winner_retention reference = the BoN ceiling pick = best final_score
+foley_cw/policy_offline.py:208:    ref_winner = int(np.lexsort((np.arange(n), -pool.final_score))[0]) if n else None
+foley_cw/policy_offline.py:210:    # best final_score AMONG the proxy-correct candidates (preregistration: a false prune
+foley_cw/policy_offline.py:211:    # is pruning a candidate that was proxy-correct AND would have been the winner).
+foley_cw/policy_offline.py:215:            (correct_idx, -pool.final_score[correct_idx]))[0]])
+foley_cw/policy_offline.py:225:    def _finish(winner: Optional[int], completed_idx: np.ndarray) -> PolicyResult:
+foley_cw/policy_offline.py:230:        if winner is None:
+foley_cw/policy_offline.py:235:            wcorr = bool(final_correct[winner])
+foley_cw/policy_offline.py:236:            acorr = {a: bool(pool.labels[a][winner]) for a in present_axes}
+foley_cw/policy_offline.py:237:            achieved = float(final_correct[winner])
+foley_cw/policy_offline.py:238:        retained = (ref_winner is not None) and (ref_winner in set(completed_idx.tolist()))
+foley_cw/policy_offline.py:240:        # would-be correct winner). Pruning the reward-winner when it is proxy-WRONG is a
+foley_cw/policy_offline.py:244:            policy=policy, clip=pool.clip, winner=winner, winner_correct=wcorr,
+foley_cw/policy_offline.py:246:            scoring_calls=int(scoring), winner_retained=bool(retained),
+foley_cw/policy_offline.py:257:        winner = _argmax_by_score(alive, pool.final_score, rng)
+foley_cw/policy_offline.py:258:        return _finish(winner, alive)
+foley_cw/policy_offline.py:269:        winner = _argmax_by_score(chosen, pool.final_score, rng)
+foley_cw/policy_offline.py:271:        return _finish(winner, chosen)
+foley_cw/policy_offline.py:287:        winner = _argmax_by_score(survivors, pool.final_score, rng)
+foley_cw/policy_offline.py:288:        return _finish(winner, survivors)
+foley_cw/policy_offline.py:290:    # ---- diffrs_scalar: reject below threshold at first window, complete survivors ----
+foley_cw/policy_offline.py:291:    if policy == "diffrs_scalar":
+foley_cw/policy_offline.py:294:        keep_mask = pool.final_score >= diffrs_tau
+foley_cw/policy_offline.py:296:            keep_mask[int(np.argmax(pool.final_score))] = True   # keep best, never empty
+foley_cw/policy_offline.py:304:        winner = _argmax_by_score(survivors, pool.final_score, rng)
+foley_cw/policy_offline.py:305:        return _finish(winner, survivors)
+foley_cw/policy_offline.py:307:    # ---- smc_scalar: resample population ~ softmax(score/T) at first window ----
+foley_cw/policy_offline.py:308:    if policy == "smc_scalar":
+foley_cw/policy_offline.py:311:        logits = pool.final_score / max(smc_temp, 1e-6)
+foley_cw/policy_offline.py:323:        winner = _argmax_by_score(kept, pool.final_score, rng)
+foley_cw/policy_offline.py:324:        return _finish(winner, kept)
+foley_cw/policy_offline.py:326:    # ---- oracle_axis_gated: stagewise prune on closed-window axes ----
+foley_cw/policy_offline.py:327:    if policy == "oracle_axis_gated":
+foley_cw/policy_offline.py:346:                    keep[int(np.argmax(pool.final_score[survivors]))] = True
+foley_cw/policy_offline.py:354:        winner = _argmax_by_score(survivors, pool.final_score, rng)
+foley_cw/policy_offline.py:355:        return _finish(winner, survivors)
+foley_cw/policy_offline.py:368:            "policy": None, "n_clips": 0, "final_correctness": 0.0,
+foley_cw/policy_offline.py:370:            "winner_retention": 0.0, "false_prune_rate": 0.0, "regret": 0.0,
+foley_cw/policy_offline.py:379:        "final_correctness": float(np.mean([r.winner_correct for r in results])),
+foley_cw/policy_offline.py:383:        "winner_retention": float(np.mean([r.winner_retained for r in results])),
+foley_cw/policy_offline.py:393:def run_all_policies(
+foley_cw/policy_offline.py:400:    diffrs_tau: float = 0.0,
+foley_cw/policy_offline.py:401:    smc_temp: float = 1.0,
+foley_cw/policy_offline.py:406:    same_compute_bon's NFE budget is matched, PER CLIP, to oracle_axis_gated's realized
+foley_cw/policy_offline.py:421:            pool, "oracle_axis_gated", gates=gates, axes=axes, num_steps=num_steps,
+foley_cw/policy_offline.py:422:            rng=_rng("oracle_axis_gated", pool.clip),
+foley_cw/policy_offline.py:423:            diffrs_tau=diffrs_tau, smc_temp=smc_temp, random_prune_frac=random_prune_frac,
+foley_cw/policy_offline.py:426:        per_policy["oracle_axis_gated"].append(r)
+foley_cw/policy_offline.py:430:            if policy == "oracle_axis_gated":
+foley_cw/policy_offline.py:436:                diffrs_tau=diffrs_tau, smc_temp=smc_temp, random_prune_frac=random_prune_frac,
+
+codex
+One concrete caveat is worth separating from the scalar tie: the oracle gate is explicitly oracle/proxy-driven, while the scalar policies all consume `final_score`. I’m checking whether the scalar score fell back to proxy labels anywhere, because that would be a real invalidating bug.
+exec
+/usr/bin/bash -lc "python - <<'PY'
+import scripts.phase4_policy as ph
+records=ph.load_pool_records()
+keep=ph.eval_clips('all')
+missing=0; total=0; pools=0
+for clip in sorted(records):
+    if keep is not None and clip not in keep: continue
+    per_j=records[clip]
+    js=sorted(per_j.keys())
+    if len(js)<2: continue
+    feats=[ph.load_final_feature(clip,j) for j in js]
+    total += len(feats)
+    missing += sum(f is None for f in feats)
+    pools += 1
+print('pools', pools, 'features', total, 'missing', missing)
+PY" in /XYFS02/HDD_POOL/paratera_xy/pxy1289/HaocunYe/Research/SoundDecisions
+codex
+The feature-presence check is still running over the cache; I’ll wait for that result before giving the verdict so the answer can rule out the fallback path cleanly.
+codex
+The cache scan is slower than expected, likely because importing/building paths touches a large measurement file. I’m letting it finish rather than starting competing scans.

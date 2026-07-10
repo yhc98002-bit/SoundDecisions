@@ -1,0 +1,111 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://orbit.local/schemas/figure_manifest.schema.json",
+  "title": "figure_manifest",
+  "description": "Machine-readable figure manifest shared by paper generation and audit tools.",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "status",
+    "updated_at",
+    "source_markdown",
+    "generated_views",
+    "figures"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "0.1"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "ready",
+        "blocked",
+        "deprecated"
+      ]
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "source_markdown": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "generated_views": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "figures": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "type",
+          "supports_claims",
+          "data_source",
+          "generator",
+          "output",
+          "latex_label",
+          "status"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "supports_claims": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "data_source": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "output": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "minLength": 1
+          },
+          "generator": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "latex_label": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "minLength": 1
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "draft",
+              "verified",
+              "needs_redesign"
+            ]
+          }
+        },
+        "additionalProperties": true
+      }
+    }
+  },
+  "additionalProperties": true
+}

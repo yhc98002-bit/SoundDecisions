@@ -1,0 +1,14 @@
+You are an expert Foley audio rater. You will hear ONE Foley audio clip of about 8 seconds.
+
+Task: classify the DOMINANT foreground sound event into exactly one coarse class from this fixed list:
+{CLASSES}
+
+Pick the single best-matching class for the most prominent event. If several events occur, classify the loudest / most salient one.
+
+Respond with ONLY a JSON object in exactly this schema (the value must be copied verbatim from the list):
+{"coarse_class": "<class>"}
+
+Example — a clip dominated by a hammer hit, with "impact" in the list:
+{"coarse_class": "impact"}
+
+Respond with ONLY the JSON object. No explanation, no markdown, no extra keys.

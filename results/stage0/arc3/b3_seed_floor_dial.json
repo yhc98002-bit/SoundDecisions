@@ -1,0 +1,127 @@
+{
+  "section": "B3_seed_floor_dial",
+  "preregistration": "experiment/preregistered/arc3_tierB_preregistration.md#B3",
+  "pool": "cfg-dial clips (frozen 60/40 split)",
+  "n_dial_clips_present": 24,
+  "rp_dim": 256,
+  "rp_seed": 0,
+  "lam": 1.0,
+  "n_boot": 2000,
+  "cfgs": [
+    1.0,
+    1.5,
+    2.0,
+    2.5,
+    3.0,
+    4.5
+  ],
+  "per_cfg": {
+    "1": {
+      "n_train_clips": 14,
+      "n_eval_clips": 10,
+      "n_train_rows": 146,
+      "n_eval_rows": 103,
+      "chance": 0.2718,
+      "ridge_acc": 0.1845,
+      "mlp_acc": 0.1845,
+      "best_acc": 0.1845,
+      "best_probe": "ridge",
+      "ridge_margin": -0.0874,
+      "mlp_margin": -0.0874,
+      "best_margin": -0.0874
+    },
+    "1.5": {
+      "n_train_clips": 14,
+      "n_eval_clips": 10,
+      "n_train_rows": 144,
+      "n_eval_rows": 98,
+      "chance": 0.2143,
+      "ridge_acc": 0.1224,
+      "mlp_acc": 0.1735,
+      "best_acc": 0.1735,
+      "best_probe": "mlp",
+      "ridge_margin": -0.0918,
+      "mlp_margin": -0.0408,
+      "best_margin": -0.0408
+    },
+    "2": {
+      "n_train_clips": 14,
+      "n_eval_clips": 10,
+      "n_train_rows": 152,
+      "n_eval_rows": 90,
+      "chance": 0.2111,
+      "ridge_acc": 0.0667,
+      "mlp_acc": 0.1222,
+      "best_acc": 0.1222,
+      "best_probe": "mlp",
+      "ridge_margin": -0.1444,
+      "mlp_margin": -0.0889,
+      "best_margin": -0.0889
+    },
+    "2.5": {
+      "n_train_clips": 14,
+      "n_eval_clips": 10,
+      "n_train_rows": 161,
+      "n_eval_rows": 94,
+      "chance": 0.2979,
+      "ridge_acc": 0.1383,
+      "mlp_acc": 0.0532,
+      "best_acc": 0.1383,
+      "best_probe": "ridge",
+      "ridge_margin": -0.1596,
+      "mlp_margin": -0.2447,
+      "best_margin": -0.1596
+    },
+    "3": {
+      "n_train_clips": 14,
+      "n_eval_clips": 10,
+      "n_train_rows": 157,
+      "n_eval_rows": 99,
+      "chance": 0.2222,
+      "ridge_acc": 0.1111,
+      "mlp_acc": 0.0707,
+      "best_acc": 0.1111,
+      "best_probe": "ridge",
+      "ridge_margin": -0.1111,
+      "mlp_margin": -0.1515,
+      "best_margin": -0.1111
+    },
+    "4.5": {
+      "n_train_clips": 14,
+      "n_eval_clips": 10,
+      "n_train_rows": 164,
+      "n_eval_rows": 100,
+      "chance": 0.34,
+      "ridge_acc": 0.1,
+      "mlp_acc": 0.12,
+      "best_acc": 0.12,
+      "best_probe": "mlp",
+      "ridge_margin": -0.24,
+      "mlp_margin": -0.22,
+      "best_margin": -0.22
+    }
+  },
+  "slope_best_acc_minus_chance_vs_cfg": {
+    "point": -0.04387558179867916,
+    "lo": -0.10384835792229126,
+    "hi": 0.026221172223344514,
+    "n_boot": 2000,
+    "eval_clips": 10
+  },
+  "slope_ridge_acc_minus_chance_vs_cfg": {
+    "point": -0.04021069241950407,
+    "lo": -0.09037858247873733,
+    "hi": 0.024603276684754132,
+    "n_boot": 2000,
+    "eval_clips": 10
+  },
+  "decision": {
+    "suggested_token": "NO_SEED_FLOOR",
+    "seed_floor_confirmed": false,
+    "slope_positive": false,
+    "f1_status": "F-1 stays refuted (slope flat or shrinking; CI includes/below 0)",
+    "rationale": "cfg=1.0 best=0.184 (ridge) chance=0.272 margin=-0.087 vs +0.10 \u2192 no seed floor; slope(acc\u2212chance vs cfg)=-0.0439 CI=[-0.1038,0.0262] \u2192 CI includes/below 0"
+  },
+  "suggested_token": "NO_SEED_FLOOR",
+  "notes": "Bootstrap unit = video (eval clips resampled, chance recomputed per draw). Abstain rows dropped (confident class subset). Probes trained ONLY on probe_train clips, evaluated ONLY on eval clips (no clip in both). Full-pool cfg=1.0 part requires the 200-clip s=0 latents via --collect (GPU, not run here)."
+}

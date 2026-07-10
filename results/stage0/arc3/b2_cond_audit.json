@@ -1,0 +1,151 @@
+{
+  "_doc": "Arc-3 Tier-B \u00a7B2 conditioning-channel audit (frozen pre-reg). Ridge+MLP probe of MEASURED class from raw pooled CLIP/Synchformer conditioning, frozen 60/40 split, vs chance; bootstrap by video.",
+  "label_role": "p1cfg1_independent",
+  "b1_tag": "p1cfg1",
+  "b1_internal_best_class_acc": 0.4375,
+  "n_clips_with_feat_and_label": 200,
+  "missing_feat": [],
+  "missing_label": [],
+  "variants": {
+    "pooled_all": {
+      "ridge": {
+        "family": "ridge",
+        "accuracy": 0.3783783783783784,
+        "chance": 0.2702702702702703,
+        "delta_over_chance": 0.10810810810810811,
+        "ci95": [
+          0.2702702702702703,
+          0.4864864864864865
+        ],
+        "n_train": 126,
+        "n_eval": 74,
+        "n_classes": 11
+      },
+      "mlp": {
+        "family": "mlp",
+        "accuracy": 0.36486486486486486,
+        "chance": 0.2702702702702703,
+        "delta_over_chance": 0.09459459459459457,
+        "ci95": [
+          0.25675675675675674,
+          0.47297297297297297
+        ],
+        "n_train": 126,
+        "n_eval": 74,
+        "n_classes": 11
+      }
+    },
+    "clip_f": {
+      "ridge": {
+        "family": "ridge",
+        "accuracy": 0.4189189189189189,
+        "chance": 0.2702702702702703,
+        "delta_over_chance": 0.14864864864864863,
+        "ci95": [
+          0.3108108108108108,
+          0.527027027027027
+        ],
+        "n_train": 126,
+        "n_eval": 74,
+        "n_classes": 11
+      },
+      "mlp": {
+        "family": "mlp",
+        "accuracy": 0.3108108108108108,
+        "chance": 0.2702702702702703,
+        "delta_over_chance": 0.040540540540540515,
+        "ci95": [
+          0.25641891891891894,
+          0.4594594594594595
+        ],
+        "n_train": 126,
+        "n_eval": 74,
+        "n_classes": 11
+      }
+    },
+    "sync_f": {
+      "ridge": {
+        "family": "ridge",
+        "accuracy": 0.2702702702702703,
+        "chance": 0.2702702702702703,
+        "delta_over_chance": 0.0,
+        "ci95": [
+          0.17567567567567569,
+          0.36486486486486486
+        ],
+        "n_train": 126,
+        "n_eval": 74,
+        "n_classes": 11
+      },
+      "mlp": {
+        "family": "mlp",
+        "accuracy": 0.36486486486486486,
+        "chance": 0.2702702702702703,
+        "delta_over_chance": 0.09459459459459457,
+        "ci95": [
+          0.25675675675675674,
+          0.47297297297297297
+        ],
+        "n_train": 126,
+        "n_eval": 74,
+        "n_classes": 11
+      }
+    },
+    "clip_f_c": {
+      "ridge": {
+        "family": "ridge",
+        "accuracy": 0.2972972972972973,
+        "chance": 0.2702702702702703,
+        "delta_over_chance": 0.02702702702702703,
+        "ci95": [
+          0.20270270270270271,
+          0.40540540540540543
+        ],
+        "n_train": 126,
+        "n_eval": 74,
+        "n_classes": 11
+      },
+      "mlp": {
+        "family": "mlp",
+        "accuracy": 0.33783783783783783,
+        "chance": 0.2702702702702703,
+        "delta_over_chance": 0.06756756756756754,
+        "ci95": [
+          0.22972972972972974,
+          0.44594594594594594
+        ],
+        "n_train": 126,
+        "n_eval": 74,
+        "n_classes": 11
+      }
+    }
+  },
+  "label_dist_all": {
+    "vehicles": 59,
+    "animals": 53,
+    "doors_furniture": 22,
+    "other": 20,
+    "electronics_ui": 19,
+    "impact_friction": 13,
+    "guns_explosions": 7,
+    "water_liquid": 3,
+    "food_cooking": 2,
+    "tools_hand": 1,
+    "machines_motors": 1
+  },
+  "n_classes": 11,
+  "eval_majority_prior": 0.2702702702702703,
+  "chance_for_decision": 0.2702702702702703,
+  "decision": {
+    "token": "COND_NOT_BOTTLENECK",
+    "near_chance": true,
+    "below_b1": false,
+    "cond_best_acc": 0.4189189189189189,
+    "chance": 0.2702702702702703,
+    "b1_best_acc": 0.4375,
+    "margin": 0.15,
+    "b1_gap": 0.15,
+    "continue": true,
+    "best_cond_probe": "clip_f/ridge"
+  }
+}

@@ -1,0 +1,171 @@
+{
+  "agreement": 0.55,
+  "confident_accuracy": 0.7333333333333333,
+  "abstain_rate": 0.25,
+  "cross_tagger": 0.55,
+  "n": 20,
+  "min_required": 0.5,
+  "beats_contingency": "armed, not triggered",
+  "results": [
+    {
+      "key": "4268",
+      "ucs": "AIR",
+      "panns": "abstain",
+      "ast": "guns_explosions",
+      "accepted": false,
+      "caption": "A person fires a paintball gun inside a building."
+    },
+    {
+      "key": "3363",
+      "ucs": "AIRCRAFT",
+      "panns": "vehicles",
+      "ast": "vehicles",
+      "accepted": true,
+      "caption": "A man unfolds and folds the arms of a drone, which make clic"
+    },
+    {
+      "key": "3985",
+      "ucs": "ALARMS",
+      "panns": "electronics_ui",
+      "ast": "electronics_ui",
+      "accepted": true,
+      "caption": "A person sleeping in bed is woken up by a beeping alarm cloc"
+    },
+    {
+      "key": "1386",
+      "ucs": "ANIMALS",
+      "panns": "animals",
+      "ast": "animals",
+      "accepted": true,
+      "caption": "A walrus opens its mouth and lets out two loud, trumpeting r"
+    },
+    {
+      "key": "3491",
+      "ucs": "BELLS",
+      "panns": "vehicles",
+      "ast": "vehicles",
+      "accepted": false,
+      "caption": "A large church bell tolls from a stone tower."
+    },
+    {
+      "key": "34",
+      "ucs": "BIRDS",
+      "panns": "animals",
+      "ast": "animals",
+      "accepted": true,
+      "caption": "A raven croaks while perched on a car's roof rack."
+    },
+    {
+      "key": "194",
+      "ucs": "CLOTH",
+      "panns": "impact_friction",
+      "ast": "doors_furniture",
+      "accepted": true,
+      "caption": "A person cuts fabric with a rotary cutter on a cutting mat."
+    },
+    {
+      "key": "528",
+      "ucs": "COMMUNICATIONS",
+      "panns": "impact_friction",
+      "ast": "abstain",
+      "accepted": false,
+      "caption": "A camera lens autofocuses with a whirring sound."
+    },
+    {
+      "key": "1066",
+      "ucs": "COMPUTERS",
+      "panns": "abstain",
+      "ast": "abstain",
+      "accepted": false,
+      "caption": "Someone is typing on a keyboard."
+    },
+    {
+      "key": "3048",
+      "ucs": "CREATURES",
+      "panns": "abstain",
+      "ast": "animals",
+      "accepted": false,
+      "caption": "A small, furry creature with large eyes makes high-pitched c"
+    },
+    {
+      "key": "4510",
+      "ucs": "DOORS",
+      "panns": "doors_furniture",
+      "ast": "doors_furniture",
+      "accepted": true,
+      "caption": "A person walks through a doorway and closes a metal gate beh"
+    },
+    {
+      "key": "2029",
+      "ucs": "EXPLOSIONS",
+      "panns": "abstain",
+      "ast": "other",
+      "accepted": false,
+      "caption": "A large projectile approaches with a roaring sound and creat"
+    },
+    {
+      "key": "4567",
+      "ucs": "FIGHT",
+      "panns": "doors_furniture",
+      "ast": "abstain",
+      "accepted": true,
+      "caption": "A man pushes another person against a radiator, walks to a c"
+    },
+    {
+      "key": "1812",
+      "ucs": "FIRE",
+      "panns": "animals",
+      "ast": "animals",
+      "accepted": false,
+      "caption": "A soldering iron sizzles as it melts solder on a circuit boa"
+    },
+    {
+      "key": "4520",
+      "ucs": "FIREWORKS",
+      "panns": "guns_explosions",
+      "ast": "guns_explosions",
+      "accepted": true,
+      "caption": "Fireworks explode in the sky, creating puffs of white smoke."
+    },
+    {
+      "key": "3540",
+      "ucs": "FOLEY",
+      "panns": "doors_furniture",
+      "ast": "doors_furniture",
+      "accepted": true,
+      "caption": "A man closes a book and gets up from beside a child's bed, c"
+    },
+    {
+      "key": "3261",
+      "ucs": "FOOD & DRINK",
+      "panns": "abstain",
+      "ast": "food_cooking",
+      "accepted": false,
+      "caption": "A person uses a cookie cutter and a press to shape green dou"
+    },
+    {
+      "key": "4015",
+      "ucs": "FOOTSTEPS",
+      "panns": "footsteps_walk",
+      "ast": "abstain",
+      "accepted": true,
+      "caption": "An adult and a child hike on a snowy, dirt trail in the moun"
+    },
+    {
+      "key": "1851",
+      "ucs": "GLASS",
+      "panns": "vehicles",
+      "ast": "impact_friction",
+      "accepted": false,
+      "caption": "A person in a lab taps a pipette against a glass vial."
+    },
+    {
+      "key": "1653",
+      "ucs": "GUNS",
+      "panns": "guns_explosions",
+      "ast": "guns_explosions",
+      "accepted": true,
+      "caption": "A person shoots a paintball or airsoft gun at a microwave ov"
+    }
+  ]
+}

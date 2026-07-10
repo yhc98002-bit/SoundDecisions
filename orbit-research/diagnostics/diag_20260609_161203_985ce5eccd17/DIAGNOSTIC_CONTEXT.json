@@ -1,0 +1,35 @@
+{
+  "schema_version": "0.1",
+  "diagnostic_id": "diag_20260609_161203_985ce5eccd17",
+  "input": "experiment/experiment_pack.json",
+  "input_hash": "985ce5eccd17",
+  "diagnostic_kind": "implementation_smoke",
+  "claim_relevance": "paper_scope_affecting",
+  "status": "partial_crux_validated",
+  "run_id": "phase0_mmaudio_crux_20260609",
+  "result_paths": [
+    "results/phase0_mmaudio_validation.json",
+    "results/score_sde_validation_report.md",
+    "results/feasibility_report.md",
+    "results/video_conditioning_test.json",
+    "results/video_conditioning_derisk_report.md",
+    "results/vidcond_0B4dYTMsgHA_000130.wav"
+  ],
+  "audit": {
+    "verdict": null,
+    "regime_preserved": "unknown",
+    "mechanism_rejected": false
+  },
+  "artifact_inventory": [
+    "results/phase0_mmaudio_validation.json",
+    "results/score_sde_validation_report.md",
+    "results/feasibility_report.md"
+  ],
+  "notes": "User approved 'Full Phase-0 on an17' (GPU + downloads). Environment built (shared venv on /XYFS02, torch 2.5.1+cu121, MMAudio vendored + small_16k weights md5-verified). MMAudioBackend wired (foley_cw/mmaudio_backend.py). CRUX VALIDATED on real MMAudio small_16k (an17, A800, fp32): Phase 0.1 trajectory access PASS, Phase 0.2 velocity->score SDE token=OK (alpha=0 reproduces ODE exactly 0.0; small-alpha continuity, fork validity, nontrivial diversity all pass). Convention audited against MMAudio source = identical to foley_cw's rectified-flow derivation (IdentitySToT, score=(t*v-x)/(1-t), no sign flip). REMAINING for full GO_MAPS_PHASE: Phase 0.3 FoleyBench dataset_subset_manifest, 0.4 event_anchor_validation, 0.5 reliability gate (>=3 reliable axes) — need a FoleyBench download + real per-axis audio measurements (taggers/onset). Awaiting user decision to proceed to that scope. No GO_MAPS_PHASE emitted yet; no claims; no results fabricated.",
+  "first_diagnostic": {
+    "id": "diag_phase0_feasibility",
+    "command_summary": "MMAudio Phase 0 STRICT: trajectory access + velocity->score SDE validation (alpha=0 AND nonzero-alpha) + dataset/anchor manifest + 3-part reliability gate. Emit GO_MAPS_PHASE / FIX_SCORE_CONVERSION / NO_TRAJECTORY_ACCESS / STOP_PROJECT.",
+    "requires_gpu": true,
+    "requires_mmaudio": true
+  }
+}

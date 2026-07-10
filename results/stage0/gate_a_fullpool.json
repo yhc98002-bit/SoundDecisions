@@ -1,0 +1,93 @@
+{
+  "_doc": "Full-pool Gate-A (\u00a71.2/\u00a715.8) cfg=4.5 ratification \u2014 RULING-1 scaled caps.",
+  "n_perm": 1000,
+  "scaled_cap_cfg1": 15,
+  "scaled_cap_cfg45": 15,
+  "mmd_exceedance_worst_cfg45": 15,
+  "cfg45_clean": false,
+  "cfg45_caveat": "near-exchangeable on tagger-probs, not provably exact",
+  "n_clips_cfg1": 200,
+  "n_clips_cfg45": 200,
+  "guards": {
+    "power_reject_frac": 0.9833333333333333,
+    "cross_clip_mmd_median": 0.31054871211461155,
+    "cross_clip_mmd_p95": 0.604737566533931,
+    "null_ks_p": 0.48284916708563275
+  },
+  "cfg1_internal_null": {
+    "token": "CFG_KERNEL_OK(cfg=1, schedule=sqrt_down)",
+    "passed": true,
+    "detail": "internal null consistent with an exact kernel",
+    "per_s": {
+      "0.05": {
+        "n_cells": 200,
+        "n_low_p": 9,
+        "cap": 15,
+        "ok": true,
+        "median_mmd2": 9.317268860886685e-07,
+        "median_tv": 0.25
+      },
+      "0.9": {
+        "n_cells": 200,
+        "n_low_p": 10,
+        "cap": 15,
+        "ok": true,
+        "median_mmd2": -0.003794936328264109,
+        "median_tv": 0.25
+      }
+    }
+  },
+  "cfg45_calibrated": {
+    "token": "CFG_KERNEL_OK(cfg=4.5, schedule=sqrt_down)",
+    "passed": true,
+    "detail": "exchangeable with the cfg=1.0 null at all test points",
+    "per_s": {
+      "0.05": {
+        "checks": {
+          "mmd:mw": true,
+          "mmd:exceedance": true,
+          "mmd:gross": true,
+          "tv:mw": true,
+          "tv:exceedance": true,
+          "tv:gross": true
+        },
+        "stats": {
+          "mmd_mw_p": 0.7452192017818852,
+          "mmd_n_exceed": 15,
+          "mmd_worst": 0.0818387796360518,
+          "tv_mw_p": 0.9999989812546249,
+          "tv_n_exceed": 6,
+          "tv_worst": 0.625
+        },
+        "n_cells": 200,
+        "ok": true
+      },
+      "0.9": {
+        "checks": {
+          "mmd:mw": true,
+          "mmd:exceedance": true,
+          "mmd:gross": true,
+          "tv:mw": true,
+          "tv:exceedance": true,
+          "tv:gross": true
+        },
+        "stats": {
+          "mmd_mw_p": 0.23494394886634523,
+          "mmd_n_exceed": 15,
+          "mmd_worst": 0.07547732363242599,
+          "tv_mw_p": 0.9999993849126186,
+          "tv_n_exceed": 5,
+          "tv_worst": 0.5625
+        },
+        "n_cells": 200,
+        "ok": true
+      }
+    }
+  },
+  "ratified": true,
+  "ledger_updated": true,
+  "tokens": [
+    "CFG_KERNEL_OK(cfg=1, schedule=sqrt_down)",
+    "CFG_KERNEL_OK(cfg=4.5, schedule=sqrt_down)"
+  ]
+}

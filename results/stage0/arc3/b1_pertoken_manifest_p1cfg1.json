@@ -1,0 +1,8 @@
+{
+  "_doc": "Arc-3 B1 per-token/cross-attn collection manifest (\u00a7B1 families 3-4).",
+  "tag": "p1cfg1",
+  "subdir": "arc3/pertoken",
+  "n_done": 200,
+  "n_missing": 0,
+  "missing": []
+}

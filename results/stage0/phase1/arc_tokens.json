@@ -1,0 +1,13 @@
+{
+  "tokens": [
+    "GO_MAPS_PHASE",
+    "CFG_KERNEL_OK(cfg=1, schedule=sqrt_down)",
+    "COMMITMENT_MAP_DONE",
+    "READOUT_MAP_DONE",
+    "GO_MAP",
+    "GO_READOUT"
+  ],
+  "cfg": "1.0 headline",
+  "cfg45": "CANDIDATE (full-pool Gate-A pending)",
+  "date": "2026-06-20"
+}

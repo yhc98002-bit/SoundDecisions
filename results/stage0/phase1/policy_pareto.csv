@@ -1,0 +1,8 @@
+policy,n_clips,final_correctness,correct_presence,correct_timing,correct_class,correct_material,completed_candidates,total_nfe,scoring_calls,winner_retention,false_prune_rate,regret
+full_bon,200,0.37,0.865,0.88,0.63,0.655,16.0,80000,3200,1.0,0.0,0.59
+same_compute_bon,200,0.35,0.875,0.87,0.605,0.66,9.385,46925,1877,0.6,0.395,0.61
+random_prune,200,0.33,0.885,0.89,0.605,0.64,8.0,49600,4800,0.485,0.475,0.63
+diffrs_scalar,200,0.37,0.865,0.88,0.63,0.655,8.24,50512,4848,1.0,0.21,0.59
+smc_scalar,200,0.37,0.875,0.88,0.6,0.68,10.345,58511,5269,0.69,0.35,0.59
+final_rerank,200,0.37,0.865,0.88,0.63,0.655,16.0,80000,3200,1.0,0.0,0.59
+oracle_axis_gated,200,0.785,1.0,1.0,0.995,0.785,6.055,49151,8437,0.475,0.0,0.175

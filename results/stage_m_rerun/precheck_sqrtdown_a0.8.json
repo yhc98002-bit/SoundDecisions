@@ -1,0 +1,35 @@
+{
+  "tuple": {
+    "cfg": 1.0,
+    "g_kind": "sqrt_down",
+    "alpha": 0.8,
+    "num_steps": 20
+  },
+  "token": "CFG_KERNEL_OK(cfg=1, schedule=sqrt_down)",
+  "passed": true,
+  "detail": "internal null consistent with an exact kernel",
+  "guards": {
+    "power_reject_frac": 0.9833333333333333,
+    "cross_clip_mmd_median": 0.37645599249431483,
+    "cross_clip_mmd_p95": 0.5348977284779471,
+    "null_ks_p": 0.16558583363892254
+  },
+  "per_s": {
+    "0.05": {
+      "n_cells": 16,
+      "n_low_p": 1,
+      "cap": 2,
+      "ok": true,
+      "median_mmd2": -0.000991859208032908,
+      "median_tv": 0.3125
+    },
+    "0.9": {
+      "n_cells": 16,
+      "n_low_p": 1,
+      "cap": 2,
+      "ok": true,
+      "median_mmd2": 0.003160462590782731,
+      "median_tv": 0.25
+    }
+  }
+}

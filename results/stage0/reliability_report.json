@@ -1,0 +1,49 @@
+{
+  "results": [
+    {
+      "axis_id": "presence",
+      "determinism": 1.0,
+      "robustness": 0.9826666666666668,
+      "validity": -0.1245674740484426,
+      "passed": false,
+      "demoted": true,
+      "reason": "AXIS_DEMOTED:presence \u2014 validity -0.125 < theta_cal 0.600"
+    },
+    {
+      "axis_id": "timing",
+      "determinism": 1.0,
+      "robustness": 0.9546666666666666,
+      "validity": -0.02827763496143969,
+      "passed": false,
+      "demoted": true,
+      "reason": "AXIS_DEMOTED:timing \u2014 validity -0.028 < theta_cal 0.600"
+    },
+    {
+      "axis_id": "class",
+      "determinism": 1.0,
+      "robustness": 0.8333333333333335,
+      "validity": 0.14512093411175978,
+      "passed": false,
+      "demoted": true,
+      "reason": "AXIS_DEMOTED:class \u2014 robustness 0.833 < theta_robust 0.850; validity 0.145 < theta_cal 0.600"
+    },
+    {
+      "axis_id": "material",
+      "determinism": 1.0,
+      "robustness": 0.9758064924205256,
+      "validity": NaN,
+      "passed": false,
+      "demoted": true,
+      "reason": "AXIS_DEMOTED:material \u2014 validity nan < theta_cal 0.600; no MLLM-judgeable gold for an embedding axis \u2014 second-embedder validation is a PI-checkpoint question"
+    }
+  ],
+  "tokens": [
+    "AXIS_DEMOTED:presence",
+    "AXIS_DEMOTED:timing",
+    "AXIS_DEMOTED:class",
+    "AXIS_DEMOTED:material"
+  ],
+  "survivors": [],
+  "gate_ok": false,
+  "validity_source": "MLLM (qwen3.5-omni-plus) only; human sidecar pending"
+}

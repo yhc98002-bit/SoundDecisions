@@ -1,0 +1,89 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://orbit.local/schemas/proposal_pack.schema.json",
+  "title": "proposal_pack",
+  "description": "STOP A machine-readable proposal pack. Markdown artifacts are generated or legacy views.",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "status",
+    "updated_at",
+    "source_markdown",
+    "generated_views",
+    "problem_selection",
+    "assumptions",
+    "abstract_task",
+    "baseline_headroom",
+    "candidate_mechanisms",
+    "selected_sketch",
+    "open_risks"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "0.1"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "ready",
+        "blocked",
+        "deprecated"
+      ]
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "source_markdown": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "generated_views": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "problem_selection": {
+      "type": [
+        "object",
+        "string",
+        "null"
+      ]
+    },
+    "assumptions": {
+      "type": "array"
+    },
+    "abstract_task": {
+      "type": [
+        "object",
+        "string",
+        "null"
+      ]
+    },
+    "baseline_headroom": {
+      "type": [
+        "object",
+        "string",
+        "null"
+      ]
+    },
+    "candidate_mechanisms": {
+      "type": "array"
+    },
+    "selected_sketch": {
+      "type": [
+        "object",
+        "string",
+        "null"
+      ]
+    },
+    "open_risks": {
+      "type": "array"
+    }
+  },
+  "additionalProperties": true
+}

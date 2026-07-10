@@ -1,0 +1,13 @@
+{
+  "tokens": [
+    "READOUT_MAP_DONE"
+  ],
+  "s_read": {
+    "presence/audio_tagger/ode": 0.35,
+    "timing/audio_tagger/ode": 0.05,
+    "class/audio_tagger/ode": 0.75,
+    "material/audio_tagger/ode": 0.6
+  },
+  "complete": true,
+  "missing": []
+}

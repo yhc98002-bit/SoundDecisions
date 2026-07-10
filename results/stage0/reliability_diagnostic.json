@@ -1,0 +1,984 @@
+{
+  "_doc": "Stage-0 validity diagnostic \u2014 Cohen kappa vs Gwet AC1, with the class label-space + abstain confounds decomposed. DIAGNOSTIC ONLY, not a gate; theta_cal=0.6 unchanged.",
+  "excluded_classes": [
+    "ambient_nature",
+    "music",
+    "speech_vocal"
+  ],
+  "axes": {
+    "presence": {
+      "full": {
+        "n": 100,
+        "p_o": 0.75,
+        "cohens_kappa": -0.04340567612687846,
+        "gwet_ac1": 0.6738208624176397,
+        "measured_marginal": {
+          "present": 92,
+          "absent": 8
+        },
+        "gold_marginal": {
+          "present": 81,
+          "absent": 19
+        }
+      },
+      "gate_subset": {
+        "n": 50,
+        "p_o": 0.74,
+        "cohens_kappa": -0.1245674740484426,
+        "gwet_ac1": 0.663995864564487,
+        "measured_marginal": {
+          "present": 46,
+          "absent": 4
+        },
+        "gold_marginal": {
+          "absent": 9,
+          "present": 41
+        }
+      },
+      "gate_subset_pairs": [
+        {
+          "clip": "111",
+          "measured": "present",
+          "gold": "absent"
+        },
+        {
+          "clip": "1152",
+          "measured": "present",
+          "gold": "present"
+        },
+        {
+          "clip": "119",
+          "measured": "present",
+          "gold": "present"
+        },
+        {
+          "clip": "130",
+          "measured": "present",
+          "gold": "present"
+        },
+        {
+          "clip": "1350",
+          "measured": "present",
+          "gold": "present"
+        },
+        {
+          "clip": "1357",
+          "measured": "present",
+          "gold": "absent"
+        },
+        {
+          "clip": "1373",
+          "measured": "present",
+          "gold": "present"
+        },
+        {
+          "clip": "1410",
+          "measured": "present",
+          "gold": "present"
+        },
+        {
+          "clip": "1421",
+          "measured": "present",
+          "gold": "present"
+        },
+        {
+          "clip": "1422",
+          "measured": "present",
+          "gold": "present"
+        },
+        {
+          "clip": "1447",
+          "measured": "present",
+          "gold": "absent"
+        },
+        {
+          "clip": "1517",
+          "measured": "present",
+          "gold": "present"
+        },
+        {
+          "clip": "1560",
+          "measured": "present",
+          "gold": "present"
+        },
+        {
+          "clip": "1574",
+          "measured": "present",
+          "gold": "absent"
+        },
+        {
+          "clip": "16",
+          "measured": "present",
+          "gold": "present"
+        },
+        {
+          "clip": "1628",
+          "measured": "present",
+          "gold": "present"
+        },
+        {
+          "clip": "1653",
+          "measured": "present",
+          "gold": "present"
+        },
+        {
+          "clip": "1699",
+          "measured": "present",
+          "gold": "present"
+        },
+        {
+          "clip": "1781",
+          "measured": "absent",
+          "gold": "present"
+        },
+        {
+          "clip": "1844",
+          "measured": "absent",
+          "gold": "present"
+        },
+        {
+          "clip": "1900",
+          "measured": "present",
+          "gold": "present"
+        },
+        {
+          "clip": "1947",
+          "measured": "present",
+          "gold": "absent"
+        },
+        {
+          "clip": "1980",
+          "measured": "present",
+          "gold": "present"
+        },
+        {
+          "clip": "2002",
+          "measured": "present",
+          "gold": "present"
+        },
+        {
+          "clip": "2068",
+          "measured": "absent",
+          "gold": "present"
+        },
+        {
+          "clip": "214",
+          "measured": "present",
+          "gold": "present"
+        },
+        {
+          "clip": "2177",
+          "measured": "present",
+          "gold": "present"
+        },
+        {
+          "clip": "2218",
+          "measured": "present",
+          "gold": "present"
+        },
+        {
+          "clip": "250",
+          "measured": "present",
+          "gold": "present"
+        },
+        {
+          "clip": "2556",
+          "measured": "present",
+          "gold": "present"
+        },
+        {
+          "clip": "2701",
+          "measured": "present",
+          "gold": "present"
+        },
+        {
+          "clip": "2945",
+          "measured": "present",
+          "gold": "present"
+        },
+        {
+          "clip": "3056",
+          "measured": "present",
+          "gold": "present"
+        },
+        {
+          "clip": "3273",
+          "measured": "present",
+          "gold": "present"
+        },
+        {
+          "clip": "3476",
+          "measured": "present",
+          "gold": "absent"
+        },
+        {
+          "clip": "3513",
+          "measured": "present",
+          "gold": "present"
+        },
+        {
+          "clip": "3535",
+          "measured": "present",
+          "gold": "present"
+        },
+        {
+          "clip": "3570",
+          "measured": "present",
+          "gold": "absent"
+        },
+        {
+          "clip": "3585",
+          "measured": "present",
+          "gold": "present"
+        },
+        {
+          "clip": "3900",
+          "measured": "present",
+          "gold": "present"
+        },
+        {
+          "clip": "3912",
+          "measured": "present",
+          "gold": "present"
+        },
+        {
+          "clip": "4119",
+          "measured": "present",
+          "gold": "present"
+        },
+        {
+          "clip": "43",
+          "measured": "present",
+          "gold": "absent"
+        },
+        {
+          "clip": "445",
+          "measured": "present",
+          "gold": "present"
+        },
+        {
+          "clip": "455",
+          "measured": "present",
+          "gold": "present"
+        },
+        {
+          "clip": "544",
+          "measured": "present",
+          "gold": "absent"
+        },
+        {
+          "clip": "700",
+          "measured": "present",
+          "gold": "present"
+        },
+        {
+          "clip": "710",
+          "measured": "present",
+          "gold": "present"
+        },
+        {
+          "clip": "849",
+          "measured": "present",
+          "gold": "present"
+        },
+        {
+          "clip": "920",
+          "measured": "absent",
+          "gold": "present"
+        }
+      ]
+    },
+    "timing": {
+      "full": {
+        "n": 100,
+        "p_o": 0.8,
+        "cohens_kappa": 0.05123339658444038,
+        "gwet_ac1": 0.7927980039541048,
+        "measured_marginal": {
+          "0": 92,
+          "4": 1,
+          "1": 6,
+          "2": 1
+        },
+        "gold_marginal": {
+          "0": 85,
+          "1": 12,
+          "6": 1,
+          "9": 1,
+          "7": 1
+        }
+      },
+      "gate_subset": {
+        "n": 50,
+        "p_o": 0.68,
+        "cohens_kappa": -0.02827763496143969,
+        "gwet_ac1": 0.6536046763368695,
+        "measured_marginal": {
+          "0": 44,
+          "1": 5,
+          "2": 1
+        },
+        "gold_marginal": {
+          "0": 38,
+          "1": 10,
+          "6": 1,
+          "7": 1
+        }
+      },
+      "gate_subset_pairs": [
+        {
+          "clip": "111",
+          "measured": "0",
+          "gold": "0"
+        },
+        {
+          "clip": "1152",
+          "measured": "0",
+          "gold": "0"
+        },
+        {
+          "clip": "119",
+          "measured": "0",
+          "gold": "0"
+        },
+        {
+          "clip": "130",
+          "measured": "0",
+          "gold": "0"
+        },
+        {
+          "clip": "1350",
+          "measured": "0",
+          "gold": "1"
+        },
+        {
+          "clip": "1357",
+          "measured": "0",
+          "gold": "0"
+        },
+        {
+          "clip": "1373",
+          "measured": "0",
+          "gold": "6"
+        },
+        {
+          "clip": "1410",
+          "measured": "0",
+          "gold": "0"
+        },
+        {
+          "clip": "1421",
+          "measured": "0",
+          "gold": "0"
+        },
+        {
+          "clip": "1422",
+          "measured": "0",
+          "gold": "1"
+        },
+        {
+          "clip": "1447",
+          "measured": "0",
+          "gold": "0"
+        },
+        {
+          "clip": "1517",
+          "measured": "0",
+          "gold": "0"
+        },
+        {
+          "clip": "1560",
+          "measured": "0",
+          "gold": "0"
+        },
+        {
+          "clip": "1574",
+          "measured": "0",
+          "gold": "0"
+        },
+        {
+          "clip": "16",
+          "measured": "0",
+          "gold": "1"
+        },
+        {
+          "clip": "1628",
+          "measured": "0",
+          "gold": "0"
+        },
+        {
+          "clip": "1653",
+          "measured": "0",
+          "gold": "1"
+        },
+        {
+          "clip": "1699",
+          "measured": "0",
+          "gold": "0"
+        },
+        {
+          "clip": "1781",
+          "measured": "0",
+          "gold": "0"
+        },
+        {
+          "clip": "1844",
+          "measured": "0",
+          "gold": "0"
+        },
+        {
+          "clip": "1900",
+          "measured": "0",
+          "gold": "1"
+        },
+        {
+          "clip": "1947",
+          "measured": "0",
+          "gold": "0"
+        },
+        {
+          "clip": "1980",
+          "measured": "0",
+          "gold": "0"
+        },
+        {
+          "clip": "2002",
+          "measured": "0",
+          "gold": "0"
+        },
+        {
+          "clip": "2068",
+          "measured": "0",
+          "gold": "1"
+        },
+        {
+          "clip": "214",
+          "measured": "1",
+          "gold": "0"
+        },
+        {
+          "clip": "2177",
+          "measured": "0",
+          "gold": "0"
+        },
+        {
+          "clip": "2218",
+          "measured": "0",
+          "gold": "0"
+        },
+        {
+          "clip": "250",
+          "measured": "0",
+          "gold": "0"
+        },
+        {
+          "clip": "2556",
+          "measured": "0",
+          "gold": "7"
+        },
+        {
+          "clip": "2701",
+          "measured": "0",
+          "gold": "1"
+        },
+        {
+          "clip": "2945",
+          "measured": "0",
+          "gold": "0"
+        },
+        {
+          "clip": "3056",
+          "measured": "0",
+          "gold": "1"
+        },
+        {
+          "clip": "3273",
+          "measured": "0",
+          "gold": "1"
+        },
+        {
+          "clip": "3476",
+          "measured": "0",
+          "gold": "0"
+        },
+        {
+          "clip": "3513",
+          "measured": "0",
+          "gold": "0"
+        },
+        {
+          "clip": "3535",
+          "measured": "0",
+          "gold": "0"
+        },
+        {
+          "clip": "3570",
+          "measured": "0",
+          "gold": "0"
+        },
+        {
+          "clip": "3585",
+          "measured": "0",
+          "gold": "0"
+        },
+        {
+          "clip": "3900",
+          "measured": "1",
+          "gold": "0"
+        },
+        {
+          "clip": "3912",
+          "measured": "1",
+          "gold": "0"
+        },
+        {
+          "clip": "4119",
+          "measured": "1",
+          "gold": "1"
+        },
+        {
+          "clip": "43",
+          "measured": "1",
+          "gold": "0"
+        },
+        {
+          "clip": "445",
+          "measured": "0",
+          "gold": "0"
+        },
+        {
+          "clip": "455",
+          "measured": "2",
+          "gold": "0"
+        },
+        {
+          "clip": "544",
+          "measured": "0",
+          "gold": "0"
+        },
+        {
+          "clip": "700",
+          "measured": "0",
+          "gold": "0"
+        },
+        {
+          "clip": "710",
+          "measured": "0",
+          "gold": "0"
+        },
+        {
+          "clip": "849",
+          "measured": "0",
+          "gold": "0"
+        },
+        {
+          "clip": "920",
+          "measured": "0",
+          "gold": "0"
+        }
+      ]
+    },
+    "class": {
+      "full": {
+        "n": 100,
+        "p_o": 0.23,
+        "cohens_kappa": 0.1905813097866078,
+        "gwet_ac1": 0.18146061443605827,
+        "measured_marginal": {
+          "impact_friction": 5,
+          "vehicles": 24,
+          "electronics_ui": 10,
+          "animals": 13,
+          "doors_furniture": 8,
+          "abstain": 29,
+          "water_liquid": 2,
+          "tools_hand": 1,
+          "other": 3,
+          "guns_explosions": 5
+        },
+        "gold_marginal": {
+          "impact_friction": 8,
+          "speech_vocal": 34,
+          "food_cooking": 1,
+          "tools_hand": 7,
+          "animals": 6,
+          "music": 10,
+          "doors_furniture": 8,
+          "footsteps_walk": 1,
+          "vehicles": 10,
+          "guns_explosions": 6,
+          "machines_motors": 2,
+          "water_liquid": 4,
+          "electronics_ui": 2,
+          "ambient_nature": 1
+        }
+      },
+      "gate_subset": {
+        "n": 50,
+        "p_o": 0.18,
+        "cohens_kappa": 0.14512093411175978,
+        "gwet_ac1": 0.12438600237971748,
+        "measured_marginal": {
+          "electronics_ui": 5,
+          "animals": 8,
+          "vehicles": 9,
+          "impact_friction": 2,
+          "abstain": 17,
+          "doors_furniture": 3,
+          "water_liquid": 1,
+          "guns_explosions": 3,
+          "other": 2
+        },
+        "gold_marginal": {
+          "speech_vocal": 17,
+          "food_cooking": 1,
+          "animals": 5,
+          "tools_hand": 4,
+          "music": 6,
+          "impact_friction": 3,
+          "doors_furniture": 2,
+          "footsteps_walk": 1,
+          "vehicles": 4,
+          "guns_explosions": 4,
+          "machines_motors": 1,
+          "water_liquid": 2
+        }
+      },
+      "gate_subset_pairs": [
+        {
+          "clip": "111",
+          "measured": "electronics_ui",
+          "gold": "speech_vocal"
+        },
+        {
+          "clip": "1152",
+          "measured": "animals",
+          "gold": "speech_vocal"
+        },
+        {
+          "clip": "119",
+          "measured": "vehicles",
+          "gold": "food_cooking"
+        },
+        {
+          "clip": "130",
+          "measured": "impact_friction",
+          "gold": "animals"
+        },
+        {
+          "clip": "1350",
+          "measured": "vehicles",
+          "gold": "tools_hand"
+        },
+        {
+          "clip": "1357",
+          "measured": "abstain",
+          "gold": "speech_vocal"
+        },
+        {
+          "clip": "1373",
+          "measured": "doors_furniture",
+          "gold": "speech_vocal"
+        },
+        {
+          "clip": "1410",
+          "measured": "doors_furniture",
+          "gold": "tools_hand"
+        },
+        {
+          "clip": "1421",
+          "measured": "abstain",
+          "gold": "music"
+        },
+        {
+          "clip": "1422",
+          "measured": "vehicles",
+          "gold": "impact_friction"
+        },
+        {
+          "clip": "1447",
+          "measured": "abstain",
+          "gold": "speech_vocal"
+        },
+        {
+          "clip": "1517",
+          "measured": "doors_furniture",
+          "gold": "speech_vocal"
+        },
+        {
+          "clip": "1560",
+          "measured": "animals",
+          "gold": "doors_furniture"
+        },
+        {
+          "clip": "1574",
+          "measured": "electronics_ui",
+          "gold": "speech_vocal"
+        },
+        {
+          "clip": "16",
+          "measured": "vehicles",
+          "gold": "footsteps_walk"
+        },
+        {
+          "clip": "1628",
+          "measured": "vehicles",
+          "gold": "vehicles"
+        },
+        {
+          "clip": "1653",
+          "measured": "impact_friction",
+          "gold": "guns_explosions"
+        },
+        {
+          "clip": "1699",
+          "measured": "abstain",
+          "gold": "machines_motors"
+        },
+        {
+          "clip": "1781",
+          "measured": "abstain",
+          "gold": "doors_furniture"
+        },
+        {
+          "clip": "1844",
+          "measured": "water_liquid",
+          "gold": "water_liquid"
+        },
+        {
+          "clip": "1900",
+          "measured": "abstain",
+          "gold": "animals"
+        },
+        {
+          "clip": "1947",
+          "measured": "abstain",
+          "gold": "speech_vocal"
+        },
+        {
+          "clip": "1980",
+          "measured": "animals",
+          "gold": "animals"
+        },
+        {
+          "clip": "2002",
+          "measured": "vehicles",
+          "gold": "vehicles"
+        },
+        {
+          "clip": "2068",
+          "measured": "abstain",
+          "gold": "speech_vocal"
+        },
+        {
+          "clip": "214",
+          "measured": "guns_explosions",
+          "gold": "guns_explosions"
+        },
+        {
+          "clip": "2177",
+          "measured": "abstain",
+          "gold": "speech_vocal"
+        },
+        {
+          "clip": "2218",
+          "measured": "guns_explosions",
+          "gold": "guns_explosions"
+        },
+        {
+          "clip": "250",
+          "measured": "abstain",
+          "gold": "speech_vocal"
+        },
+        {
+          "clip": "2556",
+          "measured": "abstain",
+          "gold": "animals"
+        },
+        {
+          "clip": "2701",
+          "measured": "animals",
+          "gold": "speech_vocal"
+        },
+        {
+          "clip": "2945",
+          "measured": "vehicles",
+          "gold": "impact_friction"
+        },
+        {
+          "clip": "3056",
+          "measured": "animals",
+          "gold": "vehicles"
+        },
+        {
+          "clip": "3273",
+          "measured": "vehicles",
+          "gold": "vehicles"
+        },
+        {
+          "clip": "3476",
+          "measured": "other",
+          "gold": "speech_vocal"
+        },
+        {
+          "clip": "3513",
+          "measured": "abstain",
+          "gold": "music"
+        },
+        {
+          "clip": "3535",
+          "measured": "animals",
+          "gold": "tools_hand"
+        },
+        {
+          "clip": "3570",
+          "measured": "abstain",
+          "gold": "speech_vocal"
+        },
+        {
+          "clip": "3585",
+          "measured": "vehicles",
+          "gold": "music"
+        },
+        {
+          "clip": "3900",
+          "measured": "electronics_ui",
+          "gold": "tools_hand"
+        },
+        {
+          "clip": "3912",
+          "measured": "electronics_ui",
+          "gold": "music"
+        },
+        {
+          "clip": "4119",
+          "measured": "other",
+          "gold": "music"
+        },
+        {
+          "clip": "43",
+          "measured": "abstain",
+          "gold": "music"
+        },
+        {
+          "clip": "445",
+          "measured": "animals",
+          "gold": "animals"
+        },
+        {
+          "clip": "455",
+          "measured": "guns_explosions",
+          "gold": "guns_explosions"
+        },
+        {
+          "clip": "544",
+          "measured": "abstain",
+          "gold": "speech_vocal"
+        },
+        {
+          "clip": "700",
+          "measured": "animals",
+          "gold": "speech_vocal"
+        },
+        {
+          "clip": "710",
+          "measured": "abstain",
+          "gold": "water_liquid"
+        },
+        {
+          "clip": "849",
+          "measured": "abstain",
+          "gold": "speech_vocal"
+        },
+        {
+          "clip": "920",
+          "measured": "electronics_ui",
+          "gold": "impact_friction"
+        }
+      ],
+      "gold_event_restricted": {
+        "n": 55,
+        "p_o": 0.41818181818181815,
+        "cohens_kappa": 0.3437733035048471,
+        "gwet_ac1": 0.37292161520190026,
+        "measured_marginal": {
+          "impact_friction": 3,
+          "vehicles": 19,
+          "doors_furniture": 5,
+          "animals": 6,
+          "abstain": 9,
+          "water_liquid": 2,
+          "tools_hand": 1,
+          "other": 1,
+          "guns_explosions": 5,
+          "electronics_ui": 4
+        },
+        "gold_marginal": {
+          "impact_friction": 8,
+          "food_cooking": 1,
+          "tools_hand": 7,
+          "animals": 6,
+          "doors_furniture": 8,
+          "footsteps_walk": 1,
+          "vehicles": 10,
+          "guns_explosions": 6,
+          "machines_motors": 2,
+          "water_liquid": 4,
+          "electronics_ui": 2
+        }
+      },
+      "n_gold_excluded_dropped": 45,
+      "both_confident": {
+        "n": 46,
+        "p_o": 0.5,
+        "cohens_kappa": 0.41287458379578246,
+        "gwet_ac1": 0.4588486933878918,
+        "measured_marginal": {
+          "impact_friction": 3,
+          "vehicles": 19,
+          "doors_furniture": 5,
+          "animals": 6,
+          "water_liquid": 2,
+          "tools_hand": 1,
+          "other": 1,
+          "guns_explosions": 5,
+          "electronics_ui": 4
+        },
+        "gold_marginal": {
+          "impact_friction": 7,
+          "food_cooking": 1,
+          "tools_hand": 5,
+          "animals": 4,
+          "doors_furniture": 6,
+          "footsteps_walk": 1,
+          "vehicles": 10,
+          "guns_explosions": 6,
+          "water_liquid": 3,
+          "machines_motors": 1,
+          "electronics_ui": 2
+        }
+      },
+      "n_measured_abstain_in_restricted": 9
+    }
+  },
+  "gate_kappa_crosscheck": {
+    "presence": {
+      "diagnostic_kappa_gate_subset": -0.1245674740484426,
+      "gate_validity": -0.1245674740484426,
+      "n_gate_subset": 50,
+      "match": true
+    },
+    "timing": {
+      "diagnostic_kappa_gate_subset": -0.02827763496143969,
+      "gate_validity": -0.02827763496143969,
+      "n_gate_subset": 50,
+      "match": true
+    },
+    "class": {
+      "diagnostic_kappa_gate_subset": 0.14512093411175978,
+      "gate_validity": 0.14512093411175978,
+      "n_gate_subset": 50,
+      "match": true
+    }
+  }
+}

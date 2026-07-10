@@ -1,0 +1,11 @@
+{
+  "_status": "FROZEN",
+  "_doc": "Pre-registered decision thresholds, frozen BEFORE any headline curve per experiment/LONG_RANGE_EXPERIMENT_PLAN.md sections 1.5 and 3.3 (reliability: determinism >= 0.95, robustness >= 0.85, validity kappa >= 0.6). theta_commit / theta_read carried from refine-logs/EXPERIMENT_PLAN.md section 3. Sensitivity sweeps are reported after the curves, never used to re-pick values.",
+  "theta_commit": 0.7,
+  "theta_read": 0.7,
+  "theta_rel": 0.95,
+  "theta_robust": 0.85,
+  "theta_cal": 0.6,
+  "frozen": true,
+  "frozen_from": "LONG_RANGE_EXPERIMENT_PLAN.md sections 1.5 + 3.3, frozen 2026-06-11 before Stage-M/Stage-0 curves"
+}

@@ -1,0 +1,12 @@
+{
+  "n_clips": 100,
+  "n_retest": 20,
+  "retest_agreement": {
+    "presence": 1.0,
+    "class": 1.0,
+    "timing": 0.95
+  },
+  "model": "qwen3.5-omni-plus",
+  "prompt_version": "v1",
+  "human_sidecar": "PENDING \u2014 ~50 clips at the PI checkpoint (manual 3.3)"
+}

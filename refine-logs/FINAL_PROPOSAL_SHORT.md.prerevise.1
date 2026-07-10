@@ -1,0 +1,159 @@
+# Final Proposal — Foley Commitment/Readout Windows (`foley-cw`)
+
+**Title:** When Are Foley Decisions Made? Commitment and Readout Windows in Video-to-Audio Flow Generation
+**Subtitle:** Axis-Gated Candidate Pruning for Cross-Modal Audio-Visual Binding
+**Project handle:** `foley-cw`
+**Primary task:** video-to-audio (V2A) / Foley generation, analyzed as a *flow trajectory*, not as a final-output scoring problem.
+**Status:** fresh-start. No project-specific experiment has been run. The make-or-break test is the MMAudio commitment–readout probe (see `EXPERIMENT_PLAN.md`).
+
+> This document is written for autonomous research agents and collaborators. It states *what* we are claiming and *why*. The *how* (procedures, gates, decision tokens) lives in `EXPERIMENT_PLAN.md`. Read both before acting.
+
+---
+
+## 0. The pivot (read first)
+
+This project is a **deliberate replacement** of the earlier "EventWISE-AV verifier + reranking" idea. That earlier framing — "train an event-level audio-visual verifier and rerank V2A candidates" — is now treated as **crowded and weak as a headline** (FoleyBench already audits real V2A errors; MultiSoundGen already does multi-event AV preference + DPO; VideoReward/VisionReward make multi-dimensional reward modeling standard; DiffRS already does intermediate-step rejection with a scalar discriminator).
+
+The scientific object has moved from **final-output scoring** to **trajectory structure**:
+
+> Old question: *Is the final generated audio good?*
+> New question: **During generation, when does the model commit to each kind of audio-visual correctness, and when can we read enough to act?**
+
+The verifier is now only a tool. The contribution is the **commitment–readout map** of cross-modal Foley correctness.
+
+---
+
+## 1. One-Sentence Thesis
+
+**Video-to-audio models do not decide all audio-visual output axes at once: different Foley axes have distinct *commitment windows* (when the generator locks the value) and *readout windows* (when a probe can read it), and the gap between them determines when a system should prune, defer, or roll back candidate trajectories.**
+
+---
+
+## 2. Core Scientific Question
+
+> For a video-conditioned audio **flow** model, **when** does the generator commit to each Foley output axis (presence, timing, class, material, multi-event binding), and **when** can that commitment be read out by available probes?
+
+The inference policy (pruning / rollback) is strictly downstream of this map.
+
+---
+
+## 3. Key Terms (agent glossary)
+
+| Term | Meaning |
+|---|---|
+| **V2A flow model** | A video-conditioned audio generator whose sampler integrates a learned velocity field (flow matching). MMAudio is the v1 backbone. |
+| **Foley correctness axis** | A single correctness dimension: presence, gross timing, coarse class, fine class/material, multi-event binding, offscreen hallucination. |
+| **Self-target** | The **model's own final axis value** (e.g., the tagger top-1 class of the *completed* audio). The maps target this, **NOT** human correctness-vs-video. This is the central scoping decision. |
+| **Commitment** | Robustness of an axis's final value to **downstream sampling stochasticity**. Under a deterministic ODE the whole trajectory is fixed by the initial noise, so "commitment" is only meaningful as *invariance under stochastic re-completion*. |
+| **Commitment window / `t_commit`** | Earliest trajectory time at which an axis's self-target is stable across stochastic tail-forks. |
+| **Readout window / `t_read`** | Earliest time at which a given probe predicts the axis self-target from `x0(t)` / a partial preview. |
+| **Commitment–readout gap** | `t_read(axis, probe) − t_commit(axis)`. A first-class result (see R1/R2). |
+| **R1 (uncommitted)** | Probe fails because the value is not yet locked → **defer is genuinely necessary**. |
+| **R2 (committed-but-unreadable)** | Value is locked but the probe can't read it → **build a stronger probe / use internals**; the gap is reducible. |
+| **`x0(t)` / Tweedie estimate** | The denoised "best guess of the final audio" at step t. The readout probe input. Blurry early; this blur penalty is part of the gap. |
+| **Probe ladder** | Ordered scorers of increasing power applied to `x0(t)`: heuristics → CLAP/sync → audio tagger → cheap learned verifier → MLLM-on-preview → (non-blocking) internal-feature probes. |
+| **Marginal-preserving stochastic tail sampler** | The commitment fork kernel: the ODE→SDE conversion (Flow-GRPO-style) with a single noise knob α; α=0 recovers the deterministic ODE. **Not** Restart re-noising. |
+| **Event anchor** | The timestamp(s) of the visible sound-producing event(s) in the video. Required for timing/binding. An owned dependency. |
+| **Correctness-calibration sidecar** | A small human/MLLM subset used only to confirm the objective self-measurements are perceptually meaningful Foley correctness — never used as the maps' per-instance target. |
+
+---
+
+## 4. Background Lineage & Novelty
+
+This sits at the intersection of three lines; the novelty is none of them alone.
+
+1. **Critical windows in diffusion** — final image features (class, color) emerge in narrow sampling intervals; models progressively "decide" attributes coarse-to-fine. *Li et al., Critical Windows, ICML 2024 (arXiv:2403.01633).*
+2. **Intermediate-step rejection / restart** — DiffRS evaluates intermediate samples with a **single scalar** discriminator and re-noises low-quality ones (arXiv:2405.17880); Restart Sampling provides the noise-and-re-denoise mechanism (Xu et al., NeurIPS 2023, arXiv:2306.14878).
+3. **V2A flow generation** — MMAudio is a public flow-matching V2A model (Cheng et al., CVPR 2025), a natural white-box backbone. FoleyBench (Dixit et al., 2025, arXiv:2511.13219) is a Foley-focused data source. MultiSoundGen (arXiv:2509.19999) is the nearest neighbor for multi-event binding. PAVRM ("Video Generation Models Are Good Latent Reward Models", arXiv:2511.21541) does process-reward on noisy latents for **video** (our analog is audio + axis-deferred).
+
+The commitment kernel reuses the **ODE→SDE conversion** that is now standard in RL-for-flow (Flow-GRPO line): a deterministic flow ODE has an equivalent reverse SDE with the same marginals; the score is closed-form from the velocity.
+
+> **Novelty (the one sentence to defend):** *critical windows for cross-modal Foley correctness, decomposed by axis, with separately measured commitment and readout maps, used to schedule axis-gated inference.*
+
+**Relation to music-ADSR (sibling project):** the music-generation "early-decidability / bad-stays-bad" finding is **convergent evidence** for the general principle that generative trajectories decide different axes at different times. It is **NOT** proof for V2A and must not be cited as such. V2A is strongly cross-modally conditioned, so the early/late ordering here is re-established from scratch.
+
+---
+
+## 5. Hypotheses (all currently *planned / untested*)
+
+| ID | Hypothesis | Tested by |
+|---|---|---|
+| **H1 — axis-specific commitment** | Axes commit at different t. Expected ordering: `presence / gross timing / coarse class` (early) → `fine class / material` (mid) → `multi-event binding` (late). | Commitment map (C1a). |
+| **H2 — commitment ≠ readout** | Some axes are committed before cheap probes can read them; the gap separates R1 (defer) from R2 (better probe). | Commitment–readout gap (C1c). |
+| **H3 — separation enables gated action** | If early axes commit and become readable before late axes, axis-gated pruning/defer is safer than scalar rejection. | Policy analysis (C3). |
+| **H4 — scalar rejection insufficient** | If windows differ across axes, a DiffRS-style single-scalar criterion cannot exploit them. | Comparison vs scalar-DiffRS baseline. |
+| **H5 — some errors are seed-determined** | Offscreen hallucination / generic ambience may be predictable from the initial noise; if so the fix is **reseed**, not defer. | Seed-predictability analysis (separate). |
+
+**Expect surprises and treat them as findings**, e.g. coarse class may split into coarse-early / fine-late, or hallucination may be a seed lottery rather than a window. The data, not H1's ordering, is the result.
+
+---
+
+## 6. Contributions
+
+### C1 — Commitment and Readout Maps (the core)
+- **C1a Commitment map** (generator-side, label-free): per-axis agreement of the **self-target** across stochastic tail-forks → `t_commit(axis)` and the surface `A(axis, t, α)`.
+- **C1b Readout map** (probe-side): per-axis, per-probe prediction of the **same self-target** from `x0(t)` → `t_read(axis, probe)`.
+- **C1c Commitment–readout gap**: `gap = t_read − t_commit`, attributed to R1/R2 via cross-tabulation.
+
+### C2 — Axis Measurement & Calibration Protocol
+A reproducible objective measurement per axis (the self-target), an **event-anchor** protocol, a **reliability gate** (test-retest on generated audio + a small perceptual-calibration sidecar), and explicit demotion rules. Unreliable axes are demoted, not forced.
+
+### C3 — Axis-Gated Population Pruning (main method, post-green-light)
+A cascaded best-of-N policy that prunes a candidate population only on axes whose windows have closed and whose early-action precision is high; survivors continue; later axes are evaluated at later windows; finish and rerank.
+
+### C4 — Cheap Process-Aware Verifier (only after maps show headroom)
+A small axis-conditioned verifier that approximates the useful readout signal cheaply. **Value claim:** high-frequency, low-cost, intermediate-state scoring (a frontier MLLM cannot be called every step per candidate). **Not** "beats MLLM on completed audio."
+
+### C5 — Axis-Gated Rollback (secondary, aggressive)
+Use the stochastic tail mechanism (or Restart re-noising) to repair after an axis failure is detected inside its window. Not a v1 headline; runs only if forking is stable.
+
+---
+
+## 7. Claim Tiers / Minimum Publishable Outcomes
+
+| Tier | Required evidence |
+|---|---|
+| **METHOD** | Maps show separated windows, axes are readable early enough, and axis-gated pruning (or rollback) improves fixed-budget Foley correctness over the strongest baseline beyond CIs. |
+| **DIAGNOSTIC (strong)** | Maps show separated commitment windows, but cheap probes lag far behind commitment (R2-dominated). Publish the commitment–readout gap + probe-limitation analysis; motivate internal probes. |
+| **NEGATIVE (still publishable)** | All axes commit together or only near the final step → cross-modal Foley correctness has **no useful window separation** in the tested model, and method novelty collapses to scalar rejection. Honest diagnostic. |
+| **STOP** | No usable trajectory access, no reliable axis measurement, or tail-forking is not meaningful. |
+
+The make-or-break for the science is **window separation + early readability**, both measurable **without correctness labels**. The floor (DIAGNOSTIC / NEGATIVE) is genuinely good.
+
+---
+
+## 8. Compute Story (how the method is justified)
+
+MMAudio is small and fast, so do **not** sell single-generation wall-clock savings. Report **two** quantities:
+1. **Scoring-call budget** — a cheap verifier scores every step; MLLM-on-`x0` per-step-per-candidate is prohibitive. This is the verifier's edge.
+2. **Generator-completions / total NFE saved** by axis-gated early pruning. This is the schedule's edge.
+
+Headline: *capture most of the oracle (MLLM-on-`x0`) pruning gain at near-zero scoring cost, and the advantage scales on expensive generators where generator FLOPs dominate.*
+
+---
+
+## 9. Anti-Overclaim Rules (hard)
+
+Do **not** claim, unless directly proven by this project's evidence:
+- the verifier is a general reward model for all AV generation;
+- constructed/scalar negatives prove real transfer;
+- global metrics (CLAP/SyncNet/ImageBind) are useless — they are **legacy baselines**, not the main comparison (the main probe-side comparison is a strong MLLM-on-preview);
+- music-ADSR proves V2A ADSR;
+- restart/rollback helps before window evidence exists;
+- delayed-callback failures are common;
+- a new foundation model, memory architecture, or generator fine-tuning is needed.
+
+The narrow honest claim:
+> *For video-conditioned audio flow generation, different Foley correctness axes are committed and become readable at different points along the trajectory; we map this structure and test whether it licenses axis-gated compute allocation.*
+
+---
+
+## 10. Not in v1
+
+Delayed callback; long-horizon world memory; final-audio-only verifier as headline; "music proves V2A"; CLAP/SyncNet as main baselines; generator fine-tuning; large human labeling before commitment curves exist; internal-feature probes as a *blocking* requirement (they are a non-blocking follow-up).
+
+---
+
+## 11. Next Gate
+
+Run the **MMAudio commitment–readout probe** (`EXPERIMENT_PLAN.md`, Phases 0–3). Required first deliverables: `axis_reliability_report.md`, `commitment_map.csv`, `readout_map.csv`, `commitment_readout_gap_report.md`, `go_no_go_decision.md`. Allowed decision tokens: `GO_MAP`, `GO_READOUT`, `GO_POLICY`, `GO_RESTRICTED`, `GO_DIAGNOSTIC`, `STOP_ADSR`, `STOP_PROJECT`.

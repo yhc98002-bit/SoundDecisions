@@ -1,0 +1,24 @@
+{
+  "_doc": "Anchor adoption decision (\u00a73.2): human marks vs audio-track onset; the audio-only adoption rule is pre-registered (\u03c3_anchor \u2264 0.35s).",
+  "sigma_adopt_threshold_s": 0.35,
+  "stats": {
+    "n_check_csv": 30,
+    "n_human_marked": 27,
+    "n_human_no_event": 3,
+    "coverage": 0.9,
+    "mae_s": 1.7415413703703704,
+    "median_abs_dev_s": 0.9691670000000006,
+    "rmse_s": 2.9022417761515107,
+    "std_s": 2.6150741355303038,
+    "bias_s_human_minus_audio": -1.2587273703703705,
+    "sigma_anchor_s": 0.9691670000000006,
+    "median_audio_vs_visual_sigma_s": 0.7573333333333334
+  },
+  "decision": {
+    "adopt_audio_only": false,
+    "token": "AUDIO_ANCHOR_NOT_ADOPTED",
+    "anchor_source": "approved_chain(metadata>visual>light_human)",
+    "timing_bin_s": 1.5147,
+    "rule": "bins >= 2*sigma_anchor, floored at 0.5s"
+  }
+}

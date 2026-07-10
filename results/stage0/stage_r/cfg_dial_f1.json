@@ -1,0 +1,70 @@
+{
+  "probe_acc_by_cfg": {
+    "1.0": 0.3263888888888889,
+    "1.5": 0.3263888888888889,
+    "2.0": 0.3125,
+    "2.5": 0.2569444444444444,
+    "3.0": 0.2638888888888889,
+    "4.5": 0.2013888888888889
+  },
+  "alpha_star_by_cfg": {
+    "1.0": 0.05,
+    "1.5": 0.05,
+    "2.0": 0.05,
+    "2.5": 0.05,
+    "3.0": 0.05,
+    "4.5": 0.05
+  },
+  "seed_share_by_cfg": {},
+  "earliest_fork_agreement_mean_by_cfg": {
+    "1.0": 0.36666666666666664,
+    "1.5": 0.3325,
+    "2.0": 0.33095238095238094,
+    "2.5": 0.3578947368421053,
+    "3.0": 0.3447368421052632,
+    "4.5": 0.311764705882353
+  },
+  "diversity_min": 0.02,
+  "theta_agree": 0.8,
+  "lam": 1.0,
+  "suggested_token": "F1_REFUTED",
+  "rationale": "F-1 contradicted: seed_predictability trends DOWN with cfg (seed share/seed-predictability shrinks as guidance rises), opposite to the pre-registered direction.",
+  "predictions_met": {
+    "seed_predictability_grows": false,
+    "alpha_star_increases": false,
+    "seed_share_grows": false
+  },
+  "trends": {
+    "seed_predictability": {
+      "slope": -0.0385135135135135,
+      "increasing": false,
+      "n": 6,
+      "lo_cfg": 1.0,
+      "hi_cfg": 4.5,
+      "lo_val": 0.3263888888888889,
+      "hi_val": 0.2013888888888889,
+      "delta": -0.125
+    },
+    "alpha_star": {
+      "slope": -9.740264733302983e-19,
+      "increasing": false,
+      "n": 6,
+      "lo_cfg": 1.0,
+      "hi_cfg": 4.5,
+      "lo_val": 0.05,
+      "hi_val": 0.05,
+      "delta": 0.0
+    },
+    "seed_share": {
+      "slope": NaN,
+      "increasing": false,
+      "n": 0,
+      "lo_cfg": NaN,
+      "hi_cfg": NaN,
+      "lo_val": NaN,
+      "hi_val": NaN,
+      "delta": NaN
+    }
+  },
+  "n_missing_units": 0
+}

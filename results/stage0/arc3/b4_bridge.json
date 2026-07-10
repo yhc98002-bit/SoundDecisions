@@ -1,0 +1,304 @@
+{
+  "_doc": "B4 oracle->non-oracle bridge (pre-reg \u00a7B4). OFFLINE, CPU. Proxy-correctness (per-clip majority self-target). Non-oracle scorer = Phase-2 external readout accuracy as the per-axis floor; class uses the external audio-tagger (B1 internal class head unavailable). Bootstrap unit = video. Never pauses.",
+  "split": "eval",
+  "n_clips": 74,
+  "seed": 0,
+  "n_noise": 64,
+  "n_boot": 2000,
+  "num_steps": 25,
+  "diffrs_tau": 0.9976354117983408,
+  "smc_temp": 0.1,
+  "gates": [
+    {
+      "s": 0.25,
+      "axes": [
+        "presence",
+        "timing"
+      ]
+    },
+    {
+      "s": 0.35,
+      "axes": [
+        "class"
+      ]
+    },
+    {
+      "s": 0.75,
+      "axes": [
+        "material"
+      ]
+    }
+  ],
+  "readout_acc_at_commit": {
+    "presence": 0.66875,
+    "timing": 0.965,
+    "class": 0.345,
+    "material": 0.9626053630092742
+  },
+  "gate_window_s": {
+    "presence": 0.25,
+    "timing": 0.25,
+    "class": 0.35,
+    "material": 0.75
+  },
+  "policy_means": {
+    "non_oracle_axis_gated": {
+      "final": 0.33614864864864863,
+      "correct_presence": 0.9518581081081081,
+      "correct_timing": 0.9904983108108109,
+      "correct_class": 0.4875422297297297,
+      "correct_material": 0.7075591216216216
+    },
+    "oracle_axis_gated": {
+      "final": 0.7432432432432432,
+      "correct_presence": 1.0,
+      "correct_timing": 1.0,
+      "correct_class": 0.9864864864864865,
+      "correct_material": 0.7432432432432432
+    },
+    "full_bon": {
+      "final": 0.33783783783783783,
+      "correct_presence": 0.8783783783783784,
+      "correct_timing": 0.8378378378378378,
+      "correct_class": 0.6216216216216216,
+      "correct_material": 0.6486486486486487
+    },
+    "same_compute_bon": {
+      "final": 0.25675675675675674,
+      "correct_presence": 0.8918918918918919,
+      "correct_timing": 0.8378378378378378,
+      "correct_class": 0.6081081081081081,
+      "correct_material": 0.6351351351351351
+    },
+    "diffrs_scalar": {
+      "final": 0.33783783783783783,
+      "correct_presence": 0.8783783783783784,
+      "correct_timing": 0.8378378378378378,
+      "correct_class": 0.6216216216216216,
+      "correct_material": 0.6486486486486487
+    },
+    "smc_scalar": {
+      "final": 0.3108108108108108,
+      "correct_presence": 0.8783783783783784,
+      "correct_timing": 0.8378378378378378,
+      "correct_class": 0.5945945945945946,
+      "correct_material": 0.6621621621621622
+    },
+    "final_rerank": {
+      "final": 0.33783783783783783,
+      "correct_presence": 0.8783783783783784,
+      "correct_timing": 0.8378378378378378,
+      "correct_class": 0.6216216216216216,
+      "correct_material": 0.6486486486486487
+    },
+    "random_prune": {
+      "final": 0.35135135135135137,
+      "correct_presence": 0.8918918918918919,
+      "correct_timing": 0.8918918918918919,
+      "correct_class": 0.6486486486486487,
+      "correct_material": 0.6486486486486487
+    }
+  },
+  "per_axis_recovery": {
+    "presence": {
+      "recovery": 0.5546875000000001,
+      "ci_lo": 0.3515136718750005,
+      "ci_hi": 0.7402832031249996,
+      "non_oracle": 0.9518581081081081,
+      "oracle": 1.0,
+      "scalar_floor": 0.8918918918918919,
+      "scalar_floor_policy": "same_compute_bon",
+      "readout_acc": 0.66875,
+      "gate_window_s": 0.25,
+      "class_floor_note": null
+    },
+    "timing": {
+      "recovery": 0.9414062500000003,
+      "ci_lo": 0.8984374999999998,
+      "ci_hi": 0.973958333333333,
+      "non_oracle": 0.9904983108108109,
+      "oracle": 1.0,
+      "scalar_floor": 0.8378378378378378,
+      "scalar_floor_policy": "full_bon",
+      "readout_acc": 0.965,
+      "gate_window_s": 0.25,
+      "class_floor_note": null
+    },
+    "class": {
+      "recovery": 0.0,
+      "ci_lo": 0.0,
+      "ci_hi": 0.0,
+      "non_oracle": 0.4875422297297297,
+      "oracle": 0.9864864864864865,
+      "scalar_floor": 0.6216216216216216,
+      "scalar_floor_policy": "full_bon",
+      "readout_acc": 0.345,
+      "gate_window_s": 0.35,
+      "class_floor_note": "external audio-tagger readout (B1 internal class head unavailable)"
+    },
+    "material": {
+      "recovery": 0.5598958333333334,
+      "ci_lo": 0.0,
+      "ci_hi": 1.0,
+      "non_oracle": 0.7075591216216216,
+      "oracle": 0.7432432432432432,
+      "scalar_floor": 0.6621621621621622,
+      "scalar_floor_policy": "smc_scalar",
+      "readout_acc": 0.9626053630092742,
+      "gate_window_s": 0.75,
+      "class_floor_note": null
+    }
+  },
+  "mean_per_axis_recovery": {
+    "recovery": 0.5139973958333335,
+    "ci_lo": 0.35465087890624997,
+    "ci_hi": 0.6477986653645833
+  },
+  "overall_final_recovery": {
+    "recovery": 0.0,
+    "ci_lo": 0.0,
+    "ci_hi": 0.12771206559806023,
+    "non_oracle": 0.33614864864864863,
+    "oracle": 0.7432432432432432,
+    "scalar_floor": 0.33783783783783783,
+    "scalar_floor_policy": "full_bon"
+  },
+  "decision_token": "BRIDGE_PARTIAL",
+  "decision_rule": ">=0.5 BRIDGE_METHOD; 0.2-0.5 BRIDGE_PARTIAL; <0.2 BRIDGE_WEAK (on mean per-axis recovery)",
+  "decision_robustness": {
+    "seeds": [
+      1,
+      2,
+      3
+    ],
+    "mean_recovery": [
+      0.5275607638888891,
+      0.4602213541666668,
+      0.328125
+    ],
+    "token": [
+      "BRIDGE_METHOD",
+      "BRIDGE_PARTIAL",
+      "BRIDGE_PARTIAL"
+    ],
+    "per_axis": [
+      {
+        "presence": 0.5312500000000003,
+        "timing": 0.920138888888889,
+        "class": 0.0,
+        "material": 0.6588541666666672
+      },
+      {
+        "presence": 0.5729166666666667,
+        "timing": 0.9281250000000001,
+        "class": 0.0,
+        "material": 0.33984375000000044
+      },
+      {
+        "presence": 0.3828124999999998,
+        "timing": 0.9296875000000003,
+        "class": 0.0,
+        "material": 0.0
+      }
+    ],
+    "mean_recovery_min": 0.328125,
+    "mean_recovery_max": 0.5275607638888891,
+    "token_stable": false,
+    "straddles_method_threshold": true
+  },
+  "pareto": {
+    "oracle_axis_gated": {
+      "final_correctness": 0.7432432432432432,
+      "total_nfe": 17889,
+      "scoring_calls": 3070,
+      "winner_retention": 0.43243243243243246,
+      "false_prune_rate": 0.0,
+      "regret": 0.20270270270270271,
+      "correct_presence": 1.0,
+      "correct_timing": 1.0,
+      "correct_class": 0.9864864864864865,
+      "correct_material": 0.7432432432432432
+    },
+    "full_bon": {
+      "final_correctness": 0.33783783783783783,
+      "total_nfe": 29600,
+      "scoring_calls": 1184,
+      "winner_retention": 1.0,
+      "false_prune_rate": 0.0,
+      "regret": 0.6081081081081081,
+      "correct_presence": 0.8783783783783784,
+      "correct_timing": 0.8378378378378378,
+      "correct_class": 0.6216216216216216,
+      "correct_material": 0.6486486486486487
+    },
+    "same_compute_bon": {
+      "final_correctness": 0.25675675675675674,
+      "total_nfe": 17075,
+      "scoring_calls": 683,
+      "winner_retention": 0.6081081081081081,
+      "false_prune_rate": 0.43243243243243246,
+      "regret": 0.6891891891891891,
+      "correct_presence": 0.8918918918918919,
+      "correct_timing": 0.8378378378378378,
+      "correct_class": 0.6081081081081081,
+      "correct_material": 0.6351351351351351
+    },
+    "diffrs_scalar": {
+      "final_correctness": 0.33783783783783783,
+      "total_nfe": 18713,
+      "scoring_calls": 1795,
+      "winner_retention": 1.0,
+      "false_prune_rate": 0.25675675675675674,
+      "regret": 0.6081081081081081,
+      "correct_presence": 0.8783783783783784,
+      "correct_timing": 0.8378378378378378,
+      "correct_class": 0.6216216216216216,
+      "correct_material": 0.6486486486486487
+    },
+    "smc_scalar": {
+      "final_correctness": 0.3108108108108108,
+      "total_nfe": 21810,
+      "scoring_calls": 1958,
+      "winner_retention": 0.7162162162162162,
+      "false_prune_rate": 0.32432432432432434,
+      "regret": 0.6351351351351351,
+      "correct_presence": 0.8783783783783784,
+      "correct_timing": 0.8378378378378378,
+      "correct_class": 0.5945945945945946,
+      "correct_material": 0.6621621621621622
+    },
+    "final_rerank": {
+      "final_correctness": 0.33783783783783783,
+      "total_nfe": 29600,
+      "scoring_calls": 1184,
+      "winner_retention": 1.0,
+      "false_prune_rate": 0.0,
+      "regret": 0.6081081081081081,
+      "correct_presence": 0.8783783783783784,
+      "correct_timing": 0.8378378378378378,
+      "correct_class": 0.6216216216216216,
+      "correct_material": 0.6486486486486487
+    },
+    "random_prune": {
+      "final_correctness": 0.35135135135135137,
+      "total_nfe": 18352,
+      "scoring_calls": 1776,
+      "winner_retention": 0.40540540540540543,
+      "false_prune_rate": 0.4594594594594595,
+      "regret": 0.5945945945945946,
+      "correct_presence": 0.8918918918918919,
+      "correct_timing": 0.8918918918918919,
+      "correct_class": 0.6486486486486487,
+      "correct_material": 0.6486486486486487
+    },
+    "non_oracle_axis_gated": {
+      "final_correctness": 0.33614864864864863,
+      "total_nfe": 13243.3125,
+      "scoring_calls": 2315.8125,
+      "correct_presence": 0.9518581081081081,
+      "correct_timing": 0.9904983108108109,
+      "correct_class": 0.4875422297297297,
+      "correct_material": 0.7075591216216216
+    }
+  }
+}

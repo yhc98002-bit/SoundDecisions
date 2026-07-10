@@ -1,0 +1,60 @@
+{
+  "_doc": "Foley correctness axis registry (refine-logs/EXPERIMENT_PLAN.md Phase 0, 'Axis tiers for v1'). kind fixes the agreement metric. 'measure' names the per-axis self-target measurement implemented in foley_cw/axes.py (deterministic taggers/onset for the synthetic + real paths).",
+  "axes": [
+    {
+      "id": "presence",
+      "name": "event-sound presence",
+      "tier": "TIER1",
+      "kind": "categorical",
+      "agreement": "exact_match",
+      "measure": "presence_detector"
+    },
+    {
+      "id": "timing",
+      "name": "gross timing",
+      "tier": "TIER1",
+      "kind": "categorical",
+      "agreement": "exact_match",
+      "measure": "onset_timing_bin"
+    },
+    {
+      "id": "class",
+      "name": "coarse event class",
+      "tier": "TIER1",
+      "kind": "categorical",
+      "agreement": "exact_match",
+      "measure": "audio_tagger_top1",
+      "note": "GATING metric exact_match on the confident subset (abstains excluded); Krippendorff-alpha + majority-share reported alongside, never gating \u2014 K=8 makes a 7-1 split alpha=0 exactly (frozen interpretation #5, stage_m_rerun_interpretations.md)"
+    },
+    {
+      "id": "material",
+      "name": "material / fine class",
+      "tier": "TIER2",
+      "kind": "embedding",
+      "agreement": "mean_pairwise_cosine",
+      "measure": "audio_embedding",
+      "note": "prime demotion risk; run only if reliability strong on all three parts"
+    },
+    {
+      "id": "binding",
+      "name": "multi-event binding",
+      "tier": "TIER3",
+      "kind": "categorical",
+      "agreement": "exact_match",
+      "measure": "binding_label",
+      "requires": "two_event_clips"
+    },
+    {
+      "id": "offscreen_hallucination",
+      "name": "offscreen hallucination",
+      "tier": "SEPARATE",
+      "kind": "categorical",
+      "agreement": "exact_match",
+      "measure": "seed_predictability",
+      "note": "analysed as seed-predictability from initial noise / very early x_s, NOT as a commitment window"
+    }
+  ],
+  "_excluded": [
+    "delayed_callback"
+  ]
+}

@@ -1,0 +1,48 @@
+{
+  "_doc": "Phase 3 (\u00a76) gap/separation/GO-NO-GO at the headline cfg. self-target axes gate; class is diagnostic. cfg-cross ordering never blocks GO_MAP.",
+  "ordered_by_s_commit": [
+    "timing",
+    "presence",
+    "material"
+  ],
+  "separation_non_overlapping_CIs": true,
+  "separation_score": 7.242176430469487,
+  "gate_b_ordering_stable": true,
+  "gate_b_alt_tag": "p1cfg1a04",
+  "rows": [
+    {
+      "axis": "presence",
+      "s_commit": 0.2141592920353982,
+      "s_read": 0.35,
+      "gap": 0.13584070796460176,
+      "class": "early-action (committed & readable)"
+    },
+    {
+      "axis": "timing",
+      "s_commit": 0.11363636363636369,
+      "s_read": 0.05,
+      "gap": -0.06363636363636369,
+      "class": "early-action (committed & readable)"
+    },
+    {
+      "axis": "class",
+      "s_commit": 0.34593023255813954,
+      "s_read": 0.75,
+      "gap": 0.40406976744186046,
+      "class": "early-action (committed & readable)"
+    },
+    {
+      "axis": "material",
+      "s_commit": 0.6382499999999999,
+      "s_read": 0.6,
+      "gap": -0.038249999999999895,
+      "class": "early-action (committed & readable)"
+    }
+  ],
+  "tokens": [
+    "GO_MAP",
+    "GO_READOUT"
+  ],
+  "go_map": true,
+  "go_readout": true
+}

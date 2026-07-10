@@ -1,0 +1,64 @@
+{
+  "generation": {
+    "video": "third_party/MMAudio/training/example_videos/0B4dYTMsgHA_000130.mp4",
+    "audio_path": "results/vidcond_0B4dYTMsgHA_000130.wav",
+    "sr": 16000,
+    "samples": 128000,
+    "rms": 0.060206323862075806,
+    "finite": true,
+    "gen_cfg": 4.5
+  },
+  "sde_crux_video_cond": {
+    "token": "OK",
+    "checks": [
+      {
+        "name": "trajectory_access",
+        "passed": true,
+        "value": 0.0,
+        "detail": "trajectory access OK: x_s shape (250, 20), ode_complete shape (128000,), x0(s) shape (128000,) \u2014 all finite"
+      },
+      {
+        "name": "alpha0_reproduces_ode",
+        "passed": true,
+        "value": 0.0,
+        "detail": "max L2(fork_alpha0, ode_complete) = 0.000e+00 (threshold 1.000e-06); PASS"
+      },
+      {
+        "name": "score_conversion_exact",
+        "passed": true,
+        "value": 0.0,
+        "detail": "skipped: backend has no analytic_score (not SyntheticGaussianFlow)"
+      },
+      {
+        "name": "small_alpha_continuity",
+        "passed": true,
+        "value": 0.10449333148050098,
+        "detail": "smallest nonzero alpha=0.02: mean dist=1.0993, ode_norm=10.5207, ratio=0.1045 (threshold=2.0); monotone=True; PASS"
+      },
+      {
+        "name": "fork_validity",
+        "passed": true,
+        "value": 1.0,
+        "detail": "alpha=0.2: 4/4 forks are finite and non-trivially large (fraction=1.000, threshold=1.0)"
+      },
+      {
+        "name": "nontrivial_diversity",
+        "passed": true,
+        "value": 0.03191319853067398,
+        "detail": "alpha=0.2: mean per-dim std of 4 forks = 3.1913e-02 (threshold=1.00e-06); PASS"
+      },
+      {
+        "name": "marginal_preservation",
+        "passed": true,
+        "value": 0.0,
+        "detail": "skipped: backend has no analytic_marginal"
+      }
+    ]
+  },
+  "meta": {
+    "variant": "small_16k",
+    "duration": 8.0,
+    "num_steps": 25,
+    "elapsed_s": 90.4
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "_doc": "Material axis second-embedder validity (\u00a73.3): CLAP-vs-PANNs RSA (Spearman \u03c1 of pairwise-cosine geometries). Diagnostic / correctness layer; NOT a GO_MAPS_PHASE precondition.",
+  "n_clips": 50,
+  "n_pairs": 1225,
+  "rsa_spearman_rho": 0.49413723727663983,
+  "rsa_ci95": [
+    0.4118894862344475,
+    0.6392224988480261
+  ],
+  "mean_clap_cos": 0.3860382647469604,
+  "mean_panns_cos": 0.6245026019817757,
+  "interpretation": "weak cross-embedder agreement \u2014 material geometry is embedder-sensitive (report as a caveat)"
+}

@@ -1,0 +1,20 @@
+{
+  "_doc": "Kernel certifications from Stage-M (manual 1.2/15.8). A commitment grid may only run under a (cfg, schedule) listed here as ok=true. The cfg=4.5 entry is candidate-only until full-Phase-1-pool Gate-A confirms it.",
+  "headline": {
+    "cfg": 1.0,
+    "schedule": "sqrt_down",
+    "token": "CFG_KERNEL_OK(cfg=1, schedule=sqrt_down)",
+    "ok": true,
+    "ratified": true,
+    "scope": "Stage-M cells (headline backbone)"
+  },
+  "deployed": {
+    "cfg": 4.5,
+    "schedule": "sqrt_down",
+    "token": "CFG_KERNEL_OK(cfg=4.5, schedule=sqrt_down)",
+    "ok": true,
+    "ratified": true,
+    "scope": "RATIFIED \u2014 full Phase-1 pool Gate-A (200 clips, scaled cap Binomial(200,0.05)==15, n_perm=1000); CAVEAT: near-exchangeable on tagger-probs, not provably exact",
+    "caveat": "near-exchangeable on tagger-probs, not provably exact"
+  }
+}

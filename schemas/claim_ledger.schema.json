@@ -1,0 +1,164 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://orbit.local/schemas/claim_ledger.schema.json",
+  "title": "claim_ledger",
+  "description": "STOP C machine-readable claim ledger. Markdown artifacts are generated or legacy views.",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "status",
+    "updated_at",
+    "source_markdown",
+    "generated_views",
+    "claims",
+    "result_refs"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "0.1"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "ready",
+        "blocked",
+        "deprecated"
+      ]
+    },
+    "codex_review": {
+      "type": "string",
+      "enum": [
+        "passed",
+        "pending",
+        "imported",
+        "degraded",
+        "not_required"
+      ]
+    },
+    "gating": {
+      "type": "boolean"
+    },
+    "diagnostic_id": {
+      "type": "string"
+    },
+    "ledger_hash": {
+      "type": "string"
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "source_markdown": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "generated_views": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "claims": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "statement",
+          "claim_role",
+          "status",
+          "paper_use",
+          "evidence_refs",
+          "controls",
+          "scope",
+          "limitations",
+          "forbidden_overclaims",
+          "allowed_paper_sections"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "statement": {
+            "type": "string"
+          },
+          "claim_role": {
+            "type": "string",
+            "enum": [
+              "main_claim",
+              "supporting_claim",
+              "original_hypothesis",
+              "negative_result_claim",
+              "limitation",
+              "exploratory"
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "supported",
+              "partial",
+              "unsupported",
+              "exploratory"
+            ]
+          },
+          "paper_use": {
+            "type": "string",
+            "enum": [
+              "allowed",
+              "limitations_only",
+              "do_not_claim",
+              "future_work_only"
+            ]
+          },
+          "evidence_refs": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "controls": {
+            "type": "array"
+          },
+          "scope": {
+            "type": [
+              "object",
+              "string",
+              "null"
+            ]
+          },
+          "limitations": {
+            "type": [
+              "array",
+              "string",
+              "null"
+            ]
+          },
+          "forbidden_overclaims": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "allowed_paper_sections": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "result_refs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "additionalProperties": true
+}

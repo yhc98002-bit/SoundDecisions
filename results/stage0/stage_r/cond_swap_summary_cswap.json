@@ -1,0 +1,54 @@
+{
+  "tag": "cswap",
+  "n_units": 40,
+  "axes": {
+    "presence": {
+      "s_cond": 0.75,
+      "sanity": {
+        "low_s": 0.05,
+        "high_s": 0.9,
+        "follow_at_low": 0.85,
+        "retention_at_high": 1.0,
+        "follow_ok": true,
+        "retention_ok": true,
+        "passed": true
+      }
+    },
+    "timing": {
+      "s_cond": NaN,
+      "sanity": {
+        "low_s": 0.05,
+        "high_s": 0.9,
+        "follow_at_low": 0.9,
+        "retention_at_high": 0.8,
+        "follow_ok": true,
+        "retention_ok": true,
+        "passed": true
+      }
+    },
+    "class": {
+      "s_cond": 0.05,
+      "sanity": {
+        "low_s": 0.05,
+        "high_s": 0.9,
+        "follow_at_low": 0.45,
+        "retention_at_high": 1.0,
+        "follow_ok": false,
+        "retention_ok": true,
+        "passed": false
+      }
+    },
+    "material": {
+      "s_cond": 0.25,
+      "sanity": {
+        "low_s": 0.05,
+        "high_s": 0.9,
+        "follow_at_low": 0.8,
+        "retention_at_high": 1.0,
+        "follow_ok": true,
+        "retention_ok": true,
+        "passed": true
+      }
+    }
+  }
+}

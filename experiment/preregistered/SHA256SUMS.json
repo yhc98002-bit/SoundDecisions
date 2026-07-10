@@ -1,0 +1,15 @@
+{
+  "cfg_sweep_predictions.md": "3a883f153500e050952df13b69d9eead79cd9b271ab019ebfda0ece6fc1e518e",
+  "go_map_gate_language.md": "872918c1d05385694e3639b7f9f245da653bbb75a8f5cdbd433835f13fa14fcf",
+  "coarse_class_map.json": "55b5a1d4116caa4503a6b4b17192425da487a9c4385a287e343d850795be4fe7",
+  "thresholds.json": "66bbc9ca8714a46adabd353519a5ebdd7c71f4d1ad4bbc2840f935822af8bb70",
+  "_note": "coarse_class_map frozen at v2 after the W3 tagger sanity gate calibration (top1-then-map; pre-generation)",
+  "stage_m_rerun_interpretations.md": "2a51aa9b9d036dc6e98869eb0846f09856c57cc98ba915d860e56ed21b08454b",
+  "axes.json": "f8eb61c9e6c2fd01a9197952c3798263294da5b097223b015450fbf10e069a78",
+  "_note_v3": "coarse map v3 (event-restriction) + axes.json class gating metric + slice-2 interpretations frozen 2026-06-12 pre-rerun",
+  "f1_protocol_predictions.md": "0ecb9435906e02df4442214a802840d000086ab096155916309c800bdfe07abc",
+  "_amendment_2026-06-13": "amendment #12: criterion-1 washout-direction re-scope (PI decision 1a) + schedule-suffix mandate + cfg=4.5 candidate; MICROMAP_PASS achieved on Run-3 data",
+  "_amendment_2026-06-13_prereg": "pre-registrations re-frozen from the June-13 manual (F-1 promoted to central; three-share decomposition is the headline)",
+  "arc3_tierB_preregistration.md": "7678f89e650d7f3bc0634074abffe09b8c2f37dfc9ce1561e5f259f56039d5f9",
+  "_amendment_2026-06-20_arc3": "RULING-1: Gate-A cap = Binomial(n,0.05) 95pct at the ACTUAL cell count (recovers frozen 2 at n=16; 15 at n=200) \u2014 exposure-n bug-fix, not a re-tune. RULING-2: F-1 REFUTED (guidance narrows the outcome set via mode collapse; not seed-migration). METHOD path = B4 oracle->non-oracle bridge, NOT F1_SUPPORTED. Tier-B analyses pre-registered."
+}

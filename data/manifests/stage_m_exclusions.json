@@ -1,0 +1,22 @@
+{
+  "excluded_from_phase1_manifest": [
+    "2322",
+    "1610",
+    "2569",
+    "2797",
+    "1593",
+    "926",
+    "655",
+    "4541",
+    "1252",
+    "2741",
+    "2260",
+    "4053",
+    "794",
+    "832",
+    "4443",
+    "894"
+  ],
+  "generated_by": "foley_cw.foleybench_extract",
+  "reason": "used in Stage M (manual \u00a73.1: Stage-M clips are not carried forward)"
+}

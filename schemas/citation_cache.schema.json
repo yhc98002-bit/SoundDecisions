@@ -1,0 +1,115 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://orbit.local/schemas/citation_cache.schema.json",
+  "title": "citation_cache",
+  "description": "Machine-readable citation cache shared by paper generation and citation audit tools.",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "status",
+    "updated_at",
+    "source_markdown",
+    "generated_views",
+    "citations"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "0.1"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "ready",
+        "blocked",
+        "deprecated"
+      ]
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "source_markdown": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "generated_views": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "citations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "key",
+          "title",
+          "authors",
+          "venue",
+          "year",
+          "source",
+          "verified",
+          "used_for",
+          "contexts"
+        ],
+        "properties": {
+          "key": {
+            "type": "string",
+            "minLength": 1
+          },
+          "title": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "source": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "minLength": 1
+          },
+          "authors": {
+            "type": [
+              "array",
+              "string",
+              "null"
+            ]
+          },
+          "venue": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "year": {
+            "type": [
+              "integer",
+              "string",
+              "null"
+            ]
+          },
+          "verified": {
+            "type": "boolean"
+          },
+          "used_for": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "contexts": {
+            "type": "array"
+          }
+        },
+        "additionalProperties": true
+      }
+    }
+  },
+  "additionalProperties": true
+}

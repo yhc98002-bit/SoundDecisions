@@ -1,0 +1,7 @@
+{
+  "_doc": "Pilot grid for the SDE stochasticity knob alpha and the smallest-valid-alpha rule (refine-logs/EXPERIMENT_PLAN.md Phase 1). Primary operating alpha = the SMALLEST alpha that produces measurable tail diversity (>= diversity_min) while preserving valid generated audio (audio-validity guard >= audio_validity_min). The full A(axis,s,alpha) surface is reported as secondary evidence; the single primary alpha drives the headline s_commit. If no alpha qualifies -> FORK_ALPHA_NO_VALID_OPERATING_POINT. primary_alpha is selected at runtime (null until then).",
+  "pilot_grid": [0.0, 0.05, 0.1, 0.2, 0.4, 0.8, 1.6],
+  "diversity_min": 0.02,
+  "audio_validity_min": 0.5,
+  "primary_alpha": null
+}

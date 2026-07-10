@@ -1,0 +1,8 @@
+{
+  "tokens": [
+    "COMMITMENT_MAP_DONE"
+  ],
+  "n_clips": 200,
+  "n_expected": 200,
+  "complete": true
+}

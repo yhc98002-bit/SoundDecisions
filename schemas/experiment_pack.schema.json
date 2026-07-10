@@ -1,0 +1,228 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://orbit.local/schemas/experiment_pack.schema.json",
+  "title": "experiment_pack",
+  "description": "STOP B machine-readable experiment pack. Markdown artifacts are generated or legacy views.",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "status",
+    "updated_at",
+    "source_markdown",
+    "generated_views",
+    "proposal_ref",
+    "decision_tree",
+    "controls",
+    "null_result_contract",
+    "component_ladder",
+    "algorithmic_formalization",
+    "probes",
+    "formal_diagnostics"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "0.1"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "ready",
+        "blocked",
+        "deprecated"
+      ]
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "source_markdown": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "generated_views": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "proposal_ref": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "decision_tree": {
+      "type": "array"
+    },
+    "controls": {
+      "type": "array"
+    },
+    "null_result_contract": {
+      "type": [
+        "object",
+        "string",
+        "null"
+      ]
+    },
+    "component_ladder": {
+      "type": "array"
+    },
+    "algorithmic_formalization": {
+      "type": [
+        "object",
+        "string",
+        "null"
+      ]
+    },
+    "plan_code_audit": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "properties": {
+        "artifact": {
+          "type": "string"
+        },
+        "verdict": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    },
+    "probes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "status"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "purpose": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "report": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "audit": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "headroom_note": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "formal_diagnostics": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "kind",
+          "claim_relevance",
+          "expected_result_paths",
+          "success_signal",
+          "null_result_interpretation"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string",
+            "description": "Diagnostic class, for example implementation_smoke, headroom_probe, local_mechanism_probe, paper_bearing_main, paper_bearing_ablation, scaleup_candidate, or unknown."
+          },
+          "claim_relevance": {
+            "type": "string",
+            "description": "How this diagnostic relates to claims, for example none, local, paper_scope_affecting, primary_evidence, or unknown."
+          },
+          "command": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "manifest": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "manifest_path": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "grid_spec": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "status": {
+            "type": "string"
+          },
+          "owner": {
+            "type": "string"
+          },
+          "expected_result_paths": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "success_signal": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "null_result_interpretation": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "expected_report": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "expected_audit": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "additionalProperties": true
+      }
+    }
+  },
+  "additionalProperties": true
+}

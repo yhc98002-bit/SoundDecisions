@@ -1,0 +1,441 @@
+{
+  "part": "C \u2014 two budgets + entropy lens (pre-reg \u00a7C)",
+  "pre_registered_as": "DESCRIPTIVE; emits NO token (no decision rule fires here)",
+  "bootstrap_unit": "video",
+  "s_grid": [
+    0.05,
+    0.15,
+    0.25,
+    0.35,
+    0.45,
+    0.6,
+    0.75,
+    0.9
+  ],
+  "s_low": 0.05,
+  "s_mid": 0.45,
+  "per_axis": {
+    "presence": {
+      "is_embedding": "False",
+      "observational": {
+        "cfg1": {
+          "conditioning": 0.8132916666666666,
+          "seed": 0.09862878787878789,
+          "trajectory": 0.08227272727272726,
+          "residual": 0.05356060606060606
+        },
+        "cfg45": {
+          "conditioning": 0.8334166666666667,
+          "seed": 0.08349242424242424,
+          "trajectory": 0.07151515151515152,
+          "residual": 0.05712121212121211
+        },
+        "conditioning_share_cfg1": 0.8132916666666666,
+        "conditioning_share_cfg45": 0.8334166666666667,
+        "conditioning_share_delta_cfg1_to_cfg45": 0.02012500000000006,
+        "s_commit_cfg1": 0.2141592920353982,
+        "s_commit_cfg45": 0.20000000000000007
+      },
+      "causal_conditioning_responsiveness": {
+        "_label": "cond-swap FOLLOW/RETENTION; NOT the observational conditioning share",
+        "follow_rate_low_s": 0.85,
+        "follow_rate_mid_s": 0.5384615384615384,
+        "retention_rate_high_s": 1.0,
+        "s_cond": 0.75,
+        "sanity_passed": true,
+        "follow_ok": true,
+        "retention_ok": true,
+        "by_s": {
+          "0.05": {
+            "follow_rate": 0.85,
+            "retention_rate": 0.8,
+            "neither_rate": 0.15,
+            "n": 20,
+            "kind": "categorical"
+          },
+          "0.15": {
+            "follow_rate": 0.8181818181818182,
+            "retention_rate": 0.7727272727272727,
+            "neither_rate": 0.18181818181818182,
+            "n": 22,
+            "kind": "categorical"
+          },
+          "0.25": {
+            "follow_rate": 0.7777777777777778,
+            "retention_rate": 0.8888888888888888,
+            "neither_rate": 0.1111111111111111,
+            "n": 18,
+            "kind": "categorical"
+          },
+          "0.35": {
+            "follow_rate": 0.75,
+            "retention_rate": 0.625,
+            "neither_rate": 0.25,
+            "n": 8,
+            "kind": "categorical"
+          },
+          "0.45": {
+            "follow_rate": 0.5384615384615384,
+            "retention_rate": 0.6153846153846154,
+            "neither_rate": 0.3076923076923077,
+            "n": 13,
+            "kind": "categorical"
+          },
+          "0.6": {
+            "follow_rate": 0.6666666666666666,
+            "retention_rate": 1.0,
+            "neither_rate": 0.0,
+            "n": 12,
+            "kind": "categorical"
+          },
+          "0.75": {
+            "follow_rate": 0.4,
+            "retention_rate": 0.8,
+            "neither_rate": 0.2,
+            "n": 5,
+            "kind": "categorical"
+          },
+          "0.9": {
+            "follow_rate": 0.6,
+            "retention_rate": 1.0,
+            "neither_rate": 0.0,
+            "n": 5,
+            "kind": "categorical"
+          }
+        }
+      },
+      "divergence_flag": false
+    },
+    "timing": {
+      "is_embedding": "False",
+      "observational": {
+        "cfg1": {
+          "conditioning": 0.90275,
+          "seed": 0.0826098484848485,
+          "trajectory": 0.032878787878787875,
+          "residual": 0.006893939393939394
+        },
+        "cfg45": {
+          "conditioning": 0.8250416666666667,
+          "seed": 0.1121628787878788,
+          "trajectory": 0.07568181818181818,
+          "residual": 0.01863636363636364
+        },
+        "conditioning_share_cfg1": 0.90275,
+        "conditioning_share_cfg45": 0.8250416666666667,
+        "conditioning_share_delta_cfg1_to_cfg45": -0.07770833333333338,
+        "s_commit_cfg1": 0.11363636363636369,
+        "s_commit_cfg45": 0.18275862068965518
+      },
+      "causal_conditioning_responsiveness": {
+        "_label": "cond-swap FOLLOW/RETENTION; NOT the observational conditioning share",
+        "follow_rate_low_s": 0.9,
+        "follow_rate_mid_s": 0.6923076923076923,
+        "retention_rate_high_s": 0.8,
+        "s_cond": null,
+        "sanity_passed": true,
+        "follow_ok": true,
+        "retention_ok": true,
+        "by_s": {
+          "0.05": {
+            "follow_rate": 0.9,
+            "retention_rate": 0.9,
+            "neither_rate": 0.05,
+            "n": 20,
+            "kind": "categorical"
+          },
+          "0.15": {
+            "follow_rate": 0.9090909090909091,
+            "retention_rate": 0.9545454545454546,
+            "neither_rate": 0.0,
+            "n": 22,
+            "kind": "categorical"
+          },
+          "0.25": {
+            "follow_rate": 0.7777777777777778,
+            "retention_rate": 0.8888888888888888,
+            "neither_rate": 0.0,
+            "n": 18,
+            "kind": "categorical"
+          },
+          "0.35": {
+            "follow_rate": 0.875,
+            "retention_rate": 1.0,
+            "neither_rate": 0.0,
+            "n": 8,
+            "kind": "categorical"
+          },
+          "0.45": {
+            "follow_rate": 0.6923076923076923,
+            "retention_rate": 1.0,
+            "neither_rate": 0.0,
+            "n": 13,
+            "kind": "categorical"
+          },
+          "0.6": {
+            "follow_rate": 0.75,
+            "retention_rate": 1.0,
+            "neither_rate": 0.0,
+            "n": 12,
+            "kind": "categorical"
+          },
+          "0.75": {
+            "follow_rate": 0.8,
+            "retention_rate": 0.8,
+            "neither_rate": 0.0,
+            "n": 5,
+            "kind": "categorical"
+          },
+          "0.9": {
+            "follow_rate": 0.8,
+            "retention_rate": 0.8,
+            "neither_rate": 0.0,
+            "n": 5,
+            "kind": "categorical"
+          }
+        }
+      },
+      "divergence_flag": false
+    },
+    "class": {
+      "is_embedding": "False",
+      "observational": {
+        "cfg1": {
+          "conditioning": 0.37767965367965367,
+          "seed": 0.2307280424031693,
+          "trajectory": 0.3498287472425403,
+          "residual": 0.08211090496804782
+        },
+        "cfg45": {
+          "conditioning": 0.5080090504332928,
+          "seed": 0.181937991461801,
+          "trajectory": 0.28463419481383556,
+          "residual": 0.06088158105701964
+        },
+        "conditioning_share_cfg1": 0.37767965367965367,
+        "conditioning_share_cfg45": 0.5080090504332928,
+        "conditioning_share_delta_cfg1_to_cfg45": 0.13032939675363914,
+        "s_commit_cfg1": 0.34593023255813954,
+        "s_commit_cfg45": 0.3264900662251655
+      },
+      "causal_conditioning_responsiveness": {
+        "_label": "cond-swap FOLLOW/RETENTION; NOT the observational conditioning share",
+        "follow_rate_low_s": 0.45,
+        "follow_rate_mid_s": 0.23076923076923078,
+        "retention_rate_high_s": 1.0,
+        "s_cond": 0.05,
+        "sanity_passed": false,
+        "follow_ok": false,
+        "retention_ok": true,
+        "by_s": {
+          "0.05": {
+            "follow_rate": 0.45,
+            "retention_rate": 0.2,
+            "neither_rate": 0.4,
+            "n": 20,
+            "kind": "categorical"
+          },
+          "0.15": {
+            "follow_rate": 0.3181818181818182,
+            "retention_rate": 0.18181818181818182,
+            "neither_rate": 0.5454545454545454,
+            "n": 22,
+            "kind": "categorical"
+          },
+          "0.25": {
+            "follow_rate": 0.2222222222222222,
+            "retention_rate": 0.1111111111111111,
+            "neither_rate": 0.7222222222222222,
+            "n": 18,
+            "kind": "categorical"
+          },
+          "0.35": {
+            "follow_rate": 0.25,
+            "retention_rate": 0.25,
+            "neither_rate": 0.625,
+            "n": 8,
+            "kind": "categorical"
+          },
+          "0.45": {
+            "follow_rate": 0.23076923076923078,
+            "retention_rate": 0.5384615384615384,
+            "neither_rate": 0.38461538461538464,
+            "n": 13,
+            "kind": "categorical"
+          },
+          "0.6": {
+            "follow_rate": 0.3333333333333333,
+            "retention_rate": 0.75,
+            "neither_rate": 0.08333333333333333,
+            "n": 12,
+            "kind": "categorical"
+          },
+          "0.75": {
+            "follow_rate": 0.0,
+            "retention_rate": 1.0,
+            "neither_rate": 0.0,
+            "n": 5,
+            "kind": "categorical"
+          },
+          "0.9": {
+            "follow_rate": 0.0,
+            "retention_rate": 1.0,
+            "neither_rate": 0.0,
+            "n": 5,
+            "kind": "categorical"
+          }
+        }
+      },
+      "divergence_flag": true
+    },
+    "material": {
+      "is_embedding": "True",
+      "observational": {
+        "cfg1": {
+          "conditioning": 0.6370244393998554,
+          "seed": 0.2065956220571949,
+          "trajectory": 0.14393842445964064,
+          "residual": 0.013312358327614798
+        },
+        "cfg45": {
+          "conditioning": 0.7840692139781404,
+          "seed": 0.1190526640904169,
+          "trajectory": 0.08874331170144555,
+          "residual": 0.008305771004931487
+        },
+        "conditioning_share_cfg1": 0.6370244393998554,
+        "conditioning_share_cfg45": 0.7840692139781404,
+        "conditioning_share_delta_cfg1_to_cfg45": 0.14704477457828502,
+        "s_commit_cfg1": 0.6382499999999999,
+        "s_commit_cfg45": 0.64775
+      },
+      "causal_conditioning_responsiveness": {
+        "_label": "cond-swap FOLLOW/RETENTION; NOT the observational conditioning share",
+        "follow_rate_low_s": 0.8,
+        "follow_rate_mid_s": 0.0,
+        "retention_rate_high_s": 1.0,
+        "s_cond": 0.25,
+        "sanity_passed": true,
+        "follow_ok": true,
+        "retention_ok": true,
+        "by_s": {
+          "0.05": {
+            "follow_rate": 0.8,
+            "retention_rate": 0.2,
+            "neither_rate": 0.0,
+            "n": 20,
+            "kind": "embedding"
+          },
+          "0.15": {
+            "follow_rate": 0.7272727272727273,
+            "retention_rate": 0.2727272727272727,
+            "neither_rate": 0.0,
+            "n": 22,
+            "kind": "embedding"
+          },
+          "0.25": {
+            "follow_rate": 0.2777777777777778,
+            "retention_rate": 0.7222222222222222,
+            "neither_rate": 0.0,
+            "n": 18,
+            "kind": "embedding"
+          },
+          "0.35": {
+            "follow_rate": 0.25,
+            "retention_rate": 0.75,
+            "neither_rate": 0.0,
+            "n": 8,
+            "kind": "embedding"
+          },
+          "0.45": {
+            "follow_rate": 0.0,
+            "retention_rate": 1.0,
+            "neither_rate": 0.0,
+            "n": 13,
+            "kind": "embedding"
+          },
+          "0.6": {
+            "follow_rate": 0.0,
+            "retention_rate": 1.0,
+            "neither_rate": 0.0,
+            "n": 12,
+            "kind": "embedding"
+          },
+          "0.75": {
+            "follow_rate": 0.0,
+            "retention_rate": 1.0,
+            "neither_rate": 0.0,
+            "n": 5,
+            "kind": "embedding"
+          },
+          "0.9": {
+            "follow_rate": 0.0,
+            "retention_rate": 1.0,
+            "neither_rate": 0.0,
+            "n": 5,
+            "kind": "embedding"
+          }
+        }
+      },
+      "divergence_flag": false
+    }
+  },
+  "entropy_lens": {
+    "_meaning": "mean #distinct final-class labels across 16 independents per clip; DROP with cfg = mode collapse = explainer for (i)/(ii) divergence",
+    "distinct_class_count_by_cfg": {
+      "1": {
+        "mean_distinct": 4.833333333333333,
+        "n_clips": 24,
+        "per_clip_min": 3,
+        "per_clip_max": 7
+      },
+      "1.5": {
+        "mean_distinct": 4.125,
+        "n_clips": 24,
+        "per_clip_min": 2,
+        "per_clip_max": 6
+      },
+      "2": {
+        "mean_distinct": 3.75,
+        "n_clips": 24,
+        "per_clip_min": 1,
+        "per_clip_max": 7
+      },
+      "2.5": {
+        "mean_distinct": 3.7083333333333335,
+        "n_clips": 24,
+        "per_clip_min": 1,
+        "per_clip_max": 6
+      },
+      "3": {
+        "mean_distinct": 3.75,
+        "n_clips": 24,
+        "per_clip_min": 1,
+        "per_clip_max": 6
+      },
+      "4.5": {
+        "mean_distinct": 3.625,
+        "n_clips": 24,
+        "per_clip_min": 1,
+        "per_clip_max": 6
+      }
+    },
+    "sequence_cfg_1_to_4p5": [
+      4.8333,
+      4.125,
+      3.75,
+      3.7083,
+      3.75,
+      3.625
+    ],
+    "collapse_delta": 1.208333333333333
+  },
+  "headline": {
+    "axis": "class",
+    "observational_conditioning_share_cfg1": 0.37767965367965367,
+    "observational_conditioning_share_cfg45": 0.5080090504332928,
+    "causal_follow_rate_low_s": 0.45,
+    "cond_swap_sanity_passed": false,
+    "statement": "CLASS: observational conditioning-share RISES 0.378 -> 0.508 with cfg (looks MORE video-driven) BUT causal follow-rate is only 0.45 and cond-swap sanity FAILS => NOT actually video-driven. The rise is an artifact of mode collapse (distinct classes 4.8333 -> 3.625), not of the video."
+  }
+}

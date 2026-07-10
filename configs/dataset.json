@@ -1,0 +1,12 @@
+{
+  "_doc": "Dataset subset + event-anchor spec (refine-logs/EXPERIMENT_PLAN.md Phase 0.3/0.4). Do NOT rebuild a Foley benchmark; use FoleyBench (Dixit et al., 2025, arXiv:2511.13219) or equivalent. No dataset is downloaded by audit-only code; foley_cw/dataset.py builds the MANIFEST + a tiny synthetic dataset for CI. Real ingestion reads FoleyBench metadata when present (path below).",
+  "source": "FoleyBench",
+  "foleybench_root": null,
+  "single_event_subset": {"enabled": true, "min_n_per_axis": 40},
+  "two_event_subset": {"enabled": true, "purpose": "binding (Tier 3)", "min_n_per_axis": 30},
+  "clip_duration_s": [1.0, 10.0],
+  "class_balance": "balance coarse event classes; report per-class n",
+  "event_anchor_priority": ["foleybench_metadata", "visual_onset_detector", "light_human_marks"],
+  "anchor_uncertainty_required": true,
+  "min_usable_n_per_axis": {"presence": 40, "timing": 40, "class": 40, "material": 40, "binding": 30}
+}

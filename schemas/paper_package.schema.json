@@ -1,0 +1,100 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://orbit.local/schemas/paper_package.schema.json",
+  "title": "paper_package",
+  "description": "STOP D machine-readable paper package. Markdown and PDFs are generated or legacy views.",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "status",
+    "updated_at",
+    "source_markdown",
+    "generated_views",
+    "claim_ledger_ref",
+    "figure_manifest_ref",
+    "citation_cache_ref",
+    "compile_status",
+    "audits"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "0.1"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "ready",
+        "blocked",
+        "deprecated"
+      ]
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "source_markdown": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "generated_views": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "claim_ledger_ref": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "figure_manifest_ref": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "citation_cache_ref": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "compile_status": {
+      "type": [
+        "object",
+        "string",
+        "null"
+      ],
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "pdf": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": true
+    },
+    "figure_refs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "citation_refs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "audits": {
+      "type": "array"
+    }
+  },
+  "additionalProperties": true
+}

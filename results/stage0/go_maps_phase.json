@@ -1,0 +1,18 @@
+{
+  "_doc": "Stage-0 gate (\u00a73.3 self-target split: determinism+robustness gates GO_MAPS_PHASE; validity is correctness-layer only).",
+  "self_target_pass": {
+    "presence": true,
+    "timing": true,
+    "class": false,
+    "material": true
+  },
+  "n_self_target_pass": 3,
+  "min_required": 3,
+  "class_kept_diagnostic": true,
+  "validation_token": "OK",
+  "manifest_ok": true,
+  "tokens": [
+    "GO_MAPS_PHASE"
+  ],
+  "justification": "trajectory access OK; SDE validation token='OK'; manifest OK; 3/4 axes passed reliability gate (threshold=3)."
+}

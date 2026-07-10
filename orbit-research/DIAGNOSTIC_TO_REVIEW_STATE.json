@@ -1,0 +1,35 @@
+{
+  "skill": "diagnostic-to-review",
+  "diagnostic_id": "diag_20260609_161203_985ce5eccd17",
+  "input_hash": "985ce5eccd17",
+  "phase": "phase-0-context",
+  "status": "awaiting_user_action",
+  "pause_reason": "external_dependency",
+  "blockers": [
+    {
+      "id": "MMAUDIO_NOT_WIRED",
+      "kind": "missing_artifact",
+      "artifact": "foley_cw/model_adapter.py (MMAudioBackend)",
+      "message": "MMAudioBackend is an intentional raising stub from the audit-only build; real MMAudio trajectory access (extract x_s, resume, decode, v_theta) and the s<->t direction / velocity->score sign must be implemented and audited against MMAudio source (Phase 0.1/0.2) before diag_phase0_feasibility can run.",
+      "safe_next_command": "Decide MMAudio wiring path (see STOP-C note); the wiring itself is GPU-free but needs MMAudio source available."
+    },
+    {
+      "id": "GPU_REQUIRED_NOT_APPROVED",
+      "kind": "missing_artifact",
+      "artifact": "compute: GPU node (an17/an22, 8xA800)",
+      "message": "Both formal diagnostics are owner=human and require a GPU run with MMAudio + torch + FoleyBench. This is a login node with no GPU/torch/MMAudio. CLAUDE.md forbids GPU jobs without explicit user approval.",
+      "safe_next_command": "Explicit user approval to deploy diag_phase0_feasibility to an17/an22, plus environment setup."
+    }
+  ],
+  "next_action": "human decision: authorize the MMAudio-wiring + GPU Phase-0 path, or defer",
+  "next_skill_hint": null,
+  "safe_next_command": "Authorize one of: (a) wire MMAudioBackend (GPU-free, needs MMAudio source) then deploy; (b) approve full GPU run on an17/an22; (c) defer. Then resume: /diagnostic-to-review \"experiment/experiment_pack.json\" -- resume:true",
+  "timestamp": "2026-06-09T16:12:03Z",
+  "artifact_inventory": [
+    "orbit-research/diagnostics/diag_20260609_161203_985ce5eccd17/DIAGNOSTIC_CONTEXT.json"
+  ],
+  "run_id": null,
+  "result_paths": [],
+  "review_thread_id": null,
+  "notes": "Phase 0 prereqs PASS (G11 MATCHES_PLAN, G8 null-result, G9 ladder, Codex available, input is a formal diagnostic). Halted at the GPU/MMAudio execution boundary; no run launched, no results fabricated. tools/diagnostic_session.py absent — context hand-created."
+}

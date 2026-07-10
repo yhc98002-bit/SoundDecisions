@@ -1,0 +1,9 @@
+{
+  "_doc": "Integration + scan schedule. n_steps discretizes s in [0,1] for the SDE/ODE; scan_points are the progress values s at which we fork (commitment) and probe (readout). K_forks forks per scan point; N_independent full generations for the video-prior A_independent. g_kind/g_value define the diffusion scale g(s) (sigma = alpha * g(s)).",
+  "n_steps": 32,
+  "scan_points": [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0],
+  "K_forks": 16,
+  "N_independent": 16,
+  "g_kind": "constant",
+  "g_value": 1.0
+}

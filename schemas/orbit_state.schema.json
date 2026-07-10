@@ -1,0 +1,162 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://orbit.local/schemas/orbit_state.schema.json",
+  "title": "ORBIT_STATE",
+  "description": "Unified read model for the current ORBIT pipeline stop, blockers, and safe next command.",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "current_stop",
+    "current_skill",
+    "current_phase",
+    "status",
+    "pause_reason",
+    "blockers",
+    "canonical_packs",
+    "legacy_artifacts_detected",
+    "safe_next_command",
+    "updated_at"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "0.1"
+    },
+    "current_stop": {
+      "type": "string",
+      "enum": [
+        "NONE",
+        "STOP_A",
+        "STOP_B",
+        "STOP_C",
+        "STOP_D",
+        "COMPLETED"
+      ]
+    },
+    "current_skill": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "minLength": 1
+    },
+    "current_phase": {
+      "type": "string",
+      "minLength": 1
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "in_progress",
+        "paused",
+        "blocked",
+        "completed"
+      ]
+    },
+    "pause_reason": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "enum": [
+        "stop_review",
+        "missing_prereq",
+        "gate_failed",
+        "codex_review_needed",
+        "codex_review_imported",
+        "ambiguous_resume",
+        "external_dependency",
+        null
+      ]
+    },
+    "blockers": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/blocker"
+      }
+    },
+    "canonical_packs": {
+      "type": "object",
+      "required": [
+        "proposal_pack",
+        "experiment_pack",
+        "claim_ledger",
+        "paper_package"
+      ],
+      "properties": {
+        "proposal_pack": {
+          "type": "string"
+        },
+        "experiment_pack": {
+          "type": "string"
+        },
+        "claim_ledger": {
+          "type": "string"
+        },
+        "paper_package": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    },
+    "legacy_artifacts_detected": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "safe_next_command": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "$defs": {
+    "blocker": {
+      "type": "object",
+      "required": [
+        "id",
+        "kind",
+        "artifact",
+        "message",
+        "safe_next_command"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "missing_artifact",
+            "bad_verdict",
+            "codex_unavailable",
+            "stale_state",
+            "legacy_conflict"
+          ]
+        },
+        "artifact": {
+          "type": "string",
+          "minLength": 1
+        },
+        "message": {
+          "type": "string",
+          "minLength": 1
+        },
+        "safe_next_command": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

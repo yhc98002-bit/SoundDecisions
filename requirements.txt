@@ -1,0 +1,20 @@
+# foley_cw runtime dependencies.
+#
+# CORE (import-time): the analytic/synthetic validation + map machinery is numpy-only and
+# runs on a bare CPU environment.
+numpy>=1.24
+scipy>=1.10  # gate_a (Mann-Whitney / KS guards); also a librosa dependency
+
+# DEV / CI
+pytest>=7.0
+
+# --- HEAVY / MODEL deps (Phase 0+, GPU; imported LAZILY inside the methods that need them;
+# --- NOT required to import foley_cw or to run the synthetic validation/tests). Pin exact
+# --- versions during Phase 0 wiring.
+# torch
+# torchaudio
+# mmaudio            # the real V2A flow backend (vendor + audit in Phase 0.1)
+# librosa            # onset / energy heuristics, resampling for the robustness gate
+# soundfile
+# laion-clap         # CLAP legacy probe
+# (audio tagger, SyncNet/AV-sync, ImageBind, frontier-MLLM client) — added per probe
