@@ -1,0 +1,62 @@
+# Python environments, bytecode, and test output
+.venv/
+venv/
+env/
+__pycache__/
+*.py[cod]
+*.so
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Local configuration and downloaded model caches
+.env
+.env.*
+!.env.example
+.hf_cache/
+.claude/
+.agents/
+
+# Editor and operating-system files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*~
+
+# Local execution logs and runtime coordination files
+logs/
+*.log
+*.lock
+*.state
+
+# Non-redistributable or oversized research inputs and checkpoints
+data/FoleyBench/
+weights/**/*.pth
+weights/**/*.pt
+weights/**/*.ckpt
+weights/**/*.safetensors
+
+# The MMAudio checkout is an external dependency, not vendored project source.
+# Its reviewed upstream revision is documented in PI_review_guidance.markdown.
+third_party/MMAudio/
+
+# Regenerable MLLM response cache; aggregate experimental outputs remain tracked.
+results/mllm_cache/
+
+# High-volume raw run artifacts. Keep compact reports, aggregate JSON/CSV, and figures.
+results/**/pertoken/
+results/**/features/
+results/**/previews/
+results/**/audit_wavs/
+results/**/*.npz
+results/**/*.wav
+results/**/*.html
+results/**/finals/
+results/**/measurements/
+results/**/journal/
+results/**/run*_archive/
+results/labeling/
