@@ -82,11 +82,12 @@ def test_same_compute_bon_matches_gated_budget_exactly():
                            rng=np.random.default_rng(0))
     rb = P.simulate_policy(pool, "same_compute_bon", gates=gates, num_steps=25,
                            rng=np.random.default_rng(1), budget_nfe=rg.total_nfe)
-    # same_compute_bon completes floor(budget / num_steps) candidates, each full cost.
-    k = rg.total_nfe // 25
+    # same_compute_bon completes ceil(budget / num_steps) candidates, each full cost.
+    k = int(np.ceil(rg.total_nfe / 25))
     assert rb.completed == k
     assert rb.total_nfe == k * 25
-    assert rb.total_nfe <= rg.total_nfe        # never exceeds the matched budget
+    assert rb.total_nfe >= rg.total_nfe
+    assert rb.total_nfe - rg.total_nfe < 25
 
 
 def test_random_prune_nfe_exact():
@@ -252,8 +253,8 @@ def test_run_all_policies_matches_same_compute_budget():
     out = P.run_all_policies(pools, gates=gates, num_steps=25, seed=0,
                              diffrs_tau=0.45, smc_temp=0.1, random_prune_frac=0.5)
     assert set(out) == set(P.POLICIES)
-    # same_compute_bon total NFE never exceeds oracle_axis_gated's (matched-budget invariant).
-    assert out["same_compute_bon"]["total_nfe"] <= out["oracle_axis_gated"]["total_nfe"]
+    # Whole-candidate rounding makes same_compute_bon meet or exceed gated NFE.
+    assert out["same_compute_bon"]["total_nfe"] >= out["oracle_axis_gated"]["total_nfe"]
     # full_bon is the NFE ceiling.
     assert out["full_bon"]["total_nfe"] >= out["oracle_axis_gated"]["total_nfe"]
     # oracle gating reaches perfect proxy quality on the separating pool.

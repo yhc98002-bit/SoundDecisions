@@ -51,6 +51,19 @@ FINAL_GRID_S = 0.90               # latest cached grid point; the final-window f
 NUM_STEPS = P.NFE_FULL_DEFAULT    # deployed cfg=4.5 integration budget
 
 
+def headroom_supported(
+    gated_final: float,
+    gated_nfe: float,
+    scbon_final: float,
+    scbon_nfe: float,
+) -> bool:
+    """Return the corrected offline headroom screen."""
+    return bool(
+        gated_final >= scbon_final + 0.01
+        and gated_nfe <= scbon_nfe * 1.02
+    )
+
+
 # ---------------------------------------------------------------------------
 # Cache loading
 # ---------------------------------------------------------------------------
@@ -172,6 +185,8 @@ def main() -> None:
                     help="DiffRS rejection threshold; default = global median final_score.")
     ap.add_argument("--smc-temp", type=float, default=0.1)
     ap.add_argument("--random-prune-frac", type=float, default=0.5)
+    ap.add_argument("--out-csv", type=Path, default=OUT_CSV)
+    ap.add_argument("--out-md", type=Path, default=OUT_MD)
     args = ap.parse_args()
 
     keep = eval_clips(args.split)
@@ -207,8 +222,8 @@ def main() -> None:
         "completed_candidates", "total_nfe", "scoring_calls",
         "winner_retention", "false_prune_rate", "regret",
     ]
-    OUT_CSV.parent.mkdir(parents=True, exist_ok=True)
-    with open(OUT_CSV, "w", newline="", encoding="utf-8") as fh:
+    args.out_csv.parent.mkdir(parents=True, exist_ok=True)
+    with open(args.out_csv, "w", newline="", encoding="utf-8") as fh:
         w = csv.DictWriter(fh, fieldnames=cols)
         w.writeheader()
         for policy in P.POLICIES:
@@ -261,8 +276,10 @@ def main() -> None:
             f"| {policy} | ({m['total_nfe']}, {m['final_correctness']:.3f}) | "
             f"({m['scoring_calls']}, {m['final_correctness']:.3f}) |"
         )
-    headroom = (gated["final_correctness"] >= scbon["final_correctness"]
-                and gated["total_nfe"] <= scbon["total_nfe"])
+    headroom = headroom_supported(
+        gated["final_correctness"], gated["total_nfe"],
+        scbon["final_correctness"], scbon["total_nfe"],
+    )
     lines += [
         "",
         "## Matched-compute read (oracle_axis_gated vs same_compute_bon)",
@@ -275,14 +292,20 @@ def main() -> None:
         f"- random_prune control: final_corr={rnd['final_correctness']:.3f}, "
         f"false_prune={rnd['false_prune_rate']:.3f}.",
         "",
-        f"**Offline headroom (proxy):** "
-        f"{'YES — gated matches/beats matched-compute BoN at <= its NFE' if headroom else 'NO — gated does not dominate matched-compute BoN on the proxy'}. "
+        f"**Offline headroom (proxy): {'YES' if headroom else 'NO'}** — "
+        f"gated_final={gated['final_correctness']:.3f}, "
+        f"same_compute_bon_final={scbon['final_correctness']:.3f}, "
+        f"gated_nfe={gated['total_nfe']}, "
+        f"same_compute_bon_nfe={scbon['total_nfe']}; "
+        "criterion: gated_final >= same_compute_bon_final + 0.01 and "
+        "gated_nfe <= same_compute_bon_nfe * 1.02. "
         "Token routing (§9) is a human STOP decision; this report does not emit GO_POLICY / "
         "GO_RESTRICTED / DIAGNOSTIC_ONLY on its own.",
     ]
-    OUT_MD.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    args.out_md.parent.mkdir(parents=True, exist_ok=True)
+    args.out_md.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
-    print(f"wrote {OUT_CSV.relative_to(ROOT)} and {OUT_MD.relative_to(ROOT)} "
+    print(f"wrote {args.out_csv} and {args.out_md} "
           f"({len(pools)} clips, {len(P.POLICIES)} policies)")
     for policy in P.POLICIES:
         m = metrics[policy]

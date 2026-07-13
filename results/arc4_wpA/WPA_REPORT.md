@@ -31,3 +31,15 @@ Files touched: `scripts/phase3_decision.py`, `tests/test_phase3_labels.py`, `res
 - Tests added: all five ordered branches, the negative-gap suffix, the corrected class row, and unchanged Arc-3 GO booleans. `tests/test_phase3_labels.py`: 3 passed.
 - Determinism: two fresh processes produced identical corrected outputs (JSON SHA256 `297322ed8093713a6ef79d05f4d526cc43ccf86da0a9784ffec4e10f8742a167`; Markdown SHA256 `8266a6d110bcd1dca3a44f18b52d302fb8f854c09d641d8a9ec745008606a377`).
 - Deviations: none.
+
+## T2 - Matched-compute headroom
+
+Status: DONE
+
+Files touched: `foley_cw/policy_offline.py`, `scripts/phase4_policy.py`, `tests/test_policy_offline.py`, `tests/test_phase4_policy.py`, `results/arc4_wpA/policy_pareto_corrected.csv`, `results/arc4_wpA/policy_report_corrected.md`, and this report.
+
+- Per-clip same-compute allocation: floor -> ceiling. Aggregate same-compute BoN NFE `46925` -> `51525`, now above gated NFE `49151`; final correctness `0.350` -> `0.365` because the rounded-up baseline evaluates more cached candidates.
+- Headroom sentence before -> after: `NO` with gated `0.785/49151` and same-compute `0.350/46925` -> `YES` with gated `0.785/49151` and same-compute `0.365/51525` under the corrected 0.01 quality-gap and 2% compute-tolerance rule.
+- Tests added/updated: ceiling allocation and aggregate NFE invariant; predicate pinned to the corrected 200-clip replay values and both rejection boundaries. Targeted result: 16 passed.
+- Determinism: two fresh full cached replays produced identical outputs (CSV SHA256 `2a7b29d3ae5327a40c5a461d7bc74a965c48fd1fc353eff049cba33f2bdd12ab`; Markdown SHA256 `1d1f2aa140b367b7ffa4e6ecc25f64eb6b1c63cea69492691e6660dd2ff0e368`).
+- Deviations: the corrected Pareto CSV is retained beside the required Markdown so every sentence value has a machine-readable source; no Arc-3 output was overwritten.

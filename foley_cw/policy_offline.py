@@ -194,9 +194,11 @@ def simulate_policy(
 ) -> PolicyResult:
     """Run one policy on one pool. Deterministic given `rng`. Pure numpy.
 
-    `budget_nfe` caps generator-NFE for same_compute_bon (set by the script to the gated
-    policy's realized NFE). The pool's "winner" reference for retention/false-prune is the
-    candidate with the highest final_score (the BoN ceiling pick).
+    `budget_nfe` sets the generator-NFE target for same_compute_bon (set by the script to
+    the gated policy's realized NFE). Whole candidates are allocated by rounding up, so
+    the matched-compute baseline meets or slightly exceeds that target. The pool's
+    "winner" reference for retention/false-prune is the candidate with the highest
+    final_score (the BoN ceiling pick).
     """
     if rng is None:
         rng = np.random.default_rng(0)
@@ -260,7 +262,7 @@ def simulate_policy(
     # ---- same_compute_bon: BoN under a generator-NFE budget (fewer completed) ----
     if policy == "same_compute_bon":
         cap = budget_nfe if budget_nfe is not None else n * num_steps
-        k = max(1, min(n, int(cap // num_steps)))
+        k = max(1, min(n, int(np.ceil(cap / num_steps))))
         # deterministic candidate subset: first k by a seeded permutation of indices
         order = rng.permutation(n)
         chosen = np.sort(order[:k])
