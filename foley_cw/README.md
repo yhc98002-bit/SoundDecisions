@@ -1,3 +1,5 @@
+Audit-era description; predates GPU wiring; see CURRENT_STATUS
+
 # foley_cw — implementation of the `foley-cw` experiment plan
 
 This package implements **When Are Foley Decisions Made? Commitment and Readout Windows in

@@ -1,3 +1,5 @@
+Superseded snapshot
+
 # foley-cw — Research & Progress Summary (as of 2026-06-10)
 
 Status snapshot of the SoundDecisions project. Obtained results and plans are kept strictly

@@ -1,3 +1,5 @@
+Historical charter (2026-06); current status: results/CURRENT_STATUS.md
+
 # Final Proposal — Sound Decisions (`foley-cw`)
 
 **Title:** Sound Decisions: When Are Foley Decisions Made in Video-to-Audio Flow Generation?

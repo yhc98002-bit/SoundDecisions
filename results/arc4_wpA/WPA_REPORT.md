@@ -144,3 +144,14 @@ Files touched: `foley_cw/real_measurer.py`, `tests/test_real_measurer.py`, `scri
 - Weight-source switch: `FOLEY_CW_WEIGHTS_SOURCE=modelscope|hf`; default `modelscope` resolves only an existing local mirror under `FOLEY_CW_MODELSCOPE_ROOT` (default `weights/modelscope`), while `hf` resolves the pinned local HF cache. Missing mirrors fail loudly; neither mode may download.
 - Tests added: pinned HF specs, ModelScope local-path preference, and missing-mirror no-download failure. `tests/test_real_measurer.py`: 22 passed. `bash -n scripts/run_on_node.sh` and `py_compile` passed.
 - Deviations: no ModelScope mirror is currently present in this checkout; use of the existing HF cache therefore requires the explicit `FOLEY_CW_WEIGHTS_SOURCE=hf` setting.
+
+## T10 - Current status documentation
+
+Status: DONE
+
+Files touched: `results/CURRENT_STATUS.md`, `refine-logs/FINAL_PROPOSAL_SHORT.md`, `foley_cw/README.md`, `PROGRESS_SUMMARY_2026-06-10.md`, and this report.
+
+- Added the supplied current-status text with the expected completion count `1043 passed` and code-completion commit `b3e1974b0a0a1f64d650eec0604c662a8b0d841a`.
+- Added exactly one top banner to each of the three historical documents; their existing bodies were not edited.
+- Tests added: none (documentation only).
+- Deviations: the Git field records the T9 code-completion revision because a tracked file cannot contain the hash of the commit that contains itself; T10 and T11 are governance/report-only commits.
