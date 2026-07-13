@@ -31,6 +31,25 @@ SELF_TARGET_AXES = ("presence", "timing", "material")   # class is diagnostic (k
 READABLE_MARGIN = 0.15   # s_read must beat s=1 by this much on a committed axis for GO_READOUT
 
 
+def classify_r_window(s_commit: float, s_read: float) -> str:
+    """Classify a commitment/readout pair using the gap-aware R-class rules."""
+    if not math.isfinite(s_commit):
+        return "R1 (uncommitted — defer)"
+    if not math.isfinite(s_read):
+        return "R2 (committed, unreadable — Track P)"
+
+    gap = s_read - s_commit
+    if gap > READABLE_MARGIN:
+        label = f"R2-in-window (committed at {s_commit:.2f}, readable from {s_read:.2f})"
+    elif s_read <= 0.85:
+        label = "early-action (committed & readable)"
+    else:
+        label = "R2 (readable only near s=1)"
+    if gap < -READABLE_MARGIN:
+        label += " (trajectory-predictable before tail-stable)"
+    return label
+
+
 def read_budget(path: Path) -> dict:
     out = {}
     for r in csv.DictReader(path.open()):
@@ -58,6 +77,9 @@ def main() -> int:
     ap.add_argument("--alt-tag", default="p1cfg1a04", help="second-α budget for Gate B")
     ap.add_argument("--readout-tokens", type=Path, default=None)
     ap.add_argument("--thresholds", type=Path, default=Path("configs/thresholds.json"))
+    ap.add_argument("--output-dir", type=Path, default=None,
+                    help="output directory; defaults to --phase1-dir")
+    ap.add_argument("--output-stem", default="phase3_decision")
     args = ap.parse_args()
 
     bud = read_budget(args.phase1_dir / f"determination_budget_{args.primary_tag}.csv")
@@ -97,14 +119,7 @@ def main() -> int:
         committed = math.isfinite(sc)
         readable = math.isfinite(sr)
         gap = (sr - sc) if (committed and readable) else float("nan")
-        if not committed:
-            cls = "R1 (uncommitted — defer)"
-        elif not readable:
-            cls = "R2 (committed, unreadable — Track P)"
-        elif sr <= 1.0 - READABLE_MARGIN:
-            cls = "early-action (committed & readable)"
-        else:
-            cls = "R2 (readable only near s=1)"
+        cls = classify_r_window(sc, sr)
         rows.append({"axis": a, "s_commit": sc, "s_read": sr, "gap": gap, "class": cls})
 
     # --- §6 token logic ---
@@ -128,8 +143,9 @@ def main() -> int:
            "separation_score": sep_score, "gate_b_ordering_stable": gate_b,
            "gate_b_alt_tag": args.alt_tag if alt else None,
            "rows": rows, "tokens": tokens, "go_map": go_map, "go_readout": go_readout}
-    args.phase1_dir.mkdir(parents=True, exist_ok=True)
-    (args.phase1_dir / "phase3_decision.json").write_text(json.dumps(out, indent=2, default=str))
+    output_dir = args.output_dir or args.phase1_dir
+    output_dir.mkdir(parents=True, exist_ok=True)
+    (output_dir / f"{args.output_stem}.json").write_text(json.dumps(out, indent=2, default=str))
 
     def f(x):
         return "never" if (isinstance(x, float) and math.isnan(x)) else (f"{x:.3f}" if isinstance(x, float) else str(x))
@@ -142,7 +158,7 @@ def main() -> int:
         L.append(f"| {r['axis']} | {f(r['s_commit'])} | {f(r['s_read'])} | {f(r['gap'])} | {r['class']} |")
     L += ["", f"**Tokens: `{', '.join(tokens)}`** — GO_MAP={go_map} (separation+GateB), "
           f"GO_READOUT={go_readout}."]
-    (args.phase1_dir / "phase3_decision.md").write_text("\n".join(L) + "\n")
+    (output_dir / f"{args.output_stem}.md").write_text("\n".join(L) + "\n")
     print("\n".join(L))
     return 0
 

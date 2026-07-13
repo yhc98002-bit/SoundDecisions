@@ -20,3 +20,14 @@ Files touched: `results/arc4_wpA/WPA_REPORT.md`
 - Tests added: none (preflight only).
 - Deviations: none.
 
+## T1 - Gap-aware R-class labels
+
+Status: DONE
+
+Files touched: `scripts/phase3_decision.py`, `tests/test_phase3_labels.py`, `results/arc4_wpA/phase3_decision_corrected.json`, `results/arc4_wpA/phase3_decision_corrected.md`, and this report.
+
+- Class row before -> after: `early-action (committed & readable)` -> `R2-in-window (committed at 0.35, readable from 0.75)` for class (`s_commit=0.345930`, `s_read=0.750000`, gap `0.404070`).
+- GO booleans: `GO_MAP=True` -> `True`; `GO_READOUT=True` -> `True`, with byte-identical JSON boolean encodings.
+- Tests added: all five ordered branches, the negative-gap suffix, the corrected class row, and unchanged Arc-3 GO booleans. `tests/test_phase3_labels.py`: 3 passed.
+- Determinism: two fresh processes produced identical corrected outputs (JSON SHA256 `297322ed8093713a6ef79d05f4d526cc43ccf86da0a9784ffec4e10f8742a167`; Markdown SHA256 `8266a6d110bcd1dca3a44f18b52d302fb8f854c09d641d8a9ec745008606a377`).
+- Deviations: none.
