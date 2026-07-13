@@ -43,3 +43,19 @@ Files touched: `foley_cw/policy_offline.py`, `scripts/phase4_policy.py`, `tests/
 - Tests added/updated: ceiling allocation and aggregate NFE invariant; predicate pinned to the corrected 200-clip replay values and both rejection boundaries. Targeted result: 16 passed.
 - Determinism: two fresh full cached replays produced identical outputs (CSV SHA256 `2a7b29d3ae5327a40c5a461d7bc74a965c48fd1fc353eff049cba33f2bdd12ab`; Markdown SHA256 `1d1f2aa140b367b7ffa4e6ecc25f64eb6b1c63cea69492691e6660dd2ff0e368`).
 - Deviations: the corrected Pareto CSV is retained beside the required Markdown so every sentence value has a machine-readable source; no Arc-3 output was overwritten.
+
+## T3 - Bridge statistics and calibration
+
+Status: DONE
+
+Files touched: `scripts/b4_bridge.py`, `tests/test_b4_bridge_stats.py`, `results/arc4_wpA/b4_bridge_corrected.json`, `results/arc4_wpA/b4_bridge_corrected.md`, and this report. `foley_cw/bridge.py` was not changed.
+
+- Axis bootstrap seeding: process-randomized `hash(axis)` -> stable `zlib.crc32(axis.encode("utf-8")) % 1000`.
+- Bootstrap scalar floor: fixed full-data floor -> best scalar-policy mean recomputed inside every clip resample. Presence CI changed from Arc-3 `[0.351514, 0.740283]` to `[0.128809, 0.670316]`; the full-data point remains governed by the same best-on-full-data definition (T2's allocator correction separately changes the scalar roster and raises presence recovery from `0.554688` to `0.604167`).
+- Mean recovery before -> after: Arc-3 material-inclusive provisional `0.513997 [0.354651, 0.647799]` -> corrected material-inclusive diagnostic `0.526367 [0.311186, 0.636955]`; corrected material-excluded **citable** value `0.515191 [0.360404, 0.537848]`.
+- Material is tagged `UNCALIBRATED_COSINE`; overall joint recovery remains `0.000000` (95% CI `[0.000000, 0.127712]`).
+- Policy display labels now identify `diffrs_scalar` as `final_window_scalar_reject` and `smc_scalar` as `final_window_scalar_resample` while preserving JSON keys. The Markdown contains the requested s=0.90 scalar caveat and exact scoring-call ledger; no matched-scoring wording remains.
+- Seed 0/1/2/3 citable means: `0.515191`, `0.483796`, `0.502525`, `0.464286`; each tier token is `BRIDGE_PARTIAL`, so the tier token is seed-stable. Separate `--seed 1`, `--seed 2`, and `--seed 3` runs exactly matched the seed-0 robustness block.
+- Tests added: CRC32 seed pin and synthetic bootstrap comparison against a fixed-floor control; targeted result: 13 passed including the existing bridge tests.
+- Determinism: two fresh seed-0 processes produced byte-identical outputs (JSON SHA256 `ce48f44351c572d4f386ec3ac17acbb684dd94a60b7f3860e2d70c889900e014`; Markdown SHA256 `9d6a2750a27c16206d26c09a007a847da294d4b84f51ff6ad13e42679e2d4095`).
+- Deviations: none.

@@ -7,7 +7,7 @@ a noisy read of each candidate's axis label, calibrated to the Phase-2 EXTERNAL 
 (readout_map_p2cfg1.csv) at each axis's commit window. class uses the external audio-tagger readout
 (B1 internal class head not yet available — documented FLOOR). NO new generation, NO GPU.
 
-Compared policies (matched generator-NFE AND scoring-calls, by construction of the frozen sim):
+Compared policies (with generator-NFE and scoring calls reported separately):
   non_oracle_axis_gated  (NEW: noisy readout-gated pruning)
   oracle_axis_gated      (ceiling)
   full_bon, same_compute_bon, diffrs_scalar, smc_scalar, final_rerank, random_prune  (baselines)
@@ -33,6 +33,7 @@ import csv
 import json
 import os
 import sys
+import zlib
 from pathlib import Path
 
 import numpy as np
@@ -56,6 +57,47 @@ NUM_STEPS = P.NFE_FULL_DEFAULT
 
 # Scalar baselines whose per-axis correctness defines the recovery floor (pre-reg §B4 roster).
 SCALAR_POLICIES = ("full_bon", "same_compute_bon", "diffrs_scalar", "smc_scalar", "final_rerank")
+POLICY_LABELS = {
+    "diffrs_scalar": "final_window_scalar_reject",
+    "smc_scalar": "final_window_scalar_resample",
+}
+
+
+def axis_bootstrap_seed(seed: int, axis: str) -> int:
+    """Stable per-axis bootstrap seed, independent of Python's hash randomization."""
+    return seed + zlib.crc32(axis.encode("utf-8")) % 1000
+
+
+def scalar_floor_for_sample(sample_clips: list[dict], key: str) -> tuple[float, str | None]:
+    """Best scalar-policy mean for one bootstrap resample."""
+    best_value, best_policy = -1.0, None
+    for policy in SCALAR_POLICIES:
+        values = [c["rows"][policy][key] for c in sample_clips]
+        value = float(np.mean(values))
+        if np.isfinite(value) and value > best_value:
+            best_value, best_policy = value, policy
+    return float(best_value), best_policy
+
+
+def recovery_for_sample(sample_clips: list[dict], axis: str) -> float:
+    """Axis recovery with the scalar floor recomputed on the supplied clips."""
+    key = f"correct_{axis}"
+    no = np.mean([c["rows"]["non_oracle_axis_gated"][key] for c in sample_clips])
+    orc = np.mean([c["rows"]["oracle_axis_gated"][key] for c in sample_clips])
+    scalar_floor, _ = scalar_floor_for_sample(sample_clips, key)
+    return B.headroom_recovery(float(no), scalar_floor, float(orc))
+
+
+def mean_recovery_for_sample(sample_clips: list[dict], axes: tuple[str, ...]) -> float:
+    return float(np.mean([recovery_for_sample(sample_clips, axis) for axis in axes]))
+
+
+def _labeled_policy_rows(rows: dict[str, dict]) -> dict[str, dict]:
+    """Copy policy-keyed rows and add display labels without changing JSON keys."""
+    return {
+        policy: {"_label": POLICY_LABELS.get(policy, policy), **values}
+        for policy, values in rows.items()
+    }
 
 
 # ---------------------------------------------------------------------------
@@ -196,6 +238,8 @@ def main() -> int:
     ap.add_argument("--diffrs-tau", type=float, default=None)
     ap.add_argument("--robust-seeds", type=int, nargs="*", default=[1, 2, 3],
                     help="extra seeds for the decision-robustness block (point estimates).")
+    ap.add_argument("--out-json", type=Path, default=OUT_JSON)
+    ap.add_argument("--out-md", type=Path, default=None)
     args = ap.parse_args()
 
     keep = PH4.eval_clips(args.split)
@@ -280,16 +324,12 @@ def main() -> int:
 
     # ---- per-axis recovery + bootstrap by video ----
     def recovery_stat_for_axis(axis: str):
-        key = f"correct_{axis}"
-        s_floor = scalar_floor[axis]["value"]
-
         def stat(sample_clips: list[dict]) -> float:
-            no = np.mean([c["rows"]["non_oracle_axis_gated"][key] for c in sample_clips])
-            orc = np.mean([c["rows"]["oracle_axis_gated"][key] for c in sample_clips])
-            return B.headroom_recovery(float(no), float(s_floor), float(orc))
+            return recovery_for_sample(sample_clips, axis)
 
         point, lo, hi = bootstrap_over_videos(
-            per_clip, stat, n_boot=args.n_boot, ci=0.95, seed=args.seed + hash(axis) % 1000
+            per_clip, stat, n_boot=args.n_boot, ci=0.95,
+            seed=axis_bootstrap_seed(args.seed, axis),
         )
         return point, lo, hi
 
@@ -308,20 +348,18 @@ def main() -> int:
                 "external audio-tagger readout (B1 internal class head unavailable)"
                 if a == "class" else None
             ),
+            "calibration": "UNCALIBRATED_COSINE" if a == "material" else "CALIBRATED_ACCURACY",
         }
 
-    # ---- mean per-axis recovery (the decision quantity) + bootstrap by video ----
-    def mean_recovery_stat(sample_clips: list[dict]) -> float:
-        recs = []
-        for a in present_axes:
-            key = f"correct_{a}"
-            no = np.mean([c["rows"]["non_oracle_axis_gated"][key] for c in sample_clips])
-            orc = np.mean([c["rows"]["oracle_axis_gated"][key] for c in sample_clips])
-            recs.append(B.headroom_recovery(float(no), float(scalar_floor[a]["value"]), float(orc)))
-        return float(np.mean(recs))
-
-    mean_pt, mean_lo, mean_hi = bootstrap_over_videos(
-        per_clip, mean_recovery_stat, n_boot=args.n_boot, ci=0.95, seed=args.seed
+    # ---- material-inclusive diagnostic and material-excluded citable recovery ----
+    citable_axes = tuple(a for a in present_axes if a != "material")
+    mean_incl = bootstrap_over_videos(
+        per_clip, lambda sample: mean_recovery_for_sample(sample, present_axes),
+        n_boot=args.n_boot, ci=0.95, seed=args.seed,
+    )
+    mean_excl = bootstrap_over_videos(
+        per_clip, lambda sample: mean_recovery_for_sample(sample, citable_axes),
+        n_boot=args.n_boot, ci=0.95, seed=args.seed,
     )
 
     # ---- overall (final-correctness) recovery ----
@@ -336,8 +374,9 @@ def main() -> int:
 
     # Token honors the pre-reg's "substantial recovery" intent ROBUSTLY: BRIDGE_METHOD
     # requires the bootstrap CI lower bound >= 0.5 (a point estimate that merely grazes 0.5
-    # with a CI straddling it, as here 0.514 [0.355,0.648], is NOT substantial). This is a
+    # with a CI straddling it is NOT substantial). This is a
     # conservative (stricter) reading of the frozen rule, never a re-tune to inflate.
+    mean_pt, mean_lo, mean_hi = mean_excl
     token = B.decision_token(mean_pt) if mean_lo >= 0.5 else (
         "BRIDGE_PARTIAL" if mean_pt >= 0.2 else "BRIDGE_WEAK")
 
@@ -345,7 +384,10 @@ def main() -> int:
     # (point estimates only; the noise draws + scalar tie-breaks are reseeded). This records
     # whether the BRIDGE_* token is stable or sits on the 0.5 boundary. Honest reporting only;
     # the PRE-REGISTERED token is the canonical --seed run above (never re-chosen here).
-    robust = {"seeds": [], "mean_recovery": [], "token": [], "per_axis": []}
+    robust = {
+        "seeds": [], "mean_recovery": [], "ci_lo": [], "ci_hi": [],
+        "token": [], "point_token": [], "per_axis": [],
+    }
     for sd in args.robust_seeds:
         per_sd = [
             {"clip": bp.pool.clip,
@@ -367,16 +409,29 @@ def main() -> int:
             no = _pmean("non_oracle_axis_gated", key)
             orc = _pmean("oracle_axis_gated", key)
             recs_sd[a] = B.headroom_recovery(float(no), float(sf), float(orc))
-        mr = float(np.mean([recs_sd[a] for a in present_axes]))
+        mr_incl = float(np.mean([recs_sd[a] for a in present_axes]))
+        mr, mr_lo, mr_hi = bootstrap_over_videos(
+            per_sd, lambda sample: mean_recovery_for_sample(sample, citable_axes),
+            n_boot=args.n_boot, ci=0.95, seed=sd,
+        )
+        tier_token = B.decision_token(mr) if mr_lo >= 0.5 else (
+            "BRIDGE_PARTIAL" if mr >= 0.2 else "BRIDGE_WEAK"
+        )
         robust["seeds"].append(sd)
         robust["mean_recovery"].append(mr)
-        robust["token"].append(B.decision_token(mr))
+        robust["ci_lo"].append(mr_lo)
+        robust["ci_hi"].append(mr_hi)
+        robust.setdefault("mean_recovery_incl_material", []).append(mr_incl)
+        robust["token"].append(tier_token)
+        robust["point_token"].append(B.decision_token(mr))
         robust["per_axis"].append({a: recs_sd[a] for a in present_axes})
     robust["mean_recovery_min"] = (float(np.min(robust["mean_recovery"]))
                                    if robust["mean_recovery"] else None)
     robust["mean_recovery_max"] = (float(np.max(robust["mean_recovery"]))
                                    if robust["mean_recovery"] else None)
-    robust["token_stable"] = (len(set(robust["token"])) == 1) if robust["token"] else None
+    robust["token_stable"] = (
+        len(set([token] + robust["token"])) == 1 if robust["token"] else None
+    )
     robust["straddles_method_threshold"] = (
         bool(robust["mean_recovery"]
              and (min(robust["mean_recovery"] + [mean_pt]) < 0.5 <= max(robust["mean_recovery"] + [mean_pt])))
@@ -389,7 +444,7 @@ def main() -> int:
         diffrs_tau=diffrs_tau, smc_temp=args.smc_temp, random_prune_frac=args.random_prune_frac,
     )
     # non-oracle NFE/scoring: mean over noise draws of the frozen sim on the noisy pools.
-    no_nfe, no_scoring = 0.0, 0.0
+    no_nfe, no_scoring = 0.0, 0
     for bp in bridge_pools:
         for t in range(args.n_noise):
             npool = B.make_nonoracle_pool(bp, B.rng_for(args.seed, "noise", bp.pool.clip, t))
@@ -401,6 +456,7 @@ def main() -> int:
             no_nfe += r.total_nfe
             no_scoring += r.scoring_calls
     no_nfe /= max(args.n_noise, 1)
+    no_scoring_total = int(no_scoring)
     no_scoring /= max(args.n_noise, 1)
 
     pareto = {}
@@ -418,6 +474,21 @@ def main() -> int:
         **{f"correct_{a}": agg["non_oracle_axis_gated"][f"correct_{a}"] for a in present_axes},
     }
 
+    scoring_ledger = {
+        policy: {
+            "_label": POLICY_LABELS.get(policy, policy),
+            "exact_scoring_calls": int(pareto[policy]["scoring_calls"]),
+            "replays": 1,
+        }
+        for policy in ("oracle_axis_gated",) + SCALAR_POLICIES + ("random_prune",)
+    }
+    scoring_ledger["non_oracle_axis_gated"] = {
+        "_label": "non_oracle_axis_gated",
+        "exact_scoring_calls": no_scoring_total,
+        "replays": args.n_noise,
+        "mean_scoring_calls_per_noise_replay": no_scoring,
+    }
+
     out = {
         "_doc": "B4 oracle->non-oracle bridge (pre-reg §B4). OFFLINE, CPU. Proxy-correctness "
                 "(per-clip majority self-target). Non-oracle scorer = Phase-2 external readout "
@@ -429,9 +500,20 @@ def main() -> int:
         "gates": [{"s": g.s, "axes": list(g.axes)} for g in gates],
         "readout_acc_at_commit": {a: p_acc_by_axis.get(a) for a in present_axes},
         "gate_window_s": {a: gate_window.get(a) for a in present_axes},
-        "policy_means": agg,
+        "policy_means": _labeled_policy_rows(agg),
         "per_axis_recovery": per_axis_recovery,
-        "mean_per_axis_recovery": {"recovery": mean_pt, "ci_lo": mean_lo, "ci_hi": mean_hi},
+        "mean_per_axis_recovery": {
+            "incl_material": {
+                "_label": "diagnostic_including_uncalibrated_material_cosine",
+                "citable": False,
+                "recovery": mean_incl[0], "ci_lo": mean_incl[1], "ci_hi": mean_incl[2],
+            },
+            "excl_material": {
+                "_label": "citable_calibrated_axes_only",
+                "citable": True,
+                "recovery": mean_excl[0], "ci_lo": mean_excl[1], "ci_hi": mean_excl[2],
+            },
+        },
         "overall_final_recovery": {
             "recovery": ov_pt, "ci_lo": ov_lo, "ci_hi": ov_hi,
             "non_oracle": agg["non_oracle_axis_gated"]["final"],
@@ -442,13 +524,58 @@ def main() -> int:
         "decision_rule": ">=0.5 BRIDGE_METHOD; 0.2-0.5 BRIDGE_PARTIAL; <0.2 BRIDGE_WEAK "
                          "(on mean per-axis recovery)",
         "decision_robustness": robust,
-        "pareto": pareto,
+        "scoring_call_ledger": scoring_ledger,
+        "pareto": _labeled_policy_rows(pareto),
     }
 
-    OUT_JSON.parent.mkdir(parents=True, exist_ok=True)
-    OUT_JSON.write_text(json.dumps(out, indent=2, default=float) + "\n", encoding="utf-8")
+    args.out_json.parent.mkdir(parents=True, exist_ok=True)
+    args.out_json.write_text(json.dumps(out, indent=2, default=float) + "\n", encoding="utf-8")
 
-    print(f"wrote {OUT_JSON.relative_to(ROOT)} ({len(bridge_pools)} clips, split={args.split})")
+    if args.out_md is not None:
+        lines = [
+            "# B4 bridge corrected analysis",
+            "",
+            f"Split `{args.split}`; seed {args.seed}; {len(bridge_pools)} clips; "
+            f"{args.n_noise} non-oracle noise replays per clip.",
+            "",
+            "The scalar is computed from the s=0.90 grid feature and is therefore "
+            "better-informed than a true intermediate scalar.",
+            "",
+            "Material readout uses mean embedding cosine as a Bernoulli keep-accuracy and is "
+            "tagged `UNCALIBRATED_COSINE`; the material-excluded mean is the citable value.",
+            "",
+            "| recovery mean | axes | value | 95% CI | citable |",
+            "|---|---|---:|---:|---|",
+            f"| incl_material | {', '.join(present_axes)} | {mean_incl[0]:.6f} | "
+            f"[{mean_incl[1]:.6f}, {mean_incl[2]:.6f}] | no |",
+            f"| excl_material | {', '.join(citable_axes)} | {mean_excl[0]:.6f} | "
+            f"[{mean_excl[1]:.6f}, {mean_excl[2]:.6f}] | **yes** |",
+            "",
+            f"Tier token: `{token}`. Seed sweep tokens: "
+            + ", ".join(f"{s}:{t}" for s, t in zip([args.seed] + robust['seeds'],
+                                                   [token] + robust['token']))
+            + f". Seed-stable: **{len(set([token] + robust['token'])) == 1}**.",
+            "",
+            "## Policy labels",
+            "",
+            "- `diffrs_scalar`: `final_window_scalar_reject`",
+            "- `smc_scalar`: `final_window_scalar_resample`",
+            "",
+            "## Exact scoring-call ledger",
+            "",
+            "| JSON policy key | report label | exact scoring calls | replays | mean per noise replay |",
+            "|---|---|---:|---:|---:|",
+        ]
+        for policy, ledger in scoring_ledger.items():
+            mean_calls = ledger.get("mean_scoring_calls_per_noise_replay")
+            lines.append(
+                f"| {policy} | {ledger['_label']} | {ledger['exact_scoring_calls']} | "
+                f"{ledger['replays']} | {'-' if mean_calls is None else f'{mean_calls:.6f}'} |"
+            )
+        args.out_md.parent.mkdir(parents=True, exist_ok=True)
+        args.out_md.write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+    print(f"wrote {args.out_json} ({len(bridge_pools)} clips, split={args.split})")
     print(f"  readout floor @commit: " + ", ".join(
         f"{a}={p_acc_by_axis.get(a):.3f}" for a in present_axes))
     for a in present_axes:
@@ -457,7 +584,8 @@ def main() -> int:
               f"[{r['ci_lo']:.3f},{r['ci_hi']:.3f}]  "
               f"(non_oracle={r['non_oracle']:.3f} scalar={r['scalar_floor']:.3f} "
               f"oracle={r['oracle']:.3f})")
-    print(f"  MEAN per-axis recovery = {mean_pt:.3f} [{mean_lo:.3f},{mean_hi:.3f}]  -> {token}")
+    print(f"  MEAN per-axis recovery (excl material) = "
+          f"{mean_pt:.3f} [{mean_lo:.3f},{mean_hi:.3f}]  -> {token}")
     print(f"  overall final recovery = {ov_pt:.3f} [{ov_lo:.3f},{ov_hi:.3f}] "
           f"(non_oracle={agg['non_oracle_axis_gated']['final']:.3f} "
           f"scalar={fin_best_val:.3f} oracle={agg['oracle_axis_gated']['final']:.3f})")
