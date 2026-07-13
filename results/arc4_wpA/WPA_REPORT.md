@@ -89,3 +89,17 @@ Files touched: this report only. `scripts/arc4_swap_reanalysis.py` and `swap_col
 - FLAGGED - material collision ambiguity: applying the existing embedding `matches` floor to donor versus source marks 39/40 pairs as collisions and yields a pooled marginal collision floor `0.9878125`, above the approximately `0.78` independent ceiling. Interpreting "cosine tie" as strict donor/source equality instead yields zero observed collisions and a zero continuous-label floor. The requested invocation is not specified.
 - Tests added: none; the task stopped before implementation under the ambiguity rule.
 - Deviations: no decision token or corrected report was emitted. The raw journal-join gate itself passed exactly.
+
+## T6 - Abstain-filtered entropy lens
+
+Status: DONE
+
+Files touched: `scripts/c_two_budgets.py`, `tests/test_c_two_budgets.py`, `results/arc4_wpA/entropy_lens_v2.json`, `results/arc4_wpA/entropy_lens_v2.md`, and this report.
+
+- Default behavior: `--exclude-abstain` is opt-in. A redirected no-flag regeneration is byte-identical to the committed Arc-3 outputs (legacy JSON SHA256 `23cea813...`; Markdown `bc1197e3...`); Arc-3 files were not overwritten.
+- Mean distinct-class series, cfg `1,1.5,2,2.5,3,4.5`: including abstain `[4.8333, 4.1250, 3.7500, 3.7083, 3.7500, 3.6250]` -> excluding abstain `[3.8333, 3.1250, 2.7917, 2.7917, 2.8333, 2.7083]`.
+- Abstain counts out of 384 labels per cfg: `[135, 142, 142, 129, 128, 120]`; rates `[0.3516, 0.3698, 0.3698, 0.3359, 0.3333, 0.3125]`, with Wilson 95% intervals in the outputs.
+- Completeness: the Arc-4 path now refuses any cfg cohort other than exactly 24 cache files.
+- Tests added/updated: synthetic abstain filtering and CLI output, Wilson boundary cases, exact cohort completeness, and `pytest.skip` for unavailable 24-cache cohorts. Targeted result: 12 passed.
+- Determinism: two fresh processes produced byte-identical v2 outputs (JSON SHA256 `f6e4b842a444cd8ede7b37dc782ff4024720a87473f4d5d1910489be41be796c`; Markdown SHA256 `c36ad2ff882893300d87fd1489b6722ae76a7c64f93d09e4825e5156b148d315`).
+- Deviations: none.

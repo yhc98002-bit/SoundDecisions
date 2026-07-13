@@ -38,9 +38,11 @@ read of cached artifacts.
 """
 from __future__ import annotations
 
+import argparse
 import csv
 import glob
 import json
+import math
 import os
 import sys
 from pathlib import Path
@@ -56,10 +58,15 @@ DIAL_GLOB = "results/stage0/gate_a/dial_noise__dial_cfg{C}__*.npz"
 OUT_DIR = ROOT / "results/stage0/arc3"
 OUT_JSON = OUT_DIR / "two_budgets.json"
 OUT_MD = OUT_DIR / "two_budgets.md"
+ARC4_OUT_DIR = ROOT / "results/arc4_wpA"
+ARC4_OUT_JSON = ARC4_OUT_DIR / "entropy_lens_v2.json"
+ARC4_OUT_MD = ARC4_OUT_DIR / "entropy_lens_v2.md"
 
 AXES = ("presence", "timing", "class", "material")
 CFG_LIST = ("1", "1.5", "2", "2.5", "3", "4.5")  # cfg-dial grid for the entropy lens
 SHARE_KEYS = ("conditioning", "seed", "trajectory", "residual")
+ABSTAIN_LABEL = "abstain"
+EXPECTED_DIAL_CLIPS = 24
 
 
 # ---------------------------------------------------------------------------
@@ -139,6 +146,82 @@ def distinct_class_count_by_cfg() -> dict[str, dict[str, float]]:
             "per_clip_max": int(np.max(dcs)),
         }
     return out
+
+
+def binomial_wilson_ci(n_success: int, n_total: int, z: float = 1.959963984540054) \
+        -> tuple[float, float]:
+    """Two-sided Wilson score interval for a binomial proportion (95% by default)."""
+    if n_total <= 0:
+        return float("nan"), float("nan")
+    if not 0 <= n_success <= n_total:
+        raise ValueError("n_success must lie in [0, n_total]")
+    p = n_success / n_total
+    z2 = z * z
+    denom = 1.0 + z2 / n_total
+    center = (p + z2 / (2.0 * n_total)) / denom
+    half_width = z * math.sqrt(
+        p * (1.0 - p) / n_total + z2 / (4.0 * n_total * n_total)
+    ) / denom
+    return max(0.0, center - half_width), min(1.0, center + half_width)
+
+
+def build_entropy_lens_v2() -> dict:
+    """Recompute class diversity both with and without abstentions from dial caches."""
+    by_cfg: dict[str, dict[str, float | int]] = {}
+    for C in CFG_LIST:
+        files = sorted(glob.glob(str(ROOT / DIAL_GLOB.format(C=C))))
+        distinct_including: list[int] = []
+        distinct_excluding: list[int] = []
+        n_abstain = 0
+        n_labels = 0
+        for fp in files:
+            labels = np.asarray(np.load(fp, allow_pickle=True)["labels"]).tolist()
+            distinct_including.append(len(set(labels)))
+            confident = [label for label in labels if label != ABSTAIN_LABEL]
+            distinct_excluding.append(len(set(confident)))
+            n_abstain += sum(label == ABSTAIN_LABEL for label in labels)
+            n_labels += len(labels)
+
+        if len(files) != EXPECTED_DIAL_CLIPS:
+            raise FileNotFoundError(
+                f"cfg={C}: expected {EXPECTED_DIAL_CLIPS} cfg-dial caches, found {len(files)}"
+            )
+        ci_lo, ci_hi = binomial_wilson_ci(n_abstain, n_labels)
+        by_cfg[C] = {
+            "n_clips": len(files),
+            "n_labels": n_labels,
+            "n_abstain": n_abstain,
+            "mean_distinct_including_abstain": float(np.mean(distinct_including)),
+            "mean_distinct_excluding_abstain": float(np.mean(distinct_excluding)),
+            "per_clip_min_including_abstain": int(np.min(distinct_including)),
+            "per_clip_max_including_abstain": int(np.max(distinct_including)),
+            "per_clip_min_excluding_abstain": int(np.min(distinct_excluding)),
+            "per_clip_max_excluding_abstain": int(np.max(distinct_excluding)),
+            "abstain_rate": n_abstain / n_labels,
+            "abstain_ci_lo": ci_lo,
+            "abstain_ci_hi": ci_hi,
+        }
+
+    return {
+        "analysis": "Arc-4 WP-A abstain-filtered entropy lens",
+        "source": DIAL_GLOB,
+        "cfg_grid": list(CFG_LIST),
+        "abstain_label": ABSTAIN_LABEL,
+        "distinct_count_unit": "clip",
+        "abstain_rate_unit": "independent final-class label",
+        "abstain_ci": "two-sided Wilson score interval, 95%",
+        "by_cfg": by_cfg,
+        "series": {
+            "mean_distinct_including_abstain": [
+                by_cfg[C]["mean_distinct_including_abstain"] for C in CFG_LIST
+            ],
+            "mean_distinct_excluding_abstain": [
+                by_cfg[C]["mean_distinct_excluding_abstain"] for C in CFG_LIST
+            ],
+            "abstain_rate": [by_cfg[C]["abstain_rate"] for C in CFG_LIST],
+        },
+        "decision_token": None,
+    }
 
 
 # ---------------------------------------------------------------------------
@@ -364,7 +447,62 @@ def write_md(data: dict) -> None:
     OUT_MD.write_text("\n".join(L) + "\n", encoding="utf-8")
 
 
-def main() -> None:
+def write_entropy_lens_v2_md(data: dict) -> None:
+    """Write the Arc-4 abstain-aware lens without touching the Arc-3 report."""
+    lines = [
+        "# Arc-4 WP-A abstain-filtered entropy lens",
+        "",
+        "Cached analysis only; no generation and no decision token. Distinct-class counts are "
+        "clip-level means. Abstain rates pool the independent final-class labels at each cfg; "
+        "intervals are two-sided Wilson score 95% binomial intervals.",
+        "",
+        "| cfg | clips | labels | distinct incl. abstain | distinct excl. abstain | "
+        "abstain rate (95% CI) |",
+        "|---|---:|---:|---:|---:|---:|",
+    ]
+    for C in CFG_LIST:
+        row = data["by_cfg"][C]
+        lines.append(
+            f"| {C} | {row['n_clips']} | {row['n_labels']} | "
+            f"{row['mean_distinct_including_abstain']:.4f} | "
+            f"{row['mean_distinct_excluding_abstain']:.4f} | "
+            f"{row['abstain_rate']:.4f} "
+            f"[{row['abstain_ci_lo']:.4f}, {row['abstain_ci_hi']:.4f}] |"
+        )
+    lines.extend([
+        "",
+        "The inclusive series is the legacy Arc-3 entropy lens. The filtered series removes "
+        "`abstain` from each clip's distinct-label set; clips with no confident label contribute "
+        "a distinct count of zero.",
+        "",
+        "_Generated by `scripts/c_two_budgets.py --exclude-abstain`._",
+    ])
+    ARC4_OUT_MD.write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+
+def main(argv: list[str] | None = None) -> None:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--exclude-abstain",
+        action="store_true",
+        help="write the Arc-4 entropy lens with inclusive and abstain-filtered class counts",
+    )
+    args = parser.parse_args([] if argv is None else argv)
+
+    def _rel(p: Path) -> str:
+        try:
+            return str(p.relative_to(ROOT))
+        except ValueError:
+            return str(p)
+
+    if args.exclude_abstain:
+        data = build_entropy_lens_v2()
+        ARC4_OUT_DIR.mkdir(parents=True, exist_ok=True)
+        ARC4_OUT_JSON.write_text(json.dumps(data, indent=2), encoding="utf-8")
+        write_entropy_lens_v2_md(data)
+        print(f"wrote {_rel(ARC4_OUT_JSON)} and {_rel(ARC4_OUT_MD)}")
+        return
+
     for p in (BUDGET_CFG1, BUDGET_CFG45, CSWAP_MAP, CSWAP_SUMMARY):
         if not p.exists():
             raise SystemExit(f"c_two_budgets: missing cached input {p}")
@@ -373,11 +511,6 @@ def main() -> None:
     OUT_JSON.write_text(json.dumps(data, indent=2, default=str), encoding="utf-8")
     write_md(data)
 
-    def _rel(p: Path) -> str:
-        try:
-            return str(p.relative_to(ROOT))
-        except ValueError:
-            return str(p)
     print(f"wrote {_rel(OUT_JSON)} and {_rel(OUT_MD)}")
     h = data["headline"]
     print(f"  headline (class): obs cond-share {h['observational_conditioning_share_cfg1']:.3f} "
@@ -390,4 +523,4 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    main(sys.argv[1:])

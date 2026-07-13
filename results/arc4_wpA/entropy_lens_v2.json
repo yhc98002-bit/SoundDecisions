@@ -1,0 +1,129 @@
+{
+  "analysis": "Arc-4 WP-A abstain-filtered entropy lens",
+  "source": "results/stage0/gate_a/dial_noise__dial_cfg{C}__*.npz",
+  "cfg_grid": [
+    "1",
+    "1.5",
+    "2",
+    "2.5",
+    "3",
+    "4.5"
+  ],
+  "abstain_label": "abstain",
+  "distinct_count_unit": "clip",
+  "abstain_rate_unit": "independent final-class label",
+  "abstain_ci": "two-sided Wilson score interval, 95%",
+  "by_cfg": {
+    "1": {
+      "n_clips": 24,
+      "n_labels": 384,
+      "n_abstain": 135,
+      "mean_distinct_including_abstain": 4.833333333333333,
+      "mean_distinct_excluding_abstain": 3.8333333333333335,
+      "per_clip_min_including_abstain": 3,
+      "per_clip_max_including_abstain": 7,
+      "per_clip_min_excluding_abstain": 2,
+      "per_clip_max_excluding_abstain": 6,
+      "abstain_rate": 0.3515625,
+      "abstain_ci_lo": 0.3054921933433993,
+      "abstain_ci_hi": 0.40057326869709853
+    },
+    "1.5": {
+      "n_clips": 24,
+      "n_labels": 384,
+      "n_abstain": 142,
+      "mean_distinct_including_abstain": 4.125,
+      "mean_distinct_excluding_abstain": 3.125,
+      "per_clip_min_including_abstain": 2,
+      "per_clip_max_including_abstain": 6,
+      "per_clip_min_excluding_abstain": 1,
+      "per_clip_max_excluding_abstain": 5,
+      "abstain_rate": 0.3697916666666667,
+      "abstain_ci_lo": 0.32301976562771245,
+      "abstain_ci_hi": 0.4191429203727242
+    },
+    "2": {
+      "n_clips": 24,
+      "n_labels": 384,
+      "n_abstain": 142,
+      "mean_distinct_including_abstain": 3.75,
+      "mean_distinct_excluding_abstain": 2.7916666666666665,
+      "per_clip_min_including_abstain": 1,
+      "per_clip_max_including_abstain": 7,
+      "per_clip_min_excluding_abstain": 0,
+      "per_clip_max_excluding_abstain": 6,
+      "abstain_rate": 0.3697916666666667,
+      "abstain_ci_lo": 0.32301976562771245,
+      "abstain_ci_hi": 0.4191429203727242
+    },
+    "2.5": {
+      "n_clips": 24,
+      "n_labels": 384,
+      "n_abstain": 129,
+      "mean_distinct_including_abstain": 3.7083333333333335,
+      "mean_distinct_excluding_abstain": 2.7916666666666665,
+      "per_clip_min_including_abstain": 1,
+      "per_clip_max_including_abstain": 6,
+      "per_clip_min_excluding_abstain": 1,
+      "per_clip_max_excluding_abstain": 5,
+      "abstain_rate": 0.3359375,
+      "abstain_ci_lo": 0.29052826123696296,
+      "abstain_ci_hi": 0.3845967231235873
+    },
+    "3": {
+      "n_clips": 24,
+      "n_labels": 384,
+      "n_abstain": 128,
+      "mean_distinct_including_abstain": 3.75,
+      "mean_distinct_excluding_abstain": 2.8333333333333335,
+      "per_clip_min_including_abstain": 1,
+      "per_clip_max_including_abstain": 6,
+      "per_clip_min_excluding_abstain": 0,
+      "per_clip_max_excluding_abstain": 5,
+      "abstain_rate": 0.3333333333333333,
+      "abstain_ci_lo": 0.2880397615229823,
+      "abstain_ci_hi": 0.38192847655757667
+    },
+    "4.5": {
+      "n_clips": 24,
+      "n_labels": 384,
+      "n_abstain": 120,
+      "mean_distinct_including_abstain": 3.625,
+      "mean_distinct_excluding_abstain": 2.7083333333333335,
+      "per_clip_min_including_abstain": 1,
+      "per_clip_max_including_abstain": 6,
+      "per_clip_min_excluding_abstain": 1,
+      "per_clip_max_excluding_abstain": 5,
+      "abstain_rate": 0.3125,
+      "abstain_ci_lo": 0.26818988474128835,
+      "abstain_ci_hi": 0.36052438309934043
+    }
+  },
+  "series": {
+    "mean_distinct_including_abstain": [
+      4.833333333333333,
+      4.125,
+      3.75,
+      3.7083333333333335,
+      3.75,
+      3.625
+    ],
+    "mean_distinct_excluding_abstain": [
+      3.8333333333333335,
+      3.125,
+      2.7916666666666665,
+      2.7916666666666665,
+      2.8333333333333335,
+      2.7083333333333335
+    ],
+    "abstain_rate": [
+      0.3515625,
+      0.3697916666666667,
+      0.3697916666666667,
+      0.3359375,
+      0.3333333333333333,
+      0.3125
+    ]
+  },
+  "decision_token": null
+}

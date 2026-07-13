@@ -26,6 +26,17 @@ def data():
     return C.build()
 
 
+def require_dial_caches():
+    import glob
+    missing = []
+    for cfg in C.CFG_LIST:
+        files = glob.glob(str(ROOT / C.DIAL_GLOB.format(C=cfg)))
+        if len(files) != 24:
+            missing.append(f"cfg={cfg}: {len(files)}/24")
+    if missing:
+        pytest.skip("cfg-dial caches unavailable (" + ", ".join(missing) + ")")
+
+
 def test_inputs_exist():
     for p in (C.BUDGET_CFG1, C.BUDGET_CFG45, C.CSWAP_MAP, C.CSWAP_SUMMARY):
         assert p.exists(), f"missing cached input {p}"
@@ -88,6 +99,7 @@ def test_class_is_the_divergence_case(data):
 
 def test_entropy_lens_sequence(data):
     # Distinct-class-count must reproduce the documented 4.83 -> 3.62 collapse.
+    require_dial_caches()
     seq = data["entropy_lens"]["sequence_cfg_1_to_4p5"]
     assert len(seq) == len(C.CFG_LIST)
     assert seq[0] == pytest.approx(4.8333, abs=1e-3)
@@ -100,8 +112,8 @@ def test_entropy_lens_sequence(data):
 def test_distinct_count_recompute_from_npz():
     # Independent recompute of cfg=1.0 distinct-class-count straight from the dial npz cache.
     import glob
+    require_dial_caches()
     files = sorted(glob.glob(str(ROOT / C.DIAL_GLOB.format(C="1"))))
-    assert len(files) == 24, f"expected 24 cfg=1.0 dial clips, got {len(files)}"
     dcs = []
     for f in files:
         lab = np.asarray(np.load(f, allow_pickle=True)["labels"]).tolist()
@@ -122,3 +134,49 @@ def test_outputs_written(tmp_path, monkeypatch):
     assert blob["headline"]["axis"] == "class"
     md = out_md.read_text()
     assert "CONTRAST" in md and "Entropy lens" in md or "entropy lens" in md.lower()
+
+
+def test_abstain_filtered_entropy_lens_on_synthetic_caches(tmp_path, monkeypatch):
+    np.savez(tmp_path / "dial_cfg1__a.npz", labels=np.array([
+        "abstain", "dog", "dog", "cat",
+    ]))
+    np.savez(tmp_path / "dial_cfg1__b.npz", labels=np.array([
+        "abstain", "abstain", "dog", "dog",
+    ]))
+    monkeypatch.setattr(C, "ROOT", tmp_path)
+    monkeypatch.setattr(C, "DIAL_GLOB", "dial_cfg{C}__*.npz")
+    monkeypatch.setattr(C, "CFG_LIST", ("1",))
+    monkeypatch.setattr(C, "EXPECTED_DIAL_CLIPS", 2)
+
+    result = C.build_entropy_lens_v2()
+    row = result["by_cfg"]["1"]
+    assert row["mean_distinct_including_abstain"] == pytest.approx(2.5)
+    assert row["mean_distinct_excluding_abstain"] == pytest.approx(1.5)
+    assert row["n_abstain"] == 3
+    assert row["n_labels"] == 8
+    assert row["abstain_rate"] == pytest.approx(3 / 8)
+    assert row["abstain_ci_lo"] < row["abstain_rate"] < row["abstain_ci_hi"]
+    assert result["decision_token"] is None
+
+    out_dir = tmp_path / "arc4"
+    monkeypatch.setattr(C, "ARC4_OUT_DIR", out_dir)
+    monkeypatch.setattr(C, "ARC4_OUT_JSON", out_dir / "entropy_lens_v2.json")
+    monkeypatch.setattr(C, "ARC4_OUT_MD", out_dir / "entropy_lens_v2.md")
+    C.main(["--exclude-abstain"])
+    assert C.ARC4_OUT_JSON.exists()
+    assert "distinct excl. abstain" in C.ARC4_OUT_MD.read_text()
+
+
+def test_wilson_interval_boundary_cases():
+    lo0, hi0 = C.binomial_wilson_ci(0, 10)
+    lo1, hi1 = C.binomial_wilson_ci(10, 10)
+    assert lo0 == pytest.approx(0.0)
+    assert 0.0 < hi0 < 1.0
+    assert 0.0 < lo1 < 1.0
+    assert hi1 == pytest.approx(1.0)
+
+
+def test_missing_dial_caches_are_skipped(monkeypatch):
+    monkeypatch.setattr(C, "DIAL_GLOB", "definitely_missing_cfg{C}__*.npz")
+    with pytest.raises(pytest.skip.Exception):
+        require_dial_caches()
