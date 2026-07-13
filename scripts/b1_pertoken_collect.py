@@ -30,12 +30,12 @@ pooled features are cached (1:1 with <clip>__p1cfg1_ind<j>), journaled per clip,
 guarded via assert_certified_kernel (cfg=1.0 sqrt_down). Writes under results/stage0/arc3/
 pertoken/ via RunStore.put_npz (budget-accounted; frozen files untouched).
 
-DO NOT run here (GPU). The orchestrator runs it sharded on an17/an29, then a follow-up CPU
+DO NOT run here (GPU). The orchestrator runs it sharded on an12/an29, then a follow-up CPU
 probe consumes results/stage0/arc3/pertoken/*.npz with the same frozen-split / abstain
 convention as b1_class_readability.py.
 
 Run sharded (orchestrator):
-  scripts/run_on_node.sh an17 'for i in 0 1 2 3; do CUDA_VISIBLE_DEVICES=$i \
+  scripts/run_on_node.sh an12 'for i in 0 1 2 3; do CUDA_VISIBLE_DEVICES=$i \
     python scripts/b1_pertoken_collect.py --shard $i/8 > logs/b1pt_$i.log 2>&1 & done; wait'
 Aggregate (CPU): python scripts/b1_pertoken_collect.py --aggregate
 """

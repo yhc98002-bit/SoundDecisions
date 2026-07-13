@@ -34,6 +34,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 from pathlib import Path
 from typing import Any, Callable, Optional
 
@@ -54,6 +55,15 @@ NO_ONSET_LABEL = "none"
 #: pre-registered robustness perturbations (O(0.01-0.03)).
 ABSTAIN = "abstain"
 CLASS_ABSTAIN_DELTA = 0.05
+
+CLAP_MODEL_ID = "laion/clap-htsat-unfused"
+CLAP_REVISION = "8fa0f1c6d0433df6e97c127f64b2a1d6c0dcda8a"
+AST_MODEL_ID = "MIT/ast-finetuned-audioset-10-10-0.4593"
+AST_REVISION = "f826b80d28226b62986cc218e5cec390b1096902"
+_MODEL_REVISIONS = {
+    CLAP_MODEL_ID: CLAP_REVISION,
+    AST_MODEL_ID: AST_REVISION,
+}
 
 
 def load_coarse_map(path: Path) -> dict:
@@ -124,6 +134,36 @@ class RealFoleyMeasurer:
             ckpt = self.weights_dir / "Cnn14_16k_mAP=0.438.pth"
             self._panns = load_cnn14_16k(ckpt, device=self.device)
         return self._panns
+
+    def _pretrained_spec(self, model_id: str) -> tuple[str, dict[str, object]]:
+        """Resolve a pinned, local-only Transformers model source."""
+        if model_id not in _MODEL_REVISIONS:
+            raise KeyError(f"unregistered pretrained model {model_id!r}")
+        source = os.environ.get("FOLEY_CW_WEIGHTS_SOURCE", "modelscope").strip().lower()
+        if source not in {"modelscope", "hf"}:
+            raise ValueError(
+                "FOLEY_CW_WEIGHTS_SOURCE must be 'modelscope' or 'hf'; "
+                f"got {source!r}"
+            )
+        revision = _MODEL_REVISIONS[model_id]
+        if source == "hf":
+            return model_id, {"revision": revision, "local_files_only": True}
+
+        mirror_root = Path(os.environ.get(
+            "FOLEY_CW_MODELSCOPE_ROOT", self.weights_dir.parent / "modelscope"
+        ))
+        candidates = (
+            mirror_root / model_id,
+            mirror_root / model_id.replace("/", "--"),
+        )
+        local_path = next((path for path in candidates if path.is_dir()), None)
+        if local_path is None:
+            raise FileNotFoundError(
+                f"ModelScope mirror for {model_id!r} not found under {mirror_root}. "
+                "Populate the mirror or set FOLEY_CW_WEIGHTS_SOURCE=hf to use the "
+                "pinned local Hugging Face cache. Downloads are disabled."
+            )
+        return str(local_path), {"revision": revision, "local_files_only": True}
 
     def _panns_forward(self, audio: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
         """(probs527, embedding2048); one-entry cache keyed by audio bytes hash."""
@@ -240,8 +280,11 @@ class RealFoleyMeasurer:
             import torchaudio.functional as AF
             if self._clap is None:
                 from transformers import ClapModel, ClapProcessor
-                self._clap = (ClapModel.from_pretrained("laion/clap-htsat-unfused").to(self.device).eval(),
-                              ClapProcessor.from_pretrained("laion/clap-htsat-unfused"))
+                name, load_kwargs = self._pretrained_spec(CLAP_MODEL_ID)
+                self._clap = (
+                    ClapModel.from_pretrained(name, **load_kwargs).to(self.device).eval(),
+                    ClapProcessor.from_pretrained(name, **load_kwargs),
+                )
             model, proc = self._clap
             wav48 = AF.resample(torch.from_numpy(np.asarray(audio, dtype=np.float32)),
                                 self.sr, 48000)
@@ -268,10 +311,12 @@ class RealFoleyMeasurer:
         import torch
         if self._ast is None:
             from transformers import ASTFeatureExtractor, ASTForAudioClassification
-            name = "MIT/ast-finetuned-audioset-10-10-0.4593"
-            model = ASTForAudioClassification.from_pretrained(name).to(self.device).eval()
+            name, load_kwargs = self._pretrained_spec(AST_MODEL_ID)
+            model = ASTForAudioClassification.from_pretrained(
+                name, **load_kwargs
+            ).to(self.device).eval()
             self._assert_ast_label_alignment(model)
-            self._ast = (model, ASTFeatureExtractor.from_pretrained(name))
+            self._ast = (model, ASTFeatureExtractor.from_pretrained(name, **load_kwargs))
         model, fe = self._ast
         inputs = fe(np.asarray(audio, dtype=np.float32), sampling_rate=self.sr,
                     return_tensors="pt")

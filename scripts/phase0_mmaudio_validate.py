@@ -11,7 +11,7 @@ Emits the Phase-0.2 token (OK / FIX_SCORE_CONVERSION / FORK_ALPHA_NO_VALID_OPERA
 and a trajectory-access pass/fail. This is honest feasibility evidence, NOT a map and NOT a
 claim.
 
-Usage (on an17):
+Usage (on an12):
     .venv/bin/python scripts/phase0_mmaudio_validate.py --prompt "footsteps on gravel" \
         --variant small_16k --duration 4 --num-steps 25 --alpha 0.2 --k 8 --out results/
 """

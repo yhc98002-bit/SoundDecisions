@@ -14,8 +14,9 @@ import json
 import numpy as np
 import pytest
 
-from foley_cw.real_measurer import (ABSENT, ABSTAIN, CLASS_ABSTAIN_DELTA, NO_ONSET_LABEL,
-                                    PRESENT, RealFoleyMeasurer, load_coarse_map)
+from foley_cw.real_measurer import (ABSENT, ABSTAIN, AST_MODEL_ID, AST_REVISION,
+                                    CLASS_ABSTAIN_DELTA, CLAP_MODEL_ID, CLAP_REVISION,
+                                    NO_ONSET_LABEL, PRESENT, RealFoleyMeasurer, load_coarse_map)
 from foley_cw.types import AgreementMetric, Axis, AxisKind, AxisTier
 
 SR = 16000
@@ -90,6 +91,39 @@ def test_load_coarse_map_defaults_event_restriction_keys(tmp_path):
 def test_sr_guard(coarse_map):
     with pytest.raises(ValueError):
         RealFoleyMeasurer(sr=32000, coarse_map_path=coarse_map)
+
+
+@pytest.mark.parametrize(
+    ("model_id", "revision"),
+    [(CLAP_MODEL_ID, CLAP_REVISION), (AST_MODEL_ID, AST_REVISION)],
+)
+def test_hf_pretrained_specs_are_pinned_and_local_only(
+    coarse_map, monkeypatch, model_id, revision
+):
+    monkeypatch.setenv("FOLEY_CW_WEIGHTS_SOURCE", "hf")
+    name, kwargs = make_measurer(coarse_map)._pretrained_spec(model_id)
+    assert name == model_id
+    assert kwargs == {"revision": revision, "local_files_only": True}
+
+
+def test_modelscope_source_prefers_local_mirror(coarse_map, tmp_path, monkeypatch):
+    mirror = tmp_path / "modelscope"
+    local_model = mirror / CLAP_MODEL_ID
+    local_model.mkdir(parents=True)
+    monkeypatch.setenv("FOLEY_CW_WEIGHTS_SOURCE", "modelscope")
+    monkeypatch.setenv("FOLEY_CW_MODELSCOPE_ROOT", str(mirror))
+    name, kwargs = make_measurer(coarse_map)._pretrained_spec(CLAP_MODEL_ID)
+    assert name == str(local_model)
+    assert kwargs == {"revision": CLAP_REVISION, "local_files_only": True}
+
+
+def test_modelscope_source_never_falls_through_to_download(
+    coarse_map, tmp_path, monkeypatch
+):
+    monkeypatch.setenv("FOLEY_CW_WEIGHTS_SOURCE", "modelscope")
+    monkeypatch.setenv("FOLEY_CW_MODELSCOPE_ROOT", str(tmp_path / "missing"))
+    with pytest.raises(FileNotFoundError, match="Downloads are disabled"):
+        make_measurer(coarse_map)._pretrained_spec(AST_MODEL_ID)
 
 
 def test_presence_present_and_absent(coarse_map):

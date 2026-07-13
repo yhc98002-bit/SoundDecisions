@@ -9,7 +9,7 @@
 # with the staged venv's python first on PATH.
 #
 # Multi-GPU sharding example (8 workers in one session):
-#   scripts/run_on_node.sh an17 'for i in $(seq 0 7); do \
+#   scripts/run_on_node.sh an12 'for i in $(seq 0 7); do \
 #     CUDA_VISIBLE_DEVICES=$i python scripts/stage_m_micromap.py --shard $i/8 \
 #       > logs/stage_m_shard$i.log 2>&1 & done; wait'
 set -euo pipefail
@@ -27,6 +27,7 @@ mkdir -p /dev/shm/foley_venv
 flock /dev/shm/foley_venv.lock rsync -a --delete .venv/ /dev/shm/foley_venv/
 export PATH="/dev/shm/foley_venv/bin:\$PATH"
 export HF_HOME="$REPO/.hf_cache" HF_HUB_OFFLINE=1 HF_HUB_DISABLE_XET=1
+export PYTHONHASHSEED=0
 export PYTHONUNBUFFERED=1
 echo "=== [\$(hostname)] python=\$(command -v python) ==="
 $CMD

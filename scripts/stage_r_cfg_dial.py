@@ -18,13 +18,13 @@ three F-1 dial quantities:
       --aggregate, NOT re-collected here.
 
 Reuses the phase1_commitment pattern verbatim (InstrumentedBackend optional / MMAudioBackend +
-RealFoleyMeasurer + RunStore + StorageBudget; --shard i/n over an17/an29; rng_for; journaled,
+RealFoleyMeasurer + RunStore + StorageBudget; --shard i/n over an12/an29; rng_for; journaled,
 resumable). cfg>1 forks are diagnostic-only here (the F-1 dial is explicitly instrument-light
 per §8.3) and are NOT cited as a headline kernel — no Gate-A certification is asserted; the
 module/aggregate emit only a SUGGESTED token (the PI holds the binding F-1 call).
 
 Run sharded (GPU; do NOT certify a kernel — diagnostic dial):
-  scripts/run_on_node.sh an17 'for i in 0 1 2 3; do CUDA_VISIBLE_DEVICES=$i \
+  scripts/run_on_node.sh an12 'for i in 0 1 2 3; do CUDA_VISIBLE_DEVICES=$i \
     python scripts/stage_r_cfg_dial.py --shard $i/8 > logs/dial_$i.log 2>&1 & done; wait'
 Aggregate (CPU, numpy-only — fits probes, computes α*, suggests token):
   python scripts/stage_r_cfg_dial.py --aggregate

@@ -27,7 +27,7 @@ Two phases, exactly like scripts/phase1_commitment.py:
 
 Run (orchestrator) — extraction on a GPU node, then aggregate on CPU:
 
-  scripts/run_on_node.sh an17 'for i in 0 1 2 3 4 5 6 7; do CUDA_VISIBLE_DEVICES=$i \
+  scripts/run_on_node.sh an12 'for i in 0 1 2 3 4 5 6 7; do CUDA_VISIBLE_DEVICES=$i \
     .venv/bin/python scripts/b2_cond_audit.py --shard $i/8 > logs/b2_$i.log 2>&1 & done; wait'
   .venv/bin/python scripts/b2_cond_audit.py --aggregate
 

@@ -14,7 +14,7 @@ If no alpha satisfies all three -> FORK_ALPHA_NO_VALID_OPERATING_POINT (manual
 section 1.3 routing: kernel redesign or diagnostic framing; NEVER silently raise
 alpha beyond the grid).
 
-GPU, an17; ~3 clips x grid x (8 forks at s in {0.05, 0.90}) ~= minutes.
+GPU, an12; ~3 clips x grid x (8 forks at s in {0.05, 0.90}) ~= minutes.
 Output: results/stage_m/alpha_pilot.json + chosen alpha printed.
 """
 from __future__ import annotations

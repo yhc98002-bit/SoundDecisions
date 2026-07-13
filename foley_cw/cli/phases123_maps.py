@@ -388,7 +388,7 @@ def main(argv: list[str] | None = None) -> int:
             "[phases123_maps] ERROR: --no-synthetic was requested.\n"
             "Phases 1-2-3 with MMAudio require:\n"
             "  * MMAudio source + weights installed (not vendored in this repo)\n"
-            "  * GPU access (owner=human, on SSH nodes an17/an22 with A800s)\n"
+            "  * GPU access (owner=human, on SSH nodes an12/an22 with A800s)\n"
             "  * Phase-0 feasibility diagnostic completed (GO_MAPS_PHASE token)\n"
             "\n"
             "This is an AUDIT-ONLY build (STOP-B); no GPU or MMAudio results are fabricated.\n"

@@ -6,7 +6,7 @@ conditioning, (c) generate video-conditioned audio through foley_cw's integrator
 VAE/vocoder. Also re-checks the velocity->score SDE crux WITH real video conditioning (cfg=1),
 to confirm the conversion holds in the conditioned regime too.
 
-Run on an17 (HF cache pre-populated, offline):
+Run on an12 (HF cache pre-populated, offline):
     HF_HOME=.../.hf_cache HF_HUB_OFFLINE=1 HF_HUB_DISABLE_XET=1 \
     python scripts/video_conditioning_test.py --video <mp4> --out results/
 """

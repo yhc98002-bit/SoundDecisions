@@ -10,8 +10,8 @@ A_independent = agreement over the 8 finals.
 --aggregate builds results/stage0/screening/a_independent.csv and the per-axis
 video_determined_registry.json (A_independent > 0.9 exclusions, manual 3.1).
 
-Run sharded across an17 + an29 in single SSH sessions:
-  scripts/run_on_node.sh an17 'for i in 0 1 2 3; do CUDA_VISIBLE_DEVICES=$i \
+Run sharded across an12 + an29 in single SSH sessions:
+  scripts/run_on_node.sh an12 'for i in 0 1 2 3; do CUDA_VISIBLE_DEVICES=$i \
     python scripts/stage0_screening.py --shard $i/8 > logs/screen_$i.log 2>&1 & done; wait'
 """
 from __future__ import annotations

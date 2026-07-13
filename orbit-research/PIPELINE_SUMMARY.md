@@ -71,4 +71,4 @@ Human question: Is this code/plan good enough to authorize the Phase-0 GPU feasi
 
 `/diagnostic-to-review "experiment/experiment_pack.json"` — runs `diag_phase0_feasibility`
 first (must emit `GO_MAPS_PHASE`), then `diag_maps_phases123`. Requires explicit GPU approval
-(SSH nodes `an17`/`an22`) and MMAudio wiring.
+(SSH nodes `an12`/`an22`) and MMAudio wiring.

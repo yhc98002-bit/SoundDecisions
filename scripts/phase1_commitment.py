@@ -13,14 +13,14 @@ ratifies it, §1.2/§15.8):
     embedding axes carry A_fork(s_min) for the trajectory-share normalization (aggregate).
 
 Reuses the proven stage0_screening pattern (InstrumentedBackend + RealFoleyMeasurer +
-RunStore + StorageBudget, --shard i/n over an17/an29). The determination budget + Fig-1
+RunStore + StorageBudget, --shard i/n over an12/an29). The determination budget + Fig-1
 taxonomy are built by the --aggregate step via foley_cw.determination.
 
 Self-target axes (det+rob) are mapped; class is mapped as a DIAGNOSTIC axis (kept, not
 gated) per §3.3 — axis selection here is NOT the old combined gate.
 
 Run sharded:
-  scripts/run_on_node.sh an17 'for i in 0 1 2 3; do CUDA_VISIBLE_DEVICES=$i \
+  scripts/run_on_node.sh an12 'for i in 0 1 2 3; do CUDA_VISIBLE_DEVICES=$i \
     python scripts/phase1_commitment.py --shard $i/8 > logs/p1_$i.log 2>&1 & done; wait'
 Aggregate (CPU): python scripts/phase1_commitment.py --aggregate
 """

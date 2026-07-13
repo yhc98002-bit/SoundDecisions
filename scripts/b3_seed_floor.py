@@ -22,7 +22,7 @@ Two modes:
     Per clip it runs N_independent ODE generations (alpha=0), captures each INITIAL s=0
     prior latent (the probe input) + measures the final class (the probe target), and stores
     one `seedfloor_noise__<tag>__<clip>.npz` bundle (noise (N,d_in), labels) the SAME way
-    stage_r_cfg_dial stored its dial bundles. The orchestrator runs this on an17/an29; the
+    stage_r_cfg_dial stored its dial bundles. The orchestrator runs this on an12/an29; the
     --collect-aggregate step then re-uses probe_cfg on the frozen split exactly as the dial
     part does. This script does NOT launch GPU work; the GPU branch only runs when an
     operator invokes `--collect` on a node.
@@ -30,7 +30,7 @@ Two modes:
 Run (CPU dial part, NOW):
   .venv/bin/python scripts/b3_seed_floor.py
 Build the full-pool latents (GPU; orchestrator only — do NOT run from this agent):
-  scripts/run_on_node.sh an17 'for i in 0 1 2 3; do CUDA_VISIBLE_DEVICES=$i \
+  scripts/run_on_node.sh an12 'for i in 0 1 2 3; do CUDA_VISIBLE_DEVICES=$i \
     python scripts/b3_seed_floor.py --collect --shard $i/8 > logs/b3_collect_$i.log 2>&1 & done; wait'
   .venv/bin/python scripts/b3_seed_floor.py --collect-aggregate
 """

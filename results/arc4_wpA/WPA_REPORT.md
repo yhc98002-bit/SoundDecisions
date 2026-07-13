@@ -130,3 +130,17 @@ Files touched: `tests/test_real_measurer.py`, `RELEASE_NOTES.md`, and this repor
 - Optional-dependency matrix records librosa's lazy timing/onset use and soundfile's RunStore/labeling-tool use, including the labeling test's collection-time import.
 - Tests added/updated: dependency guard on the existing timing test. Project `.venv`: `tests/test_real_measurer.py` -> 18 passed; a system-Python check without librosa -> timing test skipped.
 - Deviations: the out-of-scope `tests/test_labeling_tool.py` collection-time soundfile import was documented but not changed.
+
+## T9 - Operations and offline weights
+
+Status: DONE
+
+Files touched: `foley_cw/real_measurer.py`, `tests/test_real_measurer.py`, `scripts/run_on_node.sh`, operational node references in `scripts/*.py`, `foley_cw/cli/*.py`, `experiment/LONG_RANGE_EXPERIMENT_PLAN.md`, and current ORBIT state/context files, plus this report.
+
+- Node references: every current operational `an17` reference -> `an12`; the required grep excluding `.git` and audit-history snapshots returns no matches. Historical result records retain their actual execution-node provenance.
+- Remote wrapper: exports `PYTHONHASHSEED=0` after staging the environment and continues to force the HF hub offline.
+- CLAP: `laion/clap-htsat-unfused` is pinned to local-cache revision `8fa0f1c6d0433df6e97c127f64b2a1d6c0dcda8a` with `local_files_only=True` for both model and processor.
+- AST: `MIT/ast-finetuned-audioset-10-10-0.4593` is pinned to revision `f826b80d28226b62986cc218e5cec390b1096902` with `local_files_only=True` for both classifier and feature extractor.
+- Weight-source switch: `FOLEY_CW_WEIGHTS_SOURCE=modelscope|hf`; default `modelscope` resolves only an existing local mirror under `FOLEY_CW_MODELSCOPE_ROOT` (default `weights/modelscope`), while `hf` resolves the pinned local HF cache. Missing mirrors fail loudly; neither mode may download.
+- Tests added: pinned HF specs, ModelScope local-path preference, and missing-mirror no-download failure. `tests/test_real_measurer.py`: 22 passed. `bash -n scripts/run_on_node.sh` and `py_compile` passed.
+- Deviations: no ModelScope mirror is currently present in this checkout; use of the existing HF cache therefore requires the explicit `FOLEY_CW_WEIGHTS_SOURCE=hf` setting.

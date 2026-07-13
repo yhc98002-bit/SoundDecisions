@@ -15,7 +15,7 @@ evaluator (foley_cw.gate_a) certifies them:
   journal gate_a__<clip>__cfg<g>: {gate_a_labels: {ref, s<s>}, gate_a_s, cfg, schedule}.
 
 Run BOTH cfgs (1.0 = internal-null calibration reference; 4.5 = candidate under test):
-  scripts/run_on_node.sh an17 'for i in 0..7; do CUDA_VISIBLE_DEVICES=$i \
+  scripts/run_on_node.sh an12 'for i in 0..7; do CUDA_VISIBLE_DEVICES=$i \
     python scripts/gate_a_collect.py --shard $i/16 --cfg 1.0 ... & done; wait'
 Forks run under the (cfg, schedule) tuple with --no-require-ratified (candidate collection).
 """

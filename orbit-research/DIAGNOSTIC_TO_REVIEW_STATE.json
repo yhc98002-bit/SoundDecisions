@@ -16,14 +16,14 @@
     {
       "id": "GPU_REQUIRED_NOT_APPROVED",
       "kind": "missing_artifact",
-      "artifact": "compute: GPU node (an17/an22, 8xA800)",
+      "artifact": "compute: GPU node (an12/an22, 8xA800)",
       "message": "Both formal diagnostics are owner=human and require a GPU run with MMAudio + torch + FoleyBench. This is a login node with no GPU/torch/MMAudio. CLAUDE.md forbids GPU jobs without explicit user approval.",
-      "safe_next_command": "Explicit user approval to deploy diag_phase0_feasibility to an17/an22, plus environment setup."
+      "safe_next_command": "Explicit user approval to deploy diag_phase0_feasibility to an12/an22, plus environment setup."
     }
   ],
   "next_action": "human decision: authorize the MMAudio-wiring + GPU Phase-0 path, or defer",
   "next_skill_hint": null,
-  "safe_next_command": "Authorize one of: (a) wire MMAudioBackend (GPU-free, needs MMAudio source) then deploy; (b) approve full GPU run on an17/an22; (c) defer. Then resume: /diagnostic-to-review \"experiment/experiment_pack.json\" -- resume:true",
+  "safe_next_command": "Authorize one of: (a) wire MMAudioBackend (GPU-free, needs MMAudio source) then deploy; (b) approve full GPU run on an12/an22; (c) defer. Then resume: /diagnostic-to-review \"experiment/experiment_pack.json\" -- resume:true",
   "timestamp": "2026-06-09T16:12:03Z",
   "artifact_inventory": [
     "orbit-research/diagnostics/diag_20260609_161203_985ce5eccd17/DIAGNOSTIC_CONTEXT.json"

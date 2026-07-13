@@ -242,7 +242,7 @@ def main(argv: list[str] | None = None) -> int:
             "[phase0_feasibility] ERROR: --no-synthetic was requested.\n"
             "Phase-0 with MMAudio requires:\n"
             "  * MMAudio source + weights installed (not vendored in this repo)\n"
-            "  * GPU access (owner=human, on SSH nodes an17/an22 with A800s)\n"
+            "  * GPU access (owner=human, on SSH nodes an12/an22 with A800s)\n"
             "  * Phase-0.1 trajectory access wired in foley_cw/model_adapter.MMAudioBackend\n"
             "\n"
             "This is an AUDIT-ONLY build (STOP-B); no GPU or MMAudio results are fabricated.\n"

@@ -21,11 +21,11 @@ small clip subset. The CPU --aggregate step flattens journals into follow/retent
 curves + s_cond per axis (foley_cw.condition_swap) and writes cond_swap_map.csv.
 
 Mirrors scripts/phase1_commitment.py (InstrumentedBackend + RealFoleyMeasurer +
-RunStore + StorageBudget, --shard i/n over an17/an29, rng_for, journaled/resumable).
+RunStore + StorageBudget, --shard i/n over an12/an29, rng_for, journaled/resumable).
 Exploratory; outputs NEVER feed decision tokens (§8.1). DO NOT run without approval.
 
 Run sharded (deployed cfg):
-  scripts/run_on_node.sh an17 'for i in 0 1 2 3; do CUDA_VISIBLE_DEVICES=$i \
+  scripts/run_on_node.sh an12 'for i in 0 1 2 3; do CUDA_VISIBLE_DEVICES=$i \
     python scripts/stage_r_cond_swap.py --shard $i/8 > logs/condswap_$i.log 2>&1 & done; wait'
 Aggregate (CPU): python scripts/stage_r_cond_swap.py --aggregate
 """

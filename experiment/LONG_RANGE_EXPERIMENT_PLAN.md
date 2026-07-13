@@ -23,7 +23,7 @@
 **Established (real-model evidence, citable as feasibility only):**
 - Trajectory access on real MMAudio `small_16k`: extract `x_s`, resume integration, compute `x̂0(s)`; `s↔t` mapping audited (identity; `v = x1 − x0`, `t: 0→1`).
 - Velocity→score SDE validated: `α = 0` reproduces the ODE exactly; small-α continuity, fork validity, and nontrivial diversity pass — both unconditionally and **under video conditioning** at `cfg = 1.0`.
-- Offline environment, weights, CLIP/synchformer caches, and `/dev/shm` staging are operational on an17/an29.
+- Offline environment, weights, CLIP/synchformer caches, and `/dev/shm` staging are operational on an12/an29.
 
 **Not established (no scientific claim exists yet):** dataset manifest, event anchors, per-axis measurement reliability, any commitment or readout curve, any policy result.
 
@@ -164,7 +164,7 @@ Source chain: FoleyBench metadata → off-the-shelf visual onset/event detector 
 - Primary α (smallest-valid rule), K = 12; `N_independent = 16` per clip.
 - cfg: full grid at 4.5 and 1.0; coarse grid (4 s-points, K = 8) at 2.5.
 - Secondary α × 2 at 4 s-points, K = 6, `cfg = 4.5` only (the surface).
-- **Compute envelope:** ≈ 40–45k full-generation equivalents total (including Phase-2 reuse); `small_16k` at ~3–4 s/gen ⇒ tens of GPU-hours of pure generation, ×2–3 pipeline overhead — a small number of node-days on an17+an29, trivially parallel by clip.
+- **Compute envelope:** ≈ 40–45k full-generation equivalents total (including Phase-2 reuse); `small_16k` at ~3–4 s/gen ⇒ tens of GPU-hours of pure generation, ×2–3 pipeline overhead — a small number of node-days on an12+an29, trivially parallel by clip.
 
 ### 4.2 Estimation (unchanged math, two amendments)
 - `commit(s, axis) = clip((A_fork − A_independent)/(1 − A_independent), 0, 1)`, **with the per-axis `A_independent > 0.9` exclusion** applied (Section 3.1); aggregate at the axis level, bootstrap by video.
