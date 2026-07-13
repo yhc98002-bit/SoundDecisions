@@ -176,6 +176,7 @@ def test_custom_abstain_delta(coarse_map):
 
 
 def test_timing_onset_bin_and_none(coarse_map):
+    pytest.importorskip("librosa")
     m = make_measurer(coarse_map, probs=[0.9, 0, 0, 0, 0, 0])
     tgt = m.measure(burst(onset_s=1.0), TIMING)
     assert tgt.label == int(1.0 // 0.5)  # bin 2

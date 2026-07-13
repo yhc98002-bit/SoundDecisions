@@ -118,3 +118,15 @@ Files touched: `scripts/arc4_window_robustness.py`, `results/arc4_wpA/window_rob
 - Tests added: none; this is a new diagnostic re-analysis rather than a behavioral fix. The executable includes strict provenance, grid-completeness, duplicate-row, and legacy-reproduction guards; `py_compile` passed.
 - Determinism: two fresh processes produced byte-identical outputs (CSV SHA256 `848d4e2e9f07fb02cfbe3d21aefff58db05584b9d46cfcd319aa50a8878cc6a5`; Markdown SHA256 `ca9bd83f22e515f37a88a34d176561768f7cba91c1d2238c3ad3219c13294293`).
 - Deviations: none.
+
+## T8 - Test and release hygiene
+
+Status: DONE
+
+Files touched: `tests/test_real_measurer.py`, `RELEASE_NOTES.md`, and this report.
+
+- Timing dependency behavior before -> after: missing librosa failed the real-measurer timing path -> that timing test now calls `pytest.importorskip("librosa")` and skips cleanly.
+- Release accounting documents Arc-3's full-checkout `1023 passed` result versus approximately 931 collected tests in the trimmed GitHub copy; it also distinguishes passed, collected, skipped, and collection-error counts.
+- Optional-dependency matrix records librosa's lazy timing/onset use and soundfile's RunStore/labeling-tool use, including the labeling test's collection-time import.
+- Tests added/updated: dependency guard on the existing timing test. Project `.venv`: `tests/test_real_measurer.py` -> 18 passed; a system-Python check without librosa -> timing test skipped.
+- Deviations: the out-of-scope `tests/test_labeling_tool.py` collection-time soundfile import was documented but not changed.
