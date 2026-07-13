@@ -76,3 +76,16 @@ Files touched: `scripts/phase2_readout.py`, `tests/test_phase2_readout_aggregate
 - Tests added: clip bootstrap, majority/margin semantics, optional balanced-accuracy emission, legacy equality guard, and material reporting; targeted result: 5 passed.
 - Determinism: two fresh processes produced byte-identical outputs (CSV SHA256 `1996ab42ec2f6d286c7d760ea90729a9a6af3d504405213b1769eb0fe6e79c7b`; Markdown SHA256 `2b823c1ce932be20ef5b5b56a152862906fe6ad9067784b4b37955014419cbcf`).
 - Deviations: limited to the three explicit flags above; Arc-3 outputs remain untouched.
+
+## T5 - Collision-corrected condition swaps
+
+Status: FLAGGED
+
+Files touched: this report only. `scripts/arc4_swap_reanalysis.py` and `swap_collision_report.{md,json}` were intentionally not created after the semantic stop.
+
+- Validation completed before filtering: all 40 stage-R journals reproduce all 32 committed axis-by-s cells in `cond_swap_map_cswap.csv`; every `n` matches and the maximum absolute error across follow, retention, and neither rates is `0.0` (required `<=1e-9`).
+- Phase-1 ceiling join availability: all 40 donor clips have finite per-donor cfg=4.5 `A_independent` values for every axis; no cohort-mean fallback would be needed.
+- FLAGGED - categorical denominator conflict: on class at `s=0.05`, filtering to donor != source gives 8 follow successes among 17 informative pairs (`0.47058823529411764`). The mandatory AMD-18 text fixes follow-only as `0.40`, which is 8/20 and retains collision pairs in the denominator. Both cannot define the same requested estimand.
+- FLAGGED - material collision ambiguity: applying the existing embedding `matches` floor to donor versus source marks 39/40 pairs as collisions and yields a pooled marginal collision floor `0.9878125`, above the approximately `0.78` independent ceiling. Interpreting "cosine tie" as strict donor/source equality instead yields zero observed collisions and a zero continuous-label floor. The requested invocation is not specified.
+- Tests added: none; the task stopped before implementation under the ambiguity rule.
+- Deviations: no decision token or corrected report was emitted. The raw journal-join gate itself passed exactly.
