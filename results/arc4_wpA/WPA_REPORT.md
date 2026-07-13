@@ -59,3 +59,20 @@ Files touched: `scripts/b4_bridge.py`, `tests/test_b4_bridge_stats.py`, `results
 - Tests added: CRC32 seed pin and synthetic bootstrap comparison against a fixed-floor control; targeted result: 13 passed including the existing bridge tests.
 - Determinism: two fresh seed-0 processes produced byte-identical outputs (JSON SHA256 `ce48f44351c572d4f386ec3ac17acbb684dd94a60b7f3860e2d70c889900e014`; Markdown SHA256 `9d6a2750a27c16206d26c09a007a847da294d4b84f51ff6ad13e42679e2d4095`).
 - Deviations: none.
+
+## T4 - Phase-2 aggregation upgrade
+
+Status: FLAGGED (core v2 aggregation completed; three requested lenses are artifact-limited or acceptance-inconsistent)
+
+Files touched: `scripts/phase2_readout.py`, `tests/test_phase2_readout_aggregate.py`, `results/arc4_wpA/readout_map_p2cfg1_v2.csv`, `results/arc4_wpA/readout_map_p2cfg1_v2.md`, and this report.
+
+- Aggregation before -> after: pooled row means without uncertainty -> per-clip means followed by a 1000-draw clip bootstrap (seed 0), with `metric`, 95% CI, `n_clips`, categorical majority baseline, and margin columns.
+- Legacy reproduction: all 32 `(axis, s)` point values match to tolerance; maximum absolute difference is `2.22e-16` (required `<=1e-9`). Material is labeled `cosine` and is not called accuracy in the Markdown.
+- Timing at `s=0.05`: exact match `0.946250 [0.927469, 0.963750]`; literal mode frequency of the 800 evaluated ODE targets is `753/800 = 0.941250`; margin `0.005000`.
+- `s_read_margin`: class `0.60`; presence and timing never reach `+0.15`; material is not applicable. Legacy absolute-threshold readout remains presence `0.35`, timing `0.05`, class `0.75`, material `0.60`.
+- FLAGGED - acceptance mismatch: the requested timing margin of approximately `0.02-0.05` is inconsistent with the cached target-label mode frequency; the specified majority semantics yield exactly `0.005`. No alternate baseline was substituted.
+- FLAGGED - balanced accuracy: omitted because the Phase-2 journal rows do not carry `gen_id`, as established in T0. Only this column is omitted.
+- FLAGGED - Track P: persisted output contains aggregate best-layer scores and layer IDs but no per-example predictions or clip IDs. A clip bootstrap is not recoverable without retraining and choosing unregistered layer-selection semantics.
+- Tests added: clip bootstrap, majority/margin semantics, optional balanced-accuracy emission, legacy equality guard, and material reporting; targeted result: 5 passed.
+- Determinism: two fresh processes produced byte-identical outputs (CSV SHA256 `1996ab42ec2f6d286c7d760ea90729a9a6af3d504405213b1769eb0fe6e79c7b`; Markdown SHA256 `2b823c1ce932be20ef5b5b56a152862906fe6ad9067784b4b37955014419cbcf`).
+- Deviations: limited to the three explicit flags above; Arc-3 outputs remain untouched.

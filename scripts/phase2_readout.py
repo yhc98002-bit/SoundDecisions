@@ -1,19 +1,19 @@
 #!/usr/bin/env python
-"""Phase 2 — Readout maps (manual §5). External probe on cached x̂0(s) previews.
+"""Phase 2 - readout maps (manual section 5) from cached x0(s) previews.
 
 Does an external probe reading the blurry Tweedie preview x̂0(s) recover the trajectory's
 final self-target, and at what earliest s (s_read)? Subjects = the Phase-1 independents
 (each an ODE trajectory; ODE-target = its own final self-target). The audio-tagger probe
-is the free full-grid rung (RealFoleyMeasurer on the preview wav); qwen-on-preview (the
-primary external probe) is added on a budget-limited subset by --probe qwen.
+is the only implemented probe path (RealFoleyMeasurer on the preview wav).
 
 Per (clip, subject j, s): load previews/<gid>__s{s}.wav, run the probe → predicted label
 (or embedding), compare to the final self-target recorded for that independent. Accuracy
-per (axis, s) bootstrapped by clip; s_read(axis, probe, ode) = min s with acc ≥ θ_read.
+for categorical axes and cosine for material are reduced to per-clip means, then
+bootstrapped by clip. s_read(axis, probe, ode) is reported against both the absolute
+theta_read threshold and a 0.15 margin over the categorical majority baseline.
 
-Sharded like the runner; --aggregate (CPU) builds readout_map.csv + emits READOUT_MAP_DONE.
-Run:  scripts/run_on_node.sh an17 'for i in 0..7; do CUDA_VISIBLE_DEVICES=$i \
-        python scripts/phase2_readout.py --shard $i/16 ... & done; wait'
+Collection is sharded like the Phase-1 runner. --aggregate is CPU-only and writes a v2
+re-analysis without changing the committed Arc-3 files.
 """
 from __future__ import annotations
 
@@ -23,7 +23,7 @@ import json
 import math
 import os
 import sys
-from collections import defaultdict
+from collections import Counter, defaultdict
 from pathlib import Path
 
 import numpy as np
@@ -91,46 +91,266 @@ def run_clip(measurer, axes, store, clip, finals_lab, finals_emb, n_subj, tag, s
     return rows
 
 
-def aggregate(out: Path, clips, tag, theta_read):
+def bootstrap_clip_mean(
+    values_by_clip: dict[str, list[float]], n_boot: int = 1000, seed: int = 0
+) -> tuple[float, float, float, int]:
+    """Mean of per-clip means and a percentile CI from resampled clips."""
+    clip_means = np.asarray(
+        [
+            np.mean([v for v in values_by_clip[clip] if np.isfinite(v)])
+            for clip in sorted(values_by_clip)
+            if any(np.isfinite(v) for v in values_by_clip[clip])
+        ],
+        dtype=float,
+    )
+    if clip_means.size == 0:
+        return float("nan"), float("nan"), float("nan"), 0
+    point = float(np.mean(clip_means))
+    if clip_means.size == 1:
+        return point, point, point, 1
+    rng = np.random.default_rng(seed)
+    indices = rng.integers(0, clip_means.size, size=(n_boot, clip_means.size))
+    boot = np.mean(clip_means[indices], axis=1)
+    lo, hi = np.percentile(boot, [2.5, 97.5])
+    return point, float(lo), float(hi), int(clip_means.size)
+
+
+def majority_frequency(labels: list[str]) -> float:
+    """Frequency of the modal ODE-target label among evaluated rows."""
+    if not labels:
+        return float("nan")
+    counts = Counter(labels)
+    return float(max(counts.values()) / len(labels))
+
+
+def balanced_accuracy_from_correct(labels: list[str], correct: list[float]) -> float:
+    """Mean over true classes of P(correct | true class)."""
+    by_class: dict[str, list[float]] = defaultdict(list)
+    for label, value in zip(labels, correct):
+        if np.isfinite(value):
+            by_class[label].append(float(value))
+    if not by_class:
+        return float("nan")
+    return float(np.mean([np.mean(values) for values in by_class.values()]))
+
+
+def _gid_for_row(row: dict) -> str:
+    """Recover the Phase-1 subject ID used by run_clip for baseline labels."""
+    if row.get("gen_id"):
+        return str(row["gen_id"])
+    return f"{row['clip']}__{SUBJECT_TAG}_ind{int(row['j'])}"
+
+
+def summarize_rows(
+    journal_rows: list[dict],
+    final_labels: dict,
+    n_boot: int = 1000,
+    seed: int = 0,
+) -> tuple[list[dict], bool]:
+    """Aggregate journal rows by cell after reducing repeated subjects within clip."""
+    grouped: dict[tuple, dict[str, list[float]]] = defaultdict(
+        lambda: defaultdict(list)
+    )
+    labels_by_cell: dict[tuple, list[str]] = defaultdict(list)
+    correct_by_cell: dict[tuple, list[float]] = defaultdict(list)
+    all_have_gen_id = bool(journal_rows) and all("gen_id" in row for row in journal_rows)
+
+    for row in journal_rows:
+        axis = row["axis_id"]
+        cell = (axis, row["probe"], row["target"], float(row["s"]))
+        value = float(row["correct"])
+        grouped[cell][str(row["clip"])].append(value)
+        if axis in LABEL_AXES and row["target"] == "ode" and np.isfinite(value):
+            gid = _gid_for_row(row)
+            label = final_labels.get(gid, {}).get(axis)
+            if label is None:
+                raise ValueError(
+                    f"missing ODE-target label for gen_id={gid}, axis={axis}"
+                )
+            labels_by_cell[cell].append(str(label))
+            correct_by_cell[cell].append(value)
+
+    axis_order = {axis: i for i, axis in enumerate(LABEL_AXES + EMB_AXES)}
+    rows = []
+    for cell in sorted(
+        grouped,
+        key=lambda item: (axis_order.get(item[0], len(axis_order)), item[1], item[2], item[3]),
+    ):
+        axis, probe, target, s = cell
+        value, ci_lo, ci_hi, n_clips = bootstrap_clip_mean(
+            grouped[cell], n_boot=n_boot, seed=seed
+        )
+        metric = "cosine" if axis in EMB_AXES else "exact_match"
+        majority = (
+            majority_frequency(labels_by_cell[cell])
+            if metric == "exact_match" and target == "ode"
+            else float("nan")
+        )
+        row = {
+            "axis_id": axis,
+            "probe": probe,
+            "target": target,
+            "s": s,
+            "metric": metric,
+            "accuracy": value,
+            "ci_lo": ci_lo,
+            "ci_hi": ci_hi,
+            "n_clips": n_clips,
+            "majority_baseline": majority,
+            "margin_over_majority": (
+                value - majority
+                if np.isfinite(value) and np.isfinite(majority)
+                else float("nan")
+            ),
+        }
+        if all_have_gen_id:
+            row["balanced_accuracy"] = balanced_accuracy_from_correct(
+                labels_by_cell[cell], correct_by_cell[cell]
+            )
+        rows.append(row)
+    return rows, all_have_gen_id
+
+
+def _legacy_values(path: Path) -> dict[tuple, float]:
+    if not path.exists():
+        raise FileNotFoundError(f"legacy readout map is missing: {path}")
+    return {
+        (row["axis_id"], row["probe"], row["target"], float(row["s"])): float(
+            row["accuracy"]
+        )
+        for row in csv.DictReader(path.open(newline="", encoding="utf-8"))
+    }
+
+
+def _first_crossing(rows: list[dict], field: str, threshold: float) -> dict[tuple, float]:
+    by_key: dict[tuple, list[tuple[float, float]]] = defaultdict(list)
+    for row in rows:
+        by_key[(row["axis_id"], row["probe"], row["target"])].append(
+            (float(row["s"]), float(row[field]))
+        )
+    out = {}
+    for key, values in by_key.items():
+        crossings = [s for s, value in values if np.isfinite(value) and value >= threshold]
+        out[key] = min(crossings) if crossings else float("nan")
+    return out
+
+
+def aggregate(
+    out: Path,
+    clips,
+    tag,
+    theta_read,
+    output_dir: Path = Path("results/arc4_wpA"),
+    legacy_csv: Path | None = None,
+    n_boot: int = 1000,
+    seed: int = 0,
+):
     store = RunStore(out)
-    by = defaultdict(lambda: defaultdict(list))   # (axis,probe,target) -> s -> [correct]
+    journal_rows = []
     missing = []
     for clip in clips:
         unit = f"{tag}__{clip}"
         if not store.is_done(unit):
             missing.append(clip); continue
         for r in store.load_journal(unit).get("rows", []):
-            key = (r["axis_id"], r["probe"], r["target"])
-            by[key][r["s"]].append(r["correct"])
-    p2 = out / "phase1"; p2.mkdir(parents=True, exist_ok=True)
-    rows, sread = [], {}
-    for key, by_s in by.items():
-        ax, probe, target = key
-        for s in PHASE1_S_GRID:
-            vals = [v for v in by_s.get(s, []) if np.isfinite(v)]
-            acc = float(np.mean(vals)) if vals else float("nan")
-            rows.append({"axis_id": ax, "probe": probe, "target": target, "s": s,
-                         "accuracy": acc, "n": len(vals)})
-        crossed = [s for s in PHASE1_S_GRID
-                   if by_s.get(s) and np.isfinite(np.mean([v for v in by_s[s] if np.isfinite(v)]))
-                   and np.mean([v for v in by_s[s] if np.isfinite(v)]) >= theta_read]
-        sread[key] = min(crossed) if crossed else float("nan")
-    with (p2 / f"readout_map_{tag}.csv").open("w", newline="") as f:
-        w = csv.DictWriter(f, fieldnames=["axis_id", "probe", "target", "s", "accuracy", "n"])
+            row = dict(r)
+            row.setdefault("clip", str(clip))
+            if str(row["clip"]) != str(clip):
+                raise ValueError(
+                    f"journal row clip mismatch: unit={unit}, row={row['clip']}"
+                )
+            journal_rows.append(row)
+
+    final_labels, _ = load_final_targets(
+        out / "measurements" / "measurements.jsonl", SUBJECT_TAG
+    )
+    rows, has_gen_id = summarize_rows(
+        journal_rows, final_labels, n_boot=n_boot, seed=seed
+    )
+
+    legacy_path = legacy_csv or (out / "phase1" / f"readout_map_{tag}.csv")
+    legacy = _legacy_values(legacy_path)
+    actual_keys = {
+        (row["axis_id"], row["probe"], row["target"], float(row["s"]))
+        for row in rows
+    }
+    if actual_keys != set(legacy):
+        raise ValueError(
+            f"v2/legacy cell mismatch: missing={sorted(set(legacy) - actual_keys)}, "
+            f"extra={sorted(actual_keys - set(legacy))}"
+        )
+    for row in rows:
+        key = (row["axis_id"], row["probe"], row["target"], float(row["s"]))
+        if not math.isclose(
+            float(row["accuracy"]), legacy[key], rel_tol=0.0, abs_tol=1e-9
+        ):
+            raise ValueError(
+                f"legacy pooled value not reproduced for {key}: "
+                f"v2={row['accuracy']}, legacy={legacy[key]}"
+            )
+
+    output_dir.mkdir(parents=True, exist_ok=True)
+    csv_path = output_dir / f"readout_map_{tag}_v2.csv"
+    fieldnames = [
+        "axis_id", "probe", "target", "s", "metric", "accuracy", "ci_lo", "ci_hi",
+        "n_clips", "majority_baseline", "margin_over_majority",
+    ]
+    if has_gen_id:
+        fieldnames.append("balanced_accuracy")
+    with csv_path.open("w", newline="", encoding="utf-8") as f:
+        w = csv.DictWriter(f, fieldnames=fieldnames)
         w.writeheader(); w.writerows(rows)
+
     complete = not missing
-    L = [f"# Phase-2 Readout Map ({tag}) — s_read external", "",
-         f"θ_read = {theta_read}; ODE-target; audio-tagger probe on x̂0(s) previews. "
-         f"{len(clips)-len(missing)}/{len(clips)} clips.", "",
-         "| axis | probe | s_read_external |", "|---|---|---|"]
-    for key, sr in sorted(sread.items()):
-        L.append(f"| {key[0]} | {key[1]} | {'never' if math.isnan(sr) else sr} |")
-    (p2 / f"readout_report_{tag}.md").write_text("\n".join(L) + "\n")
-    tokens = ["READOUT_MAP_DONE"] if complete else []
-    (p2 / f"tokens_readout_{tag}.json").write_text(json.dumps(
-        {"tokens": tokens, "s_read": {f"{k[0]}/{k[1]}/{k[2]}": v for k, v in sread.items()},
-         "complete": complete, "missing": missing[:10]}, indent=2, default=str))
-    print("\n".join(L)); print(f"[readout] tokens={tokens or '(incomplete)'} missing={len(missing)}")
+    sread_absolute = _first_crossing(rows, "accuracy", theta_read)
+    sread_margin = _first_crossing(rows, "margin_over_majority", 0.15)
+
+    def fmt(value: float) -> str:
+        return "never" if not np.isfinite(value) else f"{value:g}"
+
+    L = [f"# Phase-2 Readout Map v2 ({tag})", "",
+         f"theta_read = {theta_read}; ODE-target; audio-tagger probe on cached x0(s) "
+         f"previews. {len(clips)-len(missing)}/{len(clips)} clips. Values and 95% CIs "
+         f"use per-clip means with a {n_boot}-draw clip bootstrap (seed {seed}).", "",
+         "Categorical values use exact-match accuracy. Material values are mean embedding "
+         "cosines, not accuracies. The categorical majority baseline is the modal "
+         "ODE-target-label frequency among evaluated rows in each cell.", "",
+         "| axis | probe | metric | legacy s_read (absolute theta) | s_read_margin |",
+         "|---|---|---|---:|---:|"]
+    for key in sorted(sread_absolute):
+        metric = "cosine" if key[0] in EMB_AXES else "exact_match"
+        margin_text = "not applicable" if metric == "cosine" else fmt(sread_margin[key])
+        L.append(
+            f"| {key[0]} | {key[1]} | {metric} | {fmt(sread_absolute[key])} | "
+            f"{margin_text} |"
+        )
+
+    early = [row for row in rows if math.isclose(float(row["s"]), 0.05)]
+    L += ["", "## Baseline lens at s=0.05", "",
+          "| axis | metric value | majority baseline | margin |",
+          "|---|---:|---:|---:|"]
+    for row in early:
+        if row["metric"] == "cosine":
+            L.append(f"| {row['axis_id']} | {float(row['accuracy']):.6f} | n/a | n/a |")
+        else:
+            L.append(
+                f"| {row['axis_id']} | {float(row['accuracy']):.6f} | "
+                f"{float(row['majority_baseline']):.6f} | "
+                f"{float(row['margin_over_majority']):.6f} |"
+            )
+
+    if not has_gen_id:
+        L += ["", "**FLAGGED - balanced accuracy:** omitted because the cached Phase-2 "
+              "journal rows do not carry `gen_id`. The required explicit Phase-1-final "
+              "join is therefore unavailable under the specified rule."]
+    L += ["", "**FLAGGED - Track P:** the persisted Track-P JSON contains only aggregate "
+          "best-layer scores and layer IDs, not per-example predictions or clip IDs. "
+          "Applying a clip bootstrap would require retraining and an unregistered choice "
+          "about layer selection inside versus outside resampling."]
+    md_path = output_dir / f"readout_map_{tag}_v2.md"
+    md_path.write_text("\n".join(L) + "\n", encoding="utf-8")
+    print("\n".join(L))
+    print(f"[readout] wrote {csv_path} and {md_path}; missing={len(missing)}")
     return 0 if complete else 1
 
 
@@ -145,12 +365,18 @@ def main() -> int:
     ap.add_argument("--device", default="cuda")
     ap.add_argument("--limit", type=int, default=0)
     ap.add_argument("--aggregate", action="store_true")
+    ap.add_argument("--analysis-out", type=Path, default=Path("results/arc4_wpA"))
+    ap.add_argument("--n-boot", type=int, default=1000)
+    ap.add_argument("--bootstrap-seed", type=int, default=0)
     args = ap.parse_args()
 
     theta_read = json.loads(args.thresholds.read_text())["theta_read"]
     clips = sorted(str(c) for c in json.loads(args.manifest.read_text())["clips"]["single_event"])
     if args.aggregate:
-        return aggregate(args.out, clips, args.tag, theta_read)
+        return aggregate(
+            args.out, clips, args.tag, theta_read, output_dir=args.analysis_out,
+            n_boot=args.n_boot, seed=args.bootstrap_seed,
+        )
 
     import soundfile as sf
     from foley_cw.config import load_config
