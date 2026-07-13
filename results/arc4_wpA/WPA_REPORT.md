@@ -103,3 +103,18 @@ Files touched: `scripts/c_two_budgets.py`, `tests/test_c_two_budgets.py`, `resul
 - Tests added/updated: synthetic abstain filtering and CLI output, Wilson boundary cases, exact cohort completeness, and `pytest.skip` for unavailable 24-cache cohorts. Targeted result: 12 passed.
 - Determinism: two fresh processes produced byte-identical v2 outputs (JSON SHA256 `f6e4b842a444cd8ede7b37dc782ff4024720a87473f4d5d1910489be41be796c`; Markdown SHA256 `c36ad2ff882893300d87fd1489b6722ae76a7c64f93d09e4825e5156b148d315`).
 - Deviations: none.
+
+## T7 - Window-estimator robustness
+
+Status: DONE
+
+Files touched: `scripts/arc4_window_robustness.py`, `results/arc4_wpA/window_robustness.csv`, `results/arc4_wpA/window_robustness.md`, and this report.
+
+- Source: the complete per-clip `commitment_map_p1cfg1.csv` cohort (200 shared clips x 8 s points); the script refuses mixed provenance or incomplete grids and validates theta-0.70 legacy means against `determination_budget_p1cfg1.csv` to `1e-12` before writing.
+- Theta 0.70 timing: crossing `77/200 = 0.385`; legacy mean-of-crossers `0.113636` -> censored median `1.000000`.
+- Theta 0.70 presence: crossing `113/200 = 0.565`; legacy mean `0.214159` -> censored median `0.675000`.
+- Theta 0.70 material: crossing `200/200 = 1.000`; legacy mean `0.638250` -> censored median `0.600000`.
+- Ordering sweep: legacy `timing < presence < material` is stable at every threshold in `{0.60,0.65,0.70,0.75,0.80}`. The censored ordering at theta 0.70 is `material < presence < timing` and is not stable away from 0.70.
+- Tests added: none; this is a new diagnostic re-analysis rather than a behavioral fix. The executable includes strict provenance, grid-completeness, duplicate-row, and legacy-reproduction guards; `py_compile` passed.
+- Determinism: two fresh processes produced byte-identical outputs (CSV SHA256 `848d4e2e9f07fb02cfbe3d21aefff58db05584b9d46cfcd319aa50a8878cc6a5`; Markdown SHA256 `ca9bd83f22e515f37a88a34d176561768f7cba91c1d2238c3ad3219c13294293`).
+- Deviations: none.
