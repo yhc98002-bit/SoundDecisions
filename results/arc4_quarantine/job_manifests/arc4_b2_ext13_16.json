@@ -1,0 +1,32 @@
+{
+  "node": "an12",
+  "session": "arc4_b2_ext13_16",
+  "command": "set -euo pipefail; mkdir -p logs/arc4_gpu/arc4_b2_ext13_16/workers; pids=(); for i in 0 1 2 3; do python scripts/arc4_b2_generate.py --generation-manifest results/arc4_quarantine/b2_extension_seeds13_16/generation_manifest.json --out results/arc4_quarantine/b2_extension_seeds13_16 --clips-root /XYFS02/HDD_POOL/paratera_xy/pxy1289/HaocunYe/Research/SoundDecisions/data/FoleyBench/clips --certified results/stage_m_rerun/certified_kernels.json --shard \"$i/4\" --device \"cuda:$i\" > \"logs/arc4_gpu/arc4_b2_ext13_16/workers/shard${i}.log\" 2>&1 & pids+=(\"$!\"); done; rc=0; for p in \"${pids[@]}\"; do wait \"$p\" || rc=1; done; test \"$rc\" -eq 0",
+  "git_commit": "22d058c797e93c7188fc4d53fe0c70b7dbeef5e6",
+  "protocol_sha256": "b85eeece6f18ff7ce3ab254411d06f97cf2446d393f74eb81ad34048131cc03f",
+  "config_sha256": "c16633ea96e66c9d502f6b9827a8c37f09197e82733fcd0c27aab7506505cb41",
+  "seed": 0,
+  "started_utc": "2026-07-14T18:19:43Z",
+  "placement": {
+    "physical_gpu_ids": [
+      4,
+      5,
+      6,
+      7
+    ],
+    "cuda_visible_devices": "4,5,6,7",
+    "tp_width": 1,
+    "replica_count": 4,
+    "rationale": "small_16k fits TP1; four independent replicas maximize throughput"
+  },
+  "gpu_guard": {
+    "minimum_free_mib": 71680,
+    "query": "4, GPU-cc0f8386-4dc3-6707-194d-b701c36f7a16, NVIDIA A800 80GB PCIe, 81920, 81226, 0\n5, GPU-21c87527-600e-2469-8134-e4160e91fb23, NVIDIA A800 80GB PCIe, 81920, 81226, 0\n6, GPU-cfa6584b-bd6d-85e7-d4a9-bec5c58779f6, NVIDIA A800 80GB PCIe, 81920, 81226, 0\n7, GPU-f76f23aa-b266-8708-68c7-ed24a5f1c14c, NVIDIA A800 80GB PCIe, 81920, 81226, 0"
+  },
+  "weights": {
+    "source": "hf",
+    "offline": true
+  },
+  "log": "/XYFS02/HDD_POOL/paratera_xy/pxy1289/HaocunYe/Research/SoundDecisions-arc4-gpu/logs/arc4_gpu/arc4_b2_ext13_16/session.log",
+  "status": "LAUNCHED"
+}
