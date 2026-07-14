@@ -12,8 +12,8 @@ for categorical axes and cosine for material are reduced to per-clip means, then
 bootstrapped by clip. s_read(axis, probe, ode) is reported against both the absolute
 theta_read threshold and a 0.15 margin over the categorical majority baseline.
 
-Collection is sharded like the Phase-1 runner. --aggregate is CPU-only and writes a v2
-re-analysis without changing the committed Arc-3 files.
+Collection is sharded like the Phase-1 runner. --aggregate is CPU-only and writes a v3
+re-analysis without changing the committed Arc-3 or WP-A files.
 """
 from __future__ import annotations
 
@@ -123,15 +123,69 @@ def majority_frequency(labels: list[str]) -> float:
     return float(max(counts.values()) / len(labels))
 
 
-def balanced_accuracy_from_correct(labels: list[str], correct: list[float]) -> float:
-    """Mean over true classes of P(correct | true class)."""
+def balanced_accuracy_from_correct(
+    labels: list[str],
+    correct: list[float],
+    classes: tuple[str, ...] | None = None,
+) -> float:
+    """Mean recall over a fixed true-class universe.
+
+    A score is undefined when any registered class is absent. This prevents
+    bootstrap draws from silently changing the balanced-accuracy estimand.
+    """
     by_class: dict[str, list[float]] = defaultdict(list)
     for label, value in zip(labels, correct):
         if np.isfinite(value):
             by_class[label].append(float(value))
-    if not by_class:
+    class_universe = classes if classes is not None else tuple(sorted(by_class))
+    if not class_universe or any(not by_class.get(label) for label in class_universe):
         return float("nan")
-    return float(np.mean([np.mean(values) for values in by_class.values()]))
+    return float(np.mean([np.mean(by_class[label]) for label in class_universe]))
+
+
+def bootstrap_balanced_accuracy(
+    rows_by_clip: dict[str, list[tuple[str, float]]],
+    n_boot: int = 1000,
+    seed: int = 0,
+) -> tuple[float, float, float]:
+    """Balanced accuracy with clips, not individual generations, as resampling units."""
+    clips = sorted(rows_by_clip)
+    if not clips:
+        return float("nan"), float("nan"), float("nan")
+
+    class_universe = tuple(
+        sorted({label for pairs in rows_by_clip.values() for label, _ in pairs})
+    )
+
+    def score(selected: list[str]) -> float:
+        pairs = [pair for clip in selected for pair in rows_by_clip[clip]]
+        return balanced_accuracy_from_correct(
+            [label for label, _ in pairs],
+            [value for _, value in pairs],
+            classes=class_universe,
+        )
+
+    point = score(clips)
+    if len(clips) == 1:
+        return point, point, point
+    rng = np.random.default_rng(seed)
+    draws: list[float] = []
+    attempts = 0
+    max_attempts = max(n_boot * 100, n_boot)
+    while len(draws) < n_boot and attempts < max_attempts:
+        indices = rng.integers(0, len(clips), size=len(clips))
+        value = score([clips[int(index)] for index in indices])
+        attempts += 1
+        if np.isfinite(value):
+            draws.append(value)
+    if len(draws) != n_boot:
+        raise ValueError(
+            "balanced-accuracy clip bootstrap could not retain every true class: "
+            f"{len(draws)}/{n_boot} valid draws after {attempts} attempts"
+        )
+    finite = np.asarray(draws, dtype=float)
+    lo, hi = np.percentile(finite, [2.5, 97.5])
+    return point, float(lo), float(hi)
 
 
 def _gid_for_row(row: dict) -> str:
@@ -152,8 +206,9 @@ def summarize_rows(
         lambda: defaultdict(list)
     )
     labels_by_cell: dict[tuple, list[str]] = defaultdict(list)
-    correct_by_cell: dict[tuple, list[float]] = defaultdict(list)
-    all_have_gen_id = bool(journal_rows) and all("gen_id" in row for row in journal_rows)
+    balanced_by_cell: dict[tuple, dict[str, list[tuple[str, float]]]] = defaultdict(
+        lambda: defaultdict(list)
+    )
 
     for row in journal_rows:
         axis = row["axis_id"]
@@ -168,7 +223,7 @@ def summarize_rows(
                     f"missing ODE-target label for gen_id={gid}, axis={axis}"
                 )
             labels_by_cell[cell].append(str(label))
-            correct_by_cell[cell].append(value)
+            balanced_by_cell[cell][str(row["clip"])].append((str(label), value))
 
     axis_order = {axis: i for i, axis in enumerate(LABEL_AXES + EMB_AXES)}
     rows = []
@@ -203,12 +258,17 @@ def summarize_rows(
                 else float("nan")
             ),
         }
-        if all_have_gen_id:
-            row["balanced_accuracy"] = balanced_accuracy_from_correct(
-                labels_by_cell[cell], correct_by_cell[cell]
+        if metric == "exact_match" and target == "ode":
+            balanced, bal_lo, bal_hi = bootstrap_balanced_accuracy(
+                balanced_by_cell[cell], n_boot=n_boot, seed=seed
             )
+        else:
+            balanced = bal_lo = bal_hi = float("nan")
+        row["balanced_accuracy"] = balanced
+        row["bal_ci_lo"] = bal_lo
+        row["bal_ci_hi"] = bal_hi
         rows.append(row)
-    return rows, all_have_gen_id
+    return rows, bool(rows)
 
 
 def _legacy_values(path: Path) -> dict[tuple, float]:
@@ -240,10 +300,11 @@ def aggregate(
     clips,
     tag,
     theta_read,
-    output_dir: Path = Path("results/arc4_wpA"),
+    output_dir: Path = Path("results/arc4_wpA2"),
     legacy_csv: Path | None = None,
     n_boot: int = 1000,
     seed: int = 0,
+    artifact_stem: str = "readout_map_v3",
 ):
     store = RunStore(out)
     journal_rows = []
@@ -264,7 +325,7 @@ def aggregate(
     final_labels, _ = load_final_targets(
         out / "measurements" / "measurements.jsonl", SUBJECT_TAG
     )
-    rows, has_gen_id = summarize_rows(
+    rows, _ = summarize_rows(
         journal_rows, final_labels, n_boot=n_boot, seed=seed
     )
 
@@ -276,7 +337,7 @@ def aggregate(
     }
     if actual_keys != set(legacy):
         raise ValueError(
-            f"v2/legacy cell mismatch: missing={sorted(set(legacy) - actual_keys)}, "
+            f"v3/legacy cell mismatch: missing={sorted(set(legacy) - actual_keys)}, "
             f"extra={sorted(actual_keys - set(legacy))}"
         )
     for row in rows:
@@ -286,17 +347,16 @@ def aggregate(
         ):
             raise ValueError(
                 f"legacy pooled value not reproduced for {key}: "
-                f"v2={row['accuracy']}, legacy={legacy[key]}"
+                f"v3={row['accuracy']}, legacy={legacy[key]}"
             )
 
     output_dir.mkdir(parents=True, exist_ok=True)
-    csv_path = output_dir / f"readout_map_{tag}_v2.csv"
+    csv_path = output_dir / f"{artifact_stem}.csv"
     fieldnames = [
         "axis_id", "probe", "target", "s", "metric", "accuracy", "ci_lo", "ci_hi",
-        "n_clips", "majority_baseline", "margin_over_majority",
+        "n_clips", "majority_baseline", "margin_over_majority", "balanced_accuracy",
+        "bal_ci_lo", "bal_ci_hi",
     ]
-    if has_gen_id:
-        fieldnames.append("balanced_accuracy")
     with csv_path.open("w", newline="", encoding="utf-8") as f:
         w = csv.DictWriter(f, fieldnames=fieldnames)
         w.writeheader(); w.writerows(rows)
@@ -308,13 +368,15 @@ def aggregate(
     def fmt(value: float) -> str:
         return "never" if not np.isfinite(value) else f"{value:g}"
 
-    L = [f"# Phase-2 Readout Map v2 ({tag})", "",
+    L = [f"# Phase-2 Readout Map v3 ({tag})", "",
          f"theta_read = {theta_read}; ODE-target; audio-tagger probe on cached x0(s) "
          f"previews. {len(clips)-len(missing)}/{len(clips)} clips. Values and 95% CIs "
          f"use per-clip means with a {n_boot}-draw clip bootstrap (seed {seed}).", "",
          "Categorical values use exact-match accuracy. Material values are mean embedding "
          "cosines, not accuracies. The categorical majority baseline is the modal "
-         "ODE-target-label frequency among evaluated rows in each cell.", "",
+         "ODE-target-label frequency among evaluated rows in each cell. Balanced accuracy "
+         "joins labels through the deterministic Phase-1 subject ID and is bootstrapped by "
+         "clip; any missing join is a hard error.", "",
          "| axis | probe | metric | legacy s_read (absolute theta) | s_read_margin |",
          "|---|---|---|---:|---:|"]
     for key in sorted(sread_absolute):
@@ -339,15 +401,11 @@ def aggregate(
                 f"{float(row['margin_over_majority']):.6f} |"
             )
 
-    if not has_gen_id:
-        L += ["", "**FLAGGED - balanced accuracy:** omitted because the cached Phase-2 "
-              "journal rows do not carry `gen_id`. The required explicit Phase-1-final "
-              "join is therefore unavailable under the specified rule."]
     L += ["", "**FLAGGED - Track P:** the persisted Track-P JSON contains only aggregate "
           "best-layer scores and layer IDs, not per-example predictions or clip IDs. "
           "Applying a clip bootstrap would require retraining and an unregistered choice "
           "about layer selection inside versus outside resampling."]
-    md_path = output_dir / f"readout_map_{tag}_v2.md"
+    md_path = output_dir / f"{artifact_stem}.md"
     md_path.write_text("\n".join(L) + "\n", encoding="utf-8")
     print("\n".join(L))
     print(f"[readout] wrote {csv_path} and {md_path}; missing={len(missing)}")
@@ -365,7 +423,8 @@ def main() -> int:
     ap.add_argument("--device", default="cuda")
     ap.add_argument("--limit", type=int, default=0)
     ap.add_argument("--aggregate", action="store_true")
-    ap.add_argument("--analysis-out", type=Path, default=Path("results/arc4_wpA"))
+    ap.add_argument("--analysis-out", type=Path, default=Path("results/arc4_wpA2"))
+    ap.add_argument("--artifact-stem", default="readout_map_v3")
     ap.add_argument("--n-boot", type=int, default=1000)
     ap.add_argument("--bootstrap-seed", type=int, default=0)
     args = ap.parse_args()
@@ -375,7 +434,7 @@ def main() -> int:
     if args.aggregate:
         return aggregate(
             args.out, clips, args.tag, theta_read, output_dir=args.analysis_out,
-            n_boot=args.n_boot, seed=args.bootstrap_seed,
+            n_boot=args.n_boot, seed=args.bootstrap_seed, artifact_stem=args.artifact_stem,
         )
 
     import soundfile as sf
