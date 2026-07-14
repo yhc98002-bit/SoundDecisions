@@ -20,6 +20,7 @@ B2_S_GRID = (0.05, 0.15, 0.25, 0.35, 0.45, 0.60, 0.75, 0.90)
 B2_BASE_SEEDS = (0, 1, 2, 3, 4)
 B2_EXTENSION_BASE_SEEDS = (5, 6, 7, 8)
 B2_BACKFILL_BASE_SEEDS = (9, 10, 11, 12)
+B2_SECOND_BACKFILL_BASE_SEEDS = (13, 14, 15, 16)
 B2_CFG = 4.5
 B2_SCHEDULE = "sqrt_down"
 B2_ALPHA = 0.8
@@ -171,6 +172,7 @@ def validate_b2_generation_manifest(manifest: dict) -> None:
         B2_BASE_SEEDS,
         B2_EXTENSION_BASE_SEEDS,
         B2_BACKFILL_BASE_SEEDS,
+        B2_SECOND_BACKFILL_BASE_SEEDS,
     ):
         raise ValueError("B2 manifest has an unregistered base-seed series")
     if tuple(float(s) for s in manifest.get("s_grid", [])) != B2_S_GRID:

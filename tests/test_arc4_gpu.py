@@ -9,6 +9,7 @@ from foley_cw.arc4_gpu import (
     B2_BACKFILL_BASE_SEEDS,
     B2_BASE_SEEDS,
     B2_EXTENSION_BASE_SEEDS,
+    B2_SECOND_BACKFILL_BASE_SEEDS,
     B2_S_GRID,
     B6_S_GRID,
     atomic_json_create,
@@ -98,6 +99,9 @@ def test_b2_generation_manifest_is_deterministic_and_pins_cardinality():
     backfill = dict(extension)
     backfill["base_seeds"] = list(B2_BACKFILL_BASE_SEEDS)
     validate_b2_generation_manifest(backfill)
+    second_backfill = dict(extension)
+    second_backfill["base_seeds"] = list(B2_SECOND_BACKFILL_BASE_SEEDS)
+    validate_b2_generation_manifest(second_backfill)
     manifest["k_forks"] = 11
     with pytest.raises(ValueError, match="k_forks"):
         validate_b2_generation_manifest(manifest)
