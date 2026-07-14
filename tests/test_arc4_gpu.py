@@ -7,6 +7,7 @@ import pytest
 
 from foley_cw.arc4_gpu import (
     B2_BASE_SEEDS,
+    B2_EXTENSION_BASE_SEEDS,
     B2_S_GRID,
     B6_S_GRID,
     atomic_json_create,
@@ -84,6 +85,15 @@ def test_b2_generation_manifest_is_deterministic_and_pins_cardinality():
         },
     }
     validate_b2_generation_manifest(manifest)
+    extension = dict(manifest)
+    extension["base_seeds"] = list(B2_EXTENSION_BASE_SEEDS)
+    extension["expected_artifacts"] = {
+        "base_units": 192,
+        "base_wavs": 192,
+        "fork_cells": 1536,
+        "fork_wavs": 18432,
+    }
+    validate_b2_generation_manifest(extension)
     manifest["k_forks"] = 11
     with pytest.raises(ValueError, match="k_forks"):
         validate_b2_generation_manifest(manifest)

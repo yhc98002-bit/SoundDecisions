@@ -18,6 +18,7 @@ import numpy as np
 ABSTAIN = "abstain"
 B2_S_GRID = (0.05, 0.15, 0.25, 0.35, 0.45, 0.60, 0.75, 0.90)
 B2_BASE_SEEDS = (0, 1, 2, 3, 4)
+B2_EXTENSION_BASE_SEEDS = (5, 6, 7, 8)
 B2_CFG = 4.5
 B2_SCHEDULE = "sqrt_down"
 B2_ALPHA = 0.8
@@ -164,8 +165,9 @@ def validate_b2_generation_manifest(manifest: dict) -> None:
     for key, value in expected.items():
         if manifest.get(key) != value:
             raise ValueError(f"B2 manifest {key}={manifest.get(key)!r}; expected {value!r}")
-    if tuple(int(seed) for seed in manifest.get("base_seeds", [])) != B2_BASE_SEEDS:
-        raise ValueError("B2 manifest has the wrong base seeds")
+    base_seeds = tuple(int(seed) for seed in manifest.get("base_seeds", []))
+    if base_seeds not in (B2_BASE_SEEDS, B2_EXTENSION_BASE_SEEDS):
+        raise ValueError("B2 manifest has an unregistered base-seed series")
     if tuple(float(s) for s in manifest.get("s_grid", [])) != B2_S_GRID:
         raise ValueError("B2 manifest has the wrong s-grid")
     clips = [str(clip) for clip in manifest.get("clips", [])]
@@ -173,10 +175,10 @@ def validate_b2_generation_manifest(manifest: dict) -> None:
         raise ValueError("B2 manifest must contain 48 unique clips")
     counts = manifest.get("expected_artifacts", {})
     if counts != {
-        "base_units": B2_N_CLIPS * len(B2_BASE_SEEDS),
-        "base_wavs": B2_N_CLIPS * len(B2_BASE_SEEDS),
-        "fork_cells": B2_N_CLIPS * len(B2_BASE_SEEDS) * len(B2_S_GRID),
-        "fork_wavs": B2_N_CLIPS * len(B2_BASE_SEEDS) * len(B2_S_GRID) * B2_K_FORKS,
+        "base_units": B2_N_CLIPS * len(base_seeds),
+        "base_wavs": B2_N_CLIPS * len(base_seeds),
+        "fork_cells": B2_N_CLIPS * len(base_seeds) * len(B2_S_GRID),
+        "fork_wavs": B2_N_CLIPS * len(base_seeds) * len(B2_S_GRID) * B2_K_FORKS,
     }:
         raise ValueError("B2 manifest artifact cardinalities are inconsistent")
 

@@ -26,7 +26,6 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from foley_cw import score_sde as K  # noqa: E402
 from foley_cw.arc4_gpu import (  # noqa: E402
-    B2_BASE_SEEDS,
     B2_S_GRID,
     atomic_json_create,
     atomic_wav_create,
@@ -198,6 +197,7 @@ def main() -> int:
         raise ValueError("B2 raw outputs must live under results/arc4_quarantine/")
     manifest = json.loads(args.generation_manifest.read_text())
     validate_b2_generation_manifest(manifest)
+    base_seeds = tuple(int(seed) for seed in manifest["base_seeds"])
     manifest_sha = _read_frozen_hash(args.generation_manifest)
     cert = assert_certified_kernel(
         float(manifest["cfg"]),
@@ -223,7 +223,7 @@ def main() -> int:
 
     todo_units = []
     for clip in assigned_clips:
-        for base_seed in B2_BASE_SEEDS:
+        for base_seed in base_seeds:
             if not _validate_unit(
                 args.out, manifest, manifest_sha, clip, base_seed
             ):
@@ -231,7 +231,7 @@ def main() -> int:
     print(
         f"[b2] shard={args.shard} clips={len(assigned_clips)} "
         f"todo_units={len(todo_units)} expected_fork_wavs="
-        f"{len(assigned_clips) * len(B2_BASE_SEEDS) * len(B2_S_GRID) * manifest['k_forks']}",
+        f"{len(assigned_clips) * len(base_seeds) * len(B2_S_GRID) * manifest['k_forks']}",
         flush=True,
     )
     if not todo_units:
