@@ -53,9 +53,14 @@ from .model_adapter import FlowModelBackend
 from .time_map import IdentitySToT
 
 # Make the vendored MMAudio importable without requiring an editable install.
-_MMAUDIO_DIR = os.path.join(
-    os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "third_party", "MMAudio"
-)
+_MMAUDIO_DIR = os.path.abspath(os.environ.get(
+    "FOLEY_CW_MMAUDIO_ROOT",
+    os.path.join(
+        os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+        "third_party",
+        "MMAudio",
+    ),
+))
 if os.path.isdir(_MMAUDIO_DIR) and _MMAUDIO_DIR not in sys.path:
     sys.path.insert(0, _MMAUDIO_DIR)
 

@@ -1,0 +1,2333 @@
+{
+  "_doc": "Arc-4 B6 frozen generation manifest. Design metadata only; no swap outputs.",
+  "balance_rule": "greedy balance of source-class marginal, donor-class marginal, class-pair cell, and clip reuse; SHA256(seed,cfg,source,donor) deterministic tie-break",
+  "cfgs": [
+    1.0,
+    4.5
+  ],
+  "eligible_clips_by_cfg": {
+    "1": 200,
+    "4.5": 199
+  },
+  "label_rule": "per-clip lexicographic-tiebroken majority of non-abstain class labels over all 16 cached cfg-specific Phase-1 independents; clips with incomplete rows or no confident vote are excluded",
+  "measurements_path": "/XYFS02/HDD_POOL/paratera_xy/pxy1289/HaocunYe/Research/SoundDecisions/results/stage0/measurements/measurements.jsonl",
+  "n_pairs_per_cfg": 128,
+  "pair_order": "ordered source/donor",
+  "pairs": [
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "1517",
+      "donor_cached_label": "animals",
+      "pair_id": "cfg1_pair000",
+      "source": "3768",
+      "source_cached_label": "vehicles"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "2457",
+      "donor_cached_label": "other",
+      "pair_id": "cfg1_pair001",
+      "source": "3985",
+      "source_cached_label": "electronics_ui"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "3395",
+      "donor_cached_label": "vehicles",
+      "pair_id": "cfg1_pair002",
+      "source": "2177",
+      "source_cached_label": "impact_friction"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "4063",
+      "donor_cached_label": "machines_motors",
+      "pair_id": "cfg1_pair003",
+      "source": "1421",
+      "source_cached_label": "other"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "1514",
+      "donor_cached_label": "tools_hand",
+      "pair_id": "cfg1_pair004",
+      "source": "4077",
+      "source_cached_label": "doors_furniture"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "3460",
+      "donor_cached_label": "guns_explosions",
+      "pair_id": "cfg1_pair005",
+      "source": "859",
+      "source_cached_label": "animals"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "1812",
+      "donor_cached_label": "electronics_ui",
+      "pair_id": "cfg1_pair006",
+      "source": "2796",
+      "source_cached_label": "guns_explosions"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "1410",
+      "donor_cached_label": "impact_friction",
+      "pair_id": "cfg1_pair007",
+      "source": "2803",
+      "source_cached_label": "water_liquid"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "4855",
+      "donor_cached_label": "doors_furniture",
+      "pair_id": "cfg1_pair008",
+      "source": "338",
+      "source_cached_label": "food_cooking"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "2032",
+      "donor_cached_label": "food_cooking",
+      "pair_id": "cfg1_pair009",
+      "source": "4063",
+      "source_cached_label": "machines_motors"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "4881",
+      "donor_cached_label": "water_liquid",
+      "pair_id": "cfg1_pair010",
+      "source": "1514",
+      "source_cached_label": "tools_hand"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "1186",
+      "donor_cached_label": "guns_explosions",
+      "pair_id": "cfg1_pair011",
+      "source": "4996",
+      "source_cached_label": "vehicles"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "3637",
+      "donor_cached_label": "other",
+      "pair_id": "cfg1_pair012",
+      "source": "3657",
+      "source_cached_label": "doors_furniture"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "2491",
+      "donor_cached_label": "vehicles",
+      "pair_id": "cfg1_pair013",
+      "source": "388",
+      "source_cached_label": "animals"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "2249",
+      "donor_cached_label": "doors_furniture",
+      "pair_id": "cfg1_pair014",
+      "source": "4876",
+      "source_cached_label": "other"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "4268",
+      "donor_cached_label": "animals",
+      "pair_id": "cfg1_pair015",
+      "source": "2311",
+      "source_cached_label": "impact_friction"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "43",
+      "donor_cached_label": "impact_friction",
+      "pair_id": "cfg1_pair016",
+      "source": "116",
+      "source_cached_label": "electronics_ui"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "2174",
+      "donor_cached_label": "electronics_ui",
+      "pair_id": "cfg1_pair017",
+      "source": "2061",
+      "source_cached_label": "water_liquid"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "338",
+      "donor_cached_label": "food_cooking",
+      "pair_id": "cfg1_pair018",
+      "source": "4000",
+      "source_cached_label": "guns_explosions"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "2803",
+      "donor_cached_label": "water_liquid",
+      "pair_id": "cfg1_pair019",
+      "source": "2032",
+      "source_cached_label": "food_cooking"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "1514",
+      "donor_cached_label": "tools_hand",
+      "pair_id": "cfg1_pair020",
+      "source": "4063",
+      "source_cached_label": "machines_motors"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "4063",
+      "donor_cached_label": "machines_motors",
+      "pair_id": "cfg1_pair021",
+      "source": "1514",
+      "source_cached_label": "tools_hand"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "249",
+      "donor_cached_label": "electronics_ui",
+      "pair_id": "cfg1_pair022",
+      "source": "2583",
+      "source_cached_label": "vehicles"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "1278",
+      "donor_cached_label": "vehicles",
+      "pair_id": "cfg1_pair023",
+      "source": "1131",
+      "source_cached_label": "doors_furniture"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "3112",
+      "donor_cached_label": "other",
+      "pair_id": "cfg1_pair024",
+      "source": "4411",
+      "source_cached_label": "animals"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "2372",
+      "donor_cached_label": "impact_friction",
+      "pair_id": "cfg1_pair025",
+      "source": "849",
+      "source_cached_label": "other"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "3994",
+      "donor_cached_label": "doors_furniture",
+      "pair_id": "cfg1_pair026",
+      "source": "2646",
+      "source_cached_label": "impact_friction"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "1386",
+      "donor_cached_label": "animals",
+      "pair_id": "cfg1_pair027",
+      "source": "2603",
+      "source_cached_label": "electronics_ui"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "2061",
+      "donor_cached_label": "water_liquid",
+      "pair_id": "cfg1_pair028",
+      "source": "214",
+      "source_cached_label": "guns_explosions"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "2881",
+      "donor_cached_label": "guns_explosions",
+      "pair_id": "cfg1_pair029",
+      "source": "4881",
+      "source_cached_label": "water_liquid"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "1514",
+      "donor_cached_label": "tools_hand",
+      "pair_id": "cfg1_pair030",
+      "source": "2032",
+      "source_cached_label": "food_cooking"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "338",
+      "donor_cached_label": "food_cooking",
+      "pair_id": "cfg1_pair031",
+      "source": "1514",
+      "source_cached_label": "tools_hand"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "547",
+      "donor_cached_label": "vehicles",
+      "pair_id": "cfg1_pair032",
+      "source": "4063",
+      "source_cached_label": "machines_motors"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "4063",
+      "donor_cached_label": "machines_motors",
+      "pair_id": "cfg1_pair033",
+      "source": "3392",
+      "source_cached_label": "electronics_ui"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "4883",
+      "donor_cached_label": "other",
+      "pair_id": "cfg1_pair034",
+      "source": "1048",
+      "source_cached_label": "vehicles"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "1900",
+      "donor_cached_label": "animals",
+      "pair_id": "cfg1_pair035",
+      "source": "3957",
+      "source_cached_label": "doors_furniture"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "1308",
+      "donor_cached_label": "electronics_ui",
+      "pair_id": "cfg1_pair036",
+      "source": "3873",
+      "source_cached_label": "animals"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "662",
+      "donor_cached_label": "guns_explosions",
+      "pair_id": "cfg1_pair037",
+      "source": "195",
+      "source_cached_label": "impact_friction"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "4720",
+      "donor_cached_label": "doors_furniture",
+      "pair_id": "cfg1_pair038",
+      "source": "3460",
+      "source_cached_label": "guns_explosions"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "2803",
+      "donor_cached_label": "water_liquid",
+      "pair_id": "cfg1_pair039",
+      "source": "643",
+      "source_cached_label": "other"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "3114",
+      "donor_cached_label": "impact_friction",
+      "pair_id": "cfg1_pair040",
+      "source": "338",
+      "source_cached_label": "food_cooking"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "2032",
+      "donor_cached_label": "food_cooking",
+      "pair_id": "cfg1_pair041",
+      "source": "2061",
+      "source_cached_label": "water_liquid"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "4398",
+      "donor_cached_label": "other",
+      "pair_id": "cfg1_pair042",
+      "source": "1514",
+      "source_cached_label": "tools_hand"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "437",
+      "donor_cached_label": "doors_furniture",
+      "pair_id": "cfg1_pair043",
+      "source": "4063",
+      "source_cached_label": "machines_motors"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "4063",
+      "donor_cached_label": "machines_motors",
+      "pair_id": "cfg1_pair044",
+      "source": "4283",
+      "source_cached_label": "vehicles"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "1514",
+      "donor_cached_label": "tools_hand",
+      "pair_id": "cfg1_pair045",
+      "source": "34",
+      "source_cached_label": "animals"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "4939",
+      "donor_cached_label": "animals",
+      "pair_id": "cfg1_pair046",
+      "source": "2875",
+      "source_cached_label": "other"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "121",
+      "donor_cached_label": "vehicles",
+      "pair_id": "cfg1_pair047",
+      "source": "1412",
+      "source_cached_label": "electronics_ui"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "1330",
+      "donor_cached_label": "electronics_ui",
+      "pair_id": "cfg1_pair048",
+      "source": "1560",
+      "source_cached_label": "doors_furniture"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "658",
+      "donor_cached_label": "impact_friction",
+      "pair_id": "cfg1_pair049",
+      "source": "1186",
+      "source_cached_label": "guns_explosions"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "4881",
+      "donor_cached_label": "water_liquid",
+      "pair_id": "cfg1_pair050",
+      "source": "1002",
+      "source_cached_label": "impact_friction"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "4063",
+      "donor_cached_label": "machines_motors",
+      "pair_id": "cfg1_pair051",
+      "source": "2803",
+      "source_cached_label": "water_liquid"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "4000",
+      "donor_cached_label": "guns_explosions",
+      "pair_id": "cfg1_pair052",
+      "source": "2032",
+      "source_cached_label": "food_cooking"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "2032",
+      "donor_cached_label": "food_cooking",
+      "pair_id": "cfg1_pair053",
+      "source": "1514",
+      "source_cached_label": "tools_hand"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "2826",
+      "donor_cached_label": "electronics_ui",
+      "pair_id": "cfg1_pair054",
+      "source": "4063",
+      "source_cached_label": "machines_motors"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "1514",
+      "donor_cached_label": "tools_hand",
+      "pair_id": "cfg1_pair055",
+      "source": "282",
+      "source_cached_label": "vehicles"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "2812",
+      "donor_cached_label": "doors_furniture",
+      "pair_id": "cfg1_pair056",
+      "source": "2106",
+      "source_cached_label": "animals"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "2418",
+      "donor_cached_label": "other",
+      "pair_id": "cfg1_pair057",
+      "source": "67",
+      "source_cached_label": "impact_friction"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "1893",
+      "donor_cached_label": "vehicles",
+      "pair_id": "cfg1_pair058",
+      "source": "2661",
+      "source_cached_label": "other"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "1905",
+      "donor_cached_label": "impact_friction",
+      "pair_id": "cfg1_pair059",
+      "source": "2041",
+      "source_cached_label": "doors_furniture"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "3540",
+      "donor_cached_label": "animals",
+      "pair_id": "cfg1_pair060",
+      "source": "2881",
+      "source_cached_label": "guns_explosions"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "2796",
+      "donor_cached_label": "guns_explosions",
+      "pair_id": "cfg1_pair061",
+      "source": "1574",
+      "source_cached_label": "electronics_ui"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "1514",
+      "donor_cached_label": "tools_hand",
+      "pair_id": "cfg1_pair062",
+      "source": "4881",
+      "source_cached_label": "water_liquid"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "4063",
+      "donor_cached_label": "machines_motors",
+      "pair_id": "cfg1_pair063",
+      "source": "338",
+      "source_cached_label": "food_cooking"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "2061",
+      "donor_cached_label": "water_liquid",
+      "pair_id": "cfg1_pair064",
+      "source": "4063",
+      "source_cached_label": "machines_motors"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "452",
+      "donor_cached_label": "animals",
+      "pair_id": "cfg1_pair065",
+      "source": "1514",
+      "source_cached_label": "tools_hand"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "338",
+      "donor_cached_label": "food_cooking",
+      "pair_id": "cfg1_pair066",
+      "source": "1447",
+      "source_cached_label": "doors_furniture"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "1479",
+      "donor_cached_label": "electronics_ui",
+      "pair_id": "cfg1_pair067",
+      "source": "920",
+      "source_cached_label": "other"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "1762",
+      "donor_cached_label": "doors_furniture",
+      "pair_id": "cfg1_pair068",
+      "source": "3780",
+      "source_cached_label": "vehicles"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "2992",
+      "donor_cached_label": "impact_friction",
+      "pair_id": "cfg1_pair069",
+      "source": "3113",
+      "source_cached_label": "animals"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "1196",
+      "donor_cached_label": "vehicles",
+      "pair_id": "cfg1_pair070",
+      "source": "662",
+      "source_cached_label": "guns_explosions"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "2061",
+      "donor_cached_label": "water_liquid",
+      "pair_id": "cfg1_pair071",
+      "source": "691",
+      "source_cached_label": "electronics_ui"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "2032",
+      "donor_cached_label": "food_cooking",
+      "pair_id": "cfg1_pair072",
+      "source": "43",
+      "source_cached_label": "impact_friction"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "1630",
+      "donor_cached_label": "other",
+      "pair_id": "cfg1_pair073",
+      "source": "4881",
+      "source_cached_label": "water_liquid"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "214",
+      "donor_cached_label": "guns_explosions",
+      "pair_id": "cfg1_pair074",
+      "source": "4063",
+      "source_cached_label": "machines_motors"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "1514",
+      "donor_cached_label": "tools_hand",
+      "pair_id": "cfg1_pair075",
+      "source": "338",
+      "source_cached_label": "food_cooking"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "1739",
+      "donor_cached_label": "vehicles",
+      "pair_id": "cfg1_pair076",
+      "source": "1514",
+      "source_cached_label": "tools_hand"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "4063",
+      "donor_cached_label": "machines_motors",
+      "pair_id": "cfg1_pair077",
+      "source": "4870",
+      "source_cached_label": "animals"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "457",
+      "donor_cached_label": "doors_furniture",
+      "pair_id": "cfg1_pair078",
+      "source": "3912",
+      "source_cached_label": "electronics_ui"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "67",
+      "donor_cached_label": "impact_friction",
+      "pair_id": "cfg1_pair079",
+      "source": "1207",
+      "source_cached_label": "vehicles"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "4334",
+      "donor_cached_label": "electronics_ui",
+      "pair_id": "cfg1_pair080",
+      "source": "3114",
+      "source_cached_label": "impact_friction"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "1186",
+      "donor_cached_label": "guns_explosions",
+      "pair_id": "cfg1_pair081",
+      "source": "2689",
+      "source_cached_label": "other"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "2803",
+      "donor_cached_label": "water_liquid",
+      "pair_id": "cfg1_pair082",
+      "source": "194",
+      "source_cached_label": "doors_furniture"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "4315",
+      "donor_cached_label": "other",
+      "pair_id": "cfg1_pair083",
+      "source": "3460",
+      "source_cached_label": "guns_explosions"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "1810",
+      "donor_cached_label": "animals",
+      "pair_id": "cfg1_pair084",
+      "source": "2803",
+      "source_cached_label": "water_liquid"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "4063",
+      "donor_cached_label": "machines_motors",
+      "pair_id": "cfg1_pair085",
+      "source": "2032",
+      "source_cached_label": "food_cooking"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "338",
+      "donor_cached_label": "food_cooking",
+      "pair_id": "cfg1_pair086",
+      "source": "4063",
+      "source_cached_label": "machines_motors"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "481",
+      "donor_cached_label": "doors_furniture",
+      "pair_id": "cfg1_pair087",
+      "source": "1514",
+      "source_cached_label": "tools_hand"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "1514",
+      "donor_cached_label": "tools_hand",
+      "pair_id": "cfg1_pair088",
+      "source": "3491",
+      "source_cached_label": "other"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "2796",
+      "donor_cached_label": "guns_explosions",
+      "pair_id": "cfg1_pair089",
+      "source": "728",
+      "source_cached_label": "doors_furniture"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "4881",
+      "donor_cached_label": "water_liquid",
+      "pair_id": "cfg1_pair090",
+      "source": "505",
+      "source_cached_label": "vehicles"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "2032",
+      "donor_cached_label": "food_cooking",
+      "pair_id": "cfg1_pair091",
+      "source": "955",
+      "source_cached_label": "animals"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "1514",
+      "donor_cached_label": "tools_hand",
+      "pair_id": "cfg1_pair092",
+      "source": "221",
+      "source_cached_label": "electronics_ui"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "4063",
+      "donor_cached_label": "machines_motors",
+      "pair_id": "cfg1_pair093",
+      "source": "658",
+      "source_cached_label": "impact_friction"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "527",
+      "donor_cached_label": "vehicles",
+      "pair_id": "cfg1_pair094",
+      "source": "2061",
+      "source_cached_label": "water_liquid"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "913",
+      "donor_cached_label": "animals",
+      "pair_id": "cfg1_pair095",
+      "source": "338",
+      "source_cached_label": "food_cooking"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "4863",
+      "donor_cached_label": "other",
+      "pair_id": "cfg1_pair096",
+      "source": "4063",
+      "source_cached_label": "machines_motors"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "847",
+      "donor_cached_label": "electronics_ui",
+      "pair_id": "cfg1_pair097",
+      "source": "1514",
+      "source_cached_label": "tools_hand"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "2311",
+      "donor_cached_label": "impact_friction",
+      "pair_id": "cfg1_pair098",
+      "source": "4000",
+      "source_cached_label": "guns_explosions"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "2803",
+      "donor_cached_label": "water_liquid",
+      "pair_id": "cfg1_pair099",
+      "source": "3475",
+      "source_cached_label": "animals"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "338",
+      "donor_cached_label": "food_cooking",
+      "pair_id": "cfg1_pair100",
+      "source": "2622",
+      "source_cached_label": "vehicles"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "4063",
+      "donor_cached_label": "machines_motors",
+      "pair_id": "cfg1_pair101",
+      "source": "245",
+      "source_cached_label": "doors_furniture"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "1514",
+      "donor_cached_label": "tools_hand",
+      "pair_id": "cfg1_pair102",
+      "source": "1410",
+      "source_cached_label": "impact_friction"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "1436",
+      "donor_cached_label": "doors_furniture",
+      "pair_id": "cfg1_pair103",
+      "source": "4881",
+      "source_cached_label": "water_liquid"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "292",
+      "donor_cached_label": "vehicles",
+      "pair_id": "cfg1_pair104",
+      "source": "2032",
+      "source_cached_label": "food_cooking"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "1459",
+      "donor_cached_label": "animals",
+      "pair_id": "cfg1_pair105",
+      "source": "4063",
+      "source_cached_label": "machines_motors"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "1002",
+      "donor_cached_label": "impact_friction",
+      "pair_id": "cfg1_pair106",
+      "source": "1514",
+      "source_cached_label": "tools_hand"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "1964",
+      "donor_cached_label": "electronics_ui",
+      "pair_id": "cfg1_pair107",
+      "source": "1929",
+      "source_cached_label": "other"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "819",
+      "donor_cached_label": "other",
+      "pair_id": "cfg1_pair108",
+      "source": "1479",
+      "source_cached_label": "electronics_ui"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "1514",
+      "donor_cached_label": "tools_hand",
+      "pair_id": "cfg1_pair109",
+      "source": "662",
+      "source_cached_label": "guns_explosions"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "214",
+      "donor_cached_label": "guns_explosions",
+      "pair_id": "cfg1_pair110",
+      "source": "1514",
+      "source_cached_label": "tools_hand"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "2032",
+      "donor_cached_label": "food_cooking",
+      "pair_id": "cfg1_pair111",
+      "source": "2418",
+      "source_cached_label": "other"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "4063",
+      "donor_cached_label": "machines_motors",
+      "pair_id": "cfg1_pair112",
+      "source": "2881",
+      "source_cached_label": "guns_explosions"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "4876",
+      "donor_cached_label": "other",
+      "pair_id": "cfg1_pair113",
+      "source": "338",
+      "source_cached_label": "food_cooking"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "2646",
+      "donor_cached_label": "impact_friction",
+      "pair_id": "cfg1_pair114",
+      "source": "4063",
+      "source_cached_label": "machines_motors"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "2794",
+      "donor_cached_label": "animals",
+      "pair_id": "cfg1_pair115",
+      "source": "502",
+      "source_cached_label": "vehicles"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "2511",
+      "donor_cached_label": "vehicles",
+      "pair_id": "cfg1_pair116",
+      "source": "2250",
+      "source_cached_label": "animals"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "1412",
+      "donor_cached_label": "electronics_ui",
+      "pair_id": "cfg1_pair117",
+      "source": "2436",
+      "source_cached_label": "doors_furniture"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "706",
+      "donor_cached_label": "doors_furniture",
+      "pair_id": "cfg1_pair118",
+      "source": "1308",
+      "source_cached_label": "electronics_ui"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "662",
+      "donor_cached_label": "guns_explosions",
+      "pair_id": "cfg1_pair119",
+      "source": "2372",
+      "source_cached_label": "impact_friction"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "4563",
+      "donor_cached_label": "vehicles",
+      "pair_id": "cfg1_pair120",
+      "source": "2061",
+      "source_cached_label": "water_liquid"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "2061",
+      "donor_cached_label": "water_liquid",
+      "pair_id": "cfg1_pair121",
+      "source": "2802",
+      "source_cached_label": "vehicles"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "338",
+      "donor_cached_label": "food_cooking",
+      "pair_id": "cfg1_pair122",
+      "source": "2174",
+      "source_cached_label": "electronics_ui"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "2603",
+      "donor_cached_label": "electronics_ui",
+      "pair_id": "cfg1_pair123",
+      "source": "2032",
+      "source_cached_label": "food_cooking"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "1364",
+      "donor_cached_label": "animals",
+      "pair_id": "cfg1_pair124",
+      "source": "4720",
+      "source_cached_label": "doors_furniture"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "2436",
+      "donor_cached_label": "doors_furniture",
+      "pair_id": "cfg1_pair125",
+      "source": "332",
+      "source_cached_label": "animals"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "2177",
+      "donor_cached_label": "impact_friction",
+      "pair_id": "cfg1_pair126",
+      "source": "4315",
+      "source_cached_label": "other"
+    },
+    {
+      "cached_label_role": "p1cfg1_independent",
+      "cfg": 1.0,
+      "donor": "2875",
+      "donor_cached_label": "other",
+      "pair_id": "cfg1_pair127",
+      "source": "2992",
+      "source_cached_label": "impact_friction"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "1972",
+      "donor_cached_label": "other",
+      "pair_id": "cfg4.5_pair000",
+      "source": "4996",
+      "source_cached_label": "vehicles"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "3459",
+      "donor_cached_label": "animals",
+      "pair_id": "cfg4.5_pair001",
+      "source": "3460",
+      "source_cached_label": "guns_explosions"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "2032",
+      "donor_cached_label": "food_cooking",
+      "pair_id": "cfg4.5_pair002",
+      "source": "2457",
+      "source_cached_label": "other"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "4398",
+      "donor_cached_label": "doors_furniture",
+      "pair_id": "cfg4.5_pair003",
+      "source": "221",
+      "source_cached_label": "electronics_ui"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "325",
+      "donor_cached_label": "impact_friction",
+      "pair_id": "cfg4.5_pair004",
+      "source": "1810",
+      "source_cached_label": "animals"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "4881",
+      "donor_cached_label": "water_liquid",
+      "pair_id": "cfg4.5_pair005",
+      "source": "527",
+      "source_cached_label": "impact_friction"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "1330",
+      "donor_cached_label": "electronics_ui",
+      "pair_id": "cfg4.5_pair006",
+      "source": "2041",
+      "source_cached_label": "doors_furniture"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "3273",
+      "donor_cached_label": "vehicles",
+      "pair_id": "cfg4.5_pair007",
+      "source": "2803",
+      "source_cached_label": "water_liquid"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "2029",
+      "donor_cached_label": "guns_explosions",
+      "pair_id": "cfg4.5_pair008",
+      "source": "195",
+      "source_cached_label": "footsteps_walk"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "1739",
+      "donor_cached_label": "tools_hand",
+      "pair_id": "cfg4.5_pair009",
+      "source": "194",
+      "source_cached_label": "machines_motors"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "4063",
+      "donor_cached_label": "machines_motors",
+      "pair_id": "cfg4.5_pair010",
+      "source": "2032",
+      "source_cached_label": "food_cooking"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "195",
+      "donor_cached_label": "footsteps_walk",
+      "pair_id": "cfg4.5_pair011",
+      "source": "1739",
+      "source_cached_label": "tools_hand"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "2469",
+      "donor_cached_label": "doors_furniture",
+      "pair_id": "cfg4.5_pair012",
+      "source": "2436",
+      "source_cached_label": "other"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "3114",
+      "donor_cached_label": "other",
+      "pair_id": "cfg4.5_pair013",
+      "source": "847",
+      "source_cached_label": "doors_furniture"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "1209",
+      "donor_cached_label": "vehicles",
+      "pair_id": "cfg4.5_pair014",
+      "source": "2174",
+      "source_cached_label": "electronics_ui"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "1412",
+      "donor_cached_label": "electronics_ui",
+      "pair_id": "cfg4.5_pair015",
+      "source": "2757",
+      "source_cached_label": "animals"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "1002",
+      "donor_cached_label": "impact_friction",
+      "pair_id": "cfg4.5_pair016",
+      "source": "4268",
+      "source_cached_label": "water_liquid"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "1900",
+      "donor_cached_label": "animals",
+      "pair_id": "cfg4.5_pair017",
+      "source": "1628",
+      "source_cached_label": "impact_friction"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "214",
+      "donor_cached_label": "guns_explosions",
+      "pair_id": "cfg4.5_pair018",
+      "source": "2945",
+      "source_cached_label": "vehicles"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "194",
+      "donor_cached_label": "machines_motors",
+      "pair_id": "cfg4.5_pair019",
+      "source": "1048",
+      "source_cached_label": "guns_explosions"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "2803",
+      "donor_cached_label": "water_liquid",
+      "pair_id": "cfg4.5_pair020",
+      "source": "4063",
+      "source_cached_label": "machines_motors"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "1739",
+      "donor_cached_label": "tools_hand",
+      "pair_id": "cfg4.5_pair021",
+      "source": "2032",
+      "source_cached_label": "food_cooking"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "2032",
+      "donor_cached_label": "food_cooking",
+      "pair_id": "cfg4.5_pair022",
+      "source": "195",
+      "source_cached_label": "footsteps_walk"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "3540",
+      "donor_cached_label": "electronics_ui",
+      "pair_id": "cfg4.5_pair023",
+      "source": "1739",
+      "source_cached_label": "tools_hand"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "195",
+      "donor_cached_label": "footsteps_walk",
+      "pair_id": "cfg4.5_pair024",
+      "source": "2646",
+      "source_cached_label": "impact_friction"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "2881",
+      "donor_cached_label": "guns_explosions",
+      "pair_id": "cfg4.5_pair025",
+      "source": "2668",
+      "source_cached_label": "other"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "1502",
+      "donor_cached_label": "vehicles",
+      "pair_id": "cfg4.5_pair026",
+      "source": "913",
+      "source_cached_label": "animals"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "1929",
+      "donor_cached_label": "impact_friction",
+      "pair_id": "cfg4.5_pair027",
+      "source": "4720",
+      "source_cached_label": "doors_furniture"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "63",
+      "donor_cached_label": "animals",
+      "pair_id": "cfg4.5_pair028",
+      "source": "2555",
+      "source_cached_label": "electronics_ui"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "4935",
+      "donor_cached_label": "doors_furniture",
+      "pair_id": "cfg4.5_pair029",
+      "source": "1003",
+      "source_cached_label": "vehicles"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "1207",
+      "donor_cached_label": "other",
+      "pair_id": "cfg4.5_pair030",
+      "source": "3570",
+      "source_cached_label": "guns_explosions"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "4063",
+      "donor_cached_label": "machines_motors",
+      "pair_id": "cfg4.5_pair031",
+      "source": "4881",
+      "source_cached_label": "water_liquid"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "195",
+      "donor_cached_label": "footsteps_walk",
+      "pair_id": "cfg4.5_pair032",
+      "source": "194",
+      "source_cached_label": "machines_motors"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "4268",
+      "donor_cached_label": "water_liquid",
+      "pair_id": "cfg4.5_pair033",
+      "source": "1739",
+      "source_cached_label": "tools_hand"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "1739",
+      "donor_cached_label": "tools_hand",
+      "pair_id": "cfg4.5_pair034",
+      "source": "195",
+      "source_cached_label": "footsteps_walk"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "1282",
+      "donor_cached_label": "animals",
+      "pair_id": "cfg4.5_pair035",
+      "source": "2032",
+      "source_cached_label": "food_cooking"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "2032",
+      "donor_cached_label": "food_cooking",
+      "pair_id": "cfg4.5_pair036",
+      "source": "1364",
+      "source_cached_label": "electronics_ui"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "3979",
+      "donor_cached_label": "other",
+      "pair_id": "cfg4.5_pair037",
+      "source": "2418",
+      "source_cached_label": "impact_friction"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "4170",
+      "donor_cached_label": "vehicles",
+      "pair_id": "cfg4.5_pair038",
+      "source": "4855",
+      "source_cached_label": "doors_furniture"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "4939",
+      "donor_cached_label": "impact_friction",
+      "pair_id": "cfg4.5_pair039",
+      "source": "2061",
+      "source_cached_label": "other"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "3220",
+      "donor_cached_label": "electronics_ui",
+      "pair_id": "cfg4.5_pair040",
+      "source": "2796",
+      "source_cached_label": "guns_explosions"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "437",
+      "donor_cached_label": "doors_furniture",
+      "pair_id": "cfg4.5_pair041",
+      "source": "1893",
+      "source_cached_label": "animals"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "4881",
+      "donor_cached_label": "water_liquid",
+      "pair_id": "cfg4.5_pair042",
+      "source": "1278",
+      "source_cached_label": "vehicles"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "92",
+      "donor_cached_label": "guns_explosions",
+      "pair_id": "cfg4.5_pair043",
+      "source": "2803",
+      "source_cached_label": "water_liquid"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "2032",
+      "donor_cached_label": "food_cooking",
+      "pair_id": "cfg4.5_pair044",
+      "source": "4063",
+      "source_cached_label": "machines_motors"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "194",
+      "donor_cached_label": "machines_motors",
+      "pair_id": "cfg4.5_pair045",
+      "source": "1739",
+      "source_cached_label": "tools_hand"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "195",
+      "donor_cached_label": "footsteps_walk",
+      "pair_id": "cfg4.5_pair046",
+      "source": "2032",
+      "source_cached_label": "food_cooking"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "505",
+      "donor_cached_label": "vehicles",
+      "pair_id": "cfg4.5_pair047",
+      "source": "195",
+      "source_cached_label": "footsteps_walk"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "1739",
+      "donor_cached_label": "tools_hand",
+      "pair_id": "cfg4.5_pair048",
+      "source": "1560",
+      "source_cached_label": "doors_furniture"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "4876",
+      "donor_cached_label": "other",
+      "pair_id": "cfg4.5_pair049",
+      "source": "3611",
+      "source_cached_label": "animals"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "1517",
+      "donor_cached_label": "animals",
+      "pair_id": "cfg4.5_pair050",
+      "source": "4563",
+      "source_cached_label": "other"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "43",
+      "donor_cached_label": "doors_furniture",
+      "pair_id": "cfg4.5_pair051",
+      "source": "116",
+      "source_cached_label": "impact_friction"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "115",
+      "donor_cached_label": "impact_friction",
+      "pair_id": "cfg4.5_pair052",
+      "source": "4635",
+      "source_cached_label": "vehicles"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "4000",
+      "donor_cached_label": "guns_explosions",
+      "pair_id": "cfg4.5_pair053",
+      "source": "3048",
+      "source_cached_label": "electronics_ui"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "4268",
+      "donor_cached_label": "water_liquid",
+      "pair_id": "cfg4.5_pair054",
+      "source": "1905",
+      "source_cached_label": "guns_explosions"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "2372",
+      "donor_cached_label": "electronics_ui",
+      "pair_id": "cfg4.5_pair055",
+      "source": "4881",
+      "source_cached_label": "water_liquid"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "194",
+      "donor_cached_label": "machines_motors",
+      "pair_id": "cfg4.5_pair056",
+      "source": "195",
+      "source_cached_label": "footsteps_walk"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "2032",
+      "donor_cached_label": "food_cooking",
+      "pair_id": "cfg4.5_pair057",
+      "source": "1739",
+      "source_cached_label": "tools_hand"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "195",
+      "donor_cached_label": "footsteps_walk",
+      "pair_id": "cfg4.5_pair058",
+      "source": "4063",
+      "source_cached_label": "machines_motors"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "4315",
+      "donor_cached_label": "other",
+      "pair_id": "cfg4.5_pair059",
+      "source": "2032",
+      "source_cached_label": "food_cooking"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "1739",
+      "donor_cached_label": "tools_hand",
+      "pair_id": "cfg4.5_pair060",
+      "source": "691",
+      "source_cached_label": "electronics_ui"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "955",
+      "donor_cached_label": "animals",
+      "pair_id": "cfg4.5_pair061",
+      "source": "859",
+      "source_cached_label": "vehicles"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "2511",
+      "donor_cached_label": "electronics_ui",
+      "pair_id": "cfg4.5_pair062",
+      "source": "3585",
+      "source_cached_label": "other"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "292",
+      "donor_cached_label": "vehicles",
+      "pair_id": "cfg4.5_pair063",
+      "source": "96",
+      "source_cached_label": "impact_friction"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "1131",
+      "donor_cached_label": "doors_furniture",
+      "pair_id": "cfg4.5_pair064",
+      "source": "1270",
+      "source_cached_label": "guns_explosions"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "662",
+      "donor_cached_label": "guns_explosions",
+      "pair_id": "cfg4.5_pair065",
+      "source": "4694",
+      "source_cached_label": "animals"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "2803",
+      "donor_cached_label": "water_liquid",
+      "pair_id": "cfg4.5_pair066",
+      "source": "3994",
+      "source_cached_label": "doors_furniture"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "195",
+      "donor_cached_label": "footsteps_walk",
+      "pair_id": "cfg4.5_pair067",
+      "source": "4268",
+      "source_cached_label": "water_liquid"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "3957",
+      "donor_cached_label": "impact_friction",
+      "pair_id": "cfg4.5_pair068",
+      "source": "194",
+      "source_cached_label": "machines_motors"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "4063",
+      "donor_cached_label": "machines_motors",
+      "pair_id": "cfg4.5_pair069",
+      "source": "1739",
+      "source_cached_label": "tools_hand"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "3",
+      "donor_cached_label": "vehicles",
+      "pair_id": "cfg4.5_pair070",
+      "source": "2032",
+      "source_cached_label": "food_cooking"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "2612",
+      "donor_cached_label": "animals",
+      "pair_id": "cfg4.5_pair071",
+      "source": "195",
+      "source_cached_label": "footsteps_walk"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "1739",
+      "donor_cached_label": "tools_hand",
+      "pair_id": "cfg4.5_pair072",
+      "source": "2723",
+      "source_cached_label": "animals"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "2032",
+      "donor_cached_label": "food_cooking",
+      "pair_id": "cfg4.5_pair073",
+      "source": "2491",
+      "source_cached_label": "vehicles"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "2992",
+      "donor_cached_label": "other",
+      "pair_id": "cfg4.5_pair074",
+      "source": "3985",
+      "source_cached_label": "electronics_ui"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "935",
+      "donor_cached_label": "electronics_ui",
+      "pair_id": "cfg4.5_pair075",
+      "source": "2249",
+      "source_cached_label": "impact_friction"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "658",
+      "donor_cached_label": "guns_explosions",
+      "pair_id": "cfg4.5_pair076",
+      "source": "728",
+      "source_cached_label": "doors_furniture"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "245",
+      "donor_cached_label": "impact_friction",
+      "pair_id": "cfg4.5_pair077",
+      "source": "1876",
+      "source_cached_label": "guns_explosions"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "2803",
+      "donor_cached_label": "water_liquid",
+      "pair_id": "cfg4.5_pair078",
+      "source": "2817",
+      "source_cached_label": "other"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "1094",
+      "donor_cached_label": "doors_furniture",
+      "pair_id": "cfg4.5_pair079",
+      "source": "4268",
+      "source_cached_label": "water_liquid"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "1739",
+      "donor_cached_label": "tools_hand",
+      "pair_id": "cfg4.5_pair080",
+      "source": "4063",
+      "source_cached_label": "machines_motors"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "194",
+      "donor_cached_label": "machines_motors",
+      "pair_id": "cfg4.5_pair081",
+      "source": "2032",
+      "source_cached_label": "food_cooking"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "3112",
+      "donor_cached_label": "other",
+      "pair_id": "cfg4.5_pair082",
+      "source": "195",
+      "source_cached_label": "footsteps_walk"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "2689",
+      "donor_cached_label": "impact_friction",
+      "pair_id": "cfg4.5_pair083",
+      "source": "1739",
+      "source_cached_label": "tools_hand"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "195",
+      "donor_cached_label": "footsteps_walk",
+      "pair_id": "cfg4.5_pair084",
+      "source": "3496",
+      "source_cached_label": "animals"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "2032",
+      "donor_cached_label": "food_cooking",
+      "pair_id": "cfg4.5_pair085",
+      "source": "121",
+      "source_cached_label": "impact_friction"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "1859",
+      "donor_cached_label": "vehicles",
+      "pair_id": "cfg4.5_pair086",
+      "source": "3113",
+      "source_cached_label": "other"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "457",
+      "donor_cached_label": "electronics_ui",
+      "pair_id": "cfg4.5_pair087",
+      "source": "4122",
+      "source_cached_label": "vehicles"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "1386",
+      "donor_cached_label": "animals",
+      "pair_id": "cfg4.5_pair088",
+      "source": "4671",
+      "source_cached_label": "doors_furniture"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "4881",
+      "donor_cached_label": "water_liquid",
+      "pair_id": "cfg4.5_pair089",
+      "source": "1410",
+      "source_cached_label": "electronics_ui"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "1739",
+      "donor_cached_label": "tools_hand",
+      "pair_id": "cfg4.5_pair090",
+      "source": "2029",
+      "source_cached_label": "guns_explosions"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "2032",
+      "donor_cached_label": "food_cooking",
+      "pair_id": "cfg4.5_pair091",
+      "source": "4881",
+      "source_cached_label": "water_liquid"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "1263",
+      "donor_cached_label": "doors_furniture",
+      "pair_id": "cfg4.5_pair092",
+      "source": "194",
+      "source_cached_label": "machines_motors"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "1270",
+      "donor_cached_label": "guns_explosions",
+      "pair_id": "cfg4.5_pair093",
+      "source": "2032",
+      "source_cached_label": "food_cooking"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "4063",
+      "donor_cached_label": "machines_motors",
+      "pair_id": "cfg4.5_pair094",
+      "source": "195",
+      "source_cached_label": "footsteps_walk"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "4476",
+      "donor_cached_label": "other",
+      "pair_id": "cfg4.5_pair095",
+      "source": "1739",
+      "source_cached_label": "tools_hand"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "195",
+      "donor_cached_label": "footsteps_walk",
+      "pair_id": "cfg4.5_pair096",
+      "source": "2622",
+      "source_cached_label": "vehicles"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "4510",
+      "donor_cached_label": "impact_friction",
+      "pair_id": "cfg4.5_pair097",
+      "source": "3912",
+      "source_cached_label": "electronics_ui"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "2796",
+      "donor_cached_label": "guns_explosions",
+      "pair_id": "cfg4.5_pair098",
+      "source": "1813",
+      "source_cached_label": "impact_friction"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "3464",
+      "donor_cached_label": "vehicles",
+      "pair_id": "cfg4.5_pair099",
+      "source": "92",
+      "source_cached_label": "guns_explosions"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "4268",
+      "donor_cached_label": "water_liquid",
+      "pair_id": "cfg4.5_pair100",
+      "source": "3475",
+      "source_cached_label": "animals"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "4063",
+      "donor_cached_label": "machines_motors",
+      "pair_id": "cfg4.5_pair101",
+      "source": "819",
+      "source_cached_label": "other"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "2032",
+      "donor_cached_label": "food_cooking",
+      "pair_id": "cfg4.5_pair102",
+      "source": "706",
+      "source_cached_label": "doors_furniture"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "2794",
+      "donor_cached_label": "animals",
+      "pair_id": "cfg4.5_pair103",
+      "source": "2803",
+      "source_cached_label": "water_liquid"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "596",
+      "donor_cached_label": "electronics_ui",
+      "pair_id": "cfg4.5_pair104",
+      "source": "194",
+      "source_cached_label": "machines_motors"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "282",
+      "donor_cached_label": "doors_furniture",
+      "pair_id": "cfg4.5_pair105",
+      "source": "195",
+      "source_cached_label": "footsteps_walk"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "595",
+      "donor_cached_label": "animals",
+      "pair_id": "cfg4.5_pair106",
+      "source": "1739",
+      "source_cached_label": "tools_hand"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "1601",
+      "donor_cached_label": "impact_friction",
+      "pair_id": "cfg4.5_pair107",
+      "source": "2032",
+      "source_cached_label": "food_cooking"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "1739",
+      "donor_cached_label": "tools_hand",
+      "pair_id": "cfg4.5_pair108",
+      "source": "481",
+      "source_cached_label": "other"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "195",
+      "donor_cached_label": "footsteps_walk",
+      "pair_id": "cfg4.5_pair109",
+      "source": "3768",
+      "source_cached_label": "doors_furniture"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "194",
+      "donor_cached_label": "machines_motors",
+      "pair_id": "cfg4.5_pair110",
+      "source": "1630",
+      "source_cached_label": "electronics_ui"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "1739",
+      "donor_cached_label": "tools_hand",
+      "pair_id": "cfg4.5_pair111",
+      "source": "502",
+      "source_cached_label": "impact_friction"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "2032",
+      "donor_cached_label": "food_cooking",
+      "pair_id": "cfg4.5_pair112",
+      "source": "1956",
+      "source_cached_label": "animals"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "195",
+      "donor_cached_label": "footsteps_walk",
+      "pair_id": "cfg4.5_pair113",
+      "source": "2881",
+      "source_cached_label": "guns_explosions"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "1186",
+      "donor_cached_label": "other",
+      "pair_id": "cfg4.5_pair114",
+      "source": "2803",
+      "source_cached_label": "water_liquid"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "3780",
+      "donor_cached_label": "vehicles",
+      "pair_id": "cfg4.5_pair115",
+      "source": "4063",
+      "source_cached_label": "machines_motors"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "2826",
+      "donor_cached_label": "electronics_ui",
+      "pair_id": "cfg4.5_pair116",
+      "source": "195",
+      "source_cached_label": "footsteps_walk"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "4283",
+      "donor_cached_label": "doors_furniture",
+      "pair_id": "cfg4.5_pair117",
+      "source": "1739",
+      "source_cached_label": "tools_hand"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "4881",
+      "donor_cached_label": "water_liquid",
+      "pair_id": "cfg4.5_pair118",
+      "source": "2032",
+      "source_cached_label": "food_cooking"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "1048",
+      "donor_cached_label": "guns_explosions",
+      "pair_id": "cfg4.5_pair119",
+      "source": "2082",
+      "source_cached_label": "vehicles"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "194",
+      "donor_cached_label": "machines_motors",
+      "pair_id": "cfg4.5_pair120",
+      "source": "1459",
+      "source_cached_label": "vehicles"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "195",
+      "donor_cached_label": "footsteps_walk",
+      "pair_id": "cfg4.5_pair121",
+      "source": "338",
+      "source_cached_label": "other"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "2032",
+      "donor_cached_label": "food_cooking",
+      "pair_id": "cfg4.5_pair122",
+      "source": "658",
+      "source_cached_label": "guns_explosions"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "1739",
+      "donor_cached_label": "tools_hand",
+      "pair_id": "cfg4.5_pair123",
+      "source": "4268",
+      "source_cached_label": "water_liquid"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "1422",
+      "donor_cached_label": "animals",
+      "pair_id": "cfg4.5_pair124",
+      "source": "4063",
+      "source_cached_label": "machines_motors"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "2177",
+      "donor_cached_label": "impact_friction",
+      "pair_id": "cfg4.5_pair125",
+      "source": "195",
+      "source_cached_label": "footsteps_walk"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "249",
+      "donor_cached_label": "electronics_ui",
+      "pair_id": "cfg4.5_pair126",
+      "source": "2032",
+      "source_cached_label": "food_cooking"
+    },
+    {
+      "cached_label_role": "p1cfg45_independent",
+      "cfg": 4.5,
+      "donor": "1196",
+      "donor_cached_label": "vehicles",
+      "pair_id": "cfg4.5_pair127",
+      "source": "1739",
+      "source_cached_label": "tools_hand"
+    }
+  ],
+  "s_grid": [
+    0.05,
+    0.15,
+    0.25,
+    0.35,
+    0.45,
+    0.6,
+    0.75,
+    0.9
+  ],
+  "seed": 0
+}

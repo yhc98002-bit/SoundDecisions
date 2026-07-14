@@ -303,6 +303,15 @@ class RealFoleyMeasurer:
         _, emb = self._panns_forward(audio)
         return emb
 
+    def panns_posterior(self, audio: np.ndarray) -> np.ndarray:
+        """Cnn14_16k 527-way probability vector for raw posterior retention.
+
+        This reuses the one-audio forward cache, so a caller that has just
+        measured presence/class does not incur another model forward pass.
+        """
+        probs, _ = self._panns_forward(audio)
+        return np.asarray(probs, dtype=float).copy()
+
     def coarse_label_second_tagger(self, audio: np.ndarray) -> str:
         """AST coarse label for cross-tagger agreement (Phase 0.5)."""
         if self._tagger2_fn is not None:

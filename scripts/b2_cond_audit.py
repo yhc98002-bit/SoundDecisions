@@ -53,6 +53,8 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from foley_cw.cond_features import (  # noqa: E402
     build_cond_feature, clip_class_label, decide_cond_bottleneck, run_cond_probe,
 )
+from foley_cw.arc4_gpu import atomic_npz_create, valid_b2_bundle  # noqa: E402
+from foley_cw.run_store import RunStore  # noqa: E402
 
 # The conditioning parts pulled off PreprocessedConditions, in fixed feature order.
 # clip_f: projected CLIP seq (B,VN,D); sync_f: upsampled Synchformer seq (B,N,D);
@@ -103,12 +105,33 @@ def run_extraction(args, clips: list[str]) -> int:
 
     out_dir = args.out / "arc3" / "cond_feats"
     out_dir.mkdir(parents=True, exist_ok=True)
+    store = RunStore(args.out)
 
     shard_i, shard_n = (int(x) for x in args.shard.split("/"))
-    todo = [c for i, c in enumerate(clips) if i % shard_n == shard_i]
+    assigned = [c for i, c in enumerate(clips) if i % shard_n == shard_i]
     if args.limit:
-        todo = todo[: args.limit]
-    todo = [c for c in todo if not (out_dir / f"{c}.npz").exists()]
+        assigned = assigned[: args.limit]
+    todo = []
+    for clip in assigned:
+        path = out_dir / f"{clip}.npz"
+        unit = f"b2cond__{clip}"
+        if store.is_done(unit):
+            if not valid_b2_bundle(path):
+                raise RuntimeError(
+                    f"journal marks {clip} done but B2 bundle is invalid/missing: {path}")
+            continue
+        if path.exists():
+            if not valid_b2_bundle(path):
+                raise RuntimeError(f"invalid existing B2 bundle {path}; refusing to overwrite")
+            store.journal_done(unit, {
+                "clip": clip,
+                "cfg": args.cfg,
+                "schedule": args.schedule,
+                "seed": args.seed,
+                "adopted_existing_valid_bundle": True,
+            })
+            continue
+        todo.append(clip)
     print(f"[b2] shard {args.shard}: {len(todo)} clips -> {out_dir}", flush=True)
     if not todo:
         return 0
@@ -124,12 +147,8 @@ def run_extraction(args, clips: list[str]) -> int:
         res = extract_clip(backend, clip, video, args.seed)
         pooled = build_cond_feature(res["parts"], list(COND_KEYS))
         per_part = {k: build_cond_feature(res["parts"], [k]) for k in COND_KEYS}
-        # tmp MUST end in .npz: np.savez_compressed auto-appends '.npz' to any name not
-        # ending in it (so '<clip>.npz.tmp' is written as '<clip>.npz.tmp.npz', and the
-        # os.replace below then fails to find the tmp file).
-        tmp = out_dir / f"{clip}.tmp.npz"
-        np.savez_compressed(
-            tmp,
+        path = atomic_npz_create(
+            out_dir / f"{clip}.npz",
             pooled=pooled.astype(np.float32),
             clip_f=per_part["clip_f"].astype(np.float32),
             sync_f=per_part["sync_f"].astype(np.float32),
@@ -137,7 +156,20 @@ def run_extraction(args, clips: list[str]) -> int:
             cond_keys=np.array(list(COND_KEYS)),
             raw_shapes=np.array(json.dumps(res["raw_shapes"])),
         )
-        os.replace(tmp, out_dir / f"{clip}.npz")
+        if not valid_b2_bundle(path):
+            raise RuntimeError(f"new B2 bundle failed schema validation: {path}")
+        store.journal_done(f"b2cond__{clip}", {
+            "clip": clip,
+            "cfg": args.cfg,
+            "schedule": args.schedule,
+            "seed": args.seed,
+            "variant": args.variant,
+            "duration": args.duration,
+            "num_steps": args.num_steps,
+            "raw_shapes": res["raw_shapes"],
+            "bundle": str(path),
+            "elapsed_s": round(time.time() - t0, 3),
+        })
         print(f"[b2 {clip}] {time.time()-t0:.1f}s pooled_dim={pooled.shape[0]} "
               f"shapes={res['raw_shapes']}", flush=True)
     print(f"[b2] shard {args.shard} complete", flush=True)

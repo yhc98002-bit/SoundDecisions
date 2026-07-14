@@ -55,6 +55,7 @@ import numpy as np
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from foley_cw import score_sde as K  # noqa: E402
+from foley_cw.arc4_gpu import atomic_npz_create, valid_b1_bundle  # noqa: E402
 from foley_cw.config import load_config  # noqa: E402
 from foley_cw.feature_tap import (InstrumentedBackend, TapMismatchError,  # noqa: E402
                                   expected_passes)
@@ -241,24 +242,54 @@ def tap_pertoken_at(ib: InstrumentedBackend, tap: PerTokenTap, x_s, s: float, co
         return tap.pop_call(passes)
 
 
+def bundle_path(store: RunStore, gid: str, s: float) -> Path:
+    return store.root / PERTOKEN_SUBDIR / f"{gid}__s{s:.2f}.npz"
+
+
+def clip_bundles_valid(store: RunStore, clip: str, tag: str, n_independent: int) -> bool:
+    return all(
+        valid_b1_bundle(bundle_path(store, f"{clip}__{tag}_ind{j}", s))
+        for j in range(n_independent)
+        for s in PHASE1_S_GRID
+    )
+
+
 def run_clip(ib, tap, store: RunStore, clip: str, video: Path, schedule: ScheduleSpec,
              seed: int, cfg: float, tag: str, n_independent: int) -> dict:
     t0 = time.time(); nfe0 = ib.nfe
     ib.cfg_strength = cfg
     cond = ib.make_video_cond(str(video), video_id=clip)
-    saved = 0
+    written = existing = 0
     for j in range(n_independent):
         gid = f"{clip}__{tag}_ind{j}"
+        paths = {s: bundle_path(store, gid, s) for s in PHASE1_S_GRID}
+        for s, path in paths.items():
+            if path.exists() and not valid_b1_bundle(path):
+                raise RuntimeError(
+                    f"invalid existing B1 bundle {path}; refusing to overwrite")
+        missing = [s for s, path in paths.items() if not path.exists()]
+        existing += len(PHASE1_S_GRID) - len(missing)
+        if not missing:
+            continue
         tr = K.generate_trajectory(ib, cond, schedule, rng_for(seed, clip, "ind", j),
                                    alpha=0.0, record_points=PHASE1_S_GRID)
-        for s in PHASE1_S_GRID:
+        for s in missing:
             art = tap_pertoken_at(ib, tap, tr["states"][s], s, cond)
-            store.put_npz(PERTOKEN_SUBDIR, f"{gid}__s{s:.2f}", **art)
-            saved += 1
+            path = atomic_npz_create(paths[s], **art)
+            if store.budget is not None:
+                store.budget.account(path.stat().st_size, context=PERTOKEN_SUBDIR)
+                store.budget.check_or_halt(context=str(path.relative_to(store.root)))
+            if not valid_b1_bundle(path):
+                raise RuntimeError(f"new B1 bundle failed schema validation: {path}")
+            written += 1
+    if not clip_bundles_valid(store, clip, tag, n_independent):
+        raise RuntimeError(f"B1 clip completeness check failed after collection: {clip}")
     nfe = ib.nfe - nfe0
     elapsed = time.time() - t0
-    print(f"[b1pt {clip}] {elapsed:.0f}s nfe={nfe} saved={saved}", flush=True)
-    return {"clip": clip, "cfg": cfg, "tag": tag, "saved": saved,
+    print(f"[b1pt {clip}] {elapsed:.0f}s nfe={nfe} written={written} existing={existing}",
+          flush=True)
+    return {"clip": clip, "cfg": cfg, "tag": tag, "written": written,
+            "existing": existing, "bundle_count": n_independent * len(PHASE1_S_GRID),
             "elapsed_s": round(elapsed, 1), "nfe_velocity_calls": int(nfe)}
 
 
@@ -331,10 +362,18 @@ def main() -> int:
     store = RunStore(args.out, budget=budget)
     store.account_preexisting_tree()
 
-    todo = [c for i, c in enumerate(clips) if i % shard_n == shard_i]
+    assigned = [c for i, c in enumerate(clips) if i % shard_n == shard_i]
     if args.limit:
-        todo = todo[: args.limit]
-    todo = [c for c in todo if not store.is_done(f"{tag}_pertoken__{c}")]
+        assigned = assigned[: args.limit]
+    todo = []
+    for clip in assigned:
+        done = store.is_done(f"{tag}_pertoken__{clip}")
+        complete = clip_bundles_valid(store, clip, tag, args.n_independent)
+        if done and not complete:
+            raise RuntimeError(
+                f"journal marks {clip} done but one or more B1 bundles are invalid/missing")
+        if not done:
+            todo.append(clip)
     print(f"[b1pt] shard {args.shard}: {len(todo)} clips (tag={tag}, cfg={args.cfg})",
           flush=True)
     if not todo:

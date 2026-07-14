@@ -241,8 +241,10 @@ def test_determinism_and_forward_cache(coarse_map):
     l1 = m.measure(a, PRESENCE).label
     l2 = m.measure(a, CLASS).label
     l3 = m.measure(a, PRESENCE).label
+    posterior = m.panns_posterior(a)
     assert l1 == l3 == PRESENT and l2 == "impact"
-    assert calls["n"] == 1  # presence+class+repeat share one forward via the cache
+    np.testing.assert_allclose(posterior, [0.9, 0, 0, 0, 0, 0])
+    assert calls["n"] == 1  # presence+class+posterior+repeat share the cache
 
 
 def test_determinism_includes_abstain(coarse_map):
