@@ -1,0 +1,48 @@
+{
+  "analysis": "Arc-4 WP-A2 determination-status partition",
+  "censor_time": 1.0,
+  "class_curve_source": "confident raw-journal reconstruction verified against committed CSV",
+  "km_ci_method": "1000-draw clip bootstrap, percentile 95% CI",
+  "km_population": "CROSSING plus CENSORED only; VIDEO_DETERMINED excluded",
+  "per_axis": {
+    "class": {
+      "km_ci_hi": 0.45,
+      "km_ci_lo": 0.25,
+      "km_median": 0.35,
+      "legacy_mean_crossers": 0.34593023255813954,
+      "n_censored": 18,
+      "n_crossing": 172,
+      "n_video_determined": 10
+    },
+    "material": {
+      "km_ci_hi": 0.6,
+      "km_ci_lo": 0.6,
+      "km_median": 0.6,
+      "legacy_mean_crossers": 0.6382499999999999,
+      "n_censored": 0,
+      "n_crossing": 200,
+      "n_video_determined": 0
+    },
+    "presence": {
+      "km_ci_hi": 0.15,
+      "km_ci_lo": 0.05,
+      "km_median": 0.05,
+      "legacy_mean_crossers": 0.2141592920353982,
+      "n_censored": 17,
+      "n_crossing": 113,
+      "n_video_determined": 70
+    },
+    "timing": {
+      "km_ci_hi": 0.05,
+      "km_ci_lo": 0.05,
+      "km_median": 0.05,
+      "legacy_mean_crossers": 0.11363636363636369,
+      "n_censored": 2,
+      "n_crossing": 77,
+      "n_video_determined": 121
+    }
+  },
+  "source": "results/stage0/phase1/commitment_map_p1cfg1.csv",
+  "theta_commit": 0.7,
+  "video_determined_rule": "a_ind >= 1 - 1e-9"
+}
