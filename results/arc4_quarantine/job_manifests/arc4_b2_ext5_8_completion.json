@@ -1,0 +1,55 @@
+{
+  "_doc": "Append-only completion record for the Arc-4 B2 seeds 5-8 raw extension.",
+  "queue": "arc4_b2_ext5_8",
+  "launch_ledger": {
+    "path": "results/arc4_quarantine/job_manifests/arc4_b2_ext5_8.json",
+    "sha256": "8bbe5eaf788ca9a6a4009b6a198672eb4f07345ef11f4d675b3a08a345bd9387"
+  },
+  "generation_manifest": {
+    "path": "results/arc4_quarantine/b2_extension_seeds5_8/generation_manifest.json",
+    "sha256": "b6e176949f531528ccb669759d2057fa0b1b1a14567633d3dd6a2d47e0a8a9e4"
+  },
+  "terminal": {
+    "status": "COMPLETE",
+    "completed_utc": "2026-07-14T18:09:17Z",
+    "runner_exit_code": 0,
+    "runner_exit_code_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+  },
+  "logs": {
+    "session_log": {
+      "path": "logs/arc4_gpu/arc4_b2_ext5_8/session.log",
+      "sha256": "31c9ae795a38aed7c76810089e71150553c482d000d8bf2e773c02fbb11d8967"
+    },
+    "worker_log_count": 4,
+    "worker_logs_tree_sha256": "37bfd979ceeb8976b100f03280da73eeeb6d4f26d6715995f40c95e0f17e913f"
+  },
+  "artifacts": {
+    "unit_journals": 192,
+    "unit_journals_tree_sha256": "e3b1241dff6c56714fa445d2a06e3603574277fa759fbde492c3a3fb15704cbe",
+    "cell_journals": 1536,
+    "cell_journals_tree_sha256": "1a6786505dd83af23f832daaac42de68ac5d858b54518daa33b7c1656d2e1f20",
+    "base_wavs": 192,
+    "fork_wavs": 18432,
+    "total_wavs": 18624,
+    "total_wav_bytes": 9536977920,
+    "unexpected_raw_files": 0
+  },
+  "validation": {
+    "status": "PASS",
+    "completed_utc": "2026-07-14T18:17:33Z",
+    "mode": "four fresh CPU-only resume validators with CUDA hidden",
+    "pythonhashseed": "0",
+    "exit_code": 0,
+    "exit_code_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "validation_file_count": 6,
+    "validation_tree_sha256": "f5aafda152f17b3dca7aeed5e45bcdbba52d9fdf6b400a8fb9dd54f6aabf75be",
+    "clips_per_validator": 12,
+    "expected_fork_wavs_per_validator": 4608,
+    "todo_units_per_validator": 0
+  },
+  "deviations": [
+    "The extension launched 344 seconds after B6 resume completion while its append-only manifest, tests, and launch ledger were frozen.",
+    "An initial CPU validation attempt was stopped before completion to release shared-filesystem bandwidth for an29 seeds 9-12 model loading; no artifact changed. Its five-file log tree SHA256 is 4658b23e08b80038bf9a7ace10ac8721449d455e356211a71233fdb61a518ae9.",
+    "The full validation was restarted after an29 model loading and passed."
+  ]
+}
