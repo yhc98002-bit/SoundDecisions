@@ -1,0 +1,50 @@
+{
+  "binding_join_rule": {
+    "method": "bundle_relative_l2",
+    "threshold": 0.0002
+  },
+  "bundles_checked_before_failure": 30,
+  "coarse_class_map_sha256": "55b5a1d4116caa4503a6b4b17192425da487a9c4385a287e343d850795be4fe7",
+  "collection_completion_sha256": "8d90e94fbe234bcf366b45f379d0ade977115685254476b90307e1dcb935567d",
+  "evaluation_started": false,
+  "failing_inputs": {
+    "pooled": {
+      "path": "/XYFS02/HDD_POOL/paratera_xy/pxy1289/HaocunYe/Research/SoundDecisions/results/stage0/features/1002__p1cfg1_ind12__s0.75.npz",
+      "sha256": "bfbf8de037b49c496c531311b9a0865e3588c8186cca6be5644bf5a5c628609f"
+    },
+    "retap": {
+      "path": "results/arc4_b1/arc3/pertoken/1002__p1cfg1_ind12__s0.75.npz",
+      "sha256": "c1000be69ec1a615250b60333b1e48b16868c98868e3039b92d27fd28398986b"
+    }
+  },
+  "first_failing_bundle_in_sorted_scan": "1002__p1cfg1_ind12__s0.75.npz",
+  "implementation_sha256": {
+    "library": "b1e99de69fa73dbc25c2af8092ee9dce2277c1e87be75030ea3489a891cd3312",
+    "runner": "ab2778ccf4536f886f731f68cfd33c3d9bb586e39aa2cdc6c4d2332953009ad3"
+  },
+  "join_amendment_2_sha256": "08200aaa356b2c177aa6bdc10c8d4e641b4127e28dc1d74b78acacd4c1d07654",
+  "join_amendment_3_sha256": "47c2a4c6f4fdde160c093709b53a9e55cf589fed7dc3cd3d233a220d1ca2a968",
+  "join_amendment_4_sha256": "2283ae829b34a18970a8a7c8b46963ba20db72a4bd748b31dd23564651299b64",
+  "join_amendment_sha256": "4040bc321de45ce5f2aa6fbfc75d38e780ee31be0c56248fcd6a78c8848bbabd",
+  "label_summary_or_outcome_metric_computed": false,
+  "labels_loaded_for_set_and_universe_validation": true,
+  "manifest_sha256": "64a7a3d1a194edffc69506bf7baddc85e03a3ab102298f61782d3be0fe4a595b",
+  "measurements_sha256": "85fd0fc905dbcf031e2ce43ab9d4832cd1b14d7c42fb3e01e34fb4549e013ad7",
+  "observed": {
+    "cosine_float64": 0.9999999706471376,
+    "l2": 1.0071575077569148,
+    "max_abs": 1.0,
+    "pooled_l2": 3895.60159815651,
+    "relative_l2": 0.0002585371085837806,
+    "relative_l2_float64_diagnostic": 0.00025853709173790393
+  },
+  "prediction_ledgers_produced": false,
+  "probe_metrics_computed": false,
+  "protocol_amendment_sha256": "92f2e8382e39c5395d11228d70512760558946b852d5c5fd180c83fd6e40b808",
+  "protocol_sha256": "1386287a34802bd8bdca7b1f390e22631f792dd3c650eb08341f8bc4bd03b56d",
+  "reason": "retap_cache_join_failed",
+  "resolution": "Run a newly frozen recollection that persists a pre-quantization GPU token mean using the same operation and reduction order as the original pooled tap, then rerun the identity gate before fitting any probe.",
+  "schema": "arc4_b1_incomplete_v2",
+  "scientific_token": null,
+  "status": "B1_INCOMPLETE"
+}

@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "/XYFS02/HDD_POOL/paratera_xy/pxy1289/HaocunYe/Research/SoundDecisions-arc4-gpu/scripts/arc4_b1_probe.py", line 1325, in <module>
+    raise SystemExit(main())
+  File "/XYFS02/HDD_POOL/paratera_xy/pxy1289/HaocunYe/Research/SoundDecisions-arc4-gpu/scripts/arc4_b1_probe.py", line 1290, in main
+    gate = run_gate(args, manifest, clips, rows)
+  File "/XYFS02/HDD_POOL/paratera_xy/pxy1289/HaocunYe/Research/SoundDecisions-arc4-gpu/scripts/arc4_b1_probe.py", line 463, in run_gate
+    raise RuntimeError(
+RuntimeError: B1 retap/cache trajectory join failed: 1002__p1cfg1_ind12__s0.75.npz (relative_l2=0.00025853710858378062 > 0.0002); wrote B1_INCOMPLETE, no evaluation was run

@@ -1,0 +1,64 @@
+{
+  "schema": "arc4_b1_v2_gate_closeout_v1",
+  "status": "B1_INCOMPLETE",
+  "scientific_token": null,
+  "node": "ln207",
+  "execution_class": "CPU-only gate validation; no GPU allocated or used",
+  "command": "PYTHONHASHSEED=0 python scripts/arc4_b1_probe.py --b1-root results/arc4_b1 --pooled-root /XYFS02/HDD_POOL/paratera_xy/pxy1289/HaocunYe/Research/SoundDecisions/results/stage0 --measurements /XYFS02/HDD_POOL/paratera_xy/pxy1289/HaocunYe/Research/SoundDecisions/results/stage0/measurements/measurements.jsonl",
+  "evaluate_flag_present": false,
+  "completed_utc": "2026-07-14T18:13:25Z",
+  "source_commit": "f9fcdd3fcba5046877dbcaaa9eb4df6420910c65",
+  "protocol_sha256": "1386287a34802bd8bdca7b1f390e22631f792dd3c650eb08341f8bc4bd03b56d",
+  "protocol_amendment_sha256": "92f2e8382e39c5395d11228d70512760558946b852d5c5fd180c83fd6e40b808",
+  "join_amendment_sha256": "4040bc321de45ce5f2aa6fbfc75d38e780ee31be0c56248fcd6a78c8848bbabd",
+  "join_amendment_2_sha256": "08200aaa356b2c177aa6bdc10c8d4e641b4127e28dc1d74b78acacd4c1d07654",
+  "join_amendment_3_sha256": "47c2a4c6f4fdde160c093709b53a9e55cf589fed7dc3cd3d233a220d1ca2a968",
+  "join_amendment_4_sha256": "2283ae829b34a18970a8a7c8b46963ba20db72a4bd748b31dd23564651299b64",
+  "original_binding_gate_content": {
+    "runner_sha256": "e57998c22dc6a2fc9330199a1569e6ccebb888ddd2141db3febeb7d92190cb34",
+    "library_sha256": "b1e99de69fa73dbc25c2af8092ee9dce2277c1e87be75030ea3489a891cd3312",
+    "test_sha256": "997fa49194a20f4c7ad62cfea499e62b7e8d9647eb16cfd12d77096bd747feed"
+  },
+  "closeout_reproduction_content": {
+    "runner_sha256": "ab2778ccf4536f886f731f68cfd33c3d9bb586e39aa2cdc6c4d2332953009ad3",
+    "library_sha256": "b1e99de69fa73dbc25c2af8092ee9dce2277c1e87be75030ea3489a891cd3312",
+    "test_sha256": "9e5271a80b5265e5664d9a0947ca2dd4185ac7a843c33e298f50939873991cf1"
+  },
+  "collection_completion_manifest_sha256": "8d90e94fbe234bcf366b45f379d0ade977115685254476b90307e1dcb935567d",
+  "failure_artifact": {
+    "path": "results/arc4_b1/b1_incomplete_v2.json",
+    "sha256": "8eccf463643ff8bfcf28cb20ef9e2967f777329039edd5e1c0bbc664e18f2b49"
+  },
+  "log": {
+    "path": "logs/arc4_gpu/arc4_b1_probe_v2_final/gate.log",
+    "sha256": "f9f9c6fbff885c73438397058d6fe83daa233c2f71fef3f4e1e4c10040c65a6e"
+  },
+  "exit_code": {
+    "value": 1,
+    "path": "logs/arc4_gpu/arc4_b1_probe_v2_final/exit_code",
+    "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+  },
+  "binding_failure": {
+    "first_failing_bundle_in_sorted_scan": "1002__p1cfg1_ind12__s0.75.npz",
+    "bundles_checked_before_failure": 30,
+    "threshold": 0.0002,
+    "observed_relative_l2": 0.0002585371085837806
+  },
+  "frozen_inputs": {
+    "population_manifest_sha256": "64a7a3d1a194edffc69506bf7baddc85e03a3ab102298f61782d3be0fe4a595b",
+    "coarse_class_map_sha256": "55b5a1d4116caa4503a6b4b17192425da487a9c4385a287e343d850795be4fe7",
+    "measurements_sha256": "85fd0fc905dbcf031e2ce43ab9d4832cd1b14d7c42fb3e01e34fb4549e013ad7",
+    "failing_retap_sha256": "c1000be69ec1a615250b60333b1e48b16868c98868e3039b92d27fd28398986b",
+    "failing_pooled_sha256": "bfbf8de037b49c496c531311b9a0865e3588c8186cca6be5644bf5a5c628609f"
+  },
+  "outcome_boundary": {
+    "labels_loaded_only_for_exact_set_and_universe_validation": true,
+    "label_distribution_computed": false,
+    "probe_fitted": false,
+    "prediction_produced": false,
+    "probe_metric_computed": false,
+    "bundle_gate_v2_produced": false
+  },
+  "superseded_v1_audit_history": "results/arc4_b1/job_manifests/arc4_b1_probe.json",
+  "resolution": "Run a newly frozen recollection that persists a pre-quantization GPU token mean using the same operation and reduction order as the original pooled tap, then rerun the identity gate before fitting any probe."
+}

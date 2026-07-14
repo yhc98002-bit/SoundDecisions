@@ -1,0 +1,48 @@
+{
+  "schema": "arc4_b1_collection_completion_v1",
+  "status": "COMPLETE",
+  "node": "an12",
+  "completed_utc": "2026-07-14T17:19:32Z",
+  "launch_manifest_path": "results/arc4_b1/job_manifests/arc4_b1_collect.json",
+  "launch_manifest_sha256": "09843d505159468663a04aa15619f0120d50870d6416196478aa33256dc60984",
+  "aggregate_manifest_path": "results/arc4_b1/arc3/b1_pertoken_manifest_p1cfg1.json",
+  "aggregate_manifest_sha256": "1d8440d8bb800d95cc07049ea7767292498cfa6f05c370ebeb12f2d04a372b5a",
+  "session_log_path": "logs/arc4_gpu/arc4_b1_collect/session.log",
+  "session_log_sha256": "1086244851f5c52ec4cca55845ed35cdd67f08f2428d4fd3df8dde9d40e02b17",
+  "exit_code_path": "logs/arc4_gpu/arc4_b1_collect/exit_code",
+  "exit_code_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+  "collection_config": {
+    "cfg": 1.0,
+    "schedule": "sqrt_down",
+    "seed": 0,
+    "variant": "small_16k",
+    "num_steps": 20,
+    "duration_sec": 8.0,
+    "n_independent": 16,
+    "s_grid": [0.05, 0.15, 0.25, 0.35, 0.45, 0.6, 0.75, 0.9]
+  },
+  "counts": {
+    "journals": 200,
+    "per_token_bundles": 25600,
+    "pooled_bundles": 25600,
+    "labels": 3200
+  },
+  "worker_logs": [
+    {
+      "path": "logs/arc4_gpu/arc4_b1_collect/workers/shard0.log",
+      "sha256": "0d6628550555b0515f37fff0c00fe58b5972ee4eaa653e39b3f278d11d46d827"
+    },
+    {
+      "path": "logs/arc4_gpu/arc4_b1_collect/workers/shard1.log",
+      "sha256": "df252ade87eaf4623587c9432a748ea568ba224cbef6cbfdb8a7e61b365f98c0"
+    },
+    {
+      "path": "logs/arc4_gpu/arc4_b1_collect/workers/shard2.log",
+      "sha256": "e2344a3fa8aca80419b7245a7c2c582edddf6c7771461f6bc48652a683aa022a"
+    },
+    {
+      "path": "logs/arc4_gpu/arc4_b1_collect/workers/shard3.log",
+      "sha256": "3f929215ced716411a62f2512d01c047460565a474c8b3440afebe875d2d4448"
+    }
+  ]
+}
