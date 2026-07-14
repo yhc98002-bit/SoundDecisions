@@ -122,18 +122,21 @@ def test_distinct_count_recompute_from_npz():
 
 
 def test_outputs_written(tmp_path, monkeypatch):
-    # Run main() with redirected outputs; assert both files materialize and json round-trips.
-    out_json = tmp_path / "two_budgets.json"
-    out_md = tmp_path / "two_budgets.md"
-    monkeypatch.setattr(C, "OUT_DIR", tmp_path)
-    monkeypatch.setattr(C, "OUT_JSON", out_json)
-    monkeypatch.setattr(C, "OUT_MD", out_md)
+    require_dial_caches()
+    out_json = tmp_path / "entropy_lens_v3.json"
+    out_md = tmp_path / "entropy_lens_v3.md"
+    monkeypatch.setattr(C, "ARC4_WPA2_OUT_DIR", tmp_path)
+    monkeypatch.setattr(C, "ARC4_WPA2_OUT_JSON", out_json)
+    monkeypatch.setattr(C, "ARC4_WPA2_OUT_MD", out_md)
     C.main()
     assert out_json.exists() and out_md.exists()
     blob = json.loads(out_json.read_text())
-    assert blob["headline"]["axis"] == "class"
+    assert blob["ci_method"] == "clip_bootstrap"
+    assert blob["mechanism_claim"] is None
+    assert "mode collapse" not in out_json.read_text().lower()
     md = out_md.read_text()
-    assert "CONTRAST" in md and "Entropy lens" in md or "entropy lens" in md.lower()
+    assert "descriptive" in md.lower()
+    assert "causal mechanism" in md.lower()
 
 
 def test_abstain_filtered_entropy_lens_on_synthetic_caches(tmp_path, monkeypatch):
@@ -148,7 +151,7 @@ def test_abstain_filtered_entropy_lens_on_synthetic_caches(tmp_path, monkeypatch
     monkeypatch.setattr(C, "CFG_LIST", ("1",))
     monkeypatch.setattr(C, "EXPECTED_DIAL_CLIPS", 2)
 
-    result = C.build_entropy_lens_v2()
+    result = C.build_entropy_lens_v3()
     row = result["by_cfg"]["1"]
     assert row["mean_distinct_including_abstain"] == pytest.approx(2.5)
     assert row["mean_distinct_excluding_abstain"] == pytest.approx(1.5)
@@ -156,24 +159,25 @@ def test_abstain_filtered_entropy_lens_on_synthetic_caches(tmp_path, monkeypatch
     assert row["n_labels"] == 8
     assert row["abstain_rate"] == pytest.approx(3 / 8)
     assert row["abstain_ci_lo"] < row["abstain_rate"] < row["abstain_ci_hi"]
+    assert result["ci_method"] == "clip_bootstrap"
     assert result["decision_token"] is None
 
-    out_dir = tmp_path / "arc4"
-    monkeypatch.setattr(C, "ARC4_OUT_DIR", out_dir)
-    monkeypatch.setattr(C, "ARC4_OUT_JSON", out_dir / "entropy_lens_v2.json")
-    monkeypatch.setattr(C, "ARC4_OUT_MD", out_dir / "entropy_lens_v2.md")
+    out_dir = tmp_path / "arc4_wpA2"
+    monkeypatch.setattr(C, "ARC4_WPA2_OUT_DIR", out_dir)
+    monkeypatch.setattr(C, "ARC4_WPA2_OUT_JSON", out_dir / "entropy_lens_v3.json")
+    monkeypatch.setattr(C, "ARC4_WPA2_OUT_MD", out_dir / "entropy_lens_v3.md")
     C.main(["--exclude-abstain"])
-    assert C.ARC4_OUT_JSON.exists()
-    assert "distinct excl. abstain" in C.ARC4_OUT_MD.read_text()
+    assert C.ARC4_WPA2_OUT_JSON.exists()
+    assert "distinct excl. abstain" in C.ARC4_WPA2_OUT_MD.read_text()
 
 
-def test_wilson_interval_boundary_cases():
-    lo0, hi0 = C.binomial_wilson_ci(0, 10)
-    lo1, hi1 = C.binomial_wilson_ci(10, 10)
-    assert lo0 == pytest.approx(0.0)
-    assert 0.0 < hi0 < 1.0
-    assert 0.0 < lo1 < 1.0
-    assert hi1 == pytest.approx(1.0)
+def test_clip_bootstrap_is_deterministic():
+    values = [0.0, 0.25, 0.5, 1.0]
+    first = C.bootstrap_clip_mean(values, n_boot=1000, seed=0)
+    second = C.bootstrap_clip_mean(values, n_boot=1000, seed=0)
+    assert first == pytest.approx(second)
+    assert first[0] == pytest.approx(np.mean(values))
+    assert first[1] < first[0] < first[2]
 
 
 def test_missing_dial_caches_are_skipped(monkeypatch):

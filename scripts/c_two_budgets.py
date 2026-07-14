@@ -1,40 +1,9 @@
 #!/usr/bin/env python
-"""Arc-3 Tier-B Part C — Two budgets + entropy lens (pre-reg §C). CPU-only, NO new generation.
+"""Cached class-diversity and abstention lens. CPU-only; no generation or decision token.
 
-ASSEMBLY of three cached views, SIDE BY SIDE (pre-registered as DESCRIPTIVE; emits NO token):
-
-  (i)   OBSERVATIONAL determination budget: per-axis conditioning / seed / trajectory /
-        residual shares at cfg=1.0 and cfg=4.5, from
-        results/stage0/phase1/determination_budget_p1cfg{1,45}.csv. The 'conditioning' column
-        is the OBSERVATIONAL conditioning-share (variance of the final attributable to the
-        video conditioning under the determination decomposition).
-
-  (ii)  CAUSAL conditioning responsiveness: per-axis follow_rate / retention_rate / s_cond from
-        results/stage0/stage_r/cond_swap_map_cswap.csv + cond_swap_summary_cswap.json. This is
-        the cond-swap FOLLOW/RETENTION (does the output track a SWAPPED video conditioning),
-        explicitly labelled 'causal conditioning responsiveness' and explicitly NOT the
-        observational conditioning share of (i).
-
-  (iii) ENTROPY LENS (the EXPLAINER for why (i) and (ii) diverge at high cfg): the
-        distinct-class-count vs cfg, recomputed from the cfg-dial caches
-        results/stage0/gate_a/dial_noise__dial_cfg<C>__<clip>.npz (mean #distinct final-class
-        labels across the 16 independents per clip). The sequence 4.83 -> 3.62 across cfg
-        1.0..4.5 is MODE COLLAPSE: at high cfg the generator concentrates on fewer classes, so
-        per-clip outputs look MORE determined (inflating the observational conditioning-share)
-        even though a direct video swap shows the class is NOT actually video-driven.
-
-Headline contrast (CLASS axis): observational conditioning-share RISES 0.378 -> 0.508 with cfg
-(appears more video-driven) BUT the causal follow-rate is only 0.45 and the cond-swap sanity
-FAILS -> NOT actually video-driven; the rise is an artifact of mode collapse, not of the video.
-
-Writes (NEW files only, under results/stage0/arc3/):
-  results/stage0/arc3/two_budgets.json   machine-readable assembly
-  results/stage0/arc3/two_budgets.md      the side-by-side report + contrast table
-
-Touches NO frozen file, writes NO finals/features, launches NO GPU job. Deterministic; pure
-read of cached artifacts.
-
-  python scripts/c_two_budgets.py
+The default command writes a descriptive WP-A2 artifact with clip-bootstrap confidence
+intervals. The withdrawn Arc-3 mechanism narrative is retained for audit reproduction only and
+can be emitted explicitly with ``--legacy-arc3`` to its historical results path.
 """
 from __future__ import annotations
 
@@ -61,6 +30,9 @@ OUT_MD = OUT_DIR / "two_budgets.md"
 ARC4_OUT_DIR = ROOT / "results/arc4_wpA"
 ARC4_OUT_JSON = ARC4_OUT_DIR / "entropy_lens_v2.json"
 ARC4_OUT_MD = ARC4_OUT_DIR / "entropy_lens_v2.md"
+ARC4_WPA2_OUT_DIR = ROOT / "results/arc4_wpA2"
+ARC4_WPA2_OUT_JSON = ARC4_WPA2_OUT_DIR / "entropy_lens_v3.json"
+ARC4_WPA2_OUT_MD = ARC4_WPA2_OUT_DIR / "entropy_lens_v3.md"
 
 AXES = ("presence", "timing", "class", "material")
 CFG_LIST = ("1", "1.5", "2", "2.5", "3", "4.5")  # cfg-dial grid for the entropy lens
@@ -221,6 +193,91 @@ def build_entropy_lens_v2() -> dict:
             "abstain_rate": [by_cfg[C]["abstain_rate"] for C in CFG_LIST],
         },
         "decision_token": None,
+    }
+
+
+def bootstrap_clip_mean(
+    values: list[float], n_boot: int = 1000, seed: int = 0
+) -> tuple[float, float, float]:
+    """Mean and percentile CI from a bootstrap over clips."""
+    arr = np.asarray(values, dtype=float)
+    if arr.ndim != 1 or arr.size == 0:
+        return float("nan"), float("nan"), float("nan")
+    rng = np.random.default_rng(seed)
+    indices = rng.integers(0, arr.size, size=(n_boot, arr.size))
+    draws = arr[indices].mean(axis=1)
+    lo, hi = np.quantile(draws, [0.025, 0.975])
+    return float(arr.mean()), float(lo), float(hi)
+
+
+def build_entropy_lens_v3(n_boot: int = 1000, seed: int = 0) -> dict:
+    """Publish inclusive and abstain-filtered diversity with clip-bootstrap intervals."""
+    by_cfg: dict[str, dict[str, float | int]] = {}
+    for C in CFG_LIST:
+        files = sorted(glob.glob(str(ROOT / DIAL_GLOB.format(C=C))))
+        if len(files) != EXPECTED_DIAL_CLIPS:
+            raise FileNotFoundError(
+                f"cfg={C}: expected {EXPECTED_DIAL_CLIPS} cfg-dial caches, found {len(files)}"
+            )
+
+        distinct_including: list[float] = []
+        distinct_excluding: list[float] = []
+        abstain_rates: list[float] = []
+        n_labels = 0
+        n_abstain = 0
+        for fp in files:
+            labels = np.asarray(np.load(fp, allow_pickle=True)["labels"]).tolist()
+            if not labels:
+                raise ValueError(f"empty label array in {fp}")
+            confident = [label for label in labels if label != ABSTAIN_LABEL]
+            distinct_including.append(float(len(set(labels))))
+            distinct_excluding.append(float(len(set(confident))))
+            n_clip_abstain = sum(label == ABSTAIN_LABEL for label in labels)
+            abstain_rates.append(n_clip_abstain / len(labels))
+            n_labels += len(labels)
+            n_abstain += n_clip_abstain
+
+        inc, inc_lo, inc_hi = bootstrap_clip_mean(distinct_including, n_boot, seed)
+        exc, exc_lo, exc_hi = bootstrap_clip_mean(distinct_excluding, n_boot, seed)
+        abstain, abstain_lo, abstain_hi = bootstrap_clip_mean(abstain_rates, n_boot, seed)
+        by_cfg[C] = {
+            "n_clips": len(files),
+            "n_labels": n_labels,
+            "n_abstain": n_abstain,
+            "mean_distinct_including_abstain": inc,
+            "mean_distinct_including_abstain_ci_lo": inc_lo,
+            "mean_distinct_including_abstain_ci_hi": inc_hi,
+            "mean_distinct_excluding_abstain": exc,
+            "mean_distinct_excluding_abstain_ci_lo": exc_lo,
+            "mean_distinct_excluding_abstain_ci_hi": exc_hi,
+            "abstain_rate": abstain,
+            "abstain_ci_lo": abstain_lo,
+            "abstain_ci_hi": abstain_hi,
+        }
+
+    return {
+        "analysis": "Arc-4 WP-A2 descriptive entropy lens",
+        "source": DIAL_GLOB,
+        "cfg_grid": list(CFG_LIST),
+        "abstain_label": ABSTAIN_LABEL,
+        "ci_method": "clip_bootstrap",
+        "ci_level": 0.95,
+        "bootstrap_unit": "clip",
+        "n_boot": n_boot,
+        "bootstrap_seed": seed,
+        "interpretation": "descriptive_only",
+        "by_cfg": by_cfg,
+        "series": {
+            "mean_distinct_including_abstain": [
+                by_cfg[C]["mean_distinct_including_abstain"] for C in CFG_LIST
+            ],
+            "mean_distinct_excluding_abstain": [
+                by_cfg[C]["mean_distinct_excluding_abstain"] for C in CFG_LIST
+            ],
+            "abstain_rate": [by_cfg[C]["abstain_rate"] for C in CFG_LIST],
+        },
+        "decision_token": None,
+        "mechanism_claim": None,
     }
 
 
@@ -480,12 +537,51 @@ def write_entropy_lens_v2_md(data: dict) -> None:
     ARC4_OUT_MD.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 
+def write_entropy_lens_v3_md(data: dict) -> None:
+    """Write the descriptive WP-A2 lens; no causal or mechanism interpretation."""
+    lines = [
+        "# Arc-4 WP-A2 descriptive entropy lens",
+        "",
+        "Cached analysis only; no generation and no decision token. Means and 95% intervals "
+        "use a 1,000-draw bootstrap over the 24 clips at each cfg (seed 0).",
+        "",
+        "| cfg | distinct incl. abstain (95% CI) | distinct excl. abstain (95% CI) | "
+        "abstain rate (95% CI) |",
+        "|---|---:|---:|---:|",
+    ]
+    for C in CFG_LIST:
+        row = data["by_cfg"][C]
+        lines.append(
+            f"| {C} | {row['mean_distinct_including_abstain']:.4f} "
+            f"[{row['mean_distinct_including_abstain_ci_lo']:.4f}, "
+            f"{row['mean_distinct_including_abstain_ci_hi']:.4f}] | "
+            f"{row['mean_distinct_excluding_abstain']:.4f} "
+            f"[{row['mean_distinct_excluding_abstain_ci_lo']:.4f}, "
+            f"{row['mean_distinct_excluding_abstain_ci_hi']:.4f}] | "
+            f"{row['abstain_rate']:.4f} "
+            f"[{row['abstain_ci_lo']:.4f}, {row['abstain_ci_hi']:.4f}] |"
+        )
+    lines.extend([
+        "",
+        "The two distinct-count series are reported side by side for continuity. They are "
+        "descriptive diversity summaries and do not establish a causal mechanism.",
+        "",
+        "_Generated by `scripts/c_two_budgets.py`._",
+    ])
+    ARC4_WPA2_OUT_MD.write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+
 def main(argv: list[str] | None = None) -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
         "--exclude-abstain",
         action="store_true",
-        help="write the Arc-4 entropy lens with inclusive and abstain-filtered class counts",
+        help="deprecated alias for the default abstain-aware WP-A2 output",
+    )
+    parser.add_argument(
+        "--legacy-arc3",
+        action="store_true",
+        help="reproduce the withdrawn Arc-3 narrative at its historical output path",
     )
     args = parser.parse_args([] if argv is None else argv)
 
@@ -495,31 +591,22 @@ def main(argv: list[str] | None = None) -> None:
         except ValueError:
             return str(p)
 
-    if args.exclude_abstain:
-        data = build_entropy_lens_v2()
-        ARC4_OUT_DIR.mkdir(parents=True, exist_ok=True)
-        ARC4_OUT_JSON.write_text(json.dumps(data, indent=2), encoding="utf-8")
-        write_entropy_lens_v2_md(data)
-        print(f"wrote {_rel(ARC4_OUT_JSON)} and {_rel(ARC4_OUT_MD)}")
+    if args.legacy_arc3:
+        for p in (BUDGET_CFG1, BUDGET_CFG45, CSWAP_MAP, CSWAP_SUMMARY):
+            if not p.exists():
+                raise SystemExit(f"c_two_budgets: missing cached input {p}")
+        data = build()
+        OUT_DIR.mkdir(parents=True, exist_ok=True)
+        OUT_JSON.write_text(json.dumps(data, indent=2, default=str), encoding="utf-8")
+        write_md(data)
+        print(f"wrote historical {_rel(OUT_JSON)} and {_rel(OUT_MD)}")
         return
 
-    for p in (BUDGET_CFG1, BUDGET_CFG45, CSWAP_MAP, CSWAP_SUMMARY):
-        if not p.exists():
-            raise SystemExit(f"c_two_budgets: missing cached input {p}")
-    data = build()
-    OUT_DIR.mkdir(parents=True, exist_ok=True)
-    OUT_JSON.write_text(json.dumps(data, indent=2, default=str), encoding="utf-8")
-    write_md(data)
-
-    print(f"wrote {_rel(OUT_JSON)} and {_rel(OUT_MD)}")
-    h = data["headline"]
-    print(f"  headline (class): obs cond-share {h['observational_conditioning_share_cfg1']:.3f} "
-          f"-> {h['observational_conditioning_share_cfg45']:.3f}; "
-          f"causal follow@low_s {h['causal_follow_rate_low_s']:.2f}; "
-          f"cond-swap sanity {'PASS' if h['cond_swap_sanity_passed'] else 'FAIL'}")
-    el = data["entropy_lens"]
-    print(f"  entropy lens: distinct-class {el['sequence_cfg_1_to_4p5']} "
-          f"(collapse Δ {el['collapse_delta']:.2f})")
+    data = build_entropy_lens_v3()
+    ARC4_WPA2_OUT_DIR.mkdir(parents=True, exist_ok=True)
+    ARC4_WPA2_OUT_JSON.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
+    write_entropy_lens_v3_md(data)
+    print(f"wrote {_rel(ARC4_WPA2_OUT_JSON)} and {_rel(ARC4_WPA2_OUT_MD)}")
 
 
 if __name__ == "__main__":
