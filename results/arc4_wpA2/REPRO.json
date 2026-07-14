@@ -1,0 +1,80 @@
+{
+  "protocol": {
+    "artifact_count": 14,
+    "processes": 3,
+    "python_hash_seeds": [0, 0, 1],
+    "requirement": "byte-identical final artifacts"
+  },
+  "regenerators": {
+    "results/arc4_wpA/b4_bridge_corrected.json": {
+      "run1": "dad3752cca3eb3275703e0d04311518308bd797a689af03cd270873415e6b4ff",
+      "run2": "dad3752cca3eb3275703e0d04311518308bd797a689af03cd270873415e6b4ff",
+      "run3_hashseed_1": "dad3752cca3eb3275703e0d04311518308bd797a689af03cd270873415e6b4ff"
+    },
+    "results/arc4_wpA/b4_bridge_corrected.md": {
+      "run1": "99c1005834f55579566a7219495e4c3faac60ad18348aba19fc1c1345e3a9202",
+      "run2": "99c1005834f55579566a7219495e4c3faac60ad18348aba19fc1c1345e3a9202",
+      "run3_hashseed_1": "99c1005834f55579566a7219495e4c3faac60ad18348aba19fc1c1345e3a9202"
+    },
+    "results/arc4_wpA/policy_report_corrected.md": {
+      "run1": "ed51d085f8e04c20141ceaa09b8be1b4cadc689ceb8afc64e9853d50ba6ad584",
+      "run2": "ed51d085f8e04c20141ceaa09b8be1b4cadc689ceb8afc64e9853d50ba6ad584",
+      "run3_hashseed_1": "ed51d085f8e04c20141ceaa09b8be1b4cadc689ceb8afc64e9853d50ba6ad584"
+    },
+    "results/arc4_wpA2/entropy_lens_v3.json": {
+      "run1": "913b03924598574451f633e7b3eeea79673667faaf7c29a2ce3bafc490dde0ed",
+      "run2": "913b03924598574451f633e7b3eeea79673667faaf7c29a2ce3bafc490dde0ed",
+      "run3_hashseed_1": "913b03924598574451f633e7b3eeea79673667faaf7c29a2ce3bafc490dde0ed"
+    },
+    "results/arc4_wpA2/entropy_lens_v3.md": {
+      "run1": "9ce772509e666a448ecaf50e28f39cd95e6e5d609ecdcd3794faa0b9386e091f",
+      "run2": "9ce772509e666a448ecaf50e28f39cd95e6e5d609ecdcd3794faa0b9386e091f",
+      "run3_hashseed_1": "9ce772509e666a448ecaf50e28f39cd95e6e5d609ecdcd3794faa0b9386e091f"
+    },
+    "results/arc4_wpA2/axis_validity.json": {
+      "run1": "09f26abfd290f9e6e474f904d5967bd3dcb1f182326e90ec697bcaeee1f2e45a",
+      "run2": "09f26abfd290f9e6e474f904d5967bd3dcb1f182326e90ec697bcaeee1f2e45a",
+      "run3_hashseed_1": "09f26abfd290f9e6e474f904d5967bd3dcb1f182326e90ec697bcaeee1f2e45a"
+    },
+    "results/arc4_wpA2/class_reconstruction.json": {
+      "run1": "4d191b1c53ce21c4e9b68b9c36e385b0fc7ea2edd607fc528e2e034047773bc0",
+      "run2": "4d191b1c53ce21c4e9b68b9c36e385b0fc7ea2edd607fc528e2e034047773bc0",
+      "run3_hashseed_1": "4d191b1c53ce21c4e9b68b9c36e385b0fc7ea2edd607fc528e2e034047773bc0"
+    },
+    "results/arc4_wpA2/class_reconstruction.md": {
+      "run1": "ad69db4db2a76e7e9adaad30b374ce57a078e9c93ffe85064acff5699dbeebd7",
+      "run2": "ad69db4db2a76e7e9adaad30b374ce57a078e9c93ffe85064acff5699dbeebd7",
+      "run3_hashseed_1": "ad69db4db2a76e7e9adaad30b374ce57a078e9c93ffe85064acff5699dbeebd7"
+    },
+    "results/arc4_wpA2/determination_partition.csv": {
+      "run1": "81360b7933f4adb4d64116004936e532dcd13b993404b6feebb61287a0b36415",
+      "run2": "81360b7933f4adb4d64116004936e532dcd13b993404b6feebb61287a0b36415",
+      "run3_hashseed_1": "81360b7933f4adb4d64116004936e532dcd13b993404b6feebb61287a0b36415"
+    },
+    "results/arc4_wpA2/window_partitioned.json": {
+      "run1": "512faa81e070f2911041ec2dab55dbc4cf66f32bddcac8ee3d9e2ae1f6c762a6",
+      "run2": "512faa81e070f2911041ec2dab55dbc4cf66f32bddcac8ee3d9e2ae1f6c762a6",
+      "run3_hashseed_1": "512faa81e070f2911041ec2dab55dbc4cf66f32bddcac8ee3d9e2ae1f6c762a6"
+    },
+    "results/arc4_wpA2/readout_map_v3.csv": {
+      "run1": "70deb40616bccd7b47222af6c53b1dfad40fca5279e03fd2048748ef32af9f92",
+      "run2": "70deb40616bccd7b47222af6c53b1dfad40fca5279e03fd2048748ef32af9f92",
+      "run3_hashseed_1": "70deb40616bccd7b47222af6c53b1dfad40fca5279e03fd2048748ef32af9f92"
+    },
+    "results/arc4_wpA2/readout_map_v3.md": {
+      "run1": "3a0dfb35451b1f5c0b345e832e73c3c0a3dc32ae7feaec037d227cc16d96273b",
+      "run2": "3a0dfb35451b1f5c0b345e832e73c3c0a3dc32ae7feaec037d227cc16d96273b",
+      "run3_hashseed_1": "3a0dfb35451b1f5c0b345e832e73c3c0a3dc32ae7feaec037d227cc16d96273b"
+    },
+    "results/arc4_wpA2/axis_diagnostics.md": {
+      "run1": "78fcb922286533844eb19711e5b69a404c793c0485c14d63133db8bda165eafb",
+      "run2": "78fcb922286533844eb19711e5b69a404c793c0485c14d63133db8bda165eafb",
+      "run3_hashseed_1": "78fcb922286533844eb19711e5b69a404c793c0485c14d63133db8bda165eafb"
+    },
+    "results/arc4_wpA2/swap_final.json": {
+      "run1": "a5316079fe348215b40adb5d40c9862e5cfb74c7cc8c7ebfae8edd2168dffb2e",
+      "run2": "a5316079fe348215b40adb5d40c9862e5cfb74c7cc8c7ebfae8edd2168dffb2e",
+      "run3_hashseed_1": "a5316079fe348215b40adb5d40c9862e5cfb74c7cc8c7ebfae8edd2168dffb2e"
+    }
+  }
+}

@@ -1,0 +1,224 @@
+[
+  {
+    "claim": "Joint simulated keep-flip recovery",
+    "value": 0.0,
+    "artifact": "results/arc4_wpA/b4_bridge_corrected.json",
+    "key": "joint_recovery"
+  },
+  {
+    "claim": "Joint recovery bootstrap CI upper bound after resampling the floor",
+    "value": 0.19092041015624997,
+    "artifact": "results/arc4_wpA/b4_bridge_corrected.json",
+    "key": "joint_ci_hi"
+  },
+  {
+    "claim": "Rounded baseline aggregate NFE",
+    "value": 51525,
+    "artifact": "results/arc4_wpA/policy_report_corrected.md",
+    "key": "same_compute_bon.NFE"
+  },
+  {
+    "claim": "Axis-gated aggregate NFE",
+    "value": 49151,
+    "artifact": "results/arc4_wpA/policy_report_corrected.md",
+    "key": "oracle_axis_gated.NFE"
+  },
+  {
+    "claim": "Presence cohort majority share",
+    "value": 0.8778125,
+    "artifact": "results/arc4_wpA2/axis_validity.json",
+    "key": "per_axis.presence.majority_share"
+  },
+  {
+    "claim": "Timing cohort majority share",
+    "value": 0.940625,
+    "artifact": "results/arc4_wpA2/axis_validity.json",
+    "key": "per_axis.timing.majority_share"
+  },
+  {
+    "claim": "Class effective category count",
+    "value": 6.233896899764545,
+    "artifact": "results/arc4_wpA2/axis_validity.json",
+    "key": "per_axis.class.k_eff"
+  },
+  {
+    "claim": "Material Tier-0 relative agreement",
+    "value": 0.41211526040904745,
+    "artifact": "results/arc4_wpA2/axis_validity.json",
+    "key": "per_axis.material.relative_agreement"
+  },
+  {
+    "claim": "Class journal reconstruction maximum committed-CSV delta",
+    "value": 0.0,
+    "artifact": "results/arc4_wpA2/class_reconstruction.json",
+    "key": "max_abs_delta"
+  },
+  {
+    "claim": "Class confident-subset commitment window",
+    "value": 0.34593023255813954,
+    "artifact": "results/arc4_wpA2/class_reconstruction.json",
+    "key": "s_commit_confident"
+  },
+  {
+    "claim": "Class naive abstain-as-value commitment window",
+    "value": 0.4625925925925926,
+    "artifact": "results/arc4_wpA2/class_reconstruction.json",
+    "key": "s_commit_naive"
+  },
+  {
+    "claim": "Class confident R2 readout gap",
+    "value": 0.40406976744186046,
+    "artifact": "results/arc4_wpA2/class_reconstruction.json",
+    "key": "gap_confident"
+  },
+  {
+    "claim": "Class naive sensitivity readout gap",
+    "value": 0.2874074074074074,
+    "artifact": "results/arc4_wpA2/class_reconstruction.json",
+    "key": "gap_naive"
+  },
+  {
+    "claim": "Class video-determined clips excluded from window estimation",
+    "value": 10,
+    "artifact": "results/arc4_wpA2/window_partitioned.json",
+    "key": "per_axis.class.n_video_determined"
+  },
+  {
+    "claim": "Presence video-determined clips excluded from window estimation",
+    "value": 70,
+    "artifact": "results/arc4_wpA2/window_partitioned.json",
+    "key": "per_axis.presence.n_video_determined"
+  },
+  {
+    "claim": "Timing video-determined clips excluded from window estimation",
+    "value": 121,
+    "artifact": "results/arc4_wpA2/window_partitioned.json",
+    "key": "per_axis.timing.n_video_determined"
+  },
+  {
+    "claim": "Timing readout margin over majority at s=0.05",
+    "value": 0.0050000000000000044,
+    "artifact": "results/arc4_wpA2/readout_map_v3.csv",
+    "key": "axis_id=timing,s=0.05.margin_over_majority"
+  },
+  {
+    "claim": "Timing balanced-accuracy lower CI at s=0.05",
+    "value": 0.27598806994287134,
+    "artifact": "results/arc4_wpA2/readout_map_v3.csv",
+    "key": "axis_id=timing,s=0.05.bal_ci_lo"
+  },
+  {
+    "claim": "Class unconditional swap follow-only rate at s=0.05",
+    "value": 0.4,
+    "artifact": "results/arc4_wpA2/swap_final.json",
+    "key": "estimands.unconditional.follow_only"
+  },
+  {
+    "claim": "Class donor-not-source swap follow-only rate at s=0.05",
+    "value": 0.47058823529411764,
+    "artifact": "results/arc4_wpA2/swap_final.json",
+    "key": "estimands.donor_ne_source.follow_only"
+  },
+  {
+    "claim": "Swap journal reproduction maximum delta",
+    "value": 0.0,
+    "artifact": "results/arc4_wpA2/swap_final.json",
+    "key": "legacy_validation.max_abs_delta"
+  },
+  {
+    "claim": "WP-A fixed-floor joint recovery CI upper bound",
+    "value": 0.127712,
+    "artifact": "results/arc4_wpA/WPA_REPORT.md",
+    "key": "T3.fixed_floor_joint_ci_hi"
+  },
+  {
+    "claim": "Rounded comparator aggregate NFE advantage percent",
+    "value": 4.8,
+    "artifact": "results/arc4_wpA/policy_report_corrected.md",
+    "key": "rounded_comparator.aggregate_nfe_advantage_percent"
+  },
+  {
+    "claim": "WP-A full-artifact passed-test count",
+    "value": 1041,
+    "artifact": "results/arc4_wpA/WPA_REPORT.md",
+    "key": "verification.pytest_passed"
+  },
+  {
+    "claim": "Class confident-subset crossing clip count",
+    "value": 172,
+    "artifact": "results/arc4_wpA2/class_reconstruction.json",
+    "key": "n_crossing_confident"
+  },
+  {
+    "claim": "Class naive abstain-as-value crossing clip count",
+    "value": 135,
+    "artifact": "results/arc4_wpA2/class_reconstruction.json",
+    "key": "n_crossing_naive"
+  },
+  {
+    "claim": "Material video-determined clip count",
+    "value": 0,
+    "artifact": "results/arc4_wpA2/window_partitioned.json",
+    "key": "per_axis.material.n_video_determined"
+  },
+  {
+    "claim": "Legacy Phase-2 pooled-value maximum reproduction delta",
+    "value": 2.220446049250313e-16,
+    "artifact": "results/arc4_wpA2/axis_diagnostics.md",
+    "key": "reconstruction_checks.legacy.max_abs_delta"
+  },
+  {
+    "claim": "Timing balanced-accuracy upper CI at s=0.05",
+    "value": 0.42738040946944206,
+    "artifact": "results/arc4_wpA2/readout_map_v3.csv",
+    "key": "axis_id=timing,s=0.05.bal_ci_hi"
+  },
+  {
+    "claim": "Class unconditional swap denominator at s=0.05",
+    "value": 20,
+    "artifact": "results/arc4_wpA2/swap_final.json",
+    "key": "estimands.unconditional.n"
+  },
+  {
+    "claim": "Class donor-not-source swap denominator at s=0.05",
+    "value": 17,
+    "artifact": "results/arc4_wpA2/swap_final.json",
+    "key": "estimands.donor_ne_source.n"
+  },
+  {
+    "claim": "Class swap follow count shared by both estimands at s=0.05",
+    "value": 8,
+    "artifact": "results/arc4_wpA2/swap_final.json",
+    "key": "estimands.donor_ne_source.follow_count"
+  },
+  {
+    "claim": "Committed swap cells reproduced from journals",
+    "value": 32,
+    "artifact": "results/arc4_wpA2/swap_final.json",
+    "key": "legacy_validation.reproduced_cells"
+  },
+  {
+    "claim": "Three-process byte-reproduced artifact count",
+    "value": 14,
+    "artifact": "results/arc4_wpA2/REPRO.json",
+    "key": "protocol.artifact_count"
+  },
+  {
+    "claim": "Evidence-backed task flag count",
+    "value": 1,
+    "artifact": "results/arc4_wpA2/FLAGS.json",
+    "key": "len(flags)"
+  },
+  {
+    "claim": "Frozen pre-existing file count checked by the verifier",
+    "value": 8,
+    "artifact": "scripts/arc4_wpA2_verify.py",
+    "key": "len(FROZEN)"
+  },
+  {
+    "claim": "WP-A2 full-artifact passed-test count",
+    "value": 1061,
+    "artifact": "tests_full.log",
+    "key": "pytest_summary.passed"
+  }
+]
