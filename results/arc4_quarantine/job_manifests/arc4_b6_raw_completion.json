@@ -1,0 +1,36 @@
+{
+  "_doc": "Append-only terminal record for the original Arc-4 B6 raw-generation launch.",
+  "queue": "arc4_b6_raw",
+  "launch_ledger": {
+    "path": "results/arc4_quarantine/job_manifests/arc4_b6_raw.json",
+    "sha256": "9215787d592b4b1d3cc4941fa8b8c243c61c32df97693d2c0ff3f2bf7955921c"
+  },
+  "terminal": {
+    "status": "ALLOCATION_TIMEOUT",
+    "completed_utc": "2026-07-14T17:09:52Z",
+    "runner_exit_code_recorded": false,
+    "slurm_job_id": "97747",
+    "slurm_state": "TIMEOUT",
+    "slurm_elapsed": "04:00:11"
+  },
+  "logs": {
+    "session_log": {
+      "path": "logs/arc4_gpu/arc4_b6_raw/session.log",
+      "sha256": "8aa7976dd0d7372fe285bdbf4ffd96127f6c0bcd55e4359dd3b417d3663d3cd5"
+    },
+    "worker_log_count": 8,
+    "worker_logs_tree_sha256": "9a6bb0a5bcd9005ce98aea3f1d65c41bbdb43f432b1f0d317c19ea5e2420f2d4"
+  },
+  "completed_pair_journals": {
+    "cfg1p0": 53,
+    "cfg4p5": 128
+  },
+  "validation": {
+    "status": "INCOMPLETE_AT_TIMEOUT",
+    "note": "Only committed pair journals are counted; partial files are not completion evidence."
+  },
+  "deviations": [
+    "The four-hour an21 allocation ended while cfg1.0 was in progress.",
+    "The launch runner could not write an exit_code because Slurm terminated the allocation."
+  ]
+}

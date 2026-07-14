@@ -1,0 +1,49 @@
+{
+  "_doc": "Append-only completion record for the Arc-4 B6 raw-generation resume.",
+  "queue": "arc4_b6_resume_an12",
+  "launch_ledger": {
+    "path": "results/arc4_quarantine/job_manifests/arc4_b6_resume_an12.json",
+    "sha256": "14695ef3cd926f758409f887141e2a5bcac14784ab5bf1cc54bdce3829c6c906"
+  },
+  "terminal": {
+    "status": "COMPLETE",
+    "completed_utc": "2026-07-14T17:25:30Z",
+    "runner_exit_code": 0
+  },
+  "logs": {
+    "session_log": {
+      "path": "logs/arc4_gpu/arc4_b6_resume_an12/session.log",
+      "sha256": "1b4a25794699f7bce9e44fae239fdcc85a23def9905ec61f5f1f26d11ea96c65"
+    },
+    "worker_log_count": 4,
+    "worker_logs_tree_sha256": "c76c168e3f9242fa673b71a7062b41a13d686d77fa30aa530968119e833b25f3"
+  },
+  "artifacts": {
+    "cfg1p0": {
+      "pair_journals": 128,
+      "raw_wavs": 1280,
+      "journal_tree_sha256": "9a525e03225148b0d6c0f211c1974a84510634695be853aab3cec6c6aeb49136"
+    },
+    "cfg4p5": {
+      "pair_journals": 128,
+      "raw_wavs": 1280,
+      "journal_tree_sha256": "ab4aab624eeeadbb35bc0302e68526a947f5cd3bce9e336b342634480c64c423"
+    }
+  },
+  "validation": {
+    "status": "PASS",
+    "completed_utc": "2026-07-14T17:43:48Z",
+    "mode": "eight fresh CPU-only resume validators with CUDA hidden",
+    "pythonhashseed": "0",
+    "exit_code": 0,
+    "exit_code_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "validator_log_count": 8,
+    "validator_logs_tree_sha256": "64f7130a638a643fd7eb6447eb6121b6af721f780db2894f24843b95ec53bdf5",
+    "assigned_pairs_per_validator": 32,
+    "todo_pairs_per_validator": 0
+  },
+  "deviations": [
+    "The resume completed the 75 cfg1.0 pair journals left by the an21 allocation timeout.",
+    "Guarded Slurm job 97896 remained pending and was canceled before start; the resume moved to newly free an12 GPUs 4-7."
+  ]
+}
