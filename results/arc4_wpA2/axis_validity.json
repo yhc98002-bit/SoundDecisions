@@ -1,0 +1,270 @@
+{
+  "analysis": "Arc-4 WP-A2 axis informativeness",
+  "between_video_sampling": {
+    "n_pairs": 10000,
+    "pair_score": "mean agreement over all cross-target pairs for the selected video pair",
+    "seed": 0,
+    "selection": "seeded permutation without replacement",
+    "unit": "unique unordered pair of distinct videos"
+  },
+  "decision_token": null,
+  "evidence_tier": "diagnostic/exploratory",
+  "heterogeneity_bootstrap": {
+    "ci": 0.95,
+    "n_draws": 1000,
+    "pair_reweighting": "frozen selected video pairs weighted by endpoint resample multiplicities",
+    "seed": 0,
+    "unit": "video"
+  },
+  "per_axis": {
+    "class": {
+      "a_between_video": 0.15185616339452093,
+      "a_ind_mean": 0.37767965367965367,
+      "abstain_rate": 0.323125,
+      "entropy": 2.051842587682616,
+      "entropy_log_base": "natural",
+      "heterogeneity_difference": 0.22582349028513274,
+      "heterogeneity_difference_ci95": [
+        0.19313818574179542,
+        0.25959574456532497
+      ],
+      "heterogeneity_significance_definition": "positive within-minus-between difference; 95% video-bootstrap CI lower bound > 0",
+      "heterogeneity_significant": true,
+      "k_eff": 6.233896899764545,
+      "k_eff_definition": "inverse_simpson_1_over_sum_p_squared",
+      "kind": "categorical",
+      "label_marginals": [
+        {
+          "label": "animals",
+          "share": 0.21421975992613113
+        },
+        {
+          "label": "doors_furniture",
+          "share": 0.08125577100646353
+        },
+        {
+          "label": "electronics_ui",
+          "share": 0.08079409048938135
+        },
+        {
+          "label": "food_cooking",
+          "share": 0.009695290858725761
+        },
+        {
+          "label": "footsteps_walk",
+          "share": 0.0050784856879039705
+        },
+        {
+          "label": "guns_explosions",
+          "share": 0.054016620498614956
+        },
+        {
+          "label": "impact_friction",
+          "share": 0.08217913204062789
+        },
+        {
+          "label": "machines_motors",
+          "share": 0.01662049861495845
+        },
+        {
+          "label": "other",
+          "share": 0.12234533702677747
+        },
+        {
+          "label": "tools_hand",
+          "share": 0.009695290858725761
+        },
+        {
+          "label": "vehicles",
+          "share": 0.27100646352723917
+        },
+        {
+          "label": "water_liquid",
+          "share": 0.0530932594644506
+        }
+      ],
+      "majority_share": 0.27100646352723917,
+      "n_abstain": 1034,
+      "n_between_video_pairs": 10000,
+      "n_confident": 2166,
+      "n_observations": 3200,
+      "n_videos": 200,
+      "relative_agreement": 0.26625612371239377,
+      "verdict": "INFORMATIVE",
+      "verdict_basis": "majority_share >= 0.85 OR k_eff < 1.5"
+    },
+    "material": {
+      "a_between_video": 0.3825735962244892,
+      "a_ind_mean": 0.6370244393998555,
+      "abstain_rate": null,
+      "embedding_dimension": 512,
+      "entropy": null,
+      "entropy_log_base": null,
+      "heterogeneity_difference": 0.2544508431753663,
+      "heterogeneity_difference_ci95": [
+        0.23683558380765363,
+        0.2727423860773138
+      ],
+      "heterogeneity_significance_definition": "positive within-minus-between difference; 95% video-bootstrap CI lower bound > 0",
+      "heterogeneity_significant": true,
+      "k_eff": null,
+      "k_eff_definition": null,
+      "kind": "embedding",
+      "label_marginals": null,
+      "majority_share": null,
+      "n_abstain": null,
+      "n_between_video_pairs": 10000,
+      "n_confident": null,
+      "n_observations": 3200,
+      "n_videos": 200,
+      "relative_agreement": 0.41211526040904745,
+      "verdict": "INFORMATIVE",
+      "verdict_basis": "relative_agreement < 0.1"
+    },
+    "presence": {
+      "a_between_video": 0.78696171875,
+      "a_ind_mean": 0.8132916666666666,
+      "abstain_rate": 0.0,
+      "entropy": 0.37126089307216215,
+      "entropy_log_base": "natural",
+      "heterogeneity_difference": 0.02632994791666665,
+      "heterogeneity_difference_ci95": [
+        0.015623059213814586,
+        0.03887450482374702
+      ],
+      "heterogeneity_significance_definition": "positive within-minus-between difference; 95% video-bootstrap CI lower bound > 0",
+      "heterogeneity_significant": true,
+      "k_eff": 1.2730994825298179,
+      "k_eff_definition": "inverse_simpson_1_over_sum_p_squared",
+      "kind": "categorical",
+      "label_marginals": [
+        {
+          "label": "absent",
+          "share": 0.1221875
+        },
+        {
+          "label": "present",
+          "share": 0.8778125
+        }
+      ],
+      "majority_share": 0.8778125,
+      "n_abstain": 0,
+      "n_between_video_pairs": 10000,
+      "n_confident": 3200,
+      "n_observations": 3200,
+      "n_videos": 200,
+      "relative_agreement": 0.12359256637903733,
+      "verdict": "DEGENERATE",
+      "verdict_basis": "majority_share >= 0.85 OR k_eff < 1.5"
+    },
+    "timing": {
+      "a_between_video": 0.885778515625,
+      "a_ind_mean": 0.90275,
+      "abstain_rate": 0.0,
+      "entropy": 0.3150294264316954,
+      "entropy_log_base": "natural",
+      "heterogeneity_difference": 0.016971484375000068,
+      "heterogeneity_difference_ci95": [
+        0.005657184985279992,
+        0.0302014792865246
+      ],
+      "heterogeneity_significance_definition": "positive within-minus-between difference; 95% video-bootstrap CI lower bound > 0",
+      "heterogeneity_significant": true,
+      "k_eff": 1.1285907978850385,
+      "k_eff_definition": "inverse_simpson_1_over_sum_p_squared",
+      "kind": "categorical",
+      "label_marginals": [
+        {
+          "label": 0,
+          "share": 0.940625
+        },
+        {
+          "label": 1,
+          "share": 0.03375
+        },
+        {
+          "label": 10,
+          "share": 0.00125
+        },
+        {
+          "label": 11,
+          "share": 0.000625
+        },
+        {
+          "label": 12,
+          "share": 0.000625
+        },
+        {
+          "label": 14,
+          "share": 0.0003125
+        },
+        {
+          "label": 2,
+          "share": 0.010625
+        },
+        {
+          "label": 3,
+          "share": 0.0040625
+        },
+        {
+          "label": 4,
+          "share": 0.0025
+        },
+        {
+          "label": 5,
+          "share": 0.0021875
+        },
+        {
+          "label": 6,
+          "share": 0.0009375
+        },
+        {
+          "label": 7,
+          "share": 0.0003125
+        },
+        {
+          "label": 8,
+          "share": 0.00125
+        },
+        {
+          "label": 9,
+          "share": 0.0009375
+        }
+      ],
+      "majority_share": 0.940625,
+      "n_abstain": 0,
+      "n_between_video_pairs": 10000,
+      "n_confident": 3200,
+      "n_observations": 3200,
+      "n_videos": 200,
+      "relative_agreement": 0.14858399422722496,
+      "verdict": "DEGENERATE",
+      "verdict_basis": "majority_share >= 0.85 OR k_eff < 1.5"
+    }
+  },
+  "source": {
+    "cardinality_validated": true,
+    "join_key": [
+      "axis_id",
+      "extra.clip",
+      "extra.j"
+    ],
+    "n_axes": 4,
+    "n_independent_per_video_axis": 16,
+    "n_videos": 200,
+    "role": "p1cfg1_independent"
+  },
+  "thresholds": {
+    "categorical": {
+      "combination": "OR",
+      "degenerate_if_k_eff_lt": 1.5,
+      "degenerate_if_majority_share_gte": 0.85,
+      "k_eff_definition": "inverse_simpson_1_over_sum_p_squared"
+    },
+    "frozen_from": "WP-A2 A2-1 prompt",
+    "material": {
+      "degenerate_if_relative_agreement_lt": 0.1,
+      "relative_agreement_definition": "(a_ind_mean - a_between_video) / (1 - a_between_video)"
+    }
+  }
+}
