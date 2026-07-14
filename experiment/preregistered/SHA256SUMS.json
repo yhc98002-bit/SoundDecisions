@@ -14,5 +14,6 @@
   "_amendment_2026-06-20_arc3": "RULING-1: Gate-A cap = Binomial(n,0.05) 95pct at the ACTUAL cell count (recovers frozen 2 at n=16; 15 at n=200) \u2014 exposure-n bug-fix, not a re-tune. RULING-2: F-1 REFUTED (guidance narrows the outcome set via mode collapse; not seed-migration). METHOD path = B4 oracle->non-oracle bridge, NOT F1_SUPPORTED. Tier-B analyses pre-registered.",
   "_amendment_2026-07_arc4": "729e8e6984d18c76420c46e0a94054c47fdcc50396988528bc33a58ab02eabdf",
   "B1_PROTOCOL.md": "b85eeece6f18ff7ce3ab254411d06f97cf2446d393f74eb81ad34048131cc03f",
-  "B1_PROTOCOL_V2.md": "1386287a34802bd8bdca7b1f390e22631f792dd3c650eb08341f8bc4bd03b56d"
+  "B1_PROTOCOL_V2.md": "1386287a34802bd8bdca7b1f390e22631f792dd3c650eb08341f8bc4bd03b56d",
+  "B1_PROTOCOL_V2_AMENDMENT.md": "92f2e8382e39c5395d11228d70512760558946b852d5c5fd180c83fd6e40b808"
 }
