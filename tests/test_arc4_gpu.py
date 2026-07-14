@@ -6,6 +6,7 @@ import numpy as np
 import pytest
 
 from foley_cw.arc4_gpu import (
+    B2_BACKFILL_BASE_SEEDS,
     B2_BASE_SEEDS,
     B2_EXTENSION_BASE_SEEDS,
     B2_S_GRID,
@@ -94,6 +95,9 @@ def test_b2_generation_manifest_is_deterministic_and_pins_cardinality():
         "fork_wavs": 18432,
     }
     validate_b2_generation_manifest(extension)
+    backfill = dict(extension)
+    backfill["base_seeds"] = list(B2_BACKFILL_BASE_SEEDS)
+    validate_b2_generation_manifest(backfill)
     manifest["k_forks"] = 11
     with pytest.raises(ValueError, match="k_forks"):
         validate_b2_generation_manifest(manifest)
