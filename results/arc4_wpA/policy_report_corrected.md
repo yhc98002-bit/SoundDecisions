@@ -31,8 +31,8 @@ Oracle gate windows from s_commit (determination_budget_p1cfg45.csv):
 | final_rerank | (80000, 0.370) | (3200, 0.370) |
 | oracle_axis_gated | (49151, 0.785) | (8437, 0.785) |
 
-## Matched-compute read (oracle_axis_gated vs same_compute_bon)
-- same_compute_bon NFE budget is matched per clip to oracle_axis_gated.
+## Conservatively rounded-up compute comparator (oracle_axis_gated vs same_compute_bon)
+- same_compute_bon is allocated by ceiling per clip, so the baseline receives 4.8% more aggregate NFE (51,525 vs 49,151) than oracle_axis_gated.
 - oracle_axis_gated: final_corr=0.785, NFE=49151, false_prune=0.000.
 - same_compute_bon: final_corr=0.365, NFE=51525.
 - full_bon ceiling: final_corr=0.370, NFE=80000.

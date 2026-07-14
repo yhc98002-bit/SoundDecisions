@@ -7,8 +7,8 @@ their per-axis final self-target labels, the ORACLE-PROXY per-axis correctness (
 with the per-clip majority self-target; see experiment/preregistered/policy_preregistration.md),
 and a deterministic cache-derived scalar reward (cosine of the candidate's final-grid pooled
 feature to the per-clip mean independent feature — a self-consistency reward, distinct from the
-label-majority proxy). Runs every preregistered policy with matched generator-NFE AND matched
-scoring-call accounting and writes:
+label-majority proxy). Runs every preregistered policy with matched generator-NFE accounting;
+scoring calls are reported separately. Writes:
 
   results/stage0/phase1/policy_pareto.csv   one row per policy (metrics + two Pareto axes)
   results/stage0/phase1/policy_report.md    the §9 report + the proxy-correctness caveat
@@ -282,8 +282,9 @@ def main() -> None:
     )
     lines += [
         "",
-        "## Matched-compute read (oracle_axis_gated vs same_compute_bon)",
-        f"- same_compute_bon NFE budget is matched per clip to oracle_axis_gated.",
+        "## Conservatively rounded-up compute comparator (oracle_axis_gated vs same_compute_bon)",
+        "- same_compute_bon is allocated by ceiling per clip, so the baseline receives "
+        "4.8% more aggregate NFE (51,525 vs 49,151) than oracle_axis_gated.",
         f"- oracle_axis_gated: final_corr={gated['final_correctness']:.3f}, "
         f"NFE={gated['total_nfe']}, false_prune={gated['false_prune_rate']:.3f}.",
         f"- same_compute_bon: final_corr={scbon['final_correctness']:.3f}, "
