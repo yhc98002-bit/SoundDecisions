@@ -1,0 +1,55 @@
+{
+  "_doc": "Append-only completion record for the Arc-4 B2 seeds 13-16 raw extension.",
+  "queue": "arc4_b2_ext13_16",
+  "launch_ledger": {
+    "path": "results/arc4_quarantine/job_manifests/arc4_b2_ext13_16.json",
+    "sha256": "e59b6c1d62300dc8ce2c2557b30ef75ab9d180f71492acc95788d36b9cdc7a72"
+  },
+  "generation_manifest": {
+    "path": "results/arc4_quarantine/b2_extension_seeds13_16/generation_manifest.json",
+    "sha256": "ae3dfb2e0022043206d8d4fcf748a3ce68ba1a3898af560ff3e059ba217e3c51"
+  },
+  "terminal": {
+    "status": "COMPLETE",
+    "completed_utc": "2026-07-14T18:58:58Z",
+    "runner_exit_code": 0,
+    "runner_exit_code_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+  },
+  "logs": {
+    "session_log": {
+      "path": "logs/arc4_gpu/arc4_b2_ext13_16/session.log",
+      "sha256": "989fe005cd7c429b2c04afebf231927d4d51bc1eb4224bc369fb43b946a7a383"
+    },
+    "worker_log_count": 4,
+    "worker_logs_tree_sha256": "e5a2d3fe87606dbe48b21b8057e38e65638d1a28588669236421a6d2612b2f8b"
+  },
+  "artifacts": {
+    "unit_journals": 192,
+    "unit_journals_tree_sha256": "bae2611b47807a657c854ab22c0fd2248c4d14bd2faeb6c7e3b73ad878120d3a",
+    "cell_journals": 1536,
+    "cell_journals_tree_sha256": "236a8b6c26053f5c60b9fa48634e3a8cdb179cd44d4d67b1c4c73618be4b75f9",
+    "base_wavs": 192,
+    "fork_wavs": 18432,
+    "total_wavs": 18624,
+    "total_wav_bytes": 9536977920,
+    "unexpected_raw_files": 0
+  },
+  "validation": {
+    "status": "PASS",
+    "completed_utc": "2026-07-14T19:03:49Z",
+    "mode": "four fresh CPU-only resume validators with CUDA hidden",
+    "pythonhashseed": "0",
+    "exit_code": 0,
+    "exit_code_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "validation_file_count": 6,
+    "validation_tree_sha256": "89f67a397febb4936f68b6613ae5e038fa15bedec4ae746d72779a5b61ea0a19",
+    "clips_per_validator": 12,
+    "expected_fork_wavs_per_validator": 4608,
+    "todo_units_per_validator": 0
+  },
+  "deviations": [
+    "an12 GPUs 4-7 were idle for 626 seconds after seeds 5-8 generation while its CPU validation ran and this append-only extension was authorized, frozen, tested, and launched.",
+    "Local-weight initialization took about 124 seconds before active generation; no network download occurred.",
+    "After generation, an12 remained idle during the 291-second CPU rehash and was then deliberately released at the frozen 17-total-seed closeout bound."
+  ]
+}
