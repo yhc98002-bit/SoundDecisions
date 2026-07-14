@@ -1,3 +1,5 @@
+> **SUPERSEDED** — Historical Arc-3 audit record. Current status: [`results/CURRENT_STATUS.md`](CURRENT_STATUS.md).
+
 # PI Report — Autonomous Arc 3 (foley-cw, 2026-06-21)
 
 **Bottom line.** Both rulings applied; the Tier-B program ran end-to-end with adversarial

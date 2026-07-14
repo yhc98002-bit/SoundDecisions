@@ -5,12 +5,13 @@
 
 ## Start here
 
-1. [`results/PI_REPORT_arc3.md`](results/PI_REPORT_arc3.md) is the latest consolidated status report. It should be read before older progress reports; it describes the final Arc-3 token ledger, the evidence tier, corrections made after adversarial checking, and deferred follow-ups.
-2. [`experiment/preregistered/arc3_tierB_preregistration.md`](experiment/preregistered/arc3_tierB_preregistration.md) records the Tier-B plan that was frozen before that analysis. [`experiment/preregistered/SHA256SUMS.json`](experiment/preregistered/SHA256SUMS.json) records its freeze hashes.
-3. [`proposal/METHOD_SPEC.md`](proposal/METHOD_SPEC.md) and [`experiment/EXPERIMENT_PLAN.md`](experiment/EXPERIMENT_PLAN.md) define the intended method and decision gates.
-4. [`foley_cw/README.md`](foley_cw/README.md) is the shortest technical introduction to the package and its verified-versus-model-specific boundaries.
+1. [`results/CURRENT_STATUS.md`](results/CURRENT_STATUS.md) is the authoritative current status, evidence tier, and citation boundary.
+2. [`results/PI_REPORT_arc3.md`](results/PI_REPORT_arc3.md) is a superseded Arc-3 audit record. Read it only after the current status and amendments; its conclusions are retained for chronology, not current citation.
+3. [`experiment/preregistered/amendments_arc4.md`](experiment/preregistered/amendments_arc4.md) records the post-result governance amendments. [`experiment/preregistered/SHA256SUMS.json`](experiment/preregistered/SHA256SUMS.json) records the freeze hashes.
+4. [`experiment/preregistered/arc3_tierB_preregistration.md`](experiment/preregistered/arc3_tierB_preregistration.md) records the Tier-B plan frozen before that analysis.
+5. [`proposal/METHOD_SPEC.md`](proposal/METHOD_SPEC.md), [`experiment/EXPERIMENT_PLAN.md`](experiment/EXPERIMENT_PLAN.md), and [`foley_cw/README.md`](foley_cw/README.md) define the method, decision gates, and package boundaries.
 
-The latest report is a project-authored evidence summary, not a new independent re-analysis performed for this guide. In particular, no GPU job or external model run was launched during repository preparation.
+The current status and amendments are project-authored governance records, not a new independent re-analysis performed for this guide. In particular, no GPU job or external model run was launched during repository preparation.
 
 ## Current implementation and evidence status
 
@@ -21,17 +22,19 @@ The repository implements a video-to-audio flow-generation analysis framework as
 3. **Statistical decisions:** Estimate commitment/readout windows with video-level bootstrap CIs, test separation and robustness, and emit pre-specified tokens.
 4. **Follow-on analyses:** Test guidance effects, condition swaps, class readability, seed effects, and an offline axis-gated policy.
 
-According to the latest Arc-3 report, the implementation and reported analyses are complete through the Tier-B program. The reported current interpretation is:
+WP-A corrected code and re-analysed cached Arc-1..3 artifacts. The current interpretation is:
 
-- The cfg=1.0 and cfg=4.5 kernel checks were accepted, with an explicit caveat for cfg=4.5.
-- The commitment/readout map gate reported `GO_MAP` and `GO_READOUT`.
-- The original F-1 seed-migration prediction was **refuted**; the alternative explanation is guidance-driven entropy reduction rather than a causal move into either seed or video conditioning.
-- The oracle-to-non-oracle policy bridge reported `BRIDGE_PARTIAL`: timing is recovered well, while class readout is the limiting factor. The report therefore calls the overall result **DIAGNOSTIC-strong**, not a fully robust joint non-oracle result.
-- The report records 1,023 passing tests at the end of Arc 3. This is a historical test result; repository preparation should rerun the local suite before release changes.
+- The evidence tier is **diagnostic/exploratory**. Arcs 1-3 are exploratory; Arc 4 is the frozen confirmatory pass.
+- The cfg=1.0 and cfg=4.5 kernel checks were accepted, with the AMD-13 near-exchangeability caveat on cfg=4.5 and every derived result.
+- The legacy commitment/readout rules report `GO_MAP` and `GO_READOUT`, under the self-target charter and human-alignment limits recorded by AMD-14.
+- The F-1 guidance-to-entropy mechanism is **UNRESOLVED** pending Arc-4 B-3/B-6. The Arc-3 condition-swap interpretation is withdrawn.
+- `R2_CLASS_PENDING_PERTOKEN` replaces `R2_CLASS_CONFIRMED`; `NO_GLOBAL_SEED_DECODER` replaces the broader `NO_SEED_FLOOR`. Per-token and video-conditional seed claims remain pending.
+- `BRIDGE_PARTIAL` is provisional. Joint recovery is zero under the simulated symmetric keep-flip error model; per-axis means are sensitivity results, not a confirmed joint scheduler result.
+- Arc 3 recorded 1,023 passing tests in the full checkout; WP-A recorded 1,041. These are historical environment-specific test results, not scientific findings.
 
 ### Important chronology note
 
-Some earlier reports are intentionally retained and can look inconsistent if read out of order. For example, [`PROGRESS_SUMMARY_2026-06-10.md`](PROGRESS_SUMMARY_2026-06-10.md) describes a much earlier Phase-0 checkpoint, and [`results/stage0/reliability_report.md`](results/stage0/reliability_report.md) is an older standalone report that demotes all axes. Treat [`results/PI_REPORT_arc3.md`](results/PI_REPORT_arc3.md), together with the Arc-3 aggregate artifacts below, as the latest account; review the older files as audit history rather than current conclusions.
+Earlier reports are intentionally retained and can look inconsistent if read out of order. For example, [`PROGRESS_SUMMARY_2026-06-10.md`](PROGRESS_SUMMARY_2026-06-10.md) describes an early Phase-0 checkpoint, [`results/stage0/reliability_report.md`](results/stage0/reliability_report.md) is an older standalone report, and [`results/PI_REPORT_arc3.md`](results/PI_REPORT_arc3.md) preserves withdrawn Arc-3 conclusions. Treat all of them as audit history; [`results/CURRENT_STATUS.md`](results/CURRENT_STATUS.md) and the Arc-4 amendments govern current interpretation.
 
 ## Critical code to review
 
@@ -73,20 +76,21 @@ The key safeguard is that deterministic continuation (`α=0`) must reproduce the
 
 | File | What it answers |
 |---|---|
-| [`results/PI_REPORT_arc3.md`](results/PI_REPORT_arc3.md) | Current overall narrative, token ledger, caveats, adversarial correction, and deferred work. |
+| [`results/CURRENT_STATUS.md`](results/CURRENT_STATUS.md) | Current evidence tier, citable bridge result, unresolved mechanism, and citation boundary. |
+| [`results/PI_REPORT_arc3.md`](results/PI_REPORT_arc3.md) | Superseded Arc-3 narrative retained as audit history. |
 | [`results/stage0/phase1/phase3_decision.md`](results/stage0/phase1/phase3_decision.md) | Main `GO_MAP`/`GO_READOUT` separation decision and reported commitment/readout windows. |
 | [`results/stage0/gate_a_fullpool_report.md`](results/stage0/gate_a_fullpool_report.md) and [`results/stage0/gate_a_fullpool_interpretation.md`](results/stage0/gate_a_fullpool_interpretation.md) | The full-pool Gate-A calculation and why the exposure-scaled cap was ratified. |
-| [`results/stage0/arc3/two_budgets.md`](results/stage0/arc3/two_budgets.md) and [`results/stage0/arc3/b3_seed_floor_dial.json`](results/stage0/arc3/b3_seed_floor_dial.json) | Evidence behind the F-1 refutation and entropy-reduction interpretation. |
+| [`results/stage0/arc3/two_budgets.md`](results/stage0/arc3/two_budgets.md) and [`results/stage0/arc3/b3_seed_floor_dial.json`](results/stage0/arc3/b3_seed_floor_dial.json) | Historical evidence behind the now-withdrawn Arc-3 mechanism interpretation. |
 | [`results/stage0/arc3/b4_bridge.json`](results/stage0/arc3/b4_bridge.json), [`results/stage0/arc3/b2_cond_audit_report.md`](results/stage0/arc3/b2_cond_audit_report.md), and [`results/figures/`](results/figures/) | The `BRIDGE_PARTIAL` result, the conditioning-channel audit, and the publication figures. |
 
 Raw per-clip journals and feature tensors remain in the original run storage for auditability. They are supporting evidence, not the recommended first read; the high-volume tensor/audio artifacts are intentionally excluded from the GitHub upload.
 
 ## PI review points and open work
 
-1. **Evidence tier and framing:** Decide whether “DIAGNOSTIC-strong, class-readout-limited” is the desired top-level framing. The evidence does not support a strong joint non-oracle recovery claim.
+1. **Evidence tier and framing:** Keep the top-level tier diagnostic/exploratory. The evidence does not support a strong joint non-oracle recovery or resolved-mechanism claim.
 2. **Gate-A ratification:** Review the full-pool exposure-cap correction in the two Gate-A files above and confirm its governance/freeze treatment is acceptable.
 3. **Axis semantics:** Review the self-target, anchor, tagger, and material-embedding choices before treating the four axes as perceptual conclusions.
-4. **Class-readout follow-up:** The latest report identifies a robust nonlinear/learned class head as the concrete unresolved technical lever. The collected per-token/cross-attention features need a numerically safe, streamed follow-up probe before a new claim is made.
+4. **Class-readout follow-up:** The collected per-token/cross-attention features need a numerically safe, streamed follow-up probe before `R2_CLASS_PENDING_PERTOKEN` can be reconsidered.
 5. **Deferred scale checks:** The full-pool B3 seed test and MMAudio large_44k scale-insurance check were reported as deferred and not story-critical; they are not completed evidence.
 6. **Document hygiene:** Retain older reports for traceability, but establish a clearly labeled current release summary before external scientific circulation so superseded snapshots cannot be mistaken for current status.
 

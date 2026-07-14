@@ -1,5 +1,7 @@
 # Long-Range Experiment Plan — `foley-cw` / Sound Decisions (v2)
 
+> **STATUS NOTICE** — Historical plan text below includes pending and halted phase labels that have since completed. See [`results/CURRENT_STATUS.md`](../results/CURRENT_STATUS.md) for current status.
+
 **Project:** *When Are Foley Decisions Made? Commitment and Readout Windows in V2A Flow Generation.*
 **Backbone:** MMAudio (rectified flow, `small_16k` primary; `large_44k` for scale insurance only).
 **Scope of this document:** everything from the current checkpoint (Phase-0 crux validated on the real model; no `GO_MAPS_PHASE` yet) through paper assembly. It **amends and extends** `EXPERIMENT_PLAN.md`; where the two conflict, this document wins. `FINAL_PROPOSAL_SHORT.md` remains the conceptual frame.

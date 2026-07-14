@@ -1,5 +1,7 @@
 # Experiment Plan
 
+> **STATUS NOTICE** — Historical plan text below includes pending phase labels that have since completed. See [`results/CURRENT_STATUS.md`](../results/CURRENT_STATUS.md) for current status.
+
 > Generated view of `experiment/experiment_pack.json`. Do not treat this Markdown file as the source of truth.
 
 ## Status
