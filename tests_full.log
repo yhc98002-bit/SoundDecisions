@@ -1,0 +1,32 @@
+........................................................................ [  6%]
+........................................................................ [ 13%]
+........................................................................ [ 20%]
+........................................................................ [ 27%]
+........................................................................ [ 33%]
+........................................................................ [ 40%]
+........................................................................ [ 47%]
+........................................................................ [ 54%]
+........................................................................ [ 61%]
+........................................................................ [ 67%]
+........................................................................ [ 74%]
+........................................................................ [ 81%]
+........................................................................ [ 88%]
+........................................................................ [ 95%]
+.....................................................                    [100%]
+=============================== warnings summary ===============================
+tests/test_cli.py: 11 warnings
+tests/test_readout.py: 2 warnings
+tests/test_stats.py: 1 warning
+  /XYFS02/HDD_POOL/paratera_xy/pxy1289/HaocunYe/Research/SoundDecisions/.venv/lib/python3.10/site-packages/numpy/lib/_nanfunctions_impl.py:1424: RuntimeWarning: All-NaN slice encountered
+    return _nanquantile_unchecked(
+
+tests/test_readout.py::TestBuildReadoutMap::test_empty_videos_list_returns_underpowered_windows
+  /XYFS02/HDD_POOL/paratera_xy/pxy1289/HaocunYe/Research/SoundDecisions/.venv/lib/python3.10/site-packages/numpy/_core/fromnumeric.py:3596: RuntimeWarning: Mean of empty slice.
+    return _methods._mean(a, axis=axis, dtype=dtype,
+
+tests/test_readout.py::TestBuildReadoutMap::test_empty_videos_list_returns_underpowered_windows
+  /XYFS02/HDD_POOL/paratera_xy/pxy1289/HaocunYe/Research/SoundDecisions/.venv/lib/python3.10/site-packages/numpy/_core/_methods.py:130: RuntimeWarning: invalid value encountered in divide
+    ret = um.true_divide(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+1061 passed, 16 warnings in 506.88s (0:08:26)

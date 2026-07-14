@@ -1,0 +1,40 @@
+name: CPU tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  artifact-independent:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - name: Install CPU test dependencies
+        run: python -m pip install -r requirements.txt
+      - name: Run artifact-independent suite
+        env:
+          PYTHONHASHSEED: "0"
+        run: >-
+          python -m pytest -q
+          tests/test_agreement.py
+          tests/test_arc4_axis_validity.py
+          tests/test_arc4_determination_partition.py
+          tests/test_arc4_swap_final.py
+          tests/test_bridge.py
+          tests/test_b4_bridge_stats.py
+          tests/test_b4_joint_floor.py
+          tests/test_commitment.py
+          tests/test_commitment_abstain.py
+          tests/test_determination.py
+          tests/test_phase2_readout_aggregate.py
+          tests/test_phase3_labels.py
+          tests/test_phase4_policy.py
+          tests/test_policy_offline.py
+          tests/test_readout.py
+          tests/test_stats.py

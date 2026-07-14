@@ -2,6 +2,8 @@
 
 import zlib
 
+import pytest
+
 from foley_cw import bridge as B
 from foley_cw.stats import bootstrap_over_videos
 from scripts import b4_bridge
@@ -45,5 +47,7 @@ def test_bootstrap_recomputes_scalar_floor_within_each_draw():
         n_boot=500, seed=0,
     )
     control = bootstrap_over_videos(clips, fixed_stat, n_boot=500, seed=0)
-    assert corrected[0] == control[0]
-    assert corrected[2] - corrected[1] != control[2] - control[1]
+    assert corrected[0] == pytest.approx(control[0])
+    corrected_width = corrected[2] - corrected[1]
+    control_width = control[2] - control[1]
+    assert corrected_width != pytest.approx(control_width)

@@ -4,6 +4,7 @@ from __future__ import annotations
 import math
 
 import numpy as np
+import pytest
 
 from foley_cw.internal_probes import (best_layer_curve, probe_accuracy,
                                       s_read_internal)
@@ -38,7 +39,7 @@ class TestProbeAccuracy:
     def test_single_class_train_predicts_majority(self):
         X = np.random.default_rng(3).normal(0, 1, (20, 4))
         acc = probe_accuracy(X[:10], ["a"] * 10, X[10:], ["a"] * 7 + ["b"] * 3)
-        assert acc == 0.7   # majority 'a' on eval = 7/10
+        assert acc == pytest.approx(0.7)  # majority 'a' on eval = 7/10
 
     def test_empty_eval_is_nan(self):
         X = np.zeros((4, 3))
@@ -47,8 +48,8 @@ class TestProbeAccuracy:
 
 class TestSReadInternal:
     def test_first_crossing(self):
-        assert s_read_internal({0.05: 0.4, 0.45: 0.6, 0.9: 0.8}, 0.7) == 0.9
-        assert s_read_internal({0.05: 0.95, 0.9: 0.99}, 0.7) == 0.05
+        assert s_read_internal({0.05: 0.4, 0.45: 0.6, 0.9: 0.8}, 0.7) == pytest.approx(0.9)
+        assert s_read_internal({0.05: 0.95, 0.9: 0.99}, 0.7) == pytest.approx(0.05)
 
     def test_never_is_nan(self):
         assert math.isnan(s_read_internal({0.05: 0.3, 0.9: 0.5}, 0.7))

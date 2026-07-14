@@ -8,6 +8,7 @@ from __future__ import annotations
 import math
 
 import numpy as np
+import pytest
 
 from foley_cw.cfg_dial import (F1_INCONCLUSIVE, F1_REFUTED, F1_SUPPORTED,
                                alpha_star, f1_verdict, seed_predictability)
@@ -57,7 +58,7 @@ class TestAlphaStar:
         # diversity crosses 0.02 first at alpha=0.2 here.
         div = {0.05: 0.0, 0.1: 0.005, 0.2: 0.03, 0.4: 0.10, 0.8: 0.25}
         out = alpha_star({2.0: div}, diversity_min=0.02)
-        assert out["by_cfg"][2.0] == 0.2
+        assert out["by_cfg"][2.0] == pytest.approx(0.2)
 
     def test_never_unlocks_is_nan(self):
         div = {0.05: 0.0, 0.1: 0.001, 0.2: 0.005}     # never reaches 0.02
@@ -74,7 +75,8 @@ class TestAlphaStar:
         }
         out = alpha_star(by, diversity_min=0.02)
         assert out["increasing"] is True
-        assert out["by_cfg"][1.0] == 0.05 and out["by_cfg"][4.5] == 0.4
+        assert out["by_cfg"][1.0] == pytest.approx(0.05)
+        assert out["by_cfg"][4.5] == pytest.approx(0.4)
 
 
 # ---------------------------------------------------------------------------

@@ -64,7 +64,7 @@ def test_sqrt_probs_zeros_stay_zero_and_values():
     P = np.array([[0.0, 0.25, 1.0], [0.0, 0.04, 0.81]])
     S = sqrt_probs(P)
     assert S.shape == P.shape
-    assert np.all(S[:, 0] == 0.0)
+    np.testing.assert_allclose(S[:, 0], 0.0)
     np.testing.assert_allclose(S, [[0.0, 0.5, 1.0], [0.0, 0.2, 0.9]])
 
 
@@ -78,7 +78,8 @@ def test_sqrt_probs_monotone():
 def test_sqrt_probs_clips_negative_noise():
     # tiny negative numerical noise must not produce NaNs
     S = sqrt_probs(np.array([-1e-9, 0.0, 0.5]))
-    assert np.all(np.isfinite(S)) and S[0] == 0.0
+    assert np.all(np.isfinite(S))
+    assert S[0] == pytest.approx(0.0)
 
 
 # ------------------------------------------------------------ label-marginal TV
@@ -141,7 +142,8 @@ def test_build_cell_same_pool_is_null_like():
     cell = build_cell("c0", 0.3, 1.0, fork, ref,
                       ["dog"] * 5 + ["abstain"] * 3, ["dog"] * 6 + ["abstain"] * 2,
                       rng=np.random.default_rng(0), n_perm=99)
-    assert cell.clip_id == "c0" and cell.s == 0.3 and cell.cfg == 1.0
+    assert cell.clip_id == "c0"
+    assert (cell.s, cell.cfg) == pytest.approx((0.3, 1.0))
     assert cell.n_fork == 8 and cell.n_ref == 8 and cell.schedule == "constant"
     assert np.isfinite(cell.mmd2)
     assert 0.0 < cell.p_value <= 1.0 and cell.p_value > ALPHA_SIG
@@ -194,9 +196,9 @@ def test_calibrate_empty_raises():
 def test_check_guards_pass():
     ok, guards, reason = check_guards(0.95, 1.0, 0.5, {"0.05": 0.01})
     assert ok and reason == ""
-    assert guards["power_reject_frac"] == 0.95
-    assert guards["cross_clip_mmd_median"] == 1.0
-    assert guards["null_ks_p"] == 0.5
+    assert guards["power_reject_frac"] == pytest.approx(0.95)
+    assert guards["cross_clip_mmd_median"] == pytest.approx(1.0)
+    assert guards["null_ks_p"] == pytest.approx(0.5)
     assert "cross_clip_mmd_p95" in guards  # frozen interpretation #10 reading
 
 
@@ -248,7 +250,7 @@ def test_internal_null_passes_with_low_p_at_cap():
         assert res.per_s[sk]["n_low_p"] == LOW_P_MAX_CELLS
         assert res.per_s[sk]["cap"] == LOW_P_MAX_CELLS
         assert res.per_s[sk]["ok"]
-    assert res.guards["power_reject_frac"] == 0.95
+    assert res.guards["power_reject_frac"] == pytest.approx(0.95)
 
 
 def test_internal_null_fails_on_low_p_pileup_at_one_s():

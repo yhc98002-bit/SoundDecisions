@@ -42,7 +42,7 @@ def test_a_independent_excludes_abstain_pairs(monkeypatch):
         object(), object(), _class_axis(), object(), schedule, np.random.default_rng(0)
     )
 
-    assert value == 1.0
+    assert value == pytest.approx(1.0)
 
 
 def test_a_fork_excludes_abstain_pairs(monkeypatch):
@@ -61,7 +61,7 @@ def test_a_fork_excludes_abstain_pairs(monkeypatch):
         alpha=0.8, schedule=schedule, rng=np.random.default_rng(0),
     )
 
-    assert value == 1.0
+    assert value == pytest.approx(1.0)
 
 
 @pytest.mark.parametrize("labels", [

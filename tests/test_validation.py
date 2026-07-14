@@ -77,11 +77,11 @@ class TestTrajectoryAccess:
 
     def test_value_zero_on_pass(self, backend, cond, schedule, rng):
         result = check_trajectory_access(backend, cond, schedule, rng)
-        assert result.value == 0.0
+        assert result.value == pytest.approx(0.0)
 
     def test_threshold_zero(self, backend, cond, schedule, rng):
         result = check_trajectory_access(backend, cond, schedule, rng)
-        assert result.threshold == 0.0
+        assert result.threshold == pytest.approx(0.0)
 
     def test_detail_is_nonempty(self, backend, cond, schedule, rng):
         result = check_trajectory_access(backend, cond, schedule, rng)
@@ -127,7 +127,7 @@ class TestScoreConversionExact:
 
     def test_threshold_is_1e_8(self, backend, cond, schedule, rng):
         result = check_score_conversion_exact(backend, cond, schedule, rng)
-        assert result.threshold == 1e-8
+        assert result.threshold == pytest.approx(1e-8)
 
     def test_name_correct(self, backend, cond, schedule, rng):
         result = check_score_conversion_exact(backend, cond, schedule, rng)

@@ -1,5 +1,5 @@
 # WP-A Execution Report
-Branch: `arc4-wpA`. Starting commit: `60efafdadff7c20577d88dc65201fe2a89b46b8c` (`main`). CPU-only; project `.venv`; every Python shell used `PYTHONHASHSEED=0`.
+Canonical public history: base `c3d2f2f7c27a2bf87164590163b7b214b830eeff`; code-completion `71ca39e762e664951c9196b7e407fb1b830598d4`; WP-A head `d261b0dd355e2931ca70d44aaf07f0f3cb95c0ec`, fast-forwarded to `main`. CPU-only; project `.venv`; every Python shell used `PYTHONHASHSEED=0`.
 
 ## T0 - Preflight
 Status: DONE. Files: this report.
@@ -15,7 +15,7 @@ Candidate allocation floor -> ceiling: same-compute `0.350/46925` -> `0.365/5152
 
 ## T3 - Bridge statistics
 Status: DONE. Files: `scripts/b4_bridge.py`, `tests/test_b4_bridge_stats.py`, `b4_bridge_corrected.{json,md}`; `foley_cw/bridge.py` untouched.
-`hash(axis)` -> CRC32; scalar floor moved inside each bootstrap. Arc-3 provisional inclusive `0.513997 [0.354651,0.647799]` -> corrected inclusive diagnostic `0.526367 [0.311186,0.636955]`; citable material-excluded `0.515191 [0.360404,0.537848]`; joint recovery `0.000000`. Material tagged `UNCALIBRATED_COSINE`; scalar labels/caveat and exact scoring ledger added. Seeds 0..3 citable means `0.515191/0.483796/0.502525/0.464286`, all `BRIDGE_PARTIAL` (stable). CRC32/floor tests plus bridge tests: 13 passed. Two-process hashes: `ce48f443...`, `9d6a2750...`. No deviation.
+`hash(axis)` -> CRC32; scalar floors moved inside each bootstrap. Arc-3 provisional inclusive `0.513997 [0.354651,0.647799]` -> corrected inclusive sensitivity `0.526367 [0.311186,0.636955]`; material-excluded sensitivity `0.515191 [0.360404,0.537848]` is non-citable. **Joint recovery is zero under the simulated symmetric keep-flip error model.** Its fixed-floor WP-A CI `[0.000000,0.127712]` becomes `[0.000000,0.190920]` after WP-A2 resamples the joint scalar floor. Material is tagged `UNCALIBRATED_COSINE`; scalar labels/caveat and exact scoring ledger were added. Seeds 0..3 provisional means `0.515191/0.483796/0.502525/0.464286`, all `BRIDGE_PARTIAL` (stable). CRC32/floor tests plus bridge tests: 13 passed. Two-process hashes: `ce48f443...`, `9d6a2750...` (superseded by WP-A2 reproduction records).
 
 ## T4 - Phase-2 aggregation
 Status: FLAGGED. Files: `scripts/phase2_readout.py`, `tests/test_phase2_readout_aggregate.py`, `readout_map_p2cfg1_v2.{csv,md}`.
@@ -43,7 +43,7 @@ Current `an17` -> `an12`; wrapper exports hash seed. CLAP pinned `8fa0f1c...`, A
 
 ## T10 - Status documentation
 Status: DONE. Files: `results/CURRENT_STATUS.md` and top-only banners in the three requested historical documents.
-Status records `1041 passed` and code-completion commit `b3e1974b0a0a1f64d650eec0604c662a8b0d841a`; bodies unchanged. No test. Deviation: Git field uses T9 because a file cannot contain its own commit hash; T10/T11 are governance-only.
+Status records `1041 passed`; canonical remote code-completion is `71ca39e762e664951c9196b7e407fb1b830598d4` and WP-A head is `d261b0dd355e2931ca70d44aaf07f0f3cb95c0ec`. Bodies were unchanged. No test.
 
 ## T11 - Amendment ledger
 Status: DONE. Files: new `amendments_arc4.md`, append-only `SHA256SUMS.json`.
@@ -55,7 +55,7 @@ AMD-13..18 added verbatim; appended hash `729e8e6984d18c76420c46e0a94054c47fdcc5
 3. PASS - T1..T4 outputs are byte-identical across two fresh processes (hashes above).
 4. PASS - T5 raw join: 40 journals, 32 cells, exact `n`, max error `0.0`.
 5. PASS - `an17` grep is empty excluding `.git` and historical result/snapshot documents.
-6. PASS - exactly 12 commits, one each for T0..T11; branch not pushed or merged.
+6. PASS - exactly 12 WP-A task commits, one each for T0..T11; canonical replay was fast-forwarded to public `main` at `d261b0d`.
 
 ## Out-of-scope findings
 - User Python lacks SciPy/librosa/soundfile; authoritative runs used the complete project `.venv`.

@@ -52,7 +52,9 @@ class TestMatches:
         # and the pair-level rates put it in 'neither'
         r = CS.follow_retention_rates([swapped], [donor], [source],
                                       AxisKind.EMBEDDING, embed_cos_min=-1.0)
-        assert r["follow"] == 0.0 and r["retention"] == 0.0 and r["neither"] == 1.0
+        assert (r["follow"], r["retention"], r["neither"]) == pytest.approx(
+            (0.0, 0.0, 1.0)
+        )
 
     def test_unknown_kind_raises(self):
         with pytest.raises(ValueError):
@@ -67,12 +69,13 @@ class TestFollowRetentionCategorical:
         # every swap lands on the donor's label
         r = CS.follow_retention_rates(["dog"] * 5, ["dog"] * 5, ["cat"] * 5,
                                       AxisKind.CATEGORICAL)
-        assert r["follow"] == 1.0 and r["retention"] == 0.0 and r["n"] == 5
+        assert (r["follow"], r["retention"]) == pytest.approx((1.0, 0.0))
+        assert r["n"] == 5
 
     def test_all_retain(self):
         r = CS.follow_retention_rates(["cat"] * 4, ["dog"] * 4, ["cat"] * 4,
                                       AxisKind.CATEGORICAL)
-        assert r["retention"] == 1.0 and r["follow"] == 0.0
+        assert (r["retention"], r["follow"]) == pytest.approx((1.0, 0.0))
 
     def test_mixed_and_neither(self):
         # 2 follow (dog), 1 retain (cat), 1 third label (bird) -> neither
@@ -90,7 +93,9 @@ class TestFollowRetentionCategorical:
         # and retention (an uninformative pair) — neither is then 0.
         r = CS.follow_retention_rates(["dog", "dog"], ["dog", "dog"], ["dog", "dog"],
                                       AxisKind.CATEGORICAL)
-        assert r["follow"] == 1.0 and r["retention"] == 1.0 and r["neither"] == 0.0
+        assert (r["follow"], r["retention"], r["neither"]) == pytest.approx(
+            (1.0, 1.0, 0.0)
+        )
 
     def test_empty_is_nan(self):
         r = CS.follow_retention_rates([], [], [], AxisKind.CATEGORICAL)
@@ -122,7 +127,7 @@ class TestSCond:
     def test_basic_crossing(self):
         rates = {0.1: {"follow": 1.0}, 0.3: {"follow": 0.7},
                  0.5: {"follow": 0.4}, 0.7: {"follow": 0.1}}
-        assert CS.s_cond(rates) == 0.5
+        assert CS.s_cond(rates) == pytest.approx(0.5)
 
     def test_never_crosses_is_nan(self):
         rates = {0.1: {"follow": 0.9}, 0.5: {"follow": 0.8}, 0.9: {"follow": 0.6}}
@@ -131,11 +136,11 @@ class TestSCond:
     def test_skips_nan_follow(self):
         rates = {0.1: {"follow": float("nan")}, 0.3: {"follow": 0.9},
                  0.5: {"follow": 0.2}}
-        assert CS.s_cond(rates) == 0.5
+        assert CS.s_cond(rates) == pytest.approx(0.5)
 
     def test_custom_majority_threshold(self):
         rates = {0.2: {"follow": 0.85}, 0.4: {"follow": 0.75}, 0.6: {"follow": 0.65}}
-        assert CS.s_cond(rates, follow_majority=0.8) == 0.4
+        assert CS.s_cond(rates, follow_majority=0.8) == pytest.approx(0.4)
 
 
 # ======================================================================
@@ -148,7 +153,7 @@ class TestSanity:
         out = CS.sanity_check(rates)
         assert out["passed"] is True
         assert out["follow_ok"] is True and out["retention_ok"] is True
-        assert out["low_s"] == 0.05 and out["high_s"] == 0.90
+        assert (out["low_s"], out["high_s"]) == pytest.approx((0.05, 0.90))
 
     def test_fail_low_does_not_follow(self):
         rates = {0.05: {"follow": 0.2, "retention": 0.8},
@@ -190,11 +195,11 @@ class TestSummarizeAxis:
         sw, dn, sr = self._synthetic_swap_values(s_points, follow_curve)
         res = CS.summarize_axis(sw, dn, sr, AxisKind.CATEGORICAL)
         # s_cond is the first s with follow < 0.5
-        assert res["s_cond"] == 0.50
+        assert res["s_cond"] == pytest.approx(0.50)
         # sanity: full follow at 0.05, full retention at 0.90
         assert res["sanity"]["passed"] is True
         # curves are sorted ascending in s and aligned
-        assert res["curves"]["s"] == [0.05, 0.30, 0.50, 0.90]
+        assert res["curves"]["s"] == pytest.approx([0.05, 0.30, 0.50, 0.90])
         assert res["curves"]["follow"][0] == pytest.approx(1.0)
         assert res["curves"]["retention"][-1] == pytest.approx(1.0)
 
@@ -247,8 +252,8 @@ class TestSwapCompletionSynthetic:
                                             AxisKind.EMBEDDING, embed_cos_min=-1.0)
         r_late = CS.follow_retention_rates([late], [don_final], [src_final],
                                            AxisKind.EMBEDDING, embed_cos_min=-1.0)
-        assert r_early["follow"] == 1.0
-        assert r_late["retention"] == 1.0
+        assert r_early["follow"] == pytest.approx(1.0)
+        assert r_late["retention"] == pytest.approx(1.0)
 
 
 # ======================================================================
@@ -290,5 +295,5 @@ def test_neither_rate_correct_for_mixed_batch():
     from foley_cw.types import AxisKind
     # pair0 ("a","a","a"): shared -> both follow & retention; pair1 ("b","x","y"): neither
     r = follow_retention_rates(["a", "b"], ["a", "x"], ["a", "y"], AxisKind.CATEGORICAL)
-    assert r["follow"] == 0.5 and r["retention"] == 0.5
-    assert r["neither"] == 0.5
+    assert (r["follow"], r["retention"]) == pytest.approx((0.5, 0.5))
+    assert r["neither"] == pytest.approx(0.5)

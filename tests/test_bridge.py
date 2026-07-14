@@ -37,7 +37,7 @@ def test_zero_readout_categorical_never_keeps_correct_by_truth():
     rng = np.random.default_rng(1)
     keep = B.noisy_keep_mask(st, rng)
     # the two true-"a" candidates can never be kept (their read is forced != "a")
-    assert keep[0] == 0.0 and keep[1] == 0.0
+    assert keep[:2] == pytest.approx([0.0, 0.0])
 
 
 def test_embedding_perfect_readout_keeps_in_consensus():
@@ -84,9 +84,9 @@ def test_higher_accuracy_increases_consensus_keep_rate():
 # ---------------------------------------------------------------------------
 def test_headroom_recovery_clipping_and_bounds():
     assert B.headroom_recovery(0.6, 0.4, 0.8) == pytest.approx(0.5)
-    assert B.headroom_recovery(0.9, 0.4, 0.8) == 1.0      # clipped at 1
-    assert B.headroom_recovery(0.3, 0.4, 0.8) == 0.0      # clipped at 0
-    assert B.headroom_recovery(0.5, 0.5, 0.5) == 0.0      # zero headroom -> 0
+    assert B.headroom_recovery(0.9, 0.4, 0.8) == pytest.approx(1.0)  # clipped at 1
+    assert B.headroom_recovery(0.3, 0.4, 0.8) == pytest.approx(0.0)  # clipped at 0
+    assert B.headroom_recovery(0.5, 0.5, 0.5) == pytest.approx(0.0)  # zero headroom -> 0
 
 
 def test_decision_token_boundaries():

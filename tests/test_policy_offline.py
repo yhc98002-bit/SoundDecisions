@@ -113,7 +113,7 @@ def test_oracle_gating_beats_random_on_quality():
                            rng=np.random.default_rng(0))
     assert rg.winner_correct is True
     assert rg.false_pruned == 0            # the reward-winner is never one of the pruned losers
-    assert rg.regret == 0.0
+    assert rg.regret == pytest.approx(0.0)
 
     # Random pruning at matched fraction: averaged over seeds it sometimes prunes winners
     # and its chosen winner is sometimes wrong, so mean quality is strictly worse.
@@ -125,7 +125,7 @@ def test_oracle_gating_beats_random_on_quality():
                                 rng=np.random.default_rng(seed), random_prune_frac=0.5)
         gated_q.append(g.winner_correct)
         rand_q.append(rnd.winner_correct)
-    assert np.mean(gated_q) == 1.0
+    assert np.mean(gated_q) == pytest.approx(1.0)
     assert np.mean(rand_q) < np.mean(gated_q)   # random strictly worse on proxy quality
 
 
@@ -258,7 +258,7 @@ def test_run_all_policies_matches_same_compute_budget():
     # full_bon is the NFE ceiling.
     assert out["full_bon"]["total_nfe"] >= out["oracle_axis_gated"]["total_nfe"]
     # oracle gating reaches perfect proxy quality on the separating pool.
-    assert out["oracle_axis_gated"]["final_correctness"] == 1.0
+    assert out["oracle_axis_gated"]["final_correctness"] == pytest.approx(1.0)
     assert out["random_prune"]["final_correctness"] <= 1.0
 
 

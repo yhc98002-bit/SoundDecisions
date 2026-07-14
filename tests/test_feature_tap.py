@@ -139,7 +139,7 @@ def test_instrumented_backend_tap_features_at_and_delegation():
     assert feats.shape == (N_JOINT + N_FUSED, DIM)
     assert v.shape == (TOKENS, DIM)
     ib.cfg_strength = 1.0  # setattr delegates to wrapped backend
-    assert ib._b.cfg_strength == 1.0
+    assert ib._b.cfg_strength == pytest.approx(1.0)
 
 
 def test_record_steps_and_drain():
@@ -148,7 +148,7 @@ def test_record_steps_and_drain():
         for t in (0.0, 0.25, 0.5):
             ib.velocity(_x(), t, None)
     ts, feats = ib.drain_step_features()
-    assert ts.tolist() == [0.0, 0.25, 0.5]
+    assert ts.tolist() == pytest.approx([0.0, 0.25, 0.5])
     assert feats.shape == (3, N_JOINT + N_FUSED, DIM)
 
 

@@ -4,6 +4,7 @@ from __future__ import annotations
 import math
 
 import numpy as np
+import pytest
 
 from foley_cw.class_probes import (class_readability_curve, eval_majority_prior,
                                     mlp_probe_accuracy, s_read_internal_class)
@@ -20,7 +21,7 @@ def _separable(n, k, d, seed, sep=1.0):
 
 class TestEvalMajorityPrior:
     def test_balanced_binary(self):
-        assert eval_majority_prior(["a", "a", "b", "b"]) == 0.5
+        assert eval_majority_prior(["a", "a", "b", "b"]) == pytest.approx(0.5)
 
     def test_skewed(self):
         assert abs(eval_majority_prior(["a"] * 7 + ["b"] * 3) - 0.7) < 1e-9
@@ -50,7 +51,7 @@ class TestMLPProbeAccuracy:
     def test_single_train_class_predicts_majority(self):
         X = np.random.default_rng(3).normal(0, 1, (20, 4))
         acc = mlp_probe_accuracy(X[:10], ["a"] * 10, X[10:], ["a"] * 7 + ["b"] * 3, seed=0)
-        assert acc == 0.7   # constant-'a' prediction -> 7/10 on eval
+        assert acc == pytest.approx(0.7)  # constant-'a' prediction -> 7/10 on eval
 
     def test_three_class_separable(self):
         X, y = _separable(210, 3, 9, 2, sep=2.0)
@@ -63,12 +64,12 @@ class TestSReadInternalClass:
         # acc 0.72 >= theta but chance 0.65 -> margin 0.15 fails at s=0.15; 0.85 passes at 0.45
         best = {0.05: 0.40, 0.15: 0.72, 0.45: 0.85}
         chance = {0.05: 0.30, 0.15: 0.65, 0.45: 0.30}
-        assert s_read_internal_class(best, chance, 0.70, 0.15) == 0.45
+        assert s_read_internal_class(best, chance, 0.70, 0.15) == pytest.approx(0.45)
 
     def test_first_crossing_when_both_hold(self):
         best = {0.05: 0.95, 0.45: 0.99}
         chance = {0.05: 0.40, 0.45: 0.40}
-        assert s_read_internal_class(best, chance, 0.70, 0.15) == 0.05
+        assert s_read_internal_class(best, chance, 0.70, 0.15) == pytest.approx(0.05)
 
     def test_never_is_nan(self):
         best = {0.05: 0.40, 0.9: 0.55}

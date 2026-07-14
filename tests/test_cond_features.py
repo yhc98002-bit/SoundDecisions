@@ -9,6 +9,7 @@ from __future__ import annotations
 import math
 
 import numpy as np
+import pytest
 
 from foley_cw.cond_features import (bootstrap_acc_ci, build_cond_feature,
                                     clip_class_label, decide_cond_bottleneck,
@@ -37,7 +38,7 @@ class TestPooling:
         out = build_cond_feature(parts, ["clip_f", "sync_f", "clip_f_c"])
         # 2*2 + 2*2 + 5 = 13
         assert out.shape == (13,)
-        assert out[0] == 1.0 and out[4] == 0.0 and out[-1] == 9.0
+        assert out[[0, 4, -1]] == pytest.approx([1.0, 0.0, 9.0])
 
 
 class TestLabelDerivation:
@@ -53,7 +54,7 @@ class TestLabelDerivation:
 
     def test_majority_class_accuracy_uses_eval_prior(self):
         acc = majority_class_accuracy(["x"] * 3, ["x"] * 7 + ["y"] * 3)
-        assert acc == 0.7
+        assert acc == pytest.approx(0.7)
 
 
 class TestBootstrap:
@@ -67,7 +68,7 @@ class TestBootstrap:
     def test_perfect_accuracy_ci_is_one(self):
         clips = [f"c{i}" for i in range(20)]
         lo, hi = bootstrap_acc_ci(np.ones(20), clips, n_boot=200, seed=2)
-        assert lo == 1.0 and hi == 1.0
+        assert (lo, hi) == pytest.approx((1.0, 1.0))
 
 
 def _two_class_clips(n_per_class, d, seed, signal=1.5):
@@ -136,7 +137,7 @@ class TestMlpFallback:
     def test_mlp_degenerate_single_class_train(self):
         X = np.zeros((6, 3))
         acc = mlp_accuracy(X[:3], ["A"] * 3, X[3:], ["A", "A", "B"])
-        assert acc == 2 / 3
+        assert acc == pytest.approx(2 / 3)
 
 
 class TestDecision:

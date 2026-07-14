@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import numpy as np
+import pytest
 
 from foley_cw.seed_floor import (CFG1, RP_DIM, bootstrap_slope_ci, chance_accuracy,
                                  decide, gaussian_projection, mlp_probe_accuracy,
@@ -41,7 +42,7 @@ class TestProjection:
 # ---------------------------------------------------------------------------
 class TestChance:
     def test_majority_prior(self):
-        assert chance_accuracy(["a", "a", "a", "b"]) == 0.75
+        assert chance_accuracy(["a", "a", "a", "b"]) == pytest.approx(0.75)
 
     def test_empty_is_nan(self):
         assert np.isnan(chance_accuracy([]))
@@ -74,7 +75,7 @@ class TestMLP:
     def test_single_class_train_predicts_majority(self):
         X = np.random.default_rng(3).normal(0, 1, (20, 4))
         acc = mlp_probe_accuracy(X[:10], ["a"] * 10, X[10:], ["a"] * 7 + ["b"] * 3, seed=0)
-        assert acc == 0.7
+        assert acc == pytest.approx(0.7)
 
 
 # ---------------------------------------------------------------------------

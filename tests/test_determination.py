@@ -4,6 +4,7 @@ from __future__ import annotations
 import math
 
 import numpy as np
+import pytest
 
 from foley_cw.determination import (build_determination_budget, clip_shares,
                                      s_commit)
@@ -12,7 +13,7 @@ from foley_cw.determination import (build_determination_budget, clip_shares,
 class TestClipShares:
     def test_label_axis_hand_values(self):
         sh = clip_shares(0.5, {0.05: 0.6, 0.90: 0.9}, is_embedding=False)
-        assert sh["conditioning_share"] == 0.5
+        assert sh["conditioning_share"] == pytest.approx(0.5)
         assert sh["seed_share"] == pytest_approx(0.1)
         assert sh["trajectory_share"] == pytest_approx(0.3)
         assert sh["residual"] == pytest_approx(0.1)
@@ -28,7 +29,7 @@ class TestClipShares:
     def test_shares_clip_at_zero(self):
         # anti-correlation: A_fork(s_min) < A_independent -> seed share clipped to 0
         sh = clip_shares(0.7, {0.05: 0.6, 0.90: 0.65}, is_embedding=False)
-        assert sh["seed_share"] == 0.0
+        assert sh["seed_share"] == pytest.approx(0.0)
         assert sh["trajectory_share"] == pytest_approx(0.05)
 
     def test_nan_a_fork_propagates_to_commit_nan(self):
@@ -38,8 +39,8 @@ class TestClipShares:
 
 class TestSCommit:
     def test_first_crossing(self):
-        assert s_commit({0.05: 0.2, 0.45: 0.5, 0.90: 0.8}, 0.7) == 0.90
-        assert s_commit({0.05: 0.8, 0.90: 0.9}, 0.7) == 0.05
+        assert s_commit({0.05: 0.2, 0.45: 0.5, 0.90: 0.8}, 0.7) == pytest.approx(0.90)
+        assert s_commit({0.05: 0.8, 0.90: 0.9}, 0.7) == pytest.approx(0.05)
 
     def test_never_crosses_is_nan(self):
         assert math.isnan(s_commit({0.05: 0.1, 0.90: 0.5}, 0.7))
