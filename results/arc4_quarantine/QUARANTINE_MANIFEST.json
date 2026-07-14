@@ -1,0 +1,83 @@
+{
+  "schema": "arc4_gpu_quarantine_manifest_v1",
+  "status": "COMPLETE",
+  "completed_utc": "2026-07-14T19:03:49Z",
+  "policy": {
+    "b2_b6_raw_audio_measured": false,
+    "b2_b6_generated_audio_value_inspected": false,
+    "b2_b6_summary_statistic_computed": false,
+    "allowed_operations": [
+      "atomic raw generation",
+      "file cardinality",
+      "audio metadata validation",
+      "sha256 validation"
+    ]
+  },
+  "b1_boundary": {
+    "status": "B1_INCOMPLETE",
+    "scientific_token": null,
+    "closeout": {
+      "path": "results/arc4_b1/B1_CLOSEOUT.md",
+      "sha256": "0a7ffb48a78ce7f925506b69858aab0f88b2acdabe018fbb4af0c65187932012"
+    },
+    "gate_ledger": {
+      "path": "results/arc4_b1/job_manifests/arc4_b1_probe_v2_gate.json",
+      "sha256": "ed88cef865bfddf8636b8be122c31262b11a070e9da6e456d0ffbb5920a31573"
+    }
+  },
+  "b2": {
+    "common_design": {
+      "clips": 48,
+      "cfg": 4.5,
+      "schedule": "sqrt_down",
+      "alpha": 0.8,
+      "s_points": 8,
+      "forks_per_cell": 12,
+      "audio_subtype": "FLOAT"
+    },
+    "cohorts": [
+      {
+        "seeds": [0, 1, 2, 3, 4],
+        "manifest_sha256": "5c3a334ecfcfb3e91504354c14c8e8dbae71b3bade088b21bec26fb06fd68ed3",
+        "completion_sha256": "233996f996e1272ca5ce6b53049fc5a413d57bc2a8cf5bb456d39821f874d7da"
+      },
+      {
+        "seeds": [5, 6, 7, 8],
+        "manifest_sha256": "b6e176949f531528ccb669759d2057fa0b1b1a14567633d3dd6a2d47e0a8a9e4",
+        "completion_sha256": "12cd50cabb1537896dd6d5b16522846cc742a34a53ba466e0d9f3a37bc128a7e"
+      },
+      {
+        "seeds": [9, 10, 11, 12],
+        "manifest_sha256": "72bcd677376b1ca44278d7cb6e9ea61910cc07f06fc135b239cdbb54aa4ee6ee",
+        "completion_sha256": "8152fcbcc53756950c7cc05d779926fbef9828e6b18bf7bc4878e221b8894158"
+      },
+      {
+        "seeds": [13, 14, 15, 16],
+        "manifest_sha256": "ae3dfb2e0022043206d8d4fcf748a3ce68ba1a3898af560ff3e059ba217e3c51",
+        "completion_sha256": "0ff8ab4142cd440cc335e5177e13bd0c8be65044292e5e9687d08268458be5ba"
+      }
+    ],
+    "totals": {
+      "seeds": 17,
+      "units": 816,
+      "cell_journals": 6528,
+      "base_wavs": 816,
+      "fork_wavs": 78336,
+      "total_wavs": 79152,
+      "total_wav_bytes": 40532156160
+    },
+    "closeout_bound": "17 total seeds; no further background wave"
+  },
+  "b6": {
+    "pair_manifest_sha256": "640b00059e04e9db51cf5b4f267fc901612aa57eea0d59b12b8bb198dd8bdc4e",
+    "cfg1p0": {"pair_journals": 128, "raw_wavs": 1280},
+    "cfg4p5": {"pair_journals": 128, "raw_wavs": 1280},
+    "original_completion_sha256": "5be7886b6b4c7a51282745ad1d32cf25c574443d3460e67c5b931c8ad740aa68",
+    "resume_completion_sha256": "861c6cee74a4822911cb5fa19372bb63d3c0ef37da30bdbac79b073c4121b79f"
+  },
+  "retag_assessment": {
+    "status": "NOT_FEASIBLE_FROM_RETAINED_ARTIFACTS",
+    "path": "results/arc4_quarantine/RETAG_ASSESSMENT.md",
+    "sha256": "b6ade04670ab1e1026b8f7d29e28a3035336f5db16df51fa18b14aab0e1c1600"
+  }
+}

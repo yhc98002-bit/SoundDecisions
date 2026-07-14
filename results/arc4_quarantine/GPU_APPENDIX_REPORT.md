@@ -1,104 +1,44 @@
 # Arc-4 GPU appendix execution report
 
-Status: **RUNNING**. This report records protocol, placement, artifact integrity,
-and queue progress only. No B-2 or B-6 generated-audio value has been measured,
-inspected, summarized, or used for a decision token.
+Status: **COMPLETE**. B1 is fail-closed; B2/B6 contain raw generation plus integrity metadata only. No B2/B6 generated-audio value was measured, inspected, summarized, or used for a token.
 
-## Isolation and frozen inputs
+## Frozen authority
 
-- Worktree: `SoundDecisions-arc4-gpu`, branch `arc4-gpu`.
-- B-1 protocol: `experiment/preregistered/B1_PROTOCOL.md`, SHA256
-  `b85eeece6f18ff7ce3ab254411d06f97cf2446d393f74eb81ad34048131cc03f`,
-  frozen in commit `9586b13` before any B-1 probe evaluation.
-- B-2 manifest: SHA256
-  `5c3a334ecfcfb3e91504354c14c8e8dbae71b3bade088b21bec26fb06fd68ed3`.
-- B-6 pair manifest: SHA256
-  `640b00059e04e9db51cf5b4f267fc901612aa57eea0d59b12b8bb198dd8bdc4e`.
-- Raw queue correction: commit `0b3f27f`; corrected launch ledger: commit
-  `dbd40d9`.
+- Worktree/branch: `SoundDecisions-arc4-gpu` / `arc4-gpu`; generation and primary validation used `PYTHONHASHSEED=0`, local/offline weights, and the primary `.venv`. A deliberate B1 audit-test rerun used hash seed 1.
+- `B1_PROTOCOL.md` (SHA `b85eee...`) is explicit V1 audit history. Its attempted gate log was zero bytes; no gate artifact, prediction, metric, or exit code existed.
+- V2 protocol SHA `1386287a...` and binding Amendment-4 SHA `2283ae...` are authoritative. Earlier V2 amendments remain audit history.
+- The raw inventory and exact ledger hashes are in `QUARANTINE_MANIFEST.json`; node/device timing is in `CAPACITY_LEDGER.md`.
 
-## Placement and environment
+## B1 boundary
 
-| Queue | Node/session | Physical GPUs | Logical workers | Placement |
-|---|---|---|---|---|
-| B-1 recollection | `an12:arc4_b1_collect` | 4,5,6,7 | `cuda:0..3` | TP1 x 4 replicas |
-| B-2 raw multi-seed | `an29:arc4_b2_generate` | 4,5,6,7 | `cuda:0..3` | TP1 x 4 replicas |
-| B-6 raw swaps | `an21:arc4_b6_raw` | 4,5,6,7 | `cuda:0..3` | TP1 x 4 replicas |
+Collection completed: 200 journals, 3,200 labels, 25,600 retap bundles, and 25,600 pooled bundles. The binding whole-bundle join stopped on sorted bundle 31 (`1002__p1cfg1_ind12__s0.75.npz`): relative L2 `0.0002585371085837806` exceeded `0.0002`.
 
-Every launch queried only physical GPUs 4-7 and observed 81,226 MiB free per
-selected GPU, above the 71,680 MiB guard. All runners expose exactly
-`CUDA_VISIBLE_DEVICES=4,5,6,7`, use the shared primary `.venv/bin/python`, set
-`FOLEY_CW_WEIGHTS_SOURCE=hf`, force offline HF/Transformers operation, and set
-`PYTHONHASHSEED=0`. The shared environment replaced an abandoned `/dev/shm`
-copy that had reached only 3.9/6.0 GiB after about 15 minutes; no model process
-or GPU allocation occurred during that staging attempt.
+Authoritative status is **B1_INCOMPLETE**, `scientific_token=null`. Labels were used only for exact-set/universe validation; no distribution, probe fit, prediction, metric, gate-pass artifact, or readability interpretation exists. Evidence: `results/arc4_b1/B1_CLOSEOUT.md` and `results/arc4_b1/job_manifests/arc4_b1_probe_v2_gate.json`.
 
-## B-1
+## Capacity and inventory
 
-The collector regenerates 200 clips x 16 independents x 8 progress points. The
-mandatory evaluation gate requires 200 valid journals, exactly 25,600 valid
-per-token bundles, 25,600 matching pooled bundles, and 3,200 final class labels.
-Partial evaluation is impossible through `scripts/arc4_b1_probe.py`.
+| Queue | Node / physical GPUs | Recorded queue span | Integrity inventory |
+|---|---|---:|---|
+| B1 collection | an12 / 4-7 | 31m29s | complete counts above |
+| B2 seeds 0-4 | an29 / 4-7 | 52m10s | 240 units; 23,280 WAVs |
+| B2 seeds 5-8 | an12 / 4-7 | 38m03s | 192 units; 18,624 WAVs |
+| B2 seeds 9-12 | an29 / 4-7 | 44m00s | 192 units; 18,624 WAVs |
+| B2 seeds 13-16 | an12 / 4-7 | 39m15s | 192 units; 18,624 WAVs |
+| B6 initial/resume | an21 then an12 / 4-7 | 12m19s productive in a 4h00m11s allocation + 5m04s resume | 128 pairs and 1,280 WAVs per cfg |
 
-Snapshot at 2026-07-15 01:03 +08:00: 80 completed clip journals and 10,568
-per-token bundles, including the currently active partial clips. Four owned GPU
-PIDs held about 11,276 MiB each and were productively executing. No B-1 probe
-evaluation has started.
+All launches used TP1 x 4 replicas and exposed only physical GPUs 4-7. Physical GPUs 0-3 had resident co-tenant memory and were deliberately excluded; they were never touched. Guards saw 81,226 MiB free/GPU. Active workers held about 11.3 GiB/GPU; sampled utilization was typically 43-91% outside initialization/clip transitions.
 
-## B-2
+B2 totals are 17 disjoint seeds, 816 units, 6,528 cells, 816 base WAVs, and 78,336 fork WAVs (79,152 WAVs; 40,532,156,160 bytes). Every cohort's four fresh CUDA-hidden CPU validators reported `todo_units=0`. B6 has 128 pair journals/1,280 WAVs per cfg; all eight CPU validators reported `todo=0`.
 
-The legacy conditioning-feature extractor was caught before Python execution
-and produced no B-2 artifact. Its replacement is an axis-agnostic raw generator:
-48 clips selected by a seeded SHA256 rank from the frozen 200-clip manifest,
-base seeds 0-4, cfg 4.5, `sqrt_down`, alpha 0.8, the standard eight-point grid,
-and K=12. Frozen cardinality is 240 base WAVs and 23,040 fork WAVs. Each shard
-owns 12 clips, 60 clip/seed units, and 5,760 fork WAVs.
+## Quarantine and deviations
 
-Artifacts are atomic mono 16 kHz IEEE-float WAVs with SHA256, byte, frame,
-format, subtype, seed-lineage, kernel-ledger, command, node, GPU, and git
-metadata. Completion is journaled per clip/seed/progress cell and rolled up per
-clip/seed. Existing valid files are resumed; malformed files or journals abort
-without replacement. There is no measurement or aggregate mode.
-
-Snapshot at 2026-07-15 01:03 +08:00: all four workers passed the frozen manifest
-and ratified-kernel guards, owned about 11,276 MiB per GPU, and completed their
-first clip/seed unit in about 50 seconds. Four unit journals, 43 cell journals,
-and 536 WAVs had landed including active partial units. No raw value was read.
-
-## B-6
-
-The frozen design contains 128 unique ordered cross-class source/donor pairs per
-cfg in `{1.0, 4.5}`, with no self or same-cached-class pair, and the standard
-eight-point grid. The initial implementation incorrectly instantiated a tagger
-and would have written derived targets; it failed before generation on a missing
-worktree PANNs path. The corrected queue removes all measurer and target code.
-
-For every pair it atomically retains measurement-ready IEEE-float source, donor,
-and eight swapped WAVs with hash-validated resume journals. Cached class labels
-are retained only as frozen stratification provenance. There is no aggregate
-mode and no B-6 decision token.
-
-Snapshot at 2026-07-15 01:03 +08:00: the cfg4.5 wave had 86/128 completed pair
-journals and 860 raw WAVs. Four owned GPU PIDs
-held about 11,282 MiB each and were productively executing.
-
-## Posterior retag assessment
-
-The primary Stage-0 store has 350,556 measurement rows, including 89,367 class
-rows, but zero retained WAVs anywhere under `results/`. Class rows retain only
-`{axis_id, embedding, kind, label}`, not a 527-way posterior. Historical cached
-finals therefore cannot be retagged without regeneration.
-
-The cheapest forward resolution is now implemented for B-6: retain its raw
-float WAVs, then run tagging later as a separate quarantined evaluation. This
-does not add a tagger dependency to generation and does not recover historical
-cohorts outside B-6.
+- B6's original allocation timed out after cfg4.5 and 53 cfg1 pairs; the an12 resume completed the remaining 75. Pending Slurm job 97896 never started. an21 later denied access because no allocation existed.
+- an12's required 5m44s gap and an29's 19m40s gap, local-weight initialization, validation idle, and all placement/utilization samples are accounted in `CAPACITY_LEDGER.md`. No further wave ran beyond the deliberate 17-seed bound.
+- A slow shared-memory staging attempt was canceled at 3.9/6.0 GiB before any model process or GPU allocation. One seeds 5-8 validation attempt was deferred to release I/O for an29 initialization, then rerun to PASS.
+- Primary storage has zero retained final WAVs; categorical class embeddings are null and cannot reconstruct 527-way posteriors. Resolution is recover/rerun final audio and persist `clipwise_output`; see `RETAG_ASSESSMENT.md`.
 
 ## Verification
 
-- Targeted queue tests: `7 passed` (`tests/test_arc4_gpu.py`).
-- B-1 protocol, B-2 manifest, and B-6 pair-manifest hashes verified.
-- B-1, B-2, and B-6 workers map one-to-one onto physical GPUs 4-7.
-- B-2/B-6 quarantine boundary: raw audio plus integrity metadata only.
-- Remaining gate: complete all collections; run B-1 full-bundle validation,
-  then and only then run the frozen B-1 evaluation on `an12`.
+- Focused raw-queue tests: `7 passed` (`tests/test_arc4_gpu.py`). Independent B1 audit: `25 passed` with hash seed 0 and `18 passed` with hash seed 1.
+- Completion records hash every launch ledger/log tree/journal tree. B2 validators: 16/16 PASS; B6 validators: 8/8 PASS; all runner exits are 0 except the recorded B1 fail-closed gate and an21 allocation timeout.
+- No GPU tmux session or generation process remains; an12/an29 GPUs 4-7 were released at closeout.
