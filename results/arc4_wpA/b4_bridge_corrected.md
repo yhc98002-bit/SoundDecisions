@@ -4,14 +4,18 @@ Split `eval`; seed 0; 74 clips; 64 non-oracle noise replays per clip.
 
 The scalar is computed from the s=0.90 grid feature and is therefore better-informed than a true intermediate scalar.
 
-Material readout uses mean embedding cosine as a Bernoulli keep-accuracy and is tagged `UNCALIBRATED_COSINE`; the material-excluded mean is the citable value.
+**Joint recovery is zero under the simulated symmetric keep-flip error model.** This is a simulation result, not observed deployment performance. Its video bootstrap recomputes the best scalar-policy floor inside every resample.
 
-| recovery mean | axes | value | 95% CI | citable |
+Joint recovery: **0.000000** [0.000000, 0.190920] (citable).
+
+Material readout uses mean embedding cosine as a Bernoulli keep-accuracy and is tagged `UNCALIBRATED_COSINE`. Both per-axis means below are provisional sensitivity results and are not citable bridge results.
+
+| provisional recovery mean | axes | value | 95% CI | citable |
 |---|---|---:|---:|---|
 | incl_material | presence, timing, class, material | 0.526367 | [0.311186, 0.636955] | no |
-| excl_material | presence, timing, class | 0.515191 | [0.360404, 0.537848] | **yes** |
+| excl_material | presence, timing, class | 0.515191 | [0.360404, 0.537848] | no |
 
-Tier token: `BRIDGE_PARTIAL`. Seed sweep tokens: 0:BRIDGE_PARTIAL, 1:BRIDGE_PARTIAL, 2:BRIDGE_PARTIAL, 3:BRIDGE_PARTIAL. Seed-stable: **True**.
+Provisional per-axis tier token: `BRIDGE_PARTIAL`. Seed sweep tokens: 0:BRIDGE_PARTIAL, 1:BRIDGE_PARTIAL, 2:BRIDGE_PARTIAL, 3:BRIDGE_PARTIAL. Seed-stable: **True**.
 
 ## Policy labels
 

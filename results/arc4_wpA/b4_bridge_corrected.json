@@ -1,5 +1,5 @@
 {
-  "_doc": "B4 oracle->non-oracle bridge (pre-reg \u00a7B4). OFFLINE, CPU. Proxy-correctness (per-clip majority self-target). Non-oracle scorer = Phase-2 external readout accuracy as the per-axis floor; class uses the external audio-tagger (B1 internal class head unavailable). Bootstrap unit = video. Never pauses.",
+  "_doc": "B4 oracle->non-oracle bridge (pre-reg \u00a7B4). OFFLINE, CPU. Proxy-correctness (per-clip majority self-target). Non-oracle scorer = Phase-2 external readout accuracy as the per-axis floor; class uses the external audio-tagger (B1 internal class head unavailable). Bootstrap unit = video. Joint final-correctness recovery is the sole citable bridge result; per-axis means are sensitivity results. Never pauses.",
   "split": "eval",
   "n_clips": 74,
   "seed": 0,
@@ -170,21 +170,31 @@
       "ci_hi": 0.6369547526041666
     },
     "excl_material": {
-      "_label": "citable_calibrated_axes_only",
-      "citable": true,
+      "_label": "provisional_calibrated_axes_only",
+      "citable": false,
       "recovery": 0.5151909722222223,
       "ci_lo": 0.360403645833333,
       "ci_hi": 0.5378480113636365
     }
   },
+  "joint_recovery": 0.0,
+  "joint_ci_lo": 0.0,
+  "joint_ci_hi": 0.19092041015624997,
+  "citable_result": "joint_recovery",
+  "joint_floor_resampled": true,
+  "joint_result_model": "simulated symmetric keep-flip",
+  "joint_statement": "Joint recovery is zero under the simulated symmetric keep-flip error model.",
   "overall_final_recovery": {
+    "_label": "joint_non_oracle_recovery",
+    "citable": true,
     "recovery": 0.0,
     "ci_lo": 0.0,
-    "ci_hi": 0.12771206559806023,
+    "ci_hi": 0.19092041015624997,
     "non_oracle": 0.33614864864864863,
     "oracle": 0.7432432432432432,
     "scalar_floor": 0.33783783783783783,
-    "scalar_floor_policy": "full_bon"
+    "scalar_floor_policy": "full_bon",
+    "scalar_floor_resampled_in_bootstrap": true
   },
   "decision_token": "BRIDGE_PARTIAL",
   "decision_rule": ">=0.5 BRIDGE_METHOD; 0.2-0.5 BRIDGE_PARTIAL; <0.2 BRIDGE_WEAK (on mean per-axis recovery)",

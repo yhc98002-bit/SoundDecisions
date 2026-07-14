@@ -18,6 +18,10 @@ recovery = (non_oracle - scalar_baseline)/(oracle - scalar_baseline), clipped [0
 N_NOISE seeded noise realizations, bootstrapped by VIDEO. scalar_baseline = the best scalar policy
 per axis (the scalar tie ~0.37 overall; per-axis the strongest scalar competitor, the hardest floor).
 
+The sole citable bridge result is JOINT final-correctness recovery. Per-axis means are sensitivity
+results because they do not establish a joint non-oracle scheduler. Every bootstrap statistic
+recomputes its best scalar-policy floor inside the resampled video cohort.
+
 Decision (pre-reg §B4, OFFLINE, never pauses):
   mean per-axis recovery >= 0.5 -> BRIDGE_METHOD;  0.2-0.5 -> BRIDGE_PARTIAL;  < 0.2 -> BRIDGE_WEAK.
 
@@ -90,6 +94,15 @@ def recovery_for_sample(sample_clips: list[dict], axis: str) -> float:
 
 def mean_recovery_for_sample(sample_clips: list[dict], axes: tuple[str, ...]) -> float:
     return float(np.mean([recovery_for_sample(sample_clips, axis) for axis in axes]))
+
+
+def joint_recovery_for_sample(sample_clips: list[dict]) -> float:
+    """Joint final-correctness recovery with a resample-specific scalar floor."""
+    key = "final"
+    no = np.mean([c["rows"]["non_oracle_axis_gated"][key] for c in sample_clips])
+    orc = np.mean([c["rows"]["oracle_axis_gated"][key] for c in sample_clips])
+    scalar_floor, _ = scalar_floor_for_sample(sample_clips, key)
+    return B.headroom_recovery(float(no), scalar_floor, float(orc))
 
 
 def _labeled_policy_rows(rows: dict[str, dict]) -> dict[str, dict]:
@@ -315,12 +328,8 @@ def main() -> int:
             if np.isfinite(v) and v > best_val:
                 best_val, best_pol = v, pol
         scalar_floor[a] = {"policy": best_pol, "value": float(best_val)}
-    # final-correctness scalar floor (overall)
-    fin_best_pol, fin_best_val = None, -1.0
-    for pol in SCALAR_POLICIES:
-        v = agg[pol]["final"]
-        if np.isfinite(v) and v > fin_best_val:
-            fin_best_val, fin_best_pol = v, pol
+    # final-correctness scalar floor (joint point estimate)
+    fin_best_val, fin_best_pol = scalar_floor_for_sample(per_clip, "final")
 
     # ---- per-axis recovery + bootstrap by video ----
     def recovery_stat_for_axis(axis: str):
@@ -362,14 +371,9 @@ def main() -> int:
         n_boot=args.n_boot, ci=0.95, seed=args.seed,
     )
 
-    # ---- overall (final-correctness) recovery ----
-    def overall_recovery_stat(sample_clips: list[dict]) -> float:
-        no = np.mean([c["rows"]["non_oracle_axis_gated"]["final"] for c in sample_clips])
-        orc = np.mean([c["rows"]["oracle_axis_gated"]["final"] for c in sample_clips])
-        return B.headroom_recovery(float(no), float(fin_best_val), float(orc))
-
+    # ---- joint (final-correctness) recovery; scalar floor is redrawn with videos ----
     ov_pt, ov_lo, ov_hi = bootstrap_over_videos(
-        per_clip, overall_recovery_stat, n_boot=args.n_boot, ci=0.95, seed=args.seed + 7
+        per_clip, joint_recovery_for_sample, n_boot=args.n_boot, ci=0.95, seed=args.seed + 7
     )
 
     # Token honors the pre-reg's "substantial recovery" intent ROBUSTLY: BRIDGE_METHOD
@@ -493,7 +497,9 @@ def main() -> int:
         "_doc": "B4 oracle->non-oracle bridge (pre-reg §B4). OFFLINE, CPU. Proxy-correctness "
                 "(per-clip majority self-target). Non-oracle scorer = Phase-2 external readout "
                 "accuracy as the per-axis floor; class uses the external audio-tagger (B1 internal "
-                "class head unavailable). Bootstrap unit = video. Never pauses.",
+                "class head unavailable). Bootstrap unit = video. Joint final-correctness recovery "
+                "is the sole citable bridge result; per-axis means are sensitivity results. Never "
+                "pauses.",
         "split": args.split, "n_clips": len(bridge_pools), "seed": args.seed,
         "n_noise": args.n_noise, "n_boot": args.n_boot, "num_steps": NUM_STEPS,
         "diffrs_tau": diffrs_tau, "smc_temp": args.smc_temp,
@@ -509,16 +515,28 @@ def main() -> int:
                 "recovery": mean_incl[0], "ci_lo": mean_incl[1], "ci_hi": mean_incl[2],
             },
             "excl_material": {
-                "_label": "citable_calibrated_axes_only",
-                "citable": True,
+                "_label": "provisional_calibrated_axes_only",
+                "citable": False,
                 "recovery": mean_excl[0], "ci_lo": mean_excl[1], "ci_hi": mean_excl[2],
             },
         },
+        "joint_recovery": float(ov_pt),
+        "joint_ci_lo": float(ov_lo),
+        "joint_ci_hi": float(ov_hi),
+        "citable_result": "joint_recovery",
+        "joint_floor_resampled": True,
+        "joint_result_model": "simulated symmetric keep-flip",
+        "joint_statement": (
+            "Joint recovery is zero under the simulated symmetric keep-flip error model."
+        ),
         "overall_final_recovery": {
+            "_label": "joint_non_oracle_recovery",
+            "citable": True,
             "recovery": ov_pt, "ci_lo": ov_lo, "ci_hi": ov_hi,
             "non_oracle": agg["non_oracle_axis_gated"]["final"],
             "oracle": agg["oracle_axis_gated"]["final"],
             "scalar_floor": fin_best_val, "scalar_floor_policy": fin_best_pol,
+            "scalar_floor_resampled_in_bootstrap": True,
         },
         "decision_token": token,
         "decision_rule": ">=0.5 BRIDGE_METHOD; 0.2-0.5 BRIDGE_PARTIAL; <0.2 BRIDGE_WEAK "
@@ -541,17 +559,24 @@ def main() -> int:
             "The scalar is computed from the s=0.90 grid feature and is therefore "
             "better-informed than a true intermediate scalar.",
             "",
-            "Material readout uses mean embedding cosine as a Bernoulli keep-accuracy and is "
-            "tagged `UNCALIBRATED_COSINE`; the material-excluded mean is the citable value.",
+            "**Joint recovery is zero under the simulated symmetric keep-flip error model.** "
+            "This is a simulation result, not observed deployment performance. Its video "
+            "bootstrap recomputes the best scalar-policy floor inside every resample.",
             "",
-            "| recovery mean | axes | value | 95% CI | citable |",
+            f"Joint recovery: **{ov_pt:.6f}** [{ov_lo:.6f}, {ov_hi:.6f}] (citable).",
+            "",
+            "Material readout uses mean embedding cosine as a Bernoulli keep-accuracy and is "
+            "tagged `UNCALIBRATED_COSINE`. Both per-axis means below are provisional sensitivity "
+            "results and are not citable bridge results.",
+            "",
+            "| provisional recovery mean | axes | value | 95% CI | citable |",
             "|---|---|---:|---:|---|",
             f"| incl_material | {', '.join(present_axes)} | {mean_incl[0]:.6f} | "
             f"[{mean_incl[1]:.6f}, {mean_incl[2]:.6f}] | no |",
             f"| excl_material | {', '.join(citable_axes)} | {mean_excl[0]:.6f} | "
-            f"[{mean_excl[1]:.6f}, {mean_excl[2]:.6f}] | **yes** |",
+            f"[{mean_excl[1]:.6f}, {mean_excl[2]:.6f}] | no |",
             "",
-            f"Tier token: `{token}`. Seed sweep tokens: "
+            f"Provisional per-axis tier token: `{token}`. Seed sweep tokens: "
             + ", ".join(f"{s}:{t}" for s, t in zip([args.seed] + robust['seeds'],
                                                    [token] + robust['token']))
             + f". Seed-stable: **{len(set([token] + robust['token'])) == 1}**.",
