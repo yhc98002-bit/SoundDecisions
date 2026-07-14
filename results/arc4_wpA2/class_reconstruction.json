@@ -1,0 +1,151 @@
+{
+  "_doc": "Arc-4 WP-A2 class reconstruction from raw RunStore measurements. Joins use structured extra.clip/extra.j/extra.s/extra.k fields, never gen_id parsing.",
+  "a_ind_confident": 0.37767965367965367,
+  "a_ind_naive": 0.337,
+  "abstain_counts_by_s": {
+    "0.05": 698,
+    "0.15": 743,
+    "0.25": 733,
+    "0.35": 746,
+    "0.45": 713,
+    "0.60": 714,
+    "0.75": 702,
+    "0.90": 708,
+    "independent": 1034
+  },
+  "abstain_rate_by_s": {
+    "0.05": 0.29083333333333333,
+    "0.15": 0.3095833333333333,
+    "0.25": 0.30541666666666667,
+    "0.35": 0.31083333333333335,
+    "0.45": 0.2970833333333333,
+    "0.60": 0.2975,
+    "0.75": 0.2925,
+    "0.90": 0.295,
+    "independent": 0.323125
+  },
+  "cardinality": {
+    "fork": {
+      "expected": 19200,
+      "observed": 19200,
+      "shape": [
+        200,
+        8,
+        12
+      ],
+      "unique_join_keys": 19200
+    },
+    "independent": {
+      "expected": 3200,
+      "observed": 3200,
+      "shape": [
+        200,
+        16
+      ],
+      "unique_join_keys": 3200
+    }
+  },
+  "curve_by_s": [
+    {
+      "a_fork_confident": 0.5671317965734209,
+      "a_fork_naive": 0.47295454545454546,
+      "abstain_rate": 0.29083333333333333,
+      "commit_gain_confident": 0.3516249505973297,
+      "commit_gain_naive": 0.24714367545290852,
+      "n_unscorable_confident": 3,
+      "s": 0.05
+    },
+    {
+      "a_fork_confident": 0.595400618854227,
+      "a_fork_naive": 0.5030303030303032,
+      "abstain_rate": 0.3095833333333333,
+      "commit_gain_confident": 0.39786596714713907,
+      "commit_gain_naive": 0.2837984420896789,
+      "n_unscorable_confident": 6,
+      "s": 0.15
+    },
+    {
+      "a_fork_confident": 0.644014926046176,
+      "a_fork_naive": 0.5482575757575757,
+      "abstain_rate": 0.30541666666666667,
+      "commit_gain_confident": 0.4408531144883529,
+      "commit_gain_naive": 0.34174003511299084,
+      "n_unscorable_confident": 8,
+      "s": 0.25
+    },
+    {
+      "a_fork_confident": 0.7086888227513227,
+      "a_fork_naive": 0.576969696969697,
+      "abstain_rate": 0.31083333333333335,
+      "commit_gain_confident": 0.5297584006377651,
+      "commit_gain_naive": 0.3790230225369746,
+      "n_unscorable_confident": 8,
+      "s": 0.35
+    },
+    {
+      "a_fork_confident": 0.7617283119873794,
+      "a_fork_naive": 0.6151515151515151,
+      "abstain_rate": 0.2970833333333333,
+      "commit_gain_confident": 0.5998393165206118,
+      "commit_gain_naive": 0.4274160447279735,
+      "n_unscorable_confident": 7,
+      "s": 0.45
+    },
+    {
+      "a_fork_confident": 0.8083202849160296,
+      "a_fork_naive": 0.6643181818181819,
+      "abstain_rate": 0.2975,
+      "commit_gain_confident": 0.6684758142794791,
+      "commit_gain_naive": 0.4956466106581176,
+      "n_unscorable_confident": 12,
+      "s": 0.6
+    },
+    {
+      "a_fork_confident": 0.878489475500345,
+      "a_fork_naive": 0.7116666666666667,
+      "abstain_rate": 0.2925,
+      "commit_gain_confident": 0.7705413259852191,
+      "commit_gain_naive": 0.5601038131495499,
+      "n_unscorable_confident": 16,
+      "s": 0.75
+    },
+    {
+      "a_fork_confident": 0.9178890950319523,
+      "a_fork_naive": 0.8015151515151515,
+      "abstain_rate": 0.295,
+      "commit_gain_confident": 0.8269306792151349,
+      "commit_gain_naive": 0.6876966635336426,
+      "n_unscorable_confident": 25,
+      "s": 0.9
+    }
+  ],
+  "gap_confident": 0.40406976744186046,
+  "gap_naive": 0.2874074074074074,
+  "max_abs_confident_naive_delta": 0.21043751283566914,
+  "max_abs_delta": 0.0,
+  "n_class_csv_nonfinite_matches": 170,
+  "n_class_csv_numeric_cells": 4800,
+  "n_class_csv_rows": 1600,
+  "n_crossing_confident": 172,
+  "n_crossing_naive": 135,
+  "n_measurement_lines_streamed": 350556,
+  "n_unscorable_cells": 85,
+  "naive_confident_differ": true,
+  "reproduces_committed_csv": true,
+  "s_commit_confident": 0.34593023255813954,
+  "s_commit_naive": 0.4625925925925926,
+  "s_read": 0.75,
+  "theta_commit": 0.7,
+  "tolerance": 1e-09,
+  "unscorable_cells_by_s": {
+    "0.05": 3,
+    "0.15": 6,
+    "0.25": 8,
+    "0.35": 8,
+    "0.45": 7,
+    "0.60": 12,
+    "0.75": 16,
+    "0.90": 25,
+    "independent": 0
+  }
+}

@@ -26,7 +26,7 @@ from typing import Any, Optional
 
 import numpy as np
 
-from .agreement import agreement
+from .agreement import agreement, confident_agreement
 from .axes import measure_self_target
 from .score_sde import fork_tail, generate_trajectory, make_g, x0_at
 from .stats import window_with_ci
@@ -89,6 +89,15 @@ def commit_gain(a_fork: float, a_ind: float) -> float:
 # a_independent
 # ---------------------------------------------------------------------------
 
+def _agreement_for_axis(targets: list, axis: Axis) -> float:
+    """Apply the registered metric, excluding abstains on categorical axes."""
+    if axis.kind is AxisKind.CATEGORICAL:
+        value, _ = confident_agreement(
+            [target.label for target in targets], axis.agreement, abstain="abstain"
+        )
+        return float(value)
+    return float(agreement(targets, axis.agreement))
+
 def a_independent(
     backend: Any,
     cond: Any,
@@ -104,8 +113,9 @@ def a_independent(
     here comes only from the different starting noise, reflecting the video-conditioned
     prior P(axis | video).
 
-    Returns a float in [0, 1] (or possibly slightly negative for Krippendorff's alpha,
-    but commit_gain clamps; see commit_gain docstring).
+    Categorical agreement is scored on the confident subset: abstains are
+    excluded, and fewer than two confident labels makes the cell unscorable
+    (NaN). Embedding agreement keeps the registered metric unchanged.
     """
     N = schedule.N_independent
     targets = []
@@ -115,7 +125,7 @@ def a_independent(
         audio = result["audio"]
         tgt = measure_self_target(audio, axis, measurer)
         targets.append(tgt)
-    return agreement(targets, axis.agreement)
+    return _agreement_for_axis(targets, axis)
 
 
 # ---------------------------------------------------------------------------
@@ -136,13 +146,15 @@ def a_fork(
     """Agreement of the self-target across K stochastic tail-forks from x_s.
 
     Forks from the SAME intermediate state x_s; diversity here reflects what is
-    NOT yet committed in x_s (stochastic re-completion).  Uses schedule.K_forks forks.
+    NOT yet committed in x_s (stochastic re-completion). Uses schedule.K_forks
+    forks. Categorical agreement uses the same confident-subset abstention rule
+    as ``a_independent``.
     """
     K = schedule.K_forks
     g = make_g(schedule.g_kind, schedule.g_value)
     audios = fork_tail(backend, x_s, s, cond, alpha, K, schedule, rng, g=g)
     targets = [measure_self_target(audio, axis, measurer) for audio in audios]
-    return agreement(targets, axis.agreement)
+    return _agreement_for_axis(targets, axis)
 
 
 # ---------------------------------------------------------------------------
