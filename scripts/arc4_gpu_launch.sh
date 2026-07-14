@@ -75,6 +75,7 @@ if tmux has-session -t "$SESSION" 2>/dev/null; then
   exit 4
 fi
 mkdir -p "$LOG_DIR"
+rm -f "$LOG_DIR/exit_code"
 printf '%s' "$COMMAND_B64" | base64 -d > "$LOG_DIR/command.sh"
 chmod 700 "$LOG_DIR/command.sh"
 cat > "$LOG_DIR/runner.sh" <<RUNNER
