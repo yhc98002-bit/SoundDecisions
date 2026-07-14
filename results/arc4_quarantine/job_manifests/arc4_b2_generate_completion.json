@@ -1,0 +1,53 @@
+{
+  "_doc": "Append-only completion record for the primary Arc-4 B2 raw-generation queue.",
+  "queue": "arc4_b2_generate",
+  "launch_ledger": {
+    "path": "results/arc4_quarantine/job_manifests/arc4_b2_generate.json",
+    "sha256": "6962cc52fe0c37183d20f960c143d6dd3a9b555f7bb84feb94d53153000e6e17"
+  },
+  "generation_manifest": {
+    "path": "results/arc4_quarantine/b2/generation_manifest.json",
+    "sha256": "5c3a334ecfcfb3e91504354c14c8e8dbae71b3bade088b21bec26fb06fd68ed3"
+  },
+  "terminal": {
+    "status": "COMPLETE",
+    "completed_utc": "2026-07-14T17:49:47Z",
+    "runner_exit_code": 0,
+    "runner_exit_code_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+  },
+  "logs": {
+    "session_log": {
+      "path": "logs/arc4_gpu/arc4_b2_generate/session.log",
+      "sha256": "ef32a2efc01df2804bf7fe8c422c25e8a4ff58d291d7f8dd81f4730f0dd0980f"
+    },
+    "worker_log_count": 4,
+    "worker_logs_tree_sha256": "9a527965fe1983047b58f9174d3e27175fe89eeaa2735211196d66a54c5027d0"
+  },
+  "artifacts": {
+    "unit_journals": 240,
+    "unit_journals_tree_sha256": "a4e408a692c9d136255b931e6d7b1b9e7cd154fccf5a01160fb5d770187e6d1d",
+    "cell_journals": 1920,
+    "cell_journals_tree_sha256": "5991a2e6c19b632758bc4c2aae3f6af1b1c50c18e4e55193190f9a12da4c754e",
+    "base_wavs": 240,
+    "fork_wavs": 23040,
+    "total_wavs": 23280,
+    "total_wav_bytes": 11921222400,
+    "unexpected_raw_files": 0
+  },
+  "validation": {
+    "status": "PASS",
+    "completed_utc": "2026-07-14T17:57:34Z",
+    "mode": "four fresh CPU-only resume validators with CUDA hidden",
+    "pythonhashseed": "0",
+    "exit_code": 0,
+    "exit_code_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "validator_log_count": 4,
+    "validator_logs_tree_sha256": "4415f205bd9c8da5d140f996875c38ab7eecc96dab85889957ca5f4171fbfee6",
+    "clips_per_validator": 12,
+    "expected_fork_wavs_per_validator": 5760,
+    "todo_units_per_validator": 0
+  },
+  "deviations": [
+    "No deviation occurred after launch. A prior shared-memory staging attempt was canceled before any model process or GPU allocation and produced no queue artifact."
+  ]
+}
