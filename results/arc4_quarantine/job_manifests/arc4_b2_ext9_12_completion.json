@@ -1,0 +1,55 @@
+{
+  "_doc": "Append-only completion record for the Arc-4 B2 seeds 9-12 raw extension.",
+  "queue": "arc4_b2_ext9_12",
+  "launch_ledger": {
+    "path": "results/arc4_quarantine/job_manifests/arc4_b2_ext9_12.json",
+    "sha256": "0ac10ff9aaa0b0218ec89b7904fe896e5975507cc3c62a8aafc9382c0b70e711"
+  },
+  "generation_manifest": {
+    "path": "results/arc4_quarantine/b2_extension_seeds9_12/generation_manifest.json",
+    "sha256": "72bcd677376b1ca44278d7cb6e9ea61910cc07f06fc135b239cdbb54aa4ee6ee"
+  },
+  "terminal": {
+    "status": "COMPLETE",
+    "completed_utc": "2026-07-14T18:53:27Z",
+    "runner_exit_code": 0,
+    "runner_exit_code_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+  },
+  "logs": {
+    "session_log": {
+      "path": "logs/arc4_gpu/arc4_b2_ext9_12/session.log",
+      "sha256": "a4b11e9d2be657b279481e29081cae23d6a14710bb91d22b3a828058014414a4"
+    },
+    "worker_log_count": 4,
+    "worker_logs_tree_sha256": "02222ea4342d76f9180b7f85892063d8c7a74fc92d990091ac3c31dc97f5efd7"
+  },
+  "artifacts": {
+    "unit_journals": 192,
+    "unit_journals_tree_sha256": "f93fc6a672db9e37fe08853f4fcb94337e519062be7b0ea82f181da5bbfd6d44",
+    "cell_journals": 1536,
+    "cell_journals_tree_sha256": "f061f09dbc7b36584ede57c7c91769901cad5aedeb809155f91827d7290b49b5",
+    "base_wavs": 192,
+    "fork_wavs": 18432,
+    "total_wavs": 18624,
+    "total_wav_bytes": 9536977920,
+    "unexpected_raw_files": 0
+  },
+  "validation": {
+    "status": "PASS",
+    "completed_utc": "2026-07-14T18:58:21Z",
+    "mode": "four fresh CPU-only resume validators with CUDA hidden",
+    "pythonhashseed": "0",
+    "exit_code": 0,
+    "exit_code_sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "validation_file_count": 6,
+    "validation_tree_sha256": "7e99e4b1d4dd57559600de2e2746db7cd64733f5ffd43bc8f3b6669ff6ee127e",
+    "clips_per_validator": 12,
+    "expected_fork_wavs_per_validator": 4608,
+    "todo_units_per_validator": 0
+  },
+  "deviations": [
+    "an29 GPUs 4-7 were idle for 1,180 seconds after primary generation: 467 seconds for its full rehash, then 713 seconds awaiting the binding B1 gate/capacity decision and freezing this append-only manifest.",
+    "Local-weight initialization occupied about 284 seconds before active generation; no network download occurred.",
+    "After generation, an29 remained idle during the 294-second CPU rehash and was then deliberately released at the frozen 17-total-seed closeout bound."
+  ]
+}
