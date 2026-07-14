@@ -2,11 +2,11 @@
   "node": "an21",
   "session": "arc4_b6_raw",
   "command": "set -euo pipefail; mkdir -p logs/arc4_gpu/arc4_b6_raw/workers; for cfg in 4.5 1.0; do cfg_tag=$(printf \"%s\" \"$cfg\" | tr \".\" \"p\"); pids=(); for i in 0 1 2 3; do python scripts/arc4_b6_generate.py --pair-manifest results/arc4_quarantine/b6/pair_manifest.json --out \"results/arc4_quarantine/b6/cfg${cfg_tag}\" --clips-root /XYFS02/HDD_POOL/paratera_xy/pxy1289/HaocunYe/Research/SoundDecisions/data/FoleyBench/clips --certified results/stage_m_rerun/certified_kernels.json --cfg \"$cfg\" --schedule sqrt_down --variant small_16k --duration 8 --num-steps 20 --seed 0 --shard \"$i/4\" --device \"cuda:$i\" > \"logs/arc4_gpu/arc4_b6_raw/workers/cfg${cfg_tag}_shard${i}.log\" 2>&1 & pids+=(\"$!\"); done; rc=0; for p in \"${pids[@]}\"; do wait \"$p\" || rc=1; done; test \"$rc\" -eq 0; done",
-  "git_commit": "8f43ee595d16316466dbbf4da7db13a47edeaa2a",
+  "git_commit": "6a32072553653b2908735df2b1e18c742f9e27bd",
   "protocol_sha256": "b85eeece6f18ff7ce3ab254411d06f97cf2446d393f74eb81ad34048131cc03f",
   "config_sha256": "c16633ea96e66c9d502f6b9827a8c37f09197e82733fcd0c27aab7506505cb41",
   "seed": 0,
-  "started_utc": "2026-07-14T16:28:52Z",
+  "started_utc": "2026-07-14T16:48:07Z",
   "placement": {
     "physical_gpu_ids": [
       4,

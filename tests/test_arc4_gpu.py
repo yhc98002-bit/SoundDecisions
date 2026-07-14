@@ -1,17 +1,25 @@
 import json
 from collections import Counter
+from pathlib import Path
 
 import numpy as np
 import pytest
 
 from foley_cw.arc4_gpu import (
+    B2_BASE_SEEDS,
+    B2_S_GRID,
     B6_S_GRID,
+    atomic_json_create,
     atomic_npz_create,
+    atomic_wav_create,
     load_confident_clip_labels,
+    select_b2_clips,
     select_balanced_pairs,
     valid_b1_bundle,
     valid_b2_bundle,
+    validate_b2_generation_manifest,
     validate_pair_manifest,
+    wav_metadata,
 )
 
 
@@ -21,6 +29,73 @@ def test_atomic_npz_create_never_overwrites(tmp_path):
     with pytest.raises(FileExistsError):
         atomic_npz_create(path, value=np.array([2]))
     assert np.load(path)["value"].tolist() == [1]
+
+
+def test_atomic_json_and_wav_never_overwrite(tmp_path):
+    pytest.importorskip("soundfile")
+    json_path = tmp_path / "journal.json"
+    atomic_json_create(json_path, {"value": 1})
+    with pytest.raises(FileExistsError):
+        atomic_json_create(json_path, {"value": 2})
+    assert json.loads(json_path.read_text()) == {"value": 1}
+
+    wav_path = tmp_path / "raw.wav"
+    audio = np.linspace(-0.5, 0.5, 128, dtype=np.float32)
+    atomic_wav_create(wav_path, audio, sample_rate=16000)
+    with pytest.raises(FileExistsError):
+        atomic_wav_create(wav_path, -audio, sample_rate=16000)
+    meta = wav_metadata(wav_path)
+    assert meta["sample_rate"] == 16000
+    assert meta["frames"] == 128
+    assert meta["channels"] == 1
+    assert meta["subtype"] == "FLOAT"
+
+
+def test_b2_generation_manifest_is_deterministic_and_pins_cardinality():
+    pool = [str(index) for index in range(200)]
+    selected = select_b2_clips(pool, seed=0)
+    assert len(selected) == 48
+    assert len(set(selected)) == 48
+    assert selected == select_b2_clips(reversed(pool), seed=0)
+
+    manifest = {
+        "selection_seed": 0,
+        "n_clips": 48,
+        "clips": selected,
+        "base_seeds": list(B2_BASE_SEEDS),
+        "cfg": 4.5,
+        "schedule": "sqrt_down",
+        "alpha": 0.8,
+        "s_grid": list(B2_S_GRID),
+        "k_forks": 12,
+        "variant": "small_16k",
+        "duration_sec": 8.0,
+        "num_steps": 20,
+        "conditioning": "full_video_clip_synchformer_empty_text",
+        "audio_format": "WAV",
+        "audio_subtype": "FLOAT",
+        "sample_rate": 16000,
+        "expected_frames": 128000,
+        "expected_artifacts": {
+            "base_units": 240,
+            "base_wavs": 240,
+            "fork_cells": 1920,
+            "fork_wavs": 23040,
+        },
+    }
+    validate_b2_generation_manifest(manifest)
+    manifest["k_forks"] = 11
+    with pytest.raises(ValueError, match="k_forks"):
+        validate_b2_generation_manifest(manifest)
+
+
+def test_b6_generator_is_raw_only_and_resume_guarded():
+    source = (Path(__file__).parents[1] / "scripts" / "arc4_b6_generate.py").read_text()
+    assert "RealFoleyMeasurer" not in source
+    assert "load_config" not in source
+    assert "record_measurement" not in source
+    assert "atomic_wav_create" in source
+    assert "_journal_complete" in source
 
 
 def test_b1_and_b2_schema_validation(tmp_path):

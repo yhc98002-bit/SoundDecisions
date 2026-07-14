@@ -81,9 +81,7 @@ cat > "$LOG_DIR/runner.sh" <<RUNNER
 #!/bin/bash
 set -euo pipefail
 cd "$REPO"
-mkdir -p /dev/shm/foley_venv_arc4_gpu
-flock /dev/shm/foley_venv_arc4_gpu.lock rsync -a --delete "$PRIMARY/.venv/" /dev/shm/foley_venv_arc4_gpu/
-export PATH="/dev/shm/foley_venv_arc4_gpu/bin:\$PATH"
+export PATH="$PRIMARY/.venv/bin:\$PATH"
 export PYTHONPATH="$PRIMARY/third_party/MMAudio:\${PYTHONPATH:-}"
 export FOLEY_CW_MMAUDIO_ROOT="$PRIMARY/third_party/MMAudio"
 export FOLEY_CW_WEIGHTS_SOURCE=hf

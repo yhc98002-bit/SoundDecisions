@@ -16,6 +16,13 @@ from typing import Iterable
 import numpy as np
 
 ABSTAIN = "abstain"
+B2_S_GRID = (0.05, 0.15, 0.25, 0.35, 0.45, 0.60, 0.75, 0.90)
+B2_BASE_SEEDS = (0, 1, 2, 3, 4)
+B2_CFG = 4.5
+B2_SCHEDULE = "sqrt_down"
+B2_ALPHA = 0.8
+B2_K_FORKS = 12
+B2_N_CLIPS = 48
 B6_S_GRID = (0.05, 0.15, 0.25, 0.35, 0.45, 0.60, 0.75, 0.90)
 
 
@@ -41,6 +48,137 @@ def atomic_npz_create(path: Path, **arrays: np.ndarray) -> Path:
     finally:
         tmp.unlink(missing_ok=True)
     return path
+
+
+def atomic_json_create(path: Path, payload: dict) -> Path:
+    """Create sorted JSON atomically and refuse replacement."""
+    path = Path(path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    data = json.dumps(payload, indent=2, sort_keys=True) + "\n"
+    tmp = path.parent / f".{path.name}.tmp.{os.getpid()}"
+    try:
+        with tmp.open("x", encoding="utf-8") as fh:
+            fh.write(data)
+            fh.flush()
+            os.fsync(fh.fileno())
+        os.link(tmp, path)
+    finally:
+        tmp.unlink(missing_ok=True)
+    return path
+
+
+def atomic_wav_create(
+    path: Path,
+    audio: np.ndarray,
+    *,
+    sample_rate: int,
+    subtype: str = "FLOAT",
+) -> Path:
+    """Create a measurement-ready WAV atomically and refuse replacement."""
+    import soundfile as sf
+
+    path = Path(path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    tmp = path.parent / f".{path.name}.tmp.{os.getpid()}"
+    try:
+        with tmp.open("xb"):
+            pass
+        sf.write(
+            str(tmp),
+            np.asarray(audio, dtype=np.float32).reshape(-1),
+            int(sample_rate),
+            format="WAV",
+            subtype=subtype,
+        )
+        with tmp.open("rb") as fh:
+            os.fsync(fh.fileno())
+        os.link(tmp, path)
+    finally:
+        tmp.unlink(missing_ok=True)
+    return path
+
+
+def wav_metadata(path: Path, *, expected_subtype: str = "FLOAT") -> dict:
+    """Validate one raw B2 WAV and return integrity metadata."""
+    import soundfile as sf
+
+    path = Path(path)
+    info = sf.info(str(path))
+    if (
+        info.format != "WAV"
+        or info.subtype != expected_subtype
+        or info.samplerate <= 0
+        or info.channels != 1
+        or info.frames <= 0
+    ):
+        raise ValueError(
+            f"invalid WAV {path}: format={info.format} subtype={info.subtype} "
+            f"sr={info.samplerate} channels={info.channels} frames={info.frames}"
+        )
+    return {
+        "sha256": sha256_file(path),
+        "bytes": path.stat().st_size,
+        "sample_rate": int(info.samplerate),
+        "frames": int(info.frames),
+        "channels": int(info.channels),
+        "format": info.format,
+        "subtype": info.subtype,
+    }
+
+
+def _b2_clip_rank(seed: int, clip: str) -> str:
+    return hashlib.sha256(f"arc4-b2-v1|{seed}|{clip}".encode("utf-8")).hexdigest()
+
+
+def select_b2_clips(
+    clips: Iterable[str],
+    *,
+    n_clips: int = B2_N_CLIPS,
+    seed: int = 0,
+) -> list[str]:
+    """Select clips by an outcome-blind, seeded SHA256 rank."""
+    pool = sorted({str(clip) for clip in clips})
+    if len(pool) < n_clips:
+        raise ValueError(f"only {len(pool)} unique clips; need {n_clips}")
+    return sorted(pool, key=lambda clip: (_b2_clip_rank(seed, clip), clip))[:n_clips]
+
+
+def validate_b2_generation_manifest(manifest: dict) -> None:
+    """Enforce the frozen Arc-4 B2 raw-generation design."""
+    expected = {
+        "selection_seed": 0,
+        "n_clips": B2_N_CLIPS,
+        "cfg": B2_CFG,
+        "schedule": B2_SCHEDULE,
+        "alpha": B2_ALPHA,
+        "k_forks": B2_K_FORKS,
+        "variant": "small_16k",
+        "duration_sec": 8.0,
+        "num_steps": 20,
+        "conditioning": "full_video_clip_synchformer_empty_text",
+        "audio_format": "WAV",
+        "audio_subtype": "FLOAT",
+        "sample_rate": 16000,
+        "expected_frames": 128000,
+    }
+    for key, value in expected.items():
+        if manifest.get(key) != value:
+            raise ValueError(f"B2 manifest {key}={manifest.get(key)!r}; expected {value!r}")
+    if tuple(int(seed) for seed in manifest.get("base_seeds", [])) != B2_BASE_SEEDS:
+        raise ValueError("B2 manifest has the wrong base seeds")
+    if tuple(float(s) for s in manifest.get("s_grid", [])) != B2_S_GRID:
+        raise ValueError("B2 manifest has the wrong s-grid")
+    clips = [str(clip) for clip in manifest.get("clips", [])]
+    if len(clips) != B2_N_CLIPS or len(set(clips)) != B2_N_CLIPS:
+        raise ValueError("B2 manifest must contain 48 unique clips")
+    counts = manifest.get("expected_artifacts", {})
+    if counts != {
+        "base_units": B2_N_CLIPS * len(B2_BASE_SEEDS),
+        "base_wavs": B2_N_CLIPS * len(B2_BASE_SEEDS),
+        "fork_cells": B2_N_CLIPS * len(B2_BASE_SEEDS) * len(B2_S_GRID),
+        "fork_wavs": B2_N_CLIPS * len(B2_BASE_SEEDS) * len(B2_S_GRID) * B2_K_FORKS,
+    }:
+        raise ValueError("B2 manifest artifact cardinalities are inconsistent")
 
 
 def valid_b1_bundle(path: Path) -> bool:
