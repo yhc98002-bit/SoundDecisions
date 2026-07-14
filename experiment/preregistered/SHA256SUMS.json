@@ -12,5 +12,5 @@
   "_amendment_2026-06-13_prereg": "pre-registrations re-frozen from the June-13 manual (F-1 promoted to central; three-share decomposition is the headline)",
   "arc3_tierB_preregistration.md": "7678f89e650d7f3bc0634074abffe09b8c2f37dfc9ce1561e5f259f56039d5f9",
   "_amendment_2026-06-20_arc3": "RULING-1: Gate-A cap = Binomial(n,0.05) 95pct at the ACTUAL cell count (recovers frozen 2 at n=16; 15 at n=200) \u2014 exposure-n bug-fix, not a re-tune. RULING-2: F-1 REFUTED (guidance narrows the outcome set via mode collapse; not seed-migration). METHOD path = B4 oracle->non-oracle bridge, NOT F1_SUPPORTED. Tier-B analyses pre-registered.",
-  "_amendment_2026-07_arc4": "729e8e6984d18c76420c46e0a94054c47fdcc50396988528bc33a58ab02eabdf"
+  "_amendment_2026-07_arc4": "31d643159e4af14bd0921c6df91133a262a41adada6f4ae3c538bdd0e9838996"
 }
