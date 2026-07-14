@@ -1,0 +1,11 @@
+{
+  "flags": [
+    {
+      "task": "A2-4",
+      "reason": "The cached Phase-2 material readout stores only own-target scalar cosine values. It does not persist the predicted and reference embeddings required to compare each candidate with a matched other-video reference, and no Phase-2 preview audio survives from which those embeddings could be recomputed without inference.",
+      "evidence_cmd": "find results/stage0/journal -maxdepth 1 -name 'p2cfg1__*.json' | wc -l; inspect one journal row's keys; find results/stage0/previews results/stage0/finals -type f -name '*.wav' | wc -l; search stage0 NPY/NPZ names for material/readout",
+      "evidence": "There are 200 Phase-2 journals. Each has 128 rows with only axis_id, clip, correct, j, probe, s, and target; material correct is a scalar cosine. Persisted preview/final audio count is 0, and no material/readout NPY or NPZ cache exists. Phase-1 material embeddings cannot supply the missing Phase-2 candidate embedding.",
+      "resolution": "Freeze a matched-negative manifest, then rerun only the Phase-2 material preview/measurer path for the existing 200 clips and eight s-points while persisting the 512-D candidate, same-video reference, and other-video reference embeddings. This is the smallest experiment that can compute relative readout and finish the preregistered 2AFC scale correction."
+    }
+  ]
+}
