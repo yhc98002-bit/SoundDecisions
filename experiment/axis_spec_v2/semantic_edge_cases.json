@@ -1,0 +1,111 @@
+{
+  "schema_version": "axis_spec_v2_edge_cases",
+  "status": "DRAFT_AWAITING_DUAL_PI_SIGNATURE",
+  "cases": [
+    {
+      "case_id": "presence_target_event",
+      "axis_id": "presence",
+      "input": {"target_event_detected": true, "evidence_confident": true},
+      "expected": "present"
+    },
+    {
+      "case_id": "presence_target_absent_despite_background",
+      "axis_id": "presence",
+      "input": {"target_event_detected": false, "evidence_confident": true, "background_event_detected": true},
+      "expected": "absent"
+    },
+    {
+      "case_id": "presence_uncertain_evidence",
+      "axis_id": "presence",
+      "input": {"target_event_detected": true, "evidence_confident": false},
+      "expected": "uncertain"
+    },
+    {
+      "case_id": "timing_defined_interval",
+      "axis_id": "timing",
+      "input": {"presence": "present", "anchor_interval_s": [1.0, 1.2], "onset_interval_s": [1.25, 1.35]},
+      "expected": {"defined": true, "reason": null, "delta_t_s": 0.2, "delta_t_interval_s": [0.05, 0.35]}
+    },
+    {
+      "case_id": "timing_absent_is_undefined",
+      "axis_id": "timing",
+      "input": {"presence": "absent", "anchor_interval_s": [1.0, 1.2], "onset_interval_s": [1.25, 1.35]},
+      "expected": {"defined": false, "reason": "presence_not_confidently_positive", "delta_t_s": null, "delta_t_interval_s": null}
+    },
+    {
+      "case_id": "timing_missing_onset_is_undefined",
+      "axis_id": "timing",
+      "input": {"presence": "present", "anchor_interval_s": [1.0, 1.2], "onset_interval_s": null},
+      "expected": {"defined": false, "reason": "missing_onset", "delta_t_s": null, "delta_t_interval_s": null}
+    },
+    {
+      "case_id": "class_confident_with_posterior",
+      "axis_id": "class",
+      "input": {"label": "impact_friction", "posterior_persisted": true},
+      "expected": {"scorable": true, "reason": null}
+    },
+    {
+      "case_id": "class_abstain_is_missing",
+      "axis_id": "class",
+      "input": {"label": "abstain", "posterior_persisted": true},
+      "expected": {"scorable": false, "reason": "missing_evidence"}
+    },
+    {
+      "case_id": "class_label_without_posterior_is_incomplete",
+      "axis_id": "class",
+      "input": {"label": "impact_friction", "posterior_persisted": false},
+      "expected": {"scorable": false, "reason": "incomplete_posterior_artifact"}
+    },
+    {
+      "case_id": "material_positive",
+      "axis_id": "material",
+      "example_threshold_only": true,
+      "input": {"similarity_positive": 0.8, "similarity_negative": 0.5, "indifference_margin": 0.05},
+      "expected": {"decision": "positive", "margin": 0.3, "is_scorable": true, "probability": null}
+    },
+    {
+      "case_id": "material_negative",
+      "axis_id": "material",
+      "example_threshold_only": true,
+      "input": {"similarity_positive": 0.4, "similarity_negative": 0.7, "indifference_margin": 0.05},
+      "expected": {"decision": "negative", "margin": -0.3, "is_scorable": true, "probability": null}
+    },
+    {
+      "case_id": "material_indifferent",
+      "axis_id": "material",
+      "example_threshold_only": true,
+      "input": {"similarity_positive": 0.61, "similarity_negative": 0.6, "indifference_margin": 0.02},
+      "expected": {"decision": "indifferent", "margin": 0.01, "is_scorable": false, "probability": null}
+    },
+    {
+      "case_id": "binding_correct",
+      "axis_id": "binding",
+      "input": {"event_presence": [true, true], "assignment": "correct", "extra_event_count": 0, "anchors_usable": true, "temporal_order": "correct"},
+      "expected": {"outcome": "correct", "event_set_state": "both_present", "temporal_order": "correct", "identity_assignment": "correct", "primary_eligible": true, "primary_correct": true}
+    },
+    {
+      "case_id": "binding_swapped",
+      "axis_id": "binding",
+      "input": {"event_presence": [true, true], "assignment": "swapped", "extra_event_count": 0, "anchors_usable": true, "temporal_order": "correct"},
+      "expected": {"outcome": "swapped", "event_set_state": "both_present", "temporal_order": "correct", "identity_assignment": "swapped", "primary_eligible": true, "primary_correct": false}
+    },
+    {
+      "case_id": "binding_missing_never_swapped",
+      "axis_id": "binding",
+      "input": {"event_presence": [true, false], "assignment": "swapped", "extra_event_count": 0, "anchors_usable": true, "temporal_order": "correct"},
+      "expected": {"outcome": "missing", "event_set_state": "missing", "temporal_order": "correct", "identity_assignment": null, "primary_eligible": false, "primary_correct": null}
+    },
+    {
+      "case_id": "binding_extra_separate_from_assignment",
+      "axis_id": "binding",
+      "input": {"event_presence": [true, true], "assignment": "correct", "extra_event_count": 1, "anchors_usable": true, "temporal_order": "correct"},
+      "expected": {"outcome": "extra", "event_set_state": "both_present", "temporal_order": "correct", "identity_assignment": "correct", "primary_eligible": true, "primary_correct": true}
+    },
+    {
+      "case_id": "binding_ambiguous_anchor",
+      "axis_id": "binding",
+      "input": {"event_presence": [true, true], "assignment": "correct", "extra_event_count": 0, "anchors_usable": false, "temporal_order": "correct"},
+      "expected": {"outcome": "ambiguous", "event_set_state": "ambiguous", "temporal_order": null, "identity_assignment": null, "primary_eligible": false, "primary_correct": null}
+    }
+  ]
+}

@@ -1,0 +1,99 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sounddecisions.local/schema/axis-spec-v2-freeze-envelope.json",
+  "title": "SoundDecisions Axis Specification v2 signed freeze envelope",
+  "$comment": "No instance is created in Goal 1. The envelope is created only after both PI approvals and the sign-off amendment.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "status",
+    "spec_id",
+    "content_files",
+    "content_bundle_sha256",
+    "pi_signatures",
+    "authorization",
+    "amendment"
+  ],
+  "properties": {
+    "schema_version": {"const": "axis_spec_v2_freeze_envelope"},
+    "status": {"const": "FROZEN"},
+    "spec_id": {"const": "sounddecisions_axis_spec_v2"},
+    "content_files": {
+      "type": "array",
+      "minItems": 6,
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/hashed_file"},
+      "contains": {
+        "type": "object",
+        "properties": {"path": {"const": "experiment/axis_spec_v2/axis_spec_v2.json"}},
+        "required": ["path"]
+      },
+      "minContains": 1
+    },
+    "content_bundle_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$",
+      "$comment": "SHA256 of UTF-8 lines '<path>  <sha256>\\n' sorted bytewise by path. The envelope is excluded."
+    },
+    "pi_signatures": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["pi_1", "pi_2"],
+      "properties": {
+        "pi_1": {"$ref": "#/$defs/signature"},
+        "pi_2": {"$ref": "#/$defs/signature"}
+      }
+    },
+    "authorization": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "goal_2_measurement",
+        "b2_measurement_only_release",
+        "b6_release",
+        "causal_analysis",
+        "confirmatory_execution"
+      ],
+      "properties": {
+        "goal_2_measurement": {"const": true},
+        "b2_measurement_only_release": {"const": true},
+        "b6_release": {"const": false},
+        "causal_analysis": {"const": false},
+        "confirmatory_execution": {"const": false}
+      }
+    },
+    "amendment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "entry_id", "sha256"],
+      "properties": {
+        "path": {"type": "string", "minLength": 1},
+        "entry_id": {"type": "string", "minLength": 1},
+        "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      }
+    }
+  },
+  "$defs": {
+    "hashed_file": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256"],
+      "properties": {
+        "path": {"type": "string", "minLength": 1},
+        "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      }
+    },
+    "signature": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "approval", "approved_at", "approval_record"],
+      "properties": {
+        "name": {"type": "string", "minLength": 1},
+        "approval": {"const": true},
+        "approved_at": {"type": "string", "format": "date-time"},
+        "approval_record": {"type": "string", "minLength": 1}
+      }
+    }
+  }
+}

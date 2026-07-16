@@ -1,0 +1,590 @@
+{
+  "$schema": "./axis_spec_v2.schema.json",
+  "spec_id": "sounddecisions_axis_spec_v2",
+  "version": "2.0-draft",
+  "status": "DRAFT_AWAITING_DUAL_PI_SIGNATURE",
+  "freeze": {
+    "authority": "separate_signed_envelope",
+    "envelope_schema": "./axis_spec_v2.freeze.schema.json",
+    "expected_envelope_path": "./axis_spec_v2.freeze.json",
+    "envelope_present": false,
+    "measurement_authorized": false,
+    "quarantine_release_authorized": false,
+    "content_hash_rule": "The freeze envelope records SHA256 for the exact bytes of each reviewed content file and a bundle SHA256 over the ordered path/hash list; the envelope is not included in its own bundle hash.",
+    "rule": "Do not create the freeze envelope, record a freeze hash, authorize measurement, or release quarantine until both PIs have approved the draft and the sign-off amendment is committed."
+  },
+  "scope": {
+    "scientific_unit": "visible event",
+    "clip_is_only_a_container": true,
+    "axes": [
+      "presence",
+      "timing",
+      "class",
+      "material",
+      "binding"
+    ],
+    "causal_analysis_in_scope": false,
+    "confirmatory_execution_in_scope": false
+  },
+  "shared_contract": {
+    "anchor": {
+      "representation": "closed interval [lo_s, hi_s] with source and provenance",
+      "source_chain_draft": [
+        "foleybench_metadata",
+        "visual_onset_detector",
+        "light_human_marks"
+      ],
+      "exact_frame_without_uncertainty_forbidden": true,
+      "missing_or_unusable_anchor": "axis observation is missing for every anchor-dependent axis",
+      "multiple_events": "each event receives a stable event_id and its own interval"
+    },
+    "missingness": {
+      "missing_evidence_is_not_a_semantic_class": true,
+      "undefined_values_are_never_imputed_for_primary_scoring": true,
+      "coverage_and_reason_counts_are_mandatory": true,
+      "allowed_reasons": [
+        "missing_anchor",
+        "uncertain_anchor",
+        "presence_not_confidently_positive",
+        "missing_onset",
+        "abstain",
+        "indifferent",
+        "ambiguous_assignment",
+        "incomplete_artifact",
+        "measurement_error"
+      ]
+    },
+    "readout_targets": {
+      "primary": "fork-majority or fork-distribution value from continuations of the current state",
+      "secondary": "deterministic ODE-final value",
+      "separation_rule": "primary and secondary targets are stored, selected, scored, and reported separately"
+    },
+    "categorical_commitment": {
+      "agreement": "sum_c n_c*(n_c-1)/(n*(n-1)) over distinct scorable fork pairs",
+      "independent_baseline": "the same statistic across independent base-seed finals for the event",
+      "gain": "(A_fork-A_ind)/(1-A_ind) only when A_ind is below the numerical video-determined boundary",
+      "video_determined": "A_ind at the numerical identity boundary is a separate status and is excluded from window estimation; the scientific label video-determined additionally requires demonstrated between-video discrimination under the axis calibration gate",
+      "minimum_support": "selected by a power calculation on development data and frozen before pilot outcomes"
+    },
+    "window_rule": {
+      "commitment": "earliest sampled progress whose lower video-bootstrap confidence bound passes the development-selected commitment criterion and remains passing at all later supported points",
+      "information_readout": "earliest supported progress where the readout lower confidence bound exceeds the correct null and conditioning-only baseline by the frozen development margin",
+      "action_readout": "earliest supported progress additionally meeting the axis-specific accuracy and calibration criterion selected on development data",
+      "unsupported_grid_points": "reported as unsupported, never interpolated into a claim"
+    },
+    "threshold_and_model_selection": {
+      "historical_numeric_thresholds_carried_forward": false,
+      "development_only": true,
+      "confirmatory_labels_visible_during_selection": false,
+      "procedure": "predeclare each axis candidate grid and its single preference direction; use video-disjoint nested development folds; retain candidates within one standard error of the best primary metric; apply the axis-declared preference; break remaining ties by calibration and then stable lexical order",
+      "freeze_objects": [
+        "metric",
+        "null",
+        "candidate grid",
+        "selection rule",
+        "support rule",
+        "threshold selected on development data"
+      ]
+    },
+    "semantic_calibration": {
+      "human_claim_requires_completed_blinded_ratings": true,
+      "unrated_package_is_not_validation": true,
+      "existing_aggregate_sidecars_are_diagnostic_until_per_example_joins_are_available": true
+    },
+    "allowed_workstream_statuses": [
+      "PASS",
+      "UNRESOLVED",
+      "INVALID_MEASUREMENT",
+      "INCOMPLETE_ARTIFACTS",
+      "ENGINEERING_FAILURE"
+    ]
+  },
+  "axes": {
+    "presence": {
+      "scientific_meaning": "Whether the specified visible event has a corresponding audio event near its anchor; unrelated background audio does not count.",
+      "unit_of_analysis": "event",
+      "anchor_required": true,
+      "prerequisites": [
+        "usable event anchor interval",
+        "event identity or description",
+        "event-centered audio crop policy selected on development data"
+      ],
+      "target_type": {
+        "hard_state": [
+          "present",
+          "absent",
+          "uncertain"
+        ],
+        "continuous": "target-event presence score with component scores and confidence",
+        "scorable_states": [
+          "present",
+          "absent"
+        ]
+      },
+      "selection_procedure": "Predeclare target-semantic, anchor-local temporal, and acoustic-salience component families; fit candidate fusion rules and the present/absent/uncertain decision rule only in video-disjoint development folds; among candidates within one standard error of best balanced accuracy, choose the fewest-component fusion, then highest coverage, then lowest calibration error, then stable lexical ID; freeze before pilot or confirmatory outcomes.",
+      "missingness": "uncertain is missing evidence and excluded from correctness/agreement denominators; its rate and reason remain mandatory",
+      "reference_and_negative": {
+        "positive": "audio with a semantically matched event overlapping the anchor interval",
+        "negative": "event-absent or silent control for the target event",
+        "hard_negative": "unrelated background audio, including salient off-target events, without the target event"
+      },
+      "null_and_baseline": [
+        "development-cohort target-event prevalence/majority",
+        "event-absent and silent controls",
+        "visual-conditioning-only predictor"
+      ],
+      "commitment_statistic": "shared categorical commitment on present/absent with uncertain forks excluded and support reported",
+      "external_readout": {
+        "target": "primary and secondary readout targets kept separate",
+        "metrics": [
+          "balanced_accuracy",
+          "per_state_recall",
+          "Brier_score",
+          "expected_calibration_error",
+          "coverage",
+          "margin_over_majority"
+        ]
+      },
+      "internal_readout": {
+        "target": "fork distribution over present/absent (primary); ODE-final state (secondary)",
+        "metrics": [
+          "balanced_accuracy",
+          "per_state_recall",
+          "Brier_score",
+          "expected_calibration_error",
+          "coverage",
+          "margin_over_majority"
+        ]
+      },
+      "robustness_tests": [
+        "gain and loudness perturbations that preserve target-event semantics",
+        "codec/resampling perturbation",
+        "off-anchor unrelated-background injection must not become target presence",
+        "target-event removal is a positive control and must change the state"
+      ],
+      "semantic_calibration": "blinded event-level present/absent/uncertain ratings; reuse existing human/MLLM evidence only as diagnostic context unless exact v2 event joins are materialized",
+      "minimum_persisted_fields": [
+        "measurement_id",
+        "audio_id",
+        "audio_sha256",
+        "video_id",
+        "event_id",
+        "anchor_interval_s",
+        "anchor_source",
+        "anchor_provenance",
+        "event_description",
+        "component_scores",
+        "fusion_rule_id",
+        "continuous_score",
+        "hard_state",
+        "confidence",
+        "abstain",
+        "missing_reason",
+        "measurer_version",
+        "model_revisions"
+      ],
+      "disposition_rules": {
+        "PASS": "all calibration gates pass against target-event controls with adequate support",
+        "UNRESOLVED": "insufficient support, calibration, or event-level labels",
+        "INVALID_MEASUREMENT": "off-target background systematically counts as presence or the detector fails the correct null",
+        "INCOMPLETE_ARTIFACTS": "required anchors, component scores, controls, or provenance fields are missing",
+        "ENGINEERING_FAILURE": "deterministic execution, joins, schemas, or artifact validation fail",
+        "redesign_or_demotion": "redesign components/fusion on development data; exclude the axis if failure persists"
+      }
+    },
+    "timing": {
+      "scientific_meaning": "Continuous onset offset of the target audio event relative to the specified visual-event anchor.",
+      "unit_of_analysis": "event with confidently positive presence",
+      "anchor_required": true,
+      "prerequisites": [
+        "presence hard_state is present",
+        "usable visual anchor interval",
+        "target-event audio onset interval"
+      ],
+      "target_type": {
+        "continuous": "delta_t_s = center(audio_onset_interval)-center(anchor_interval)",
+        "uncertainty": "[audio_lo-anchor_hi, audio_hi-anchor_lo]",
+        "categorical_bins": null
+      },
+      "selection_procedure": "Keep delta_t continuous. On video-disjoint development folds, select onset association, confidence/undefined handling, and any commitment-equivalence tolerance from a predeclared grid using interval-aware median absolute error; among candidates within one standard error of best error, choose highest defined coverage, then the simplest onset association, then stable lexical ID; report fixed 50/100/200 ms readout metrics regardless of the selected commitment tolerance.",
+      "missingness": "undefined for absent/uncertain presence or missing onset; never coerced to zero or a bin",
+      "reference_and_negative": {
+        "positive": "adjudicated target-event onset interval paired to the visual-event anchor",
+        "negative": "zero-offset and video-prior predictions are baselines, not pseudo-labels",
+        "multi_onset_rule": "event identity and anchor overlap determine the onset match; nearest arbitrary clip onset is forbidden"
+      },
+      "null_and_baseline": [
+        "predict delta_t_s=0",
+        "video/anchor-position prior learned on development data",
+        "conditioning-only predictor"
+      ],
+      "commitment_statistic": "distinct-pair probability that two defined fork offsets differ by at most the event tolerance; tolerance procedure uses onset and anchor uncertainty on development data and is frozen before pilot outcomes",
+      "external_readout": {
+        "target": "fork-distribution location (primary); ODE-final delta_t_s (secondary)",
+        "metrics": [
+          "MAE_s",
+          "median_AE_s",
+          "accuracy_within_50ms",
+          "accuracy_within_100ms",
+          "accuracy_within_200ms",
+          "interval_coverage",
+          "defined_coverage"
+        ]
+      },
+      "internal_readout": {
+        "target": "fork offset distribution/location (primary); ODE-final offset (secondary)",
+        "metrics": [
+          "MAE_s",
+          "median_AE_s",
+          "accuracy_within_50ms",
+          "accuracy_within_100ms",
+          "accuracy_within_200ms",
+          "defined_coverage"
+        ]
+      },
+      "robustness_tests": [
+        "gain/EQ/codec perturbations must preserve delta_t within propagated uncertainty",
+        "off-anchor background must not replace the target onset",
+        "known audio time shift must move delta_t by the injected shift",
+        "wider anchor intervals must widen uncertainty rather than alter the point estimate silently"
+      ],
+      "semantic_calibration": "blinded target-onset interval marks with event identity; old gross-bin human aggregate is diagnostic only",
+      "minimum_persisted_fields": [
+        "measurement_id",
+        "audio_id",
+        "video_id",
+        "event_id",
+        "presence_state",
+        "anchor_interval_s",
+        "anchor_source",
+        "anchor_provenance",
+        "audio_onset_interval_s",
+        "audio_onset_source",
+        "audio_onset_provenance",
+        "delta_t_s",
+        "delta_t_interval_s",
+        "onset_component_scores",
+        "confidence",
+        "defined",
+        "missing_reason",
+        "measurer_version",
+        "model_revisions"
+      ],
+      "disposition_rules": {
+        "PASS": "defined cases beat zero-offset and video-prior nulls with calibrated intervals and acceptable support",
+        "UNRESOLVED": "too few confidently present events or onset/anchor uncertainty dominates",
+        "INVALID_MEASUREMENT": "the detector follows unrelated clip onsets or fails known-shift equivariance",
+        "INCOMPLETE_ARTIFACTS": "required presence, anchor, onset, or provenance records are missing",
+        "ENGINEERING_FAILURE": "deterministic execution, joins, schemas, or interval validation fail",
+        "redesign_or_demotion": "repair onset-event association on development data; exclude timing if unresolved"
+      }
+    },
+    "class": {
+      "scientific_meaning": "Confident coarse semantic class of the target audio event.",
+      "unit_of_analysis": "event-centered audio region; clip-level continuity output is retained only as an audit lens",
+      "anchor_required": true,
+      "prerequisites": [
+        "usable event anchor",
+        "frozen AudioSet-to-coarse mapping",
+        "full tagger posterior persistence"
+      ],
+      "target_type": {
+        "hard_state": "one frozen coarse class",
+        "posterior": "527-way clipwise_output and derived coarse posterior",
+        "abstain": "missing evidence, never a class"
+      },
+      "selection_procedure": "Calibrate the full posterior on inner video-disjoint development folds; enumerate a predeclared abstention grid; discard candidates without powered per-class support; among candidates within one standard error of best balanced accuracy choose highest coverage, then lower calibration error, then stable threshold order.",
+      "missingness": "abstain and missing posterior are excluded from confident-subset agreement and accuracy; coverage remains mandatory",
+      "reference_and_negative": {
+        "positive": "event-level semantic label under the frozen coarse map",
+        "negative": "other coarse classes in the same frozen universe",
+        "context_control": "off-target/background events are separated by event-centered cropping and calibration labels"
+      },
+      "null_and_baseline": [
+        "development confident-label majority",
+        "per-class prevalence",
+        "conditioning-only predictor"
+      ],
+      "commitment_statistic": "shared categorical commitment on confident coarse classes; abstain support is reported side by side",
+      "external_readout": {
+        "target": "fork-majority/distribution class (primary); ODE-final confident class (secondary)",
+        "metrics": [
+          "balanced_accuracy",
+          "per_class_recall",
+          "margin_over_majority",
+          "selective_risk",
+          "coverage",
+          "Brier_score",
+          "expected_calibration_error"
+        ]
+      },
+      "internal_readout": {
+        "target": "fork class distribution (primary); ODE-final class (secondary)",
+        "metrics": [
+          "balanced_accuracy",
+          "per_class_recall",
+          "margin_over_majority",
+          "selective_risk",
+          "coverage",
+          "Brier_score",
+          "expected_calibration_error"
+        ]
+      },
+      "robustness_tests": [
+        "deterministic repeat inference",
+        "gain/EQ/codec perturbations",
+        "event-window jitter inside anchor uncertainty",
+        "off-target background injection",
+        "posterior-to-coarse mapping conservation"
+      ],
+      "semantic_calibration": "reuse the existing human/MLLM class evidence as diagnostic context; v2 PASS requires exact event-level joins or a new blinded package",
+      "minimum_persisted_fields": [
+        "measurement_id",
+        "audio_id",
+        "audio_sha256",
+        "video_id",
+        "event_id",
+        "anchor_interval_s",
+        "event_crop_interval_s",
+        "clipwise_output_527",
+        "coarse_posterior",
+        "coarse_map_sha256",
+        "top1_index",
+        "cross_group_runner_index",
+        "margin",
+        "entropy",
+        "hard_label",
+        "abstain",
+        "abstention_rule_id",
+        "confidence",
+        "missing_reason",
+        "tagger_revision",
+        "measurer_version"
+      ],
+      "disposition_rules": {
+        "PASS": "exact v2 reconstruction and semantic calibration pass with powered class support",
+        "UNRESOLVED": "event-level semantic calibration or per-class support is insufficient",
+        "INVALID_MEASUREMENT": "posterior mapping/cropping fails semantic controls or exact reconstruction reveals a real error",
+        "INCOMPLETE_ARTIFACTS": "full posteriors, event crops, anchors, mapping hashes, or exact joins are missing",
+        "ENGINEERING_FAILURE": "deterministic inference, posterior mapping, joins, schemas, or reconstruction code fail",
+        "redesign_or_demotion": "preserve the old result as audit history and narrow/rebuild only if v2 evidence requires it"
+      },
+      "continuity_evidence": {
+        "legacy_reconstruction_max_abs_delta": 0.0,
+        "legacy_s_commit_confident": 0.34593023255813954,
+        "legacy_gap_confident": 0.40406976744186046,
+        "legacy_gap_naive": 0.2874074074074074,
+        "status": "preserve unless exact v2 reconstruction reveals a real error"
+      }
+    },
+    "material": {
+      "scientific_meaning": "Whether generated target-event material is closer to the same-event material reference than to a matched different-material reference.",
+      "unit_of_analysis": "event-level matched 2AFC trial",
+      "anchor_required": true,
+      "prerequisites": [
+        "confident target-event presence",
+        "usable event anchor",
+        "disjoint positive reference",
+        "frozen matched negative manifest",
+        "persisted candidate/positive/negative embeddings"
+      ],
+      "target_type": {
+        "continuous": "cos(candidate, positive)-cos(candidate, negative)",
+        "hard_state": [
+          "positive",
+          "negative",
+          "indifferent"
+        ],
+        "chance_level": 0.5,
+        "forbidden_conversion": "raw cosine is never a Bernoulli correctness probability"
+      },
+      "selection_procedure": "Freeze the positive/negative manifest without using candidate margins. On video-disjoint development trials, select embedding preprocessing and an indifference margin from a predeclared grid; among candidates within one standard error of best AUROC choose the simplest preprocessing, then highest repeat-stable coverage, then lowest calibration error against blinded material judgments, then stable lexical ID; freeze before pilot or confirmatory outcomes.",
+      "missingness": "indifferent, missing-reference, failed-match, and zero-norm embeddings are unscorable with separate reason counts",
+      "reference_and_negative": {
+        "positive": "same-video, same-event reference from a disjoint generation; leave-one-out when a reference bank is used",
+        "negative": "different-video, same coarse class, similar event timing and loudness, demonstrably different material",
+        "matching": "freeze IDs and matching metadata before measuring candidates; candidate never contributes to either reference",
+        "easy_negative": "allowed only as a labeled sanity check, never the primary estimand"
+      },
+      "null_and_baseline": [
+        "2AFC chance=0.5",
+        "label-permuted matched pairs",
+        "conditioning-only predictor"
+      ],
+      "commitment_statistic": "shared categorical commitment on positive/negative 2AFC decisions with indifferent trials excluded; margin distributions remain primary supporting evidence",
+      "external_readout": {
+        "target": "fork 2AFC distribution (primary); ODE-final 2AFC decision (secondary)",
+        "metrics": [
+          "2AFC_accuracy",
+          "AUROC",
+          "margin_distribution",
+          "indifference_rate",
+          "video_bootstrap_CI"
+        ]
+      },
+      "internal_readout": {
+        "target": "fork 2AFC distribution/margin (primary); ODE-final decision/margin (secondary)",
+        "metrics": [
+          "2AFC_accuracy",
+          "AUROC",
+          "margin_distribution",
+          "indifference_rate",
+          "video_bootstrap_CI"
+        ]
+      },
+      "robustness_tests": [
+        "loudness normalization and gain perturbation",
+        "codec/resampling perturbation",
+        "reference-generation leave-one-out",
+        "easy-negative sanity separation",
+        "matched-negative swap and label permutation"
+      ],
+      "semantic_calibration": "blinded material-similarity/difference judgments for the frozen positive/negative trials; absent ratings require a human-ready package and UNRESOLVED status",
+      "minimum_persisted_fields": [
+        "trial_id",
+        "measurement_id",
+        "candidate_audio_id",
+        "candidate_audio_sha256",
+        "video_id",
+        "event_id",
+        "anchor_interval_s",
+        "candidate_embedding",
+        "positive_reference_id",
+        "positive_reference_embedding",
+        "negative_reference_id",
+        "negative_reference_embedding",
+        "negative_video_id",
+        "coarse_class",
+        "timing_match_metadata",
+        "loudness_match_metadata",
+        "material_difference_source",
+        "similarity_positive",
+        "similarity_negative",
+        "choice_a_reference_id",
+        "choice_b_reference_id",
+        "correct_choice",
+        "presentation_order_seed",
+        "score_a",
+        "score_b",
+        "decision_choice",
+        "margin",
+        "indifference_margin_rule_id",
+        "decision",
+        "embedding_model_revision",
+        "negative_manifest_sha256"
+      ],
+      "continuity_task": "Resolve FLAG A2-4 on exactly 6,400 existing Phase-2 cells (200 clips x four subjects x eight progress points); 800 subject-final embeddings survive, while candidate previews/embeddings and matched-negative embeddings do not. Freeze positive-reference composition/aggregation/disjointness and the other-video negative manifest, then persist candidate, positive, and negative embeddings.",
+      "disposition_rules": {
+        "PASS": "matched 2AFC beats chance and permutation nulls with semantic material calibration and robustness",
+        "UNRESOLVED": "missing embeddings/references/ratings or inadequate matched-negative support",
+        "INVALID_MEASUREMENT": "performance is driven by class, timing, loudness, or reference leakage rather than material",
+        "INCOMPLETE_ARTIFACTS": "candidate/positive/negative embeddings, auditable reference lineage, or matching fields are missing",
+        "ENGINEERING_FAILURE": "deterministic embedding, joins, schemas, leave-one-out validation, or scoring code fail",
+        "redesign_or_demotion": "repair matching/representation on development data; exclude material if confounds persist"
+      }
+    },
+    "binding": {
+      "scientific_meaning": "Whether two target audio-event identities are assigned to the corresponding visible-event anchors.",
+      "unit_of_analysis": "ordered two-event set with two stable event IDs and anchor intervals",
+      "anchor_required": true,
+      "prerequisites": [
+        "two usable non-identical event anchors",
+        "event-set presence states",
+        "event identity references",
+        "separable anchor intervals or an explicit ambiguous status"
+      ],
+      "target_type": {
+        "outcome_states": [
+          "correct",
+          "swapped",
+          "missing",
+          "extra",
+          "ambiguous"
+        ],
+        "primary": "correct versus swapped assignment conditional on both target events present",
+        "decomposition": [
+          "event_set_presence",
+          "temporal_order",
+          "identity_assignment"
+        ]
+      },
+      "selection_procedure": "On video-disjoint development pairs, select event detection, ambiguity, and assignment rules from a predeclared capacity-bounded grid; among candidates within one standard error of best conditional assignment accuracy choose the fewest-component rule, then highest both-present decisive coverage, then stable lexical ID; event-set Presence and temporal-order gates must also pass; freeze before pilot or confirmatory outcomes.",
+      "missingness": "missing target events and ambiguous assignments are never recoded as swapped; each component retains its own support",
+      "reference_and_negative": {
+        "positive": "event identities assigned to their own anchor intervals",
+        "negative": "identity permutation across the two anchors while event set and timing are held fixed",
+        "controls": "missing-event, extra-event, and overlapping-anchor cases"
+      },
+      "null_and_baseline": [
+        "assignment chance=0.5 conditional on both events present",
+        "unconditional outcome majority",
+        "temporal-order-only predictor",
+        "conditioning-only predictor"
+      ],
+      "commitment_statistic": "shared categorical commitment on decisive correct/swapped assignments conditional on both events present; event-set and order commitment are reported separately",
+      "external_readout": {
+        "target": "fork assignment distribution (primary); ODE-final assignment (secondary)",
+        "metrics": [
+          "conditional_assignment_accuracy",
+          "event_presence_recall",
+          "temporal_order_accuracy",
+          "outcome_macro_recall",
+          "ambiguous_rate",
+          "support"
+        ]
+      },
+      "internal_readout": {
+        "target": "fork assignment distribution (primary); ODE-final assignment (secondary)",
+        "metrics": [
+          "conditional_assignment_accuracy",
+          "event_presence_recall",
+          "temporal_order_accuracy",
+          "outcome_macro_recall",
+          "ambiguous_rate",
+          "support"
+        ]
+      },
+      "robustness_tests": [
+        "event-ID permutation equivariance",
+        "anchor-order permutation equivariance",
+        "missing-event cases never score as swapped",
+        "unrelated extra event changes only the extra-event component",
+        "known identity swap is a positive control"
+      ],
+      "semantic_calibration": "blinded two-event sound-to-visible-event assignment ratings; unrated packages remain UNRESOLVED",
+      "minimum_persisted_fields": [
+        "measurement_id",
+        "audio_id",
+        "audio_sha256",
+        "video_id",
+        "event_set_id",
+        "event_1_id",
+        "event_2_id",
+        "event_1_anchor_interval_s",
+        "event_2_anchor_interval_s",
+        "event_1_presence",
+        "event_2_presence",
+        "detected_event_count",
+        "temporal_order_prediction",
+        "identity_assignment",
+        "outcome_state",
+        "primary_eligible",
+        "primary_correct",
+        "confidence",
+        "ambiguous_reason",
+        "reference_manifest_sha256",
+        "measurer_version",
+        "model_revisions"
+      ],
+      "b6_inheritance": "The banked B6 WAVs remain analysis-banned here. Before any later measurement, every source/donor clip requires curated event IDs and anchor intervals. Later causal work must use these frozen presence/material/binding semantics and a separately signed release amendment.",
+      "disposition_rules": {
+        "PASS": "conditional assignment beats chance with event-presence, order, and semantic-calibration gates passing",
+        "UNRESOLVED": "insufficient both-present support, overlapping anchors, or missing semantic ratings",
+        "INVALID_MEASUREMENT": "missing events are conflated with swaps or assignment follows timing/order shortcuts",
+        "INCOMPLETE_ARTIFACTS": "event IDs, two anchors, references, assignment labels, or provenance are missing",
+        "ENGINEERING_FAILURE": "deterministic execution, joins, schemas, permutation checks, or shard validation fail",
+        "redesign_or_demotion": "repair the decomposed measurers on development data; exclude binding if assignment remains invalid"
+      }
+    }
+  }
+}

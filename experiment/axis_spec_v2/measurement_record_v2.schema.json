@@ -1,0 +1,966 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sounddecisions.local/schema/measurement-record-v2.json",
+  "title": "SoundDecisions event-axis measurement record v2",
+  "$comment": "A semantic validator must additionally check interval lo<=hi, duplicated top-level/payload identity equality, SHA256-to-file content, posterior normalization and coarse-map conservation, reported margin arithmetic, reference disjointness, material A/B ID-to-slot plus score_a/score_b/decision_choice consistency, Binding event-set/outcome consistency, and source!=donor. JSON Schema cannot compare arbitrary sibling values or verify external artifacts/signatures.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "measurement_id",
+    "axis_id",
+    "measurement_version",
+    "video_id",
+    "audio_id",
+    "audio_sha256",
+    "generation",
+    "observation",
+    "provenance"
+  ],
+  "properties": {
+    "$schema": {"type": "string", "minLength": 1},
+    "schema_version": {"const": "axis_measurement_v2"},
+    "measurement_id": {"$ref": "#/$defs/nonEmptyString"},
+    "axis_id": {"enum": ["presence", "timing", "class", "material", "binding"]},
+    "measurement_version": {"$ref": "#/$defs/nonEmptyString"},
+    "video_id": {"$ref": "#/$defs/nonEmptyString"},
+    "event_id": {"$ref": "#/$defs/nonEmptyString"},
+    "audio_id": {"$ref": "#/$defs/nonEmptyString"},
+    "audio_sha256": {"$ref": "#/$defs/sha256"},
+    "anchor": {"$ref": "#/$defs/anchor"},
+    "generation": {"$ref": "#/$defs/generation"},
+    "observation": {"type": "object"},
+    "condition_swap_lineage": {"$ref": "#/$defs/conditionSwapLineage"},
+    "provenance": {"$ref": "#/$defs/provenance"}
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"axis_id": {"const": "presence"}}},
+      "then": {
+        "required": ["event_id", "anchor"],
+        "properties": {"observation": {"$ref": "#/$defs/presencePayload"}}
+      }
+    },
+    {
+      "if": {"properties": {"axis_id": {"const": "timing"}}},
+      "then": {
+        "required": ["event_id", "anchor"],
+        "properties": {"observation": {"$ref": "#/$defs/timingPayload"}}
+      }
+    },
+    {
+      "if": {"properties": {"axis_id": {"const": "class"}}},
+      "then": {
+        "required": ["event_id", "anchor"],
+        "properties": {"observation": {"$ref": "#/$defs/classPayload"}}
+      }
+    },
+    {
+      "if": {"properties": {"axis_id": {"const": "material"}}},
+      "then": {
+        "required": ["event_id", "anchor"],
+        "properties": {"observation": {"$ref": "#/$defs/materialPayload"}}
+      }
+    },
+    {
+      "if": {"properties": {"axis_id": {"const": "binding"}}},
+      "then": {
+        "properties": {
+          "event_id": false,
+          "anchor": false,
+          "observation": {"$ref": "#/$defs/bindingPayload"}
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "generation": {
+            "properties": {"role": {"enum": ["b6_source", "b6_donor", "b6_swap"]}},
+            "required": ["role"]
+          }
+        }
+      },
+      "then": {"required": ["condition_swap_lineage"]}
+    },
+    {
+      "if": {
+        "properties": {
+          "generation": {
+            "properties": {"role": {"const": "b6_source"}},
+            "required": ["role"]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "condition_swap_lineage": {
+            "properties": {"measured_role": {"const": "source"}}
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "generation": {
+            "properties": {"role": {"const": "b6_donor"}},
+            "required": ["role"]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "condition_swap_lineage": {
+            "properties": {"measured_role": {"const": "donor"}}
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "generation": {
+            "properties": {"role": {"const": "b6_swap"}},
+            "required": ["role"]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "condition_swap_lineage": {
+            "properties": {"measured_role": {"const": "swap"}}
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "nonEmptyString": {
+      "type": "string",
+      "minLength": 1
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "probability": {
+      "type": "number",
+      "minimum": 0.0,
+      "maximum": 1.0
+    },
+    "anchorInterval": {
+      "type": "array",
+      "prefixItems": [
+        {"type": "number", "minimum": 0.0},
+        {"type": "number", "minimum": 0.0}
+      ],
+      "items": false,
+      "minItems": 2,
+      "maxItems": 2
+    },
+    "signedInterval": {
+      "type": "array",
+      "prefixItems": [
+        {"type": "number"},
+        {"type": "number"}
+      ],
+      "items": false,
+      "minItems": 2,
+      "maxItems": 2
+    },
+    "anchor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["interval_s", "source", "provenance"],
+      "properties": {
+        "interval_s": {"$ref": "#/$defs/anchorInterval"},
+        "source": {"$ref": "#/$defs/nonEmptyString"},
+        "provenance": {"type": "object", "minProperties": 1},
+        "uncertainty_s": {"type": "number", "minimum": 0.0}
+      }
+    },
+    "generation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "role",
+        "generation_id",
+        "base_seed",
+        "progress",
+        "cfg",
+        "alpha",
+        "model_revision"
+      ],
+      "properties": {
+        "role": {
+          "enum": [
+            "independent",
+            "base",
+            "fork",
+            "external_preview",
+            "ode_final",
+            "b6_source",
+            "b6_donor",
+            "b6_swap"
+          ]
+        },
+        "generation_id": {"$ref": "#/$defs/nonEmptyString"},
+        "base_seed": {"type": "integer", "minimum": 0},
+        "fork_index": {
+          "oneOf": [
+            {"type": "integer", "minimum": 0},
+            {"type": "null"}
+          ]
+        },
+        "progress": {
+          "oneOf": [
+            {"type": "number", "minimum": 0.0, "maximum": 1.0},
+            {"type": "null"}
+          ]
+        },
+        "cfg": {"type": "number", "minimum": 0.0},
+        "alpha": {"type": "number", "minimum": 0.0},
+        "model_revision": {"$ref": "#/$defs/nonEmptyString"}
+      }
+    },
+    "missingReason": {
+      "oneOf": [
+        {
+          "enum": [
+            "missing_anchor",
+            "uncertain_anchor",
+            "presence_not_confidently_positive",
+            "missing_onset",
+            "abstain",
+            "indifferent",
+            "ambiguous_assignment",
+            "missing_reference",
+            "failed_match",
+            "zero_norm_embedding",
+            "incomplete_artifact",
+            "measurement_error"
+          ]
+        },
+        {"type": "null"}
+      ]
+    },
+    "scoreMap": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {"type": "number"}
+    },
+    "presencePayload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "event_description",
+        "component_scores",
+        "fusion_rule_id",
+        "continuous_score",
+        "hard_state",
+        "confidence",
+        "abstain",
+        "defined",
+        "missing_reason"
+      ],
+      "properties": {
+        "event_description": {"$ref": "#/$defs/nonEmptyString"},
+        "component_scores": {"$ref": "#/$defs/scoreMap"},
+        "fusion_rule_id": {"$ref": "#/$defs/nonEmptyString"},
+        "continuous_score": {"type": "number"},
+        "hard_state": {"enum": ["present", "absent", "uncertain"]},
+        "confidence": {"$ref": "#/$defs/probability"},
+        "abstain": {"type": "boolean"},
+        "defined": {"type": "boolean"},
+        "missing_reason": {"$ref": "#/$defs/missingReason"}
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"hard_state": {"const": "uncertain"}}},
+          "then": {
+            "properties": {
+              "abstain": {"const": true},
+              "defined": {"const": false},
+              "missing_reason": {"not": {"type": "null"}}
+            }
+          },
+          "else": {
+            "properties": {
+              "abstain": {"const": false},
+              "defined": {"const": true},
+              "missing_reason": {"type": "null"}
+            }
+          }
+        }
+      ]
+    },
+    "timingPayload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "presence_state",
+        "audio_onset_interval_s",
+        "audio_onset_source",
+        "audio_onset_provenance",
+        "delta_t_s",
+        "delta_t_interval_s",
+        "onset_component_scores",
+        "confidence",
+        "defined",
+        "missing_reason"
+      ],
+      "properties": {
+        "presence_state": {"enum": ["present", "absent", "uncertain"]},
+        "audio_onset_interval_s": {
+          "oneOf": [
+            {"$ref": "#/$defs/anchorInterval"},
+            {"type": "null"}
+          ]
+        },
+        "audio_onset_source": {
+          "oneOf": [
+            {"$ref": "#/$defs/nonEmptyString"},
+            {"type": "null"}
+          ]
+        },
+        "audio_onset_provenance": {
+          "oneOf": [
+            {"type": "object", "minProperties": 1},
+            {"type": "null"}
+          ]
+        },
+        "delta_t_s": {"type": ["number", "null"]},
+        "delta_t_interval_s": {
+          "oneOf": [
+            {"$ref": "#/$defs/signedInterval"},
+            {"type": "null"}
+          ]
+        },
+        "onset_component_scores": {"$ref": "#/$defs/scoreMap"},
+        "confidence": {
+          "oneOf": [
+            {"$ref": "#/$defs/probability"},
+            {"type": "null"}
+          ]
+        },
+        "defined": {"type": "boolean"},
+        "missing_reason": {"$ref": "#/$defs/missingReason"}
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"defined": {"const": true}}},
+          "then": {
+            "properties": {
+              "presence_state": {"const": "present"},
+              "audio_onset_interval_s": {"$ref": "#/$defs/anchorInterval"},
+              "audio_onset_source": {"$ref": "#/$defs/nonEmptyString"},
+              "audio_onset_provenance": {"type": "object", "minProperties": 1},
+              "delta_t_s": {"type": "number"},
+              "delta_t_interval_s": {"$ref": "#/$defs/signedInterval"},
+              "confidence": {"$ref": "#/$defs/probability"},
+              "missing_reason": {"type": "null"}
+            }
+          },
+          "else": {
+            "properties": {
+              "delta_t_s": {"type": "null"},
+              "delta_t_interval_s": {"type": "null"},
+              "missing_reason": {"not": {"type": "null"}}
+            }
+          }
+        }
+      ]
+    },
+    "classPayload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "event_crop_interval_s",
+        "clipwise_output_527",
+        "coarse_posterior",
+        "coarse_map_sha256",
+        "top1_index",
+        "cross_group_runner_index",
+        "margin",
+        "entropy",
+        "hard_label",
+        "abstain",
+        "abstention_rule_id",
+        "confidence",
+        "missing_reason",
+        "tagger_revision"
+      ],
+      "properties": {
+        "event_crop_interval_s": {"$ref": "#/$defs/anchorInterval"},
+        "clipwise_output_527": {
+          "type": "array",
+          "minItems": 527,
+          "maxItems": 527,
+          "items": {"$ref": "#/$defs/probability"}
+        },
+        "coarse_posterior": {
+          "type": "object",
+          "minProperties": 2,
+          "propertyNames": {"minLength": 1},
+          "additionalProperties": {"$ref": "#/$defs/probability"}
+        },
+        "coarse_map_sha256": {"$ref": "#/$defs/sha256"},
+        "top1_index": {"type": "integer", "minimum": 0, "maximum": 526},
+        "cross_group_runner_index": {"type": "integer", "minimum": 0, "maximum": 526},
+        "margin": {"type": "number", "minimum": 0.0, "maximum": 1.0},
+        "entropy": {"type": "number", "minimum": 0.0},
+        "hard_label": {
+          "oneOf": [
+            {"$ref": "#/$defs/nonEmptyString"},
+            {"type": "null"}
+          ]
+        },
+        "abstain": {"type": "boolean"},
+        "abstention_rule_id": {"$ref": "#/$defs/nonEmptyString"},
+        "confidence": {"$ref": "#/$defs/probability"},
+        "missing_reason": {"$ref": "#/$defs/missingReason"},
+        "tagger_revision": {"$ref": "#/$defs/nonEmptyString"}
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"abstain": {"const": true}}},
+          "then": {
+            "properties": {
+              "hard_label": {"type": "null"},
+              "missing_reason": {"const": "abstain"}
+            }
+          },
+          "else": {
+            "properties": {
+              "hard_label": {"$ref": "#/$defs/nonEmptyString"},
+              "missing_reason": {"type": "null"}
+            }
+          }
+        }
+      ]
+    },
+    "embeddedCandidate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "candidate_id",
+        "video_id",
+        "event_id",
+        "generation_id",
+        "audio_id",
+        "audio_sha256",
+        "embedding"
+      ],
+      "properties": {
+        "candidate_id": {"$ref": "#/$defs/nonEmptyString"},
+        "video_id": {"$ref": "#/$defs/nonEmptyString"},
+        "event_id": {"$ref": "#/$defs/nonEmptyString"},
+        "generation_id": {"$ref": "#/$defs/nonEmptyString"},
+        "audio_id": {"$ref": "#/$defs/nonEmptyString"},
+        "audio_sha256": {"$ref": "#/$defs/sha256"},
+        "embedding": {
+          "oneOf": [
+            {"$ref": "#/$defs/embeddingVector"},
+            {"type": "null"}
+          ]
+        }
+      }
+    },
+    "embeddedReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "reference_id",
+        "video_id",
+        "event_id",
+        "generation_id",
+        "audio_id",
+        "audio_sha256",
+        "embedding"
+      ],
+      "properties": {
+        "reference_id": {"$ref": "#/$defs/nonEmptyString"},
+        "video_id": {"$ref": "#/$defs/nonEmptyString"},
+        "event_id": {"$ref": "#/$defs/nonEmptyString"},
+        "generation_id": {"$ref": "#/$defs/nonEmptyString"},
+        "audio_id": {"$ref": "#/$defs/nonEmptyString"},
+        "audio_sha256": {"$ref": "#/$defs/sha256"},
+        "embedding": {
+          "oneOf": [
+            {"$ref": "#/$defs/embeddingVector"},
+            {"type": "null"}
+          ]
+        }
+      }
+    },
+    "embeddingVector": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"type": "number"}
+    },
+    "materialMatchingMetadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "coarse_class",
+        "timing_distance_s",
+        "loudness_distance_db",
+        "material_difference_source",
+        "negative_kind",
+        "relaxation_steps"
+      ],
+      "properties": {
+        "coarse_class": {"$ref": "#/$defs/nonEmptyString"},
+        "timing_distance_s": {"type": "number", "minimum": 0.0},
+        "loudness_distance_db": {"type": "number", "minimum": 0.0},
+        "material_difference_source": {"$ref": "#/$defs/nonEmptyString"},
+        "negative_kind": {"enum": ["primary_matched", "easy_sanity"]},
+        "relaxation_steps": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/nonEmptyString"}
+        }
+      }
+    },
+    "abPresentation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "randomization_seed",
+        "randomization_algorithm",
+        "positive_slot",
+        "negative_slot",
+        "option_a_reference_id",
+        "option_b_reference_id",
+        "correct_choice",
+        "orientation_sha256"
+      ],
+      "properties": {
+        "randomization_seed": {"type": "integer", "minimum": 0},
+        "randomization_algorithm": {"$ref": "#/$defs/nonEmptyString"},
+        "positive_slot": {"enum": ["A", "B"]},
+        "negative_slot": {"enum": ["A", "B"]},
+        "option_a_reference_id": {"$ref": "#/$defs/nonEmptyString"},
+        "option_b_reference_id": {"$ref": "#/$defs/nonEmptyString"},
+        "correct_choice": {
+          "description": "Ground-truth A/B choice used for 2AFC accuracy and AUROC labels.",
+          "enum": ["A", "B"]
+        },
+        "orientation_sha256": {"$ref": "#/$defs/sha256"}
+      },
+      "oneOf": [
+        {
+          "properties": {
+            "positive_slot": {"const": "A"},
+            "negative_slot": {"const": "B"},
+            "correct_choice": {"const": "A"}
+          }
+        },
+        {
+          "properties": {
+            "positive_slot": {"const": "B"},
+            "negative_slot": {"const": "A"},
+            "correct_choice": {"const": "B"}
+          }
+        }
+      ]
+    },
+    "materialPayload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "trial_id",
+        "candidate",
+        "positive_reference",
+        "negative_reference",
+        "matching_metadata",
+        "presentation",
+        "embedding_model_revision",
+        "embedding_dimension",
+        "similarity_positive",
+        "similarity_negative",
+        "score_a",
+        "score_b",
+        "margin",
+        "indifference_margin",
+        "indifference_margin_rule_id",
+        "decision",
+        "decision_choice",
+        "is_scorable",
+        "missing_reason",
+        "reference_manifest_sha256"
+      ],
+      "properties": {
+        "trial_id": {"$ref": "#/$defs/nonEmptyString"},
+        "candidate": {"$ref": "#/$defs/embeddedCandidate"},
+        "positive_reference": {
+          "oneOf": [
+            {"$ref": "#/$defs/embeddedReference"},
+            {"type": "null"}
+          ]
+        },
+        "negative_reference": {
+          "oneOf": [
+            {"$ref": "#/$defs/embeddedReference"},
+            {"type": "null"}
+          ]
+        },
+        "matching_metadata": {
+          "oneOf": [
+            {"$ref": "#/$defs/materialMatchingMetadata"},
+            {"type": "null"}
+          ]
+        },
+        "presentation": {
+          "oneOf": [
+            {"$ref": "#/$defs/abPresentation"},
+            {"type": "null"}
+          ]
+        },
+        "embedding_model_revision": {"$ref": "#/$defs/nonEmptyString"},
+        "embedding_dimension": {"type": "integer", "minimum": 1},
+        "similarity_positive": {
+          "oneOf": [
+            {"type": "number", "minimum": -1.0, "maximum": 1.0},
+            {"type": "null"}
+          ]
+        },
+        "similarity_negative": {
+          "oneOf": [
+            {"type": "number", "minimum": -1.0, "maximum": 1.0},
+            {"type": "null"}
+          ]
+        },
+        "score_a": {
+          "oneOf": [
+            {"type": "number", "minimum": -1.0, "maximum": 1.0},
+            {"type": "null"}
+          ]
+        },
+        "score_b": {
+          "oneOf": [
+            {"type": "number", "minimum": -1.0, "maximum": 1.0},
+            {"type": "null"}
+          ]
+        },
+        "margin": {
+          "oneOf": [
+            {"type": "number", "minimum": -2.0, "maximum": 2.0},
+            {"type": "null"}
+          ]
+        },
+        "indifference_margin": {"type": "number", "minimum": 0.0, "maximum": 2.0},
+        "indifference_margin_rule_id": {"$ref": "#/$defs/nonEmptyString"},
+        "decision": {"enum": ["positive", "negative", "indifferent", null]},
+        "decision_choice": {"enum": ["A", "B", "indifferent", null]},
+        "is_scorable": {"type": "boolean"},
+        "missing_reason": {"$ref": "#/$defs/missingReason"},
+        "reference_manifest_sha256": {"$ref": "#/$defs/sha256"}
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"decision": {"type": "null"}}},
+          "then": {
+            "properties": {
+              "is_scorable": {"const": false},
+              "decision_choice": {"type": "null"},
+              "similarity_positive": {"type": "null"},
+              "similarity_negative": {"type": "null"},
+              "score_a": {"type": "null"},
+              "score_b": {"type": "null"},
+              "margin": {"type": "null"},
+              "missing_reason": {
+                "enum": [
+                  "missing_reference",
+                  "failed_match",
+                  "zero_norm_embedding",
+                  "incomplete_artifact",
+                  "measurement_error"
+                ]
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "candidate": {
+                "properties": {"embedding": {"$ref": "#/$defs/embeddingVector"}}
+              },
+              "positive_reference": {
+                "allOf": [
+                  {"$ref": "#/$defs/embeddedReference"},
+                  {"properties": {"embedding": {"$ref": "#/$defs/embeddingVector"}}}
+                ]
+              },
+              "negative_reference": {
+                "allOf": [
+                  {"$ref": "#/$defs/embeddedReference"},
+                  {"properties": {"embedding": {"$ref": "#/$defs/embeddingVector"}}}
+                ]
+              },
+              "matching_metadata": {"$ref": "#/$defs/materialMatchingMetadata"},
+              "presentation": {"$ref": "#/$defs/abPresentation"},
+              "similarity_positive": {"type": "number", "minimum": -1.0, "maximum": 1.0},
+              "similarity_negative": {"type": "number", "minimum": -1.0, "maximum": 1.0},
+              "score_a": {"type": "number", "minimum": -1.0, "maximum": 1.0},
+              "score_b": {"type": "number", "minimum": -1.0, "maximum": 1.0},
+              "margin": {"type": "number", "minimum": -2.0, "maximum": 2.0}
+            }
+          }
+        },
+        {
+          "if": {"properties": {"decision": {"const": "indifferent"}}},
+          "then": {
+            "properties": {
+              "decision_choice": {"const": "indifferent"},
+              "is_scorable": {"const": false},
+              "missing_reason": {"const": "indifferent"}
+            }
+          }
+        },
+        {
+          "if": {"properties": {"decision": {"enum": ["positive", "negative"]}}},
+          "then": {
+            "properties": {
+              "decision_choice": {"enum": ["A", "B"]},
+              "is_scorable": {"const": true},
+              "missing_reason": {"type": "null"}
+            }
+          }
+        }
+      ]
+    },
+    "bindingEventObservation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "event_id",
+        "anchor",
+        "presence_state",
+        "presence_confidence",
+        "identity_reference_id",
+        "assigned_audio_event_id",
+        "detected_onset_interval_s"
+      ],
+      "properties": {
+        "event_id": {"$ref": "#/$defs/nonEmptyString"},
+        "anchor": {"$ref": "#/$defs/anchor"},
+        "presence_state": {"enum": ["present", "absent", "uncertain"]},
+        "presence_confidence": {"$ref": "#/$defs/probability"},
+        "identity_reference_id": {"$ref": "#/$defs/nonEmptyString"},
+        "assigned_audio_event_id": {
+          "oneOf": [
+            {"$ref": "#/$defs/nonEmptyString"},
+            {"type": "null"}
+          ]
+        },
+        "detected_onset_interval_s": {
+          "oneOf": [
+            {"$ref": "#/$defs/anchorInterval"},
+            {"type": "null"}
+          ]
+        }
+      }
+    },
+    "bindingPayload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "event_set_id",
+        "event_set",
+        "event_set_state",
+        "detected_event_count",
+        "extra_event_count",
+        "temporal_order_prediction",
+        "identity_assignment",
+        "outcome_state",
+        "primary_eligible",
+        "primary_correct",
+        "confidence",
+        "ambiguous_reason",
+        "reference_manifest_sha256"
+      ],
+      "properties": {
+        "event_set_id": {"$ref": "#/$defs/nonEmptyString"},
+        "event_set": {
+          "type": "array",
+          "prefixItems": [
+            {"$ref": "#/$defs/bindingEventObservation"},
+            {"$ref": "#/$defs/bindingEventObservation"}
+          ],
+          "items": false,
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "event_set_state": {
+          "enum": ["both_present", "event_1_missing", "event_2_missing", "both_missing", "uncertain"]
+        },
+        "detected_event_count": {"type": "integer", "minimum": 0},
+        "extra_event_count": {"type": "integer", "minimum": 0},
+        "temporal_order_prediction": {
+          "enum": ["event_1_before_event_2", "event_2_before_event_1", "simultaneous", "ambiguous", "undefined"]
+        },
+        "identity_assignment": {"enum": ["correct", "swapped", "ambiguous", "undefined"]},
+        "outcome_state": {"enum": ["correct", "swapped", "missing", "extra", "ambiguous"]},
+        "primary_eligible": {"type": "boolean"},
+        "primary_correct": {"type": ["boolean", "null"]},
+        "confidence": {
+          "oneOf": [
+            {"$ref": "#/$defs/probability"},
+            {"type": "null"}
+          ]
+        },
+        "ambiguous_reason": {
+          "oneOf": [
+            {"$ref": "#/$defs/nonEmptyString"},
+            {"type": "null"}
+          ]
+        },
+        "reference_manifest_sha256": {"$ref": "#/$defs/sha256"}
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"outcome_state": {"const": "correct"}}},
+          "then": {
+            "properties": {
+              "identity_assignment": {"const": "correct"},
+              "primary_eligible": {"const": true},
+              "primary_correct": {"const": true}
+            }
+          }
+        },
+        {
+          "if": {"properties": {"outcome_state": {"const": "swapped"}}},
+          "then": {
+            "properties": {
+              "identity_assignment": {"const": "swapped"},
+              "primary_eligible": {"const": true},
+              "primary_correct": {"const": false}
+            }
+          }
+        },
+        {
+          "if": {"properties": {"outcome_state": {"const": "missing"}}},
+          "then": {
+            "properties": {
+              "identity_assignment": {"enum": ["ambiguous", "undefined"]},
+              "primary_eligible": {"const": false},
+              "primary_correct": {"type": "null"}
+            }
+          }
+        },
+        {
+          "if": {"properties": {"outcome_state": {"const": "ambiguous"}}},
+          "then": {
+            "properties": {
+              "identity_assignment": {"enum": ["ambiguous", "undefined"]},
+              "primary_eligible": {"const": false},
+              "primary_correct": {"type": "null"},
+              "ambiguous_reason": {"$ref": "#/$defs/nonEmptyString"}
+            }
+          }
+        },
+        {
+          "if": {"properties": {"primary_eligible": {"const": true}}},
+          "then": {
+            "properties": {
+              "event_set_state": {"const": "both_present"},
+              "event_set": {
+                "prefixItems": [
+                  {"properties": {"presence_state": {"const": "present"}}},
+                  {"properties": {"presence_state": {"const": "present"}}}
+                ]
+              },
+              "identity_assignment": {"enum": ["correct", "swapped"]},
+              "primary_correct": {"type": "boolean"}
+            }
+          }
+        }
+      ]
+    },
+    "lineageArtifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["video_id", "event_id", "generation_id", "audio_id", "audio_sha256"],
+      "properties": {
+        "video_id": {"$ref": "#/$defs/nonEmptyString"},
+        "event_id": {"$ref": "#/$defs/nonEmptyString"},
+        "generation_id": {"$ref": "#/$defs/nonEmptyString"},
+        "audio_id": {"$ref": "#/$defs/nonEmptyString"},
+        "audio_sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "lineageSwapArtifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "swap_id",
+        "swap_index",
+        "progress",
+        "generation_id",
+        "audio_id",
+        "audio_sha256"
+      ],
+      "properties": {
+        "swap_id": {"$ref": "#/$defs/nonEmptyString"},
+        "swap_index": {"type": "integer", "minimum": 0},
+        "progress": {"type": "number", "minimum": 0.0, "maximum": 1.0},
+        "generation_id": {"$ref": "#/$defs/nonEmptyString"},
+        "audio_id": {"$ref": "#/$defs/nonEmptyString"},
+        "audio_sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "conditionSwapLineage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "pair_id",
+        "pair_manifest_sha256",
+        "cfg",
+        "measured_role",
+        "source",
+        "donor",
+        "swap"
+      ],
+      "properties": {
+        "pair_id": {"$ref": "#/$defs/nonEmptyString"},
+        "pair_manifest_sha256": {"$ref": "#/$defs/sha256"},
+        "cfg": {"type": "number", "minimum": 0.0},
+        "measured_role": {"enum": ["source", "donor", "swap"]},
+        "source": {"$ref": "#/$defs/lineageArtifact"},
+        "donor": {"$ref": "#/$defs/lineageArtifact"},
+        "swap": {"$ref": "#/$defs/lineageSwapArtifact"}
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "git_commit",
+        "input_manifest_sha256",
+        "axis_spec_content_sha256",
+        "freeze_envelope_sha256",
+        "measurer_config_sha256",
+        "command",
+        "node",
+        "pythonhashseed",
+        "model_revisions"
+      ],
+      "properties": {
+        "git_commit": {"type": "string", "pattern": "^[0-9a-f]{7,40}$"},
+        "input_manifest_sha256": {"$ref": "#/$defs/sha256"},
+        "axis_spec_content_sha256": {"$ref": "#/$defs/sha256"},
+        "freeze_envelope_sha256": {"$ref": "#/$defs/sha256"},
+        "measurer_config_sha256": {"$ref": "#/$defs/sha256"},
+        "command": {"$ref": "#/$defs/nonEmptyString"},
+        "node": {"$ref": "#/$defs/nonEmptyString"},
+        "pythonhashseed": {"type": "string", "pattern": "^-?[0-9]+$"},
+        "model_revisions": {
+          "type": "object",
+          "minProperties": 1,
+          "additionalProperties": {"$ref": "#/$defs/nonEmptyString"}
+        }
+      }
+    }
+  }
+}

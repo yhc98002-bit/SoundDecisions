@@ -1,0 +1,401 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sounddecisions.local/schema/reference-manifest-v2.json",
+  "title": "SoundDecisions material/binding reference manifest v2",
+  "$comment": "A semantic validator must additionally verify SHA256-to-file content and signatures, candidate/positive same-video same-event joins, candidate/reference generation disjointness, negative-video inequality and different-material adjudication, A/B option IDs matching the referenced artifacts, unique trial IDs, Binding event-ID/anchor assignment permutations, source!=donor, and B6 pair/audio membership. JSON Schema cannot compare arbitrary sibling values or query external manifests.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "manifest_id",
+    "status",
+    "axis_id",
+    "source_cohort_sha256",
+    "selection_rule",
+    "axis_spec_content_sha256",
+    "freeze_envelope_sha256",
+    "trials"
+  ],
+  "properties": {
+    "$schema": {"type": "string", "minLength": 1},
+    "schema_version": {"const": "axis_reference_manifest_v2"},
+    "manifest_id": {"$ref": "#/$defs/nonEmptyString"},
+    "status": {"enum": ["DRAFT", "FROZEN"]},
+    "axis_id": {"enum": ["material", "binding"]},
+    "source_cohort_sha256": {"$ref": "#/$defs/sha256"},
+    "selection_rule": {"$ref": "#/$defs/nonEmptyString"},
+    "axis_spec_content_sha256": {
+      "oneOf": [
+        {"$ref": "#/$defs/sha256"},
+        {"type": "null"}
+      ]
+    },
+    "freeze_envelope_sha256": {
+      "oneOf": [
+        {"$ref": "#/$defs/sha256"},
+        {"type": "null"}
+      ]
+    },
+    "trials": {"type": "array"}
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"status": {"const": "DRAFT"}}},
+      "then": {
+        "properties": {
+          "axis_spec_content_sha256": {"type": "null"},
+          "freeze_envelope_sha256": {"type": "null"}
+        }
+      }
+    },
+    {
+      "if": {"properties": {"status": {"const": "FROZEN"}}},
+      "then": {
+        "properties": {
+          "axis_spec_content_sha256": {"$ref": "#/$defs/sha256"},
+          "freeze_envelope_sha256": {"$ref": "#/$defs/sha256"},
+          "trials": {"minItems": 1}
+        }
+      }
+    },
+    {
+      "if": {"properties": {"axis_id": {"const": "material"}}},
+      "then": {
+        "properties": {
+          "trials": {"items": {"$ref": "#/$defs/materialTrial"}}
+        }
+      }
+    },
+    {
+      "if": {"properties": {"axis_id": {"const": "binding"}}},
+      "then": {
+        "properties": {
+          "trials": {"items": {"$ref": "#/$defs/bindingTrial"}}
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "nonEmptyString": {
+      "type": "string",
+      "minLength": 1
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "anchorInterval": {
+      "type": "array",
+      "prefixItems": [
+        {"type": "number", "minimum": 0.0},
+        {"type": "number", "minimum": 0.0}
+      ],
+      "items": false,
+      "minItems": 2,
+      "maxItems": 2
+    },
+    "anchor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["interval_s", "source", "provenance"],
+      "properties": {
+        "interval_s": {"$ref": "#/$defs/anchorInterval"},
+        "source": {"$ref": "#/$defs/nonEmptyString"},
+        "provenance": {"type": "object", "minProperties": 1},
+        "uncertainty_s": {"type": "number", "minimum": 0.0}
+      }
+    },
+    "candidateIdentity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "candidate_id",
+        "video_id",
+        "event_id",
+        "generation_id",
+        "audio_id",
+        "audio_sha256"
+      ],
+      "properties": {
+        "candidate_id": {"$ref": "#/$defs/nonEmptyString"},
+        "video_id": {"$ref": "#/$defs/nonEmptyString"},
+        "event_id": {"$ref": "#/$defs/nonEmptyString"},
+        "generation_id": {"$ref": "#/$defs/nonEmptyString"},
+        "audio_id": {"$ref": "#/$defs/nonEmptyString"},
+        "audio_sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "referenceIdentity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "reference_id",
+        "video_id",
+        "event_id",
+        "generation_id",
+        "audio_id",
+        "audio_sha256"
+      ],
+      "properties": {
+        "reference_id": {"$ref": "#/$defs/nonEmptyString"},
+        "video_id": {"$ref": "#/$defs/nonEmptyString"},
+        "event_id": {"$ref": "#/$defs/nonEmptyString"},
+        "generation_id": {"$ref": "#/$defs/nonEmptyString"},
+        "audio_id": {"$ref": "#/$defs/nonEmptyString"},
+        "audio_sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "materialMatchingMetadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "coarse_class",
+        "timing_distance_s",
+        "loudness_distance_db",
+        "material_difference_source",
+        "negative_kind",
+        "relaxation_steps"
+      ],
+      "properties": {
+        "coarse_class": {"$ref": "#/$defs/nonEmptyString"},
+        "timing_distance_s": {"type": "number", "minimum": 0.0},
+        "loudness_distance_db": {"type": "number", "minimum": 0.0},
+        "material_difference_source": {"$ref": "#/$defs/nonEmptyString"},
+        "negative_kind": {"enum": ["primary_matched", "easy_sanity"]},
+        "relaxation_steps": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/nonEmptyString"}
+        }
+      }
+    },
+    "abPresentation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "randomization_seed",
+        "randomization_algorithm",
+        "positive_slot",
+        "negative_slot",
+        "option_a_reference_id",
+        "option_b_reference_id",
+        "correct_choice",
+        "orientation_sha256"
+      ],
+      "properties": {
+        "randomization_seed": {"type": "integer", "minimum": 0},
+        "randomization_algorithm": {"$ref": "#/$defs/nonEmptyString"},
+        "positive_slot": {"enum": ["A", "B"]},
+        "negative_slot": {"enum": ["A", "B"]},
+        "option_a_reference_id": {"$ref": "#/$defs/nonEmptyString"},
+        "option_b_reference_id": {"$ref": "#/$defs/nonEmptyString"},
+        "correct_choice": {
+          "description": "Ground-truth A/B choice used for 2AFC accuracy and AUROC labels.",
+          "enum": ["A", "B"]
+        },
+        "orientation_sha256": {"$ref": "#/$defs/sha256"}
+      },
+      "oneOf": [
+        {
+          "properties": {
+            "positive_slot": {"const": "A"},
+            "negative_slot": {"const": "B"},
+            "correct_choice": {"const": "A"}
+          }
+        },
+        {
+          "properties": {
+            "positive_slot": {"const": "B"},
+            "negative_slot": {"const": "A"},
+            "correct_choice": {"const": "B"}
+          }
+        }
+      ]
+    },
+    "materialTrial": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "trial_id",
+        "candidate",
+        "positive_reference",
+        "negative_reference",
+        "matching_metadata",
+        "disjoint_references",
+        "presentation"
+      ],
+      "properties": {
+        "trial_id": {"$ref": "#/$defs/nonEmptyString"},
+        "candidate": {"$ref": "#/$defs/candidateIdentity"},
+        "positive_reference": {"$ref": "#/$defs/referenceIdentity"},
+        "negative_reference": {"$ref": "#/$defs/referenceIdentity"},
+        "matching_metadata": {"$ref": "#/$defs/materialMatchingMetadata"},
+        "disjoint_references": {"const": true},
+        "presentation": {"$ref": "#/$defs/abPresentation"}
+      }
+    },
+    "bindingReferenceArtifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "reference_id",
+        "video_id",
+        "event_id",
+        "generation_id",
+        "audio_id",
+        "audio_sha256"
+      ],
+      "properties": {
+        "reference_id": {"$ref": "#/$defs/nonEmptyString"},
+        "video_id": {"$ref": "#/$defs/nonEmptyString"},
+        "event_id": {"$ref": "#/$defs/nonEmptyString"},
+        "generation_id": {"$ref": "#/$defs/nonEmptyString"},
+        "audio_id": {"$ref": "#/$defs/nonEmptyString"},
+        "audio_sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "bindingTargetEvent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["event_id", "anchor", "identity_label", "identity_reference"],
+      "properties": {
+        "event_id": {"$ref": "#/$defs/nonEmptyString"},
+        "anchor": {"$ref": "#/$defs/anchor"},
+        "identity_label": {"$ref": "#/$defs/nonEmptyString"},
+        "identity_reference": {"$ref": "#/$defs/bindingReferenceArtifact"}
+      }
+    },
+    "assignmentEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["anchor_event_id", "audio_event_id", "reference_id"],
+      "properties": {
+        "anchor_event_id": {"$ref": "#/$defs/nonEmptyString"},
+        "audio_event_id": {"$ref": "#/$defs/nonEmptyString"},
+        "reference_id": {"$ref": "#/$defs/nonEmptyString"}
+      }
+    },
+    "assignment": {
+      "type": "array",
+      "prefixItems": [
+        {"$ref": "#/$defs/assignmentEntry"},
+        {"$ref": "#/$defs/assignmentEntry"}
+      ],
+      "items": false,
+      "minItems": 2,
+      "maxItems": 2
+    },
+    "lineageArtifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["video_id", "event_id", "generation_id", "audio_id", "audio_sha256"],
+      "properties": {
+        "video_id": {"$ref": "#/$defs/nonEmptyString"},
+        "event_id": {"$ref": "#/$defs/nonEmptyString"},
+        "generation_id": {"$ref": "#/$defs/nonEmptyString"},
+        "audio_id": {"$ref": "#/$defs/nonEmptyString"},
+        "audio_sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "lineageSwapArtifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "swap_id",
+        "swap_index",
+        "progress",
+        "generation_id",
+        "audio_id",
+        "audio_sha256"
+      ],
+      "properties": {
+        "swap_id": {"$ref": "#/$defs/nonEmptyString"},
+        "swap_index": {"type": "integer", "minimum": 0},
+        "progress": {"type": "number", "minimum": 0.0, "maximum": 1.0},
+        "generation_id": {"$ref": "#/$defs/nonEmptyString"},
+        "audio_id": {"$ref": "#/$defs/nonEmptyString"},
+        "audio_sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "b6Lineage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "pair_id",
+        "pair_manifest_sha256",
+        "cfg",
+        "source",
+        "donor",
+        "swap"
+      ],
+      "properties": {
+        "pair_id": {"$ref": "#/$defs/nonEmptyString"},
+        "pair_manifest_sha256": {"$ref": "#/$defs/sha256"},
+        "cfg": {"type": "number", "minimum": 0.0},
+        "source": {"$ref": "#/$defs/lineageArtifact"},
+        "donor": {"$ref": "#/$defs/lineageArtifact"},
+        "swap": {"$ref": "#/$defs/lineageSwapArtifact"}
+      }
+    },
+    "bindingTrial": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "trial_id",
+        "pair_id",
+        "cohort_role",
+        "video_id",
+        "composite_event_set",
+        "correct_assignment",
+        "swapped_assignment",
+        "b6_lineage"
+      ],
+      "properties": {
+        "trial_id": {"$ref": "#/$defs/nonEmptyString"},
+        "pair_id": {"$ref": "#/$defs/nonEmptyString"},
+        "cohort_role": {"enum": ["two_event", "b6_condition_swap"]},
+        "video_id": {
+          "oneOf": [
+            {"$ref": "#/$defs/nonEmptyString"},
+            {"type": "null"}
+          ]
+        },
+        "composite_event_set": {
+          "type": "array",
+          "prefixItems": [
+            {"$ref": "#/$defs/bindingTargetEvent"},
+            {"$ref": "#/$defs/bindingTargetEvent"}
+          ],
+          "items": false,
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "correct_assignment": {"$ref": "#/$defs/assignment"},
+        "swapped_assignment": {"$ref": "#/$defs/assignment"},
+        "b6_lineage": {
+          "oneOf": [
+            {"$ref": "#/$defs/b6Lineage"},
+            {"type": "null"}
+          ]
+        }
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"cohort_role": {"const": "b6_condition_swap"}}},
+          "then": {
+            "properties": {
+              "video_id": {"type": "null"},
+              "b6_lineage": {"$ref": "#/$defs/b6Lineage"}
+            }
+          },
+          "else": {
+            "properties": {
+              "video_id": {"$ref": "#/$defs/nonEmptyString"},
+              "b6_lineage": {"type": "null"}
+            }
+          }
+        }
+      ]
+    }
+  }
+}
