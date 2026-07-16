@@ -1,0 +1,12 @@
+<stdin>:112: DeprecationWarning: Accessing jsonschema.__version__ is deprecated and will be removed in a future release. Use importlib.metadata directly to query for jsonschema's version.
+METASCHEMA PASS axis_spec_v2.freeze.schema.json
+METASCHEMA PASS axis_spec_v2.schema.json
+METASCHEMA PASS measurement_record_v2.schema.json
+METASCHEMA PASS reference_manifest_v2.schema.json
+INSTANCE PASS axis_spec_v2.json
+FIXTURE PASS signed freeze envelope
+FIXTURE PASS draft reference
+NEGATIVE PASS unsigned empty frozen reference rejected
+FIXTURE PASS presence measurement
+NEGATIVE PASS class without posterior rejected
+jsonschema 4.23.0
