@@ -1,0 +1,704 @@
+{
+  "schema": "sounddecisions_axis_asset_gap_audit_v2_draft",
+  "status": "PASS",
+  "inventory_state": "INCOMPLETE_ARTIFACTS_RECORDED",
+  "goal": 1,
+  "prepared_date": "2026-07-16",
+  "base_commit": "f793878c977844efcb4bdbec5877874d9aaea22e",
+  "scientific_status": "DRAFT_NOT_FROZEN",
+  "execution_boundary": {
+    "generation_performed": false,
+    "measurement_performed": false,
+    "gpu_used": false,
+    "b2_audio_opened_or_analyzed": false,
+    "b6_audio_opened_or_analyzed": false,
+    "goal2_authorized": false
+  },
+  "evidence_roots": [
+    {
+      "role": "goal1_worktree",
+      "path": "/XYFS02/HDD_POOL/paratera_xy/pxy1289/HaocunYe/Research/SoundDecisions-axis-spec-v2",
+      "commit": "f793878c977844efcb4bdbec5877874d9aaea22e"
+    },
+    {
+      "role": "primary_full_run_storage",
+      "path": "/XYFS02/HDD_POOL/paratera_xy/pxy1289/HaocunYe/Research/SoundDecisions",
+      "commit": "f793878c977844efcb4bdbec5877874d9aaea22e"
+    },
+    {
+      "role": "arc4_gpu_raw_storage_and_small_manifests",
+      "path": "/XYFS02/HDD_POOL/paratera_xy/pxy1289/HaocunYe/Research/SoundDecisions-arc4-gpu",
+      "commit": "92b2f462bb3c69e82030433fec24b28fd5843352"
+    }
+  ],
+  "governing_evidence": [
+    {
+      "path": "arc4-gpu:results/arc4_quarantine/QUARANTINE_MANIFEST.json",
+      "sha256": "200900e998ba30aa8592d9213b48c3c3f7ff69817017959e1393e517d76cd2b5",
+      "use": "Authoritative B2/B6 cardinality, validation, and no-analysis boundary"
+    },
+    {
+      "path": "arc4-gpu:results/arc4_quarantine/CAPACITY_LEDGER.md",
+      "sha256": "15d9c9159bc4c178956e173d82afb2119b029d191a9f6f902bc82a349fd39000",
+      "use": "Collection placement, duration, and device provenance"
+    },
+    {
+      "path": "arc4-gpu:results/arc4_quarantine/RETAG_ASSESSMENT.md",
+      "sha256": "b6ade04670ab1e1026b8f7d29e28a3035336f5db16df51fa18b14aab0e1c1600",
+      "use": "Authoritative historical-final posterior recovery assessment"
+    },
+    {
+      "path": "arc4-gpu:results/arc4_b1/B1_CLOSEOUT.md",
+      "sha256": "0a7ffb48a78ce7f925506b69858aab0f88b2acdabe018fbb4af0c65187932012",
+      "use": "Authoritative B1 fail-closed status"
+    },
+    {
+      "path": "results/arc4_wpA2/FLAGS.json",
+      "sha256": "23d1528a6bf3d05d546d9a76a69ca800c1206bc948ee7e7611f80affd69f823a",
+      "use": "Authoritative A2-4 missing-input finding and minimum resolution"
+    }
+  ],
+  "anchor_sources": [
+    {
+      "id": "foleybench_metadata_and_ucs",
+      "source_paths": [
+        "data/FoleyBench/foleybench/foleybench.csv",
+        "data/FoleyBench/clips_index.csv"
+      ],
+      "source_sha256": [
+        "b6a7a1db8d2dad221ceef73ab75f5836e6324581a33b114d11a3390d31aa6a92",
+        "695b5a93e3d52ea8fcb406a95aa7b6891c60f09fff93f6299f5359e739e5216f"
+      ],
+      "verified_inventory": {
+        "metadata_rows": 5000,
+        "extracted_discrete_clips": 785,
+        "extracted_single_source": 590,
+        "extracted_multi_source": 195,
+        "extracted_mp4_files": 785
+      },
+      "fields_reusable": [
+        "clip key",
+        "duration",
+        "caption",
+        "UCS category",
+        "AudioSet category",
+        "single/multi-source",
+        "discrete/rest",
+        "source provenance",
+        "video SHA256"
+      ],
+      "missing_for_v2": [
+        "event_id",
+        "event-specific visible anchor interval",
+        "event presence state",
+        "event material identity",
+        "two-event assignment"
+      ],
+      "disposition": "REUSE_FOR_CANDIDATE_SELECTION_AND_MATCHING_ONLY",
+      "note": "The retained FoleyBench tables do not contain event timestamps. UCS is clip metadata, not an event-level truth label."
+    },
+    {
+      "id": "visual_onset_detector",
+      "implementation": "foley_cw/visual_anchors.py",
+      "implementation_sha256": "eba52e2fd9f22d44b9ed89037c783a74e2f8c624b8efa38c07af5ddbe9bc0377",
+      "artifact": "results/stage0/anchors.json",
+      "artifact_sha256": "18eac6ab1181d15b89fedbd77128c2e40150cf3fcc1ffc1719cb56d205b1d79b",
+      "verified_inventory": {
+        "clip_records": 785,
+        "records_with_visual_candidates": 785,
+        "max_candidates_per_clip": 4,
+        "ordering": "salience_descending"
+      },
+      "method": "Frame difference plus Farneback motion energy; positive derivative peaks; half-FWHM uncertainty",
+      "disposition": "REUSE_AS_CANDIDATE_ANCHOR_EVIDENCE",
+      "gap": "Candidates are not attached to a specified semantic event. V2 must adjudicate an event ID and retain an interval, not promote the top salience point automatically."
+    },
+    {
+      "id": "foleybench_audio_track_onset",
+      "implementation": "foley_cw/visual_anchors.py",
+      "artifact": "results/stage0/anchors.json",
+      "verified_inventory": {
+        "records_with_audio_candidates": 785,
+        "assigned_uncertainty_seconds": 0.05,
+        "audio_visual_median_disagreement_seconds": 0.7573333333333334
+      },
+      "adoption_artifact": "results/stage0/anchor_adoption.json",
+      "adoption_sha256": "7c2da87137a9e3c7432fae62ec8c894c6f024d97b4e378e43e445788ec3e264a",
+      "adoption_decision": "AUDIO_ANCHOR_NOT_ADOPTED",
+      "disposition": "DIAGNOSTIC_ONLY",
+      "gap": "It detects the original audio track and is outside the approved metadata-to-visual-to-human chain. It cannot serve as the v2 visible-event anchor without a new PI decision."
+    },
+    {
+      "id": "light_human_anchor_marks",
+      "candidate_manifest": "data/manifests/anchor_check_30.csv",
+      "aggregate_artifact": "results/stage0/anchor_adoption.json",
+      "verified_inventory": {
+        "candidate_rows": 30,
+        "aggregate_human_marked": 27,
+        "aggregate_no_event": 3,
+        "aggregate_median_absolute_error_seconds": 0.9691670000000006,
+        "human_values_present_in_candidate_csv": 0
+      },
+      "expected_raw_labels": "results/labeling/labels_anchor_v1.jsonl",
+      "raw_labels_present": false,
+      "disposition": "AGGREGATE_AUDIT_HISTORY_ONLY",
+      "gap": "The raw mark file is absent, so the aggregate cannot be row-audited or converted into v2 anchor intervals. Recover the original labels or re-annotate event IDs and intervals."
+    },
+    {
+      "id": "two_event_candidate_manifest",
+      "path": "data/manifests/two_event_manifest.json",
+      "sha256": "9331f384e51c6cdfbb559e5c11e24ceb5ab9cf464c4636825247fe5fddf28ea0",
+      "verified_inventory": {
+        "unique_clip_ids": 60,
+        "source": "FoleyBench Multi-source+Discrete pool",
+        "joined_to_anchor_records": 60
+      },
+      "disposition": "REUSE_AS_BINDING_CANDIDATE_POOL_ONLY",
+      "missing_for_binding": [
+        "event_1_id and event_2_id",
+        "two visible anchor intervals",
+        "per-event presence",
+        "event identities/materials",
+        "correct assignment and ambiguity state",
+        "curation verdict"
+      ]
+    }
+  ],
+  "assets": [
+    {
+      "id": "legacy_measurement_implementation",
+      "kind": "source_code",
+      "path": "foley_cw/real_measurer.py",
+      "sha256": "61d3957889a90ae09bb2260bcca1d24d096a58542f9c9fa8bade320b6d7197f6",
+      "implemented_old_contracts": {
+        "presence": "clip-level RMS gate plus maximum event-class probability",
+        "timing": "first spectral-flux onset in an absolute clip-time bin",
+        "class": "event-restricted PANNs top class with cross-group abstention margin",
+        "material": "unit-normalized CLAP embedding consumed through raw cosine",
+        "binding": "NotImplementedError"
+      },
+      "disposition": "REUSE_MODEL_LOADERS_AND_CLASS_AUDIT_PATH; REDESIGN_AXIS_DECISIONS",
+      "gap": "Presence, Timing, and Material implement the superseded operational predicates; Binding has never been implemented."
+    },
+    {
+      "id": "foleybench_extracted_video",
+      "kind": "input_video",
+      "path": "primary:data/FoleyBench/clips",
+      "verified_count": 785,
+      "verified_size_bytes": 830911270,
+      "manifest": "data/FoleyBench/clips_index.csv",
+      "disposition": "REUSABLE",
+      "use": "Visual event annotation, conditioning replay, and development/confirmatory candidate selection"
+    },
+    {
+      "id": "phase1_frozen_population",
+      "kind": "cohort_manifest",
+      "path": "data/manifests/phase1_manifest_frozen.json",
+      "sha256": "64a7a3d1a194edffc69506bf7baddc85e03a3ab102298f61782d3be0fe4a595b",
+      "verified_count": {
+        "single_event": 200,
+        "two_event": 60
+      },
+      "disposition": "AUDIT_HISTORY_AND_ID_SOURCE",
+      "gap": "Its clip-level labels and old anchor/bin contract are not event-level v2 annotations."
+    },
+    {
+      "id": "primary_measurement_journal",
+      "kind": "per_generation_measurements",
+      "path": "primary:results/stage0/measurements/measurements.jsonl",
+      "sha256": "85fd0fc905dbcf031e2ce43ab9d4832cd1b14d7c42fb3e01e34fb4549e013ad7",
+      "verified_count": 350556,
+      "axis_counts": {
+        "presence": 87063,
+        "timing": 87063,
+        "class": 89367,
+        "material": 87063
+      },
+      "embedding_inventory": {
+        "material_dimension": 512,
+        "material_rows_with_embedding": 87063,
+        "categorical_rows_with_embedding": 0
+      },
+      "disposition": "REUSABLE_FOR_EXACT_HISTORICAL_RECONSTRUCTION_AND_REFERENCE_IDS",
+      "gaps": [
+        "Class rows contain labels but no 527-way or coarse posterior",
+        "Presence and Timing are old clip-level operational definitions",
+        "Material rows do not encode a matched 2AFC decision"
+      ]
+    },
+    {
+      "id": "primary_runstore_audio",
+      "kind": "historical_final_preview_and_audit_audio",
+      "paths": [
+        "primary:results/stage0/finals",
+        "primary:results/stage0/previews",
+        "primary:results/stage0/audit_wavs"
+      ],
+      "verified_count": 0,
+      "disposition": "INCOMPLETE_ARTIFACTS",
+      "resolution": "Regenerate only the journaled trajectories/finals required by a frozen v2 task, into a new immutable output root."
+    },
+    {
+      "id": "primary_pooled_internal_features",
+      "kind": "internal_feature",
+      "path": "primary:results/stage0/features",
+      "verified_count": 111040,
+      "schema": {
+        "key": "pooled",
+        "shape": [12, 448],
+        "dtype": "float16"
+      },
+      "p1cfg1_independent_bundles": 25600,
+      "disposition": "HISTORICAL_BASELINE_ONLY",
+      "gap": "No full tokens, latent, velocity, Tweedie latent, conditioning tokens, external-preview representation, or lineage-equivalent fp32 pooled reference."
+    },
+    {
+      "id": "stage0_conditioning_features",
+      "kind": "conditioning_feature",
+      "path": "primary:results/stage0/arc3/cond_feats",
+      "verified_count": 200,
+      "schema": {
+        "pooled": [2688],
+        "clip_f": [896],
+        "sync_f": [896],
+        "clip_f_c": [896]
+      },
+      "disposition": "HISTORICAL_CONDITIONING_BASELINE_ONLY",
+      "gap": "It is one clip-level cached representation per historical clip, not the complete network-consumed conditioning-token lineage required by v2."
+    },
+    {
+      "id": "gate_a_probability_and_seed_caches",
+      "kind": "gate_specific_cache",
+      "path": "primary:results/stage0/gate_a",
+      "verified_count": {
+        "cfg_probability_bundles": 400,
+        "dial_noise_bundles": 144,
+        "all_npz": 544
+      },
+      "probability_schema": {
+        "probs_ind": [16, 527],
+        "probs_ref": [16, 527],
+        "probs_gafork_s0.05": [16, 527],
+        "probs_gafork_s0.9": [16, 527]
+      },
+      "disposition": "REUSE_ONLY_WITHIN_PROVEN_GATE_LINEAGE",
+      "gap": "These gate-specific arrays are not a complete, per-generation posterior store for every historical or banked cohort. They do not remove the need to regenerate finals where v2 requires reselectable posteriors."
+    },
+    {
+      "id": "stage_m_legacy_caches",
+      "kind": "legacy_pilot_features_measurements_and_gate_bundles",
+      "paths": [
+        "primary:results/stage_m",
+        "primary:results/stage_m_rerun",
+        "primary:results/stage_m_rerun/run2_archive"
+      ],
+      "verified_count": {
+        "stage_m_feature_npz": 2720,
+        "stage_m_gate_npz": 32,
+        "stage_m_measurement_rows": 2624,
+        "stage_m_rerun_feature_npz_each_copy": 3744,
+        "stage_m_rerun_gate_npz_each_copy": 32,
+        "stage_m_rerun_measurement_rows_each_copy": 4160,
+        "wav_files": 0
+      },
+      "disposition": "AUDIT_HISTORY_AND_DEVELOPMENT_DIAGNOSTICS_ONLY",
+      "gap": "Old axis semantics and missing source audio prevent direct v2 remeasurement."
+    },
+    {
+      "id": "phase2_external_readout_rows",
+      "kind": "legacy_external_readout",
+      "path": "primary:results/stage0/journal/p2cfg1__*.json",
+      "verified_count": {
+        "journals": 200,
+        "all_rows": 25600,
+        "material_rows": 6400,
+        "subjects_per_clip": 4,
+        "progress_points": 8
+      },
+      "row_fields": [
+        "axis_id",
+        "clip",
+        "correct",
+        "j",
+        "probe",
+        "s",
+        "target"
+      ],
+      "disposition": "LEGACY_CONTINUITY_ONLY",
+      "gap": "Material `correct` is only own-target cosine. Candidate preview WAVs and candidate/reference embeddings were not retained."
+    },
+    {
+      "id": "b2_multiseed_bank",
+      "kind": "quarantined_final_and_fork_audio",
+      "path_roots": [
+        "arc4-gpu:results/arc4_quarantine/b2",
+        "arc4-gpu:results/arc4_quarantine/b2_extension_seeds5_8",
+        "arc4-gpu:results/arc4_quarantine/b2_extension_seeds9_12",
+        "arc4-gpu:results/arc4_quarantine/b2_extension_seeds13_16"
+      ],
+      "verified_design": {
+        "clips": 48,
+        "base_seeds": 17,
+        "progress_points": 8,
+        "forks_per_cell": 12,
+        "cfg": 4.5,
+        "alpha": 0.8,
+        "schedule": "sqrt_down",
+        "sample_rate": 16000,
+        "frames_per_wav": 128000,
+        "subtype": "FLOAT"
+      },
+      "cohort_manifests": [
+        {
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "manifest_sha256": "5c3a334ecfcfb3e91504354c14c8e8dbae71b3bade088b21bec26fb06fd68ed3",
+          "completion_sha256": "233996f996e1272ca5ce6b53049fc5a413d57bc2a8cf5bb456d39821f874d7da"
+        },
+        {
+          "seeds": [
+            5,
+            6,
+            7,
+            8
+          ],
+          "manifest_sha256": "b6e176949f531528ccb669759d2057fa0b1b1a14567633d3dd6a2d47e0a8a9e4",
+          "completion_sha256": "12cd50cabb1537896dd6d5b16522846cc742a34a53ba466e0d9f3a37bc128a7e"
+        },
+        {
+          "seeds": [
+            9,
+            10,
+            11,
+            12
+          ],
+          "manifest_sha256": "72bcd677376b1ca44278d7cb6e9ea61910cc07f06fc135b239cdbb54aa4ee6ee",
+          "completion_sha256": "8152fcbcc53756950c7cc05d779926fbef9828e6b18bf7bc4878e221b8894158"
+        },
+        {
+          "seeds": [
+            13,
+            14,
+            15,
+            16
+          ],
+          "manifest_sha256": "ae3dfb2e0022043206d8d4fcf748a3ce68ba1a3898af560ff3e059ba217e3c51",
+          "completion_sha256": "0ff8ab4142cd440cc335e5177e13bd0c8be65044292e5e9687d08268458be5ba"
+        }
+      ],
+      "verified_inventory": {
+        "base_wavs": 816,
+        "fork_wavs": 78336,
+        "total_wavs": 79152,
+        "total_wav_bytes": 40532156160,
+        "validator_shards_passed": "16/16"
+      },
+      "contains": [
+        "atomic base final WAV",
+        "atomic fork final WAV",
+        "per-file SHA256/audio metadata",
+        "unit and cell journals",
+        "seed/config/kernel provenance"
+      ],
+      "does_not_contain": [
+        "v2 measurements",
+        "external Tweedie preview WAVs",
+        "intermediate states",
+        "internal features",
+        "full class posteriors",
+        "event-level anchors"
+      ],
+      "disposition": "REUSABLE_AFTER_DUAL_PI_FREEZE_AND_RELEASE_AMENDMENT",
+      "allowed_goal2_use": "Measure banked base/fork WAVs under frozen v2 semantics; replay only representations not retained as WAVs."
+    },
+    {
+      "id": "b6_condition_swap_bank",
+      "kind": "quarantined_condition_swap_audio",
+      "path": "arc4-gpu:results/arc4_quarantine/b6",
+      "pair_manifest_sha256": "640b00059e04e9db51cf5b4f267fc901612aa57eea0d59b12b8bb198dd8bdc4e",
+      "completion_sha256": {
+        "original": "5be7886b6b4c7a51282745ad1d32cf25c574443d3460e67c5b931c8ad740aa68",
+        "resume": "861c6cee74a4822911cb5fa19372bb63d3c0ef37da30bdbac79b073c4121b79f"
+      },
+      "verified_inventory": {
+        "cfg1_pairs": 128,
+        "cfg4p5_pairs": 128,
+        "wavs_per_pair": 10,
+        "total_wavs": 2560,
+        "cfg1_bytes": 655462400,
+        "cfg4p5_bytes": 655462400
+      },
+      "pair_contract": "donor_not_source by cached confident class label; source, donor, and eight swap WAVs",
+      "disposition": "OUT_OF_SCOPE_PRESERVE_UNMEASURED",
+      "allowed_goal1_action": "Define inherited v2 measurement fields and semantics only",
+      "forbidden_action": "Open, measure, aggregate, or analyze swap audio in this phase"
+    },
+    {
+      "id": "b1_retap_feature_bundles",
+      "kind": "gated_internal_feature",
+      "path": "arc4-gpu:results/arc4_b1/arc3/pertoken",
+      "verified_count": 25600,
+      "schema": {
+        "token_mean": "12x448 float16",
+        "token_mean_max": "12x896 float16",
+        "tokens_sub": "12x64x448 float16",
+        "xattn_clip": "4x64 float16",
+        "xattn_frac": "4 float32"
+      },
+      "status": "B1_INCOMPLETE",
+      "failure": {
+        "sorted_bundle_index": 31,
+        "bundle": "1002__p1cfg1_ind12__s0.75.npz",
+        "observed_relative_l2": 0.0002585371085837806,
+        "gate_threshold": 0.0002,
+        "probe_fitted": false
+      },
+      "disposition": "DIAGNOSIS_ONLY_DEFAULT_TO_RECOLLECTION",
+      "resolution": "Run the signed identity pilot; recollect same-forward fp32 lineage after PASS. Do not use these bundles for a scientific probe."
+    },
+    {
+      "id": "semantic_sidecars",
+      "kind": "legacy_semantic_calibration",
+      "paths": [
+        "primary:results/stage0/mllm_sidecar/sidecar.csv",
+        "primary:results/stage0/mllm_sidecar/sidecar_summary.json",
+        "primary:results/stage0/validity_suite.json"
+      ],
+      "verified_count": {
+        "mllm_rows": 300,
+        "mllm_clips": 100,
+        "human_summary_clips": 50
+      },
+      "disposition": "REUSE_ONLY_WHERE_EVENT_AND_AXIS_CONTRACTS_JOIN_EXACTLY",
+      "gap": "The sidecars predate event-centered v2 Presence/Timing/Material/Binding. A summary is not a substitute for a new blinded human-ready package when the required per-event fields do not join."
+    },
+    {
+      "id": "local_models_and_measurers",
+      "kind": "pinned_weights",
+      "disposition": "REUSABLE_OFFLINE_WITH_HASHED_PROVENANCE",
+      "assets": [
+        {
+          "path": "third_party/MMAudio/weights/mmaudio_small_16k.pth",
+          "sha256": "61987bcbd6fc689af063075d7efaef29425f65df155dac589c07fa8173a03c1c"
+        },
+        {
+          "path": "third_party/MMAudio/ext_weights/best_netG.pt",
+          "sha256": "970ca75ee4d5ce583e9396a4534acb14971ea2b4f1c22e038f476680c868a789"
+        },
+        {
+          "path": "third_party/MMAudio/ext_weights/synchformer_state_dict.pth",
+          "sha256": "8aff082f2df5c3bc52759db0c865c7ee772ae6400b860d1b7e90413f2defb67c"
+        },
+        {
+          "path": "weights/measurers/Cnn14_16k_mAP=0.438.pth",
+          "sha256": "e2ee543a27919542c2ea03eabaa70b24dcd4e6c8e05621de6b67a94e4c5058e6"
+        },
+        {
+          "model": "laion/clap-htsat-unfused",
+          "revision": "8fa0f1c6d0433df6e97c127f64b2a1d6c0dcda8a",
+          "source": "project-local Hugging Face cache"
+        },
+        {
+          "model": "MIT/ast-finetuned-audioset-10-10-0.4593",
+          "revision": "f826b80d28226b62986cc218e5cec390b1096902",
+          "source": "project-local Hugging Face cache"
+        }
+      ],
+      "modelscope_mirror_present": false,
+      "goal2_weight_source": "hf local-only until a populated ModelScope mirror is separately recorded"
+    }
+  ],
+  "deterministic_regeneration": {
+    "status": "AVAILABLE_FOR_JOURNALED_IDENTITIES_AFTER_GOAL2_AUTHORIZATION",
+    "source_inputs": [
+      "data/FoleyBench/clips/<clip>.mp4 and its clips_index SHA256",
+      "journaled tag, cfg, alpha, schedule, step count, duration, subject/fork index, and progress",
+      "registered seed and CRC32 derivation",
+      "MMAudio code commit and exact local weight hashes",
+      "explicit environment, dtype, CUDA determinism, and PYTHONHASHSEED"
+    ],
+    "phase1_rng_contract": {
+      "algorithm": "numpy.default_rng(SeedSequence([seed, crc32(str(part)) for part in parts]))",
+      "independent_parts": [
+        "clip",
+        "ind",
+        "j"
+      ],
+      "base_parts": [
+        "clip",
+        "base"
+      ],
+      "fork_parts": [
+        "clip",
+        "fork",
+        "s"
+      ],
+      "historical_seed": 0
+    },
+    "historical_p1cfg1_contract": {
+      "variant": "small_16k",
+      "cfg": 1.0,
+      "alpha_independent": 0.0,
+      "num_steps": 20,
+      "duration_seconds": 8.0,
+      "full_precision": true,
+      "conditioning": "full video CLIP plus Synchformer plus empty text",
+      "s_grid": [
+        0.05,
+        0.15,
+        0.25,
+        0.35,
+        0.45,
+        0.6,
+        0.75,
+        0.9
+      ]
+    },
+    "path_for_missing_class_posteriors": [
+      "Recreate the exact journaled independent/final identity using the registered RNG and configuration.",
+      "Write the regenerated final to a new immutable Goal-2 RunStore; never overwrite historical directories.",
+      "Run the pinned PANNs tagger and persist the complete 527-way clipwise_output, coarse posterior, decision diagnostics, abstention threshold version, audio SHA256, and generation ID.",
+      "Fail the unit on any missing video/hash/config/weight/join; do not infer a posterior from the old label."
+    ],
+    "validation": "A completion manifest must bind input video, source journal, code/config/model hashes, RNG parts, audio hash, posterior shape/dtype, and output hash. Cross-hardware numerical differences are measured and reported; they are never hidden by replacing an existing value."
+  },
+  "a2_4_material_fix": {
+    "status": "INCOMPLETE_ARTIFACTS",
+    "existing_phase2_population": {
+      "clips": 200,
+      "subjects_per_clip": 4,
+      "subject_indices": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "progress_points": 8,
+      "candidate_cells": 6400,
+      "legacy_value": "scalar cosine to own ODE-final embedding"
+    },
+    "reusable_inputs": {
+      "subject_ids": "<clip>__p1cfg1_ind<j>",
+      "joined_same_trajectory_final_embeddings": 800,
+      "joined_embedding_dimension": 512,
+      "available_disjoint_same_video_final_pool": "16 material embeddings per clip in the Phase-1 measurement journal",
+      "source_video_and_metadata": "data/FoleyBench/clips plus clips_index.csv"
+    },
+    "missing_inputs": [
+      "6,400 regenerated intermediate preview WAVs or equivalent deterministic replay packets",
+      "6,400 persisted candidate preview embeddings",
+      "a frozen positive-reference assignment using a disjoint same-video/same-event generation",
+      "a frozen different-video negative manifest matched on coarse class, anchor timing, and loudness and documented as different material",
+      "persisted positive and negative embeddings with reference IDs",
+      "event IDs and anchor intervals",
+      "matching covariates, relaxation level, and exclusion reason"
+    ],
+    "replay_contract": "Regenerate p1cfg1 independent subjects j=0..3 with the historical seed/config, decode Tweedie previews at the eight registered progress points, and persist output in a new immutable Goal-2 root.",
+    "negative_manifest_minimum_fields": [
+      "candidate_clip_id",
+      "candidate_event_id",
+      "positive_clip_id",
+      "positive_event_id",
+      "positive_generation_id",
+      "negative_clip_id",
+      "negative_event_id",
+      "negative_generation_id",
+      "coarse_class",
+      "material_identity_or_stratum",
+      "anchor_interval",
+      "timing_distance",
+      "loudness_band_or_distance",
+      "scene_group",
+      "match_relaxation_level",
+      "selection_rule_version",
+      "manifest_sha256"
+    ],
+    "persist_per_example": [
+      "candidate, positive, and negative 512-D embeddings",
+      "candidate, positive, and negative audio SHA256 or immutable replay reference",
+      "all three IDs and model revision",
+      "candidate-positive cosine",
+      "candidate-negative cosine",
+      "2AFC margin",
+      "indifference outcome",
+      "chance level 0.5",
+      "legacy own-target cosine side by side"
+    ],
+    "prohibited_shortcuts": [
+      "Treating cosine as Bernoulli correctness",
+      "Selecting a negative after viewing the candidate margin",
+      "Using the candidate's own contribution in its positive reference",
+      "Estimating a missing embedding from the legacy scalar cosine"
+    ]
+  },
+  "b6_measurement_semantics_inheritance": {
+    "status": "DEFINED_FOR_LATER_PHASE_NOT_RELEASED",
+    "rule": "A later causal phase must apply the same signed Axis Specification v2 schemas to source, donor, and swap audio. This audit does not measure B6.",
+    "minimum_inherited_fields": [
+      "pair_id and cfg",
+      "source/donor clip and event IDs",
+      "source/donor anchor intervals and uncertainty",
+      "audio role and SHA256",
+      "Presence component scores/state/abstention",
+      "Timing onset offset and defined/undefined reason",
+      "full Class posterior and confident/abstain state",
+      "Material embedding plus frozen source/donor nearest-reference margins",
+      "Binding event-set presence, order, assignment, and ambiguity fields",
+      "measurer/spec/model revisions and reference manifest hashes"
+    ],
+    "required_before_later_measurement": "Curate event identities and anchors for both clips in every pair, freeze all references and ambiguity rules, then record a separate quarantine-release amendment.",
+    "analysis_in_this_phase": "FORBIDDEN"
+  },
+  "blocking_gaps": [
+    {
+      "id": "GAP_ANCHOR_EVENT_IDENTITY",
+      "status": "INCOMPLETE_ARTIFACTS",
+      "impact": "Presence, Timing, Material, and Binding cannot be interpreted event-centrically from the existing salience-ranked points alone.",
+      "resolution": "Curate stable event IDs and visible anchor intervals with provenance/uncertainty on development, B2, and two-event candidate clips."
+    },
+    {
+      "id": "GAP_RAW_HUMAN_ANCHOR_LABELS",
+      "status": "INCOMPLETE_ARTIFACTS",
+      "impact": "The old 30-clip aggregate decision cannot be row-audited or upgraded to intervals.",
+      "resolution": "Recover results/labeling/labels_anchor_v1.jsonl or repeat blinded event-ID/interval annotation."
+    },
+    {
+      "id": "GAP_BINDING_ASSIGNMENTS",
+      "status": "INCOMPLETE_ARTIFACTS",
+      "impact": "The 60-clip list is not a scored Binding cohort.",
+      "resolution": "Curate two events, two anchors, per-event presence, correct assignment, and ambiguity for each admitted clip."
+    },
+    {
+      "id": "GAP_PHASE2_MATERIAL_EMBEDDINGS",
+      "status": "INCOMPLETE_ARTIFACTS",
+      "impact": "A2-4 relative readout remains uncomputable.",
+      "resolution": "Freeze references, replay the existing 6,400 Phase-2 cells, and persist all three embeddings and IDs."
+    },
+    {
+      "id": "GAP_CLASS_RESELECTABLE_POSTERIORS",
+      "status": "INCOMPLETE_ARTIFACTS",
+      "impact": "Historical class labels cannot support new abstention thresholds for every required cohort.",
+      "resolution": "Deterministically regenerate only required journaled finals and persist full posteriors."
+    },
+    {
+      "id": "GAP_B1_LINEAGE",
+      "status": "INCOMPLETE_ARTIFACTS",
+      "upstream_status": "B1_INCOMPLETE",
+      "impact": "No internal-readout probe may be fit from the existing retap collection.",
+      "resolution": "Run the signed same-forward identity pilot and recollect after the gate passes."
+    },
+    {
+      "id": "GAP_B2_RELEASE",
+      "status": "UNRESOLVED",
+      "gate": "BLOCKED_ON_PI_FREEZE",
+      "impact": "The 79,152 banked WAVs cannot yet be measured.",
+      "resolution": "Both PIs sign the Axis Specification v2 and an amendment records measurement-only release."
+    }
+  ],
+  "audit_conclusion": "The banked B2 audio is the primary reusable Goal-2 measurement asset after signed release. Historical journals preserve exact Class auditability and many Material final embeddings, but event-level anchors, reselectable Class posteriors, Phase-2 candidate/reference embeddings, and lineage-valid internal features must be newly materialized. B6 remains preserved and unmeasured."
+}
