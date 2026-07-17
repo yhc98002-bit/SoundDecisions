@@ -32,6 +32,10 @@ jobs:
           tests/test_commitment.py
           tests/test_commitment_abstain.py
           tests/test_determination.py
+          tests/test_human_eval_html.py
+          tests/test_human_eval_build.py
+          tests/test_human_eval_schema.py
+          tests/test_human_eval_scoring.py
           tests/test_phase2_readout_aggregate.py
           tests/test_phase3_labels.py
           tests/test_phase4_policy.py

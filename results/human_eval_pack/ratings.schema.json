@@ -1,0 +1,315 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sounddecisions.local/schemas/human-eval-v2-ratings.schema.json",
+  "title": "SoundDecisions blinded human-evaluation export",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "instrument_version",
+    "manifest_id",
+    "manifest_sha256",
+    "rater_id",
+    "started_at",
+    "exported_at",
+    "item_order",
+    "ratings"
+  ],
+  "properties": {
+    "schema_version": {"const": "sounddecisions-human-eval-v2-1.0"},
+    "instrument_version": {"const": "human-eval-pack-1.0"},
+    "manifest_id": {"type": "string", "minLength": 1},
+    "manifest_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "rater_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$"
+    },
+    "started_at": {"type": "string", "format": "date-time"},
+    "exported_at": {"type": "string", "format": "date-time"},
+    "item_order": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"type": "string", "pattern": "^HEV2-[0-9A-F]{12}$"}
+    },
+    "ratings": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/rating"}
+    }
+  },
+  "$defs": {
+    "interval": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["start_s", "end_s"],
+      "properties": {
+        "start_s": {"type": "number", "minimum": 0},
+        "end_s": {"type": "number", "minimum": 0}
+      }
+    },
+    "partial_interval": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["start_s", "end_s"],
+      "properties": {
+        "start_s": {"type": ["number", "null"], "minimum": 0},
+        "end_s": {"type": ["number", "null"], "minimum": 0}
+      }
+    },
+    "anchor": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["status", "start_s", "end_s", "event_description"],
+          "properties": {
+            "status": {"const": "marked"},
+            "start_s": {"type": "number", "minimum": 0},
+            "end_s": {"type": "number", "minimum": 0},
+            "event_description": {"type": "string", "maxLength": 500}
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["status", "start_s", "end_s", "event_description"],
+          "properties": {
+            "status": {"const": "too_uncertain"},
+            "start_s": {"type": ["number", "null"], "minimum": 0},
+            "end_s": {"type": ["number", "null"], "minimum": 0},
+            "event_description": {"type": "string", "maxLength": 500}
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["status", "start_s", "end_s", "event_description"],
+          "properties": {
+            "status": {"const": "unrated"},
+            "start_s": {"type": ["number", "null"], "minimum": 0},
+            "end_s": {"type": ["number", "null"], "minimum": 0},
+            "event_description": {"type": "string", "maxLength": 500}
+          }
+        }
+      ]
+    },
+    "presence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["verdict", "unrelated_background", "note"],
+      "properties": {
+        "verdict": {
+          "type": ["string", "null"],
+          "enum": ["target_present", "absent", "uncertain", null]
+        },
+        "unrelated_background": {"type": ["boolean", "null"]},
+        "note": {"type": "string", "maxLength": 2000}
+      }
+    },
+    "pair_curation": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["verdict", "event_1", "event_2", "event_1_description", "event_2_description", "note"],
+          "properties": {
+            "verdict": {"const": "confirm"},
+            "event_1": {
+              "oneOf": [{"$ref": "#/$defs/partial_interval"}, {"type": "null"}]
+            },
+            "event_2": {
+              "oneOf": [{"$ref": "#/$defs/partial_interval"}, {"type": "null"}]
+            },
+            "event_1_description": {"type": "string", "maxLength": 500},
+            "event_2_description": {"type": "string", "maxLength": 500},
+            "note": {"type": "string", "maxLength": 2000}
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["verdict", "event_1", "event_2", "event_1_description", "event_2_description", "note"],
+          "properties": {
+            "verdict": {"const": "reject"},
+            "event_1": {
+              "oneOf": [{"$ref": "#/$defs/partial_interval"}, {"type": "null"}]
+            },
+            "event_2": {
+              "oneOf": [{"$ref": "#/$defs/partial_interval"}, {"type": "null"}]
+            },
+            "event_1_description": {"type": "string", "maxLength": 500},
+            "event_2_description": {"type": "string", "maxLength": 500},
+            "note": {"type": "string", "maxLength": 2000}
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["verdict", "event_1", "event_2", "event_1_description", "event_2_description", "note"],
+          "properties": {
+            "verdict": {"type": "null"},
+            "event_1": {"type": "null"},
+            "event_2": {"type": "null"},
+            "event_1_description": {"type": "string", "maxLength": 500},
+            "event_2_description": {"type": "string", "maxLength": 500},
+            "note": {"type": "string", "maxLength": 2000}
+          }
+        }
+      ]
+    },
+    "anchor_complete": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["status", "start_s", "end_s", "event_description"],
+          "properties": {
+            "status": {"const": "marked"},
+            "start_s": {"type": "number", "minimum": 0},
+            "end_s": {"type": "number", "minimum": 0},
+            "event_description": {"type": "string", "minLength": 1, "maxLength": 500}
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["status", "start_s", "end_s", "event_description"],
+          "properties": {
+            "status": {"const": "too_uncertain"},
+            "start_s": {"type": ["number", "null"], "minimum": 0},
+            "end_s": {"type": ["number", "null"], "minimum": 0},
+            "event_description": {"type": "string", "minLength": 1, "maxLength": 500}
+          }
+        }
+      ]
+    },
+    "presence_complete": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["verdict", "unrelated_background", "note"],
+      "properties": {
+        "verdict": {"enum": ["target_present", "absent", "uncertain"]},
+        "unrelated_background": {"type": "boolean"},
+        "note": {"type": "string", "maxLength": 2000}
+      }
+    },
+    "pair_curation_complete": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["verdict", "event_1", "event_2", "event_1_description", "event_2_description", "note"],
+          "properties": {
+            "verdict": {"const": "confirm"},
+            "event_1": {"$ref": "#/$defs/interval"},
+            "event_2": {"$ref": "#/$defs/interval"},
+            "event_1_description": {"type": "string", "minLength": 1, "maxLength": 500},
+            "event_2_description": {"type": "string", "minLength": 1, "maxLength": 500},
+            "note": {"type": "string", "maxLength": 2000}
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["verdict", "event_1", "event_2", "event_1_description", "event_2_description", "note"],
+          "properties": {
+            "verdict": {"const": "reject"},
+            "event_1": {
+              "oneOf": [{"$ref": "#/$defs/partial_interval"}, {"type": "null"}]
+            },
+            "event_2": {
+              "oneOf": [{"$ref": "#/$defs/partial_interval"}, {"type": "null"}]
+            },
+            "event_1_description": {"type": "string", "maxLength": 500},
+            "event_2_description": {"type": "string", "maxLength": 500},
+            "note": {"type": "string", "maxLength": 2000}
+          }
+        }
+      ]
+    },
+    "rating": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["blind_id", "tasks", "completed"],
+      "properties": {
+        "blind_id": {"type": "string", "pattern": "^HEV2-[0-9A-F]{12}$"},
+        "tasks": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 2,
+          "uniqueItems": true,
+          "items": {"enum": ["anchor_presence", "two_event"]}
+        },
+        "completed": {"type": "boolean"},
+        "anchor": {
+          "oneOf": [{"$ref": "#/$defs/anchor"}, {"type": "null"}]
+        },
+        "presence": {
+          "oneOf": [{"$ref": "#/$defs/presence"}, {"type": "null"}]
+        },
+        "pair_curation": {
+          "oneOf": [{"$ref": "#/$defs/pair_curation"}, {"type": "null"}]
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "tasks": {"contains": {"const": "anchor_presence"}}
+            }
+          },
+          "then": {
+            "required": ["anchor", "presence"],
+            "properties": {
+              "anchor": {"$ref": "#/$defs/anchor"},
+              "presence": {"$ref": "#/$defs/presence"}
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "tasks": {"contains": {"const": "two_event"}}
+            }
+          },
+          "then": {
+            "required": ["pair_curation"],
+            "properties": {
+              "pair_curation": {"$ref": "#/$defs/pair_curation"}
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {"completed": {"const": true}},
+            "required": ["completed"]
+          },
+          "then": {
+            "allOf": [
+              {
+                "if": {
+                  "properties": {"tasks": {"contains": {"const": "anchor_presence"}}}
+                },
+                "then": {
+                  "properties": {
+                    "anchor": {"$ref": "#/$defs/anchor_complete"},
+                    "presence": {"$ref": "#/$defs/presence_complete"}
+                  }
+                }
+              },
+              {
+                "if": {
+                  "properties": {"tasks": {"contains": {"const": "two_event"}}}
+                },
+                "then": {
+                  "properties": {
+                    "pair_curation": {"$ref": "#/$defs/pair_curation_complete"}
+                  }
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

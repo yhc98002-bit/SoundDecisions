@@ -7,6 +7,7 @@ scipy>=1.10  # gate_a (Mann-Whitney / KS guards); also a librosa dependency
 
 # DEV / CI
 pytest>=7.0
+jsonschema>=4.18
 
 # --- HEAVY / MODEL deps (Phase 0+, GPU; imported LAZILY inside the methods that need them;
 # --- NOT required to import foley_cw or to run the synthetic validation/tests). Pin exact

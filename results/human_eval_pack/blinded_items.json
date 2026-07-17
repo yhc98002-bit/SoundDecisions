@@ -1,0 +1,848 @@
+{
+  "schema_version": "sounddecisions-human-eval-items-v2-1.0",
+  "instrument_version": "human-eval-pack-1.0",
+  "manifest_id": "axis-spec-v2-candidate-curation-2026-07",
+  "status": "INCOMPLETE_ARTIFACTS_PRE_FREEZE_DO_NOT_RATE",
+  "default_fps": 30.0,
+  "rubric": {
+    "anchor": "Mark the closed visual-event interval [start, end]. Use Too uncertain when a defensible interval cannot be marked.",
+    "presence": "For one specified visible event, determine whether a corresponding audio event occurs near its anchor: present, absent, or uncertain. Salient unrelated background audio does not count. The unit is the event.",
+    "two_event": "Confirm only when two separable target events exist, then mark one closed visual interval for each event; otherwise reject the item."
+  },
+  "counts": {
+    "anchor_presence": 30,
+    "two_event": 60,
+    "total_tasks": 90,
+    "unique_videos": 82
+  },
+  "items": [
+    {
+      "blind_id": "HEV2-6D944D47EF85",
+      "tasks": [
+        "anchor_presence"
+      ],
+      "media_path": "media/HEV2-6D944D47EF85.mp4",
+      "fps": 24.0,
+      "duration_s": 10.041016,
+      "target_prompt": "Identify and briefly describe the visible target event before marking it."
+    },
+    {
+      "blind_id": "HEV2-DD5E7196F93D",
+      "tasks": [
+        "anchor_presence",
+        "two_event"
+      ],
+      "media_path": "media/HEV2-DD5E7196F93D.mp4",
+      "fps": 29.97002997002997,
+      "duration_s": 10.043,
+      "target_prompt": "Complete the single-event and two-event curation tasks for this clip."
+    },
+    {
+      "blind_id": "HEV2-3A7CFEAEF852",
+      "tasks": [
+        "anchor_presence"
+      ],
+      "media_path": "media/HEV2-3A7CFEAEF852.mp4",
+      "fps": 50.0,
+      "duration_s": 10.0,
+      "target_prompt": "Identify and briefly describe the visible target event before marking it."
+    },
+    {
+      "blind_id": "HEV2-B9B13B0D1BF1",
+      "tasks": [
+        "anchor_presence"
+      ],
+      "media_path": "media/HEV2-B9B13B0D1BF1.mp4",
+      "fps": 30.0,
+      "duration_s": 10.0,
+      "target_prompt": "Identify and briefly describe the visible target event before marking it."
+    },
+    {
+      "blind_id": "HEV2-C1CE4A975F2C",
+      "tasks": [
+        "anchor_presence"
+      ],
+      "media_path": "media/HEV2-C1CE4A975F2C.mp4",
+      "fps": 30.0,
+      "duration_s": 10.0,
+      "target_prompt": "Identify and briefly describe the visible target event before marking it."
+    },
+    {
+      "blind_id": "HEV2-B256CACCF46E",
+      "tasks": [
+        "anchor_presence",
+        "two_event"
+      ],
+      "media_path": "media/HEV2-B256CACCF46E.mp4",
+      "fps": 29.97002997002997,
+      "duration_s": 10.01,
+      "target_prompt": "Complete the single-event and two-event curation tasks for this clip."
+    },
+    {
+      "blind_id": "HEV2-C6786BF51163",
+      "tasks": [
+        "anchor_presence"
+      ],
+      "media_path": "media/HEV2-C6786BF51163.mp4",
+      "fps": 29.97002997002997,
+      "duration_s": 10.043,
+      "target_prompt": "Identify and briefly describe the visible target event before marking it."
+    },
+    {
+      "blind_id": "HEV2-52E51F279DF5",
+      "tasks": [
+        "anchor_presence"
+      ],
+      "media_path": "media/HEV2-52E51F279DF5.mp4",
+      "fps": 29.922,
+      "duration_s": 10.026068,
+      "target_prompt": "Identify and briefly describe the visible target event before marking it."
+    },
+    {
+      "blind_id": "HEV2-5A0DF886184B",
+      "tasks": [
+        "anchor_presence",
+        "two_event"
+      ],
+      "media_path": "media/HEV2-5A0DF886184B.mp4",
+      "fps": 29.97002997002997,
+      "duration_s": 9.009,
+      "target_prompt": "Complete the single-event and two-event curation tasks for this clip."
+    },
+    {
+      "blind_id": "HEV2-D41A3BB94040",
+      "tasks": [
+        "anchor_presence"
+      ],
+      "media_path": "media/HEV2-D41A3BB94040.mp4",
+      "fps": 23.976023976023978,
+      "duration_s": 10.01,
+      "target_prompt": "Identify and briefly describe the visible target event before marking it."
+    },
+    {
+      "blind_id": "HEV2-FB32150363BB",
+      "tasks": [
+        "anchor_presence",
+        "two_event"
+      ],
+      "media_path": "media/HEV2-FB32150363BB.mp4",
+      "fps": 29.97002997002997,
+      "duration_s": 9.009,
+      "target_prompt": "Complete the single-event and two-event curation tasks for this clip."
+    },
+    {
+      "blind_id": "HEV2-BDACDF4AAF21",
+      "tasks": [
+        "anchor_presence"
+      ],
+      "media_path": "media/HEV2-BDACDF4AAF21.mp4",
+      "fps": 25.0,
+      "duration_s": 9.04,
+      "target_prompt": "Identify and briefly describe the visible target event before marking it."
+    },
+    {
+      "blind_id": "HEV2-75BCF299CC4B",
+      "tasks": [
+        "anchor_presence"
+      ],
+      "media_path": "media/HEV2-75BCF299CC4B.mp4",
+      "fps": 29.97002997002997,
+      "duration_s": 9.009,
+      "target_prompt": "Identify and briefly describe the visible target event before marking it."
+    },
+    {
+      "blind_id": "HEV2-E7BCEEAC3AC0",
+      "tasks": [
+        "anchor_presence"
+      ],
+      "media_path": "media/HEV2-E7BCEEAC3AC0.mp4",
+      "fps": 30.0,
+      "duration_s": 8.0,
+      "target_prompt": "Identify and briefly describe the visible target event before marking it."
+    },
+    {
+      "blind_id": "HEV2-1615DB411EB5",
+      "tasks": [
+        "anchor_presence"
+      ],
+      "media_path": "media/HEV2-1615DB411EB5.mp4",
+      "fps": 23.976023976023978,
+      "duration_s": 9.05,
+      "target_prompt": "Identify and briefly describe the visible target event before marking it."
+    },
+    {
+      "blind_id": "HEV2-4445DE0A0704",
+      "tasks": [
+        "anchor_presence",
+        "two_event"
+      ],
+      "media_path": "media/HEV2-4445DE0A0704.mp4",
+      "fps": 23.976023976023978,
+      "duration_s": 8.008,
+      "target_prompt": "Complete the single-event and two-event curation tasks for this clip."
+    },
+    {
+      "blind_id": "HEV2-8A96981CDD45",
+      "tasks": [
+        "anchor_presence"
+      ],
+      "media_path": "media/HEV2-8A96981CDD45.mp4",
+      "fps": 29.97002997002997,
+      "duration_s": 8.008,
+      "target_prompt": "Identify and briefly describe the visible target event before marking it."
+    },
+    {
+      "blind_id": "HEV2-777E678E5CCD",
+      "tasks": [
+        "anchor_presence",
+        "two_event"
+      ],
+      "media_path": "media/HEV2-777E678E5CCD.mp4",
+      "fps": 23.976023976023978,
+      "duration_s": 10.01,
+      "target_prompt": "Complete the single-event and two-event curation tasks for this clip."
+    },
+    {
+      "blind_id": "HEV2-FED09A886D19",
+      "tasks": [
+        "anchor_presence"
+      ],
+      "media_path": "media/HEV2-FED09A886D19.mp4",
+      "fps": 29.97002997002997,
+      "duration_s": 10.043,
+      "target_prompt": "Identify and briefly describe the visible target event before marking it."
+    },
+    {
+      "blind_id": "HEV2-338184E5B84D",
+      "tasks": [
+        "anchor_presence",
+        "two_event"
+      ],
+      "media_path": "media/HEV2-338184E5B84D.mp4",
+      "fps": 23.976,
+      "duration_s": 10.01001,
+      "target_prompt": "Complete the single-event and two-event curation tasks for this clip."
+    },
+    {
+      "blind_id": "HEV2-0E86366C6C12",
+      "tasks": [
+        "anchor_presence"
+      ],
+      "media_path": "media/HEV2-0E86366C6C12.mp4",
+      "fps": 25.0,
+      "duration_s": 10.04,
+      "target_prompt": "Identify and briefly describe the visible target event before marking it."
+    },
+    {
+      "blind_id": "HEV2-871CE71F78A0",
+      "tasks": [
+        "anchor_presence",
+        "two_event"
+      ],
+      "media_path": "media/HEV2-871CE71F78A0.mp4",
+      "fps": 29.97002997002997,
+      "duration_s": 10.043,
+      "target_prompt": "Complete the single-event and two-event curation tasks for this clip."
+    },
+    {
+      "blind_id": "HEV2-7EFA31601B19",
+      "tasks": [
+        "anchor_presence"
+      ],
+      "media_path": "media/HEV2-7EFA31601B19.mp4",
+      "fps": 24.0,
+      "duration_s": 9.041016,
+      "target_prompt": "Identify and briefly describe the visible target event before marking it."
+    },
+    {
+      "blind_id": "HEV2-44DFA4D96C5C",
+      "tasks": [
+        "anchor_presence"
+      ],
+      "media_path": "media/HEV2-44DFA4D96C5C.mp4",
+      "fps": 23.976023976023978,
+      "duration_s": 10.01,
+      "target_prompt": "Identify and briefly describe the visible target event before marking it."
+    },
+    {
+      "blind_id": "HEV2-93236453DEA3",
+      "tasks": [
+        "anchor_presence"
+      ],
+      "media_path": "media/HEV2-93236453DEA3.mp4",
+      "fps": 23.976023976023978,
+      "duration_s": 10.01,
+      "target_prompt": "Identify and briefly describe the visible target event before marking it."
+    },
+    {
+      "blind_id": "HEV2-93BA3B95EB7D",
+      "tasks": [
+        "anchor_presence"
+      ],
+      "media_path": "media/HEV2-93BA3B95EB7D.mp4",
+      "fps": 25.0,
+      "duration_s": 10.04,
+      "target_prompt": "Identify and briefly describe the visible target event before marking it."
+    },
+    {
+      "blind_id": "HEV2-3CF5EDECF196",
+      "tasks": [
+        "anchor_presence"
+      ],
+      "media_path": "media/HEV2-3CF5EDECF196.mp4",
+      "fps": 25.0,
+      "duration_s": 10.0,
+      "target_prompt": "Identify and briefly describe the visible target event before marking it."
+    },
+    {
+      "blind_id": "HEV2-B2B4801CEABE",
+      "tasks": [
+        "anchor_presence"
+      ],
+      "media_path": "media/HEV2-B2B4801CEABE.mp4",
+      "fps": 29.97002997002997,
+      "duration_s": 8.008,
+      "target_prompt": "Identify and briefly describe the visible target event before marking it."
+    },
+    {
+      "blind_id": "HEV2-E048CAF40A62",
+      "tasks": [
+        "anchor_presence"
+      ],
+      "media_path": "media/HEV2-E048CAF40A62.mp4",
+      "fps": 25.0,
+      "duration_s": 8.04,
+      "target_prompt": "Identify and briefly describe the visible target event before marking it."
+    },
+    {
+      "blind_id": "HEV2-DD1E43C67484",
+      "tasks": [
+        "anchor_presence"
+      ],
+      "media_path": "media/HEV2-DD1E43C67484.mp4",
+      "fps": 30.0,
+      "duration_s": 9.0,
+      "target_prompt": "Identify and briefly describe the visible target event before marking it."
+    },
+    {
+      "blind_id": "HEV2-EC71246CC49E",
+      "tasks": [
+        "two_event"
+      ],
+      "media_path": "media/HEV2-EC71246CC49E.mp4",
+      "fps": 30.0,
+      "duration_s": 10.0,
+      "target_prompt": "Assess whether this clip contains two separable target events."
+    },
+    {
+      "blind_id": "HEV2-7D1406686608",
+      "tasks": [
+        "two_event"
+      ],
+      "media_path": "media/HEV2-7D1406686608.mp4",
+      "fps": 25.0,
+      "duration_s": 9.04,
+      "target_prompt": "Assess whether this clip contains two separable target events."
+    },
+    {
+      "blind_id": "HEV2-7F5129E53D9A",
+      "tasks": [
+        "two_event"
+      ],
+      "media_path": "media/HEV2-7F5129E53D9A.mp4",
+      "fps": 29.97002997002997,
+      "duration_s": 10.01,
+      "target_prompt": "Assess whether this clip contains two separable target events."
+    },
+    {
+      "blind_id": "HEV2-F91D0C9FF49B",
+      "tasks": [
+        "two_event"
+      ],
+      "media_path": "media/HEV2-F91D0C9FF49B.mp4",
+      "fps": 23.976023976023978,
+      "duration_s": 9.05,
+      "target_prompt": "Assess whether this clip contains two separable target events."
+    },
+    {
+      "blind_id": "HEV2-FBE0AED0C3B5",
+      "tasks": [
+        "two_event"
+      ],
+      "media_path": "media/HEV2-FBE0AED0C3B5.mp4",
+      "fps": 29.97002997002997,
+      "duration_s": 10.01,
+      "target_prompt": "Assess whether this clip contains two separable target events."
+    },
+    {
+      "blind_id": "HEV2-558E2F11365E",
+      "tasks": [
+        "two_event"
+      ],
+      "media_path": "media/HEV2-558E2F11365E.mp4",
+      "fps": 30.0,
+      "duration_s": 10.0,
+      "target_prompt": "Assess whether this clip contains two separable target events."
+    },
+    {
+      "blind_id": "HEV2-B13EA2AFB699",
+      "tasks": [
+        "two_event"
+      ],
+      "media_path": "media/HEV2-B13EA2AFB699.mp4",
+      "fps": 25.0,
+      "duration_s": 10.04,
+      "target_prompt": "Assess whether this clip contains two separable target events."
+    },
+    {
+      "blind_id": "HEV2-B7ECE394DF52",
+      "tasks": [
+        "two_event"
+      ],
+      "media_path": "media/HEV2-B7ECE394DF52.mp4",
+      "fps": 24.0,
+      "duration_s": 10.041016,
+      "target_prompt": "Assess whether this clip contains two separable target events."
+    },
+    {
+      "blind_id": "HEV2-86125712FC4D",
+      "tasks": [
+        "two_event"
+      ],
+      "media_path": "media/HEV2-86125712FC4D.mp4",
+      "fps": 30.0,
+      "duration_s": 9.0,
+      "target_prompt": "Assess whether this clip contains two separable target events."
+    },
+    {
+      "blind_id": "HEV2-3375ADCF599C",
+      "tasks": [
+        "two_event"
+      ],
+      "media_path": "media/HEV2-3375ADCF599C.mp4",
+      "fps": 21.226,
+      "duration_s": 10.081881,
+      "target_prompt": "Assess whether this clip contains two separable target events."
+    },
+    {
+      "blind_id": "HEV2-8FF935B3A9CD",
+      "tasks": [
+        "two_event"
+      ],
+      "media_path": "media/HEV2-8FF935B3A9CD.mp4",
+      "fps": 25.0,
+      "duration_s": 8.04,
+      "target_prompt": "Assess whether this clip contains two separable target events."
+    },
+    {
+      "blind_id": "HEV2-AB5CDDC5B198",
+      "tasks": [
+        "two_event"
+      ],
+      "media_path": "media/HEV2-AB5CDDC5B198.mp4",
+      "fps": 25.0,
+      "duration_s": 9.0,
+      "target_prompt": "Assess whether this clip contains two separable target events."
+    },
+    {
+      "blind_id": "HEV2-67233B363C8A",
+      "tasks": [
+        "two_event"
+      ],
+      "media_path": "media/HEV2-67233B363C8A.mp4",
+      "fps": 29.97002997002997,
+      "duration_s": 10.043,
+      "target_prompt": "Assess whether this clip contains two separable target events."
+    },
+    {
+      "blind_id": "HEV2-0B9B559443CB",
+      "tasks": [
+        "two_event"
+      ],
+      "media_path": "media/HEV2-0B9B559443CB.mp4",
+      "fps": 29.97002997002997,
+      "duration_s": 10.043,
+      "target_prompt": "Assess whether this clip contains two separable target events."
+    },
+    {
+      "blind_id": "HEV2-043AE58CB747",
+      "tasks": [
+        "two_event"
+      ],
+      "media_path": "media/HEV2-043AE58CB747.mp4",
+      "fps": 30.0,
+      "duration_s": 10.0,
+      "target_prompt": "Assess whether this clip contains two separable target events."
+    },
+    {
+      "blind_id": "HEV2-72CA7699D48B",
+      "tasks": [
+        "two_event"
+      ],
+      "media_path": "media/HEV2-72CA7699D48B.mp4",
+      "fps": 25.0,
+      "duration_s": 8.04,
+      "target_prompt": "Assess whether this clip contains two separable target events."
+    },
+    {
+      "blind_id": "HEV2-D65F23182AA4",
+      "tasks": [
+        "two_event"
+      ],
+      "media_path": "media/HEV2-D65F23182AA4.mp4",
+      "fps": 30.0,
+      "duration_s": 10.0,
+      "target_prompt": "Assess whether this clip contains two separable target events."
+    },
+    {
+      "blind_id": "HEV2-F66A4AE10058",
+      "tasks": [
+        "two_event"
+      ],
+      "media_path": "media/HEV2-F66A4AE10058.mp4",
+      "fps": 25.0,
+      "duration_s": 10.04,
+      "target_prompt": "Assess whether this clip contains two separable target events."
+    },
+    {
+      "blind_id": "HEV2-7296FEEDE3F7",
+      "tasks": [
+        "two_event"
+      ],
+      "media_path": "media/HEV2-7296FEEDE3F7.mp4",
+      "fps": 15.043,
+      "duration_s": 10.103902,
+      "target_prompt": "Assess whether this clip contains two separable target events."
+    },
+    {
+      "blind_id": "HEV2-3B956C96C42A",
+      "tasks": [
+        "two_event"
+      ],
+      "media_path": "media/HEV2-3B956C96C42A.mp4",
+      "fps": 29.97002997002997,
+      "duration_s": 10.01,
+      "target_prompt": "Assess whether this clip contains two separable target events."
+    },
+    {
+      "blind_id": "HEV2-18ACD3D39681",
+      "tasks": [
+        "two_event"
+      ],
+      "media_path": "media/HEV2-18ACD3D39681.mp4",
+      "fps": 25.0,
+      "duration_s": 10.0,
+      "target_prompt": "Assess whether this clip contains two separable target events."
+    },
+    {
+      "blind_id": "HEV2-38A6717C6A90",
+      "tasks": [
+        "two_event"
+      ],
+      "media_path": "media/HEV2-38A6717C6A90.mp4",
+      "fps": 24.0,
+      "duration_s": 10.041016,
+      "target_prompt": "Assess whether this clip contains two separable target events."
+    },
+    {
+      "blind_id": "HEV2-EC7E1BFF3B56",
+      "tasks": [
+        "two_event"
+      ],
+      "media_path": "media/HEV2-EC7E1BFF3B56.mp4",
+      "fps": 25.0,
+      "duration_s": 8.04,
+      "target_prompt": "Assess whether this clip contains two separable target events."
+    },
+    {
+      "blind_id": "HEV2-9D8020664CBF",
+      "tasks": [
+        "two_event"
+      ],
+      "media_path": "media/HEV2-9D8020664CBF.mp4",
+      "fps": 25.0,
+      "duration_s": 10.04,
+      "target_prompt": "Assess whether this clip contains two separable target events."
+    },
+    {
+      "blind_id": "HEV2-5107D139A4DC",
+      "tasks": [
+        "two_event"
+      ],
+      "media_path": "media/HEV2-5107D139A4DC.mp4",
+      "fps": 29.97002997002997,
+      "duration_s": 10.01,
+      "target_prompt": "Assess whether this clip contains two separable target events."
+    },
+    {
+      "blind_id": "HEV2-83F714E5FB96",
+      "tasks": [
+        "two_event"
+      ],
+      "media_path": "media/HEV2-83F714E5FB96.mp4",
+      "fps": 25.0,
+      "duration_s": 10.04,
+      "target_prompt": "Assess whether this clip contains two separable target events."
+    },
+    {
+      "blind_id": "HEV2-18AA703FF854",
+      "tasks": [
+        "two_event"
+      ],
+      "media_path": "media/HEV2-18AA703FF854.mp4",
+      "fps": 25.0,
+      "duration_s": 10.04,
+      "target_prompt": "Assess whether this clip contains two separable target events."
+    },
+    {
+      "blind_id": "HEV2-26F35D81E749",
+      "tasks": [
+        "two_event"
+      ],
+      "media_path": "media/HEV2-26F35D81E749.mp4",
+      "fps": 29.97002997002997,
+      "duration_s": 10.01,
+      "target_prompt": "Assess whether this clip contains two separable target events."
+    },
+    {
+      "blind_id": "HEV2-9D4833F0D774",
+      "tasks": [
+        "two_event"
+      ],
+      "media_path": "media/HEV2-9D4833F0D774.mp4",
+      "fps": 23.976,
+      "duration_s": 10.01001,
+      "target_prompt": "Assess whether this clip contains two separable target events."
+    },
+    {
+      "blind_id": "HEV2-856E5B5DC2A3",
+      "tasks": [
+        "two_event"
+      ],
+      "media_path": "media/HEV2-856E5B5DC2A3.mp4",
+      "fps": 30.0,
+      "duration_s": 9.0,
+      "target_prompt": "Assess whether this clip contains two separable target events."
+    },
+    {
+      "blind_id": "HEV2-01FD8E1772BE",
+      "tasks": [
+        "two_event"
+      ],
+      "media_path": "media/HEV2-01FD8E1772BE.mp4",
+      "fps": 25.0,
+      "duration_s": 8.04,
+      "target_prompt": "Assess whether this clip contains two separable target events."
+    },
+    {
+      "blind_id": "HEV2-11B9CAE179D5",
+      "tasks": [
+        "two_event"
+      ],
+      "media_path": "media/HEV2-11B9CAE179D5.mp4",
+      "fps": 29.97002997002997,
+      "duration_s": 10.043,
+      "target_prompt": "Assess whether this clip contains two separable target events."
+    },
+    {
+      "blind_id": "HEV2-471D9B318687",
+      "tasks": [
+        "two_event"
+      ],
+      "media_path": "media/HEV2-471D9B318687.mp4",
+      "fps": 29.97002997002997,
+      "duration_s": 10.043,
+      "target_prompt": "Assess whether this clip contains two separable target events."
+    },
+    {
+      "blind_id": "HEV2-349C7BE2454A",
+      "tasks": [
+        "two_event"
+      ],
+      "media_path": "media/HEV2-349C7BE2454A.mp4",
+      "fps": 29.97002997002997,
+      "duration_s": 9.042,
+      "target_prompt": "Assess whether this clip contains two separable target events."
+    },
+    {
+      "blind_id": "HEV2-A3AE97054BEA",
+      "tasks": [
+        "two_event"
+      ],
+      "media_path": "media/HEV2-A3AE97054BEA.mp4",
+      "fps": 25.0,
+      "duration_s": 10.04,
+      "target_prompt": "Assess whether this clip contains two separable target events."
+    },
+    {
+      "blind_id": "HEV2-F9E54CD85675",
+      "tasks": [
+        "two_event"
+      ],
+      "media_path": "media/HEV2-F9E54CD85675.mp4",
+      "fps": 25.0,
+      "duration_s": 10.04,
+      "target_prompt": "Assess whether this clip contains two separable target events."
+    },
+    {
+      "blind_id": "HEV2-EE1EB1AFCAD2",
+      "tasks": [
+        "two_event"
+      ],
+      "media_path": "media/HEV2-EE1EB1AFCAD2.mp4",
+      "fps": 23.976023976023978,
+      "duration_s": 9.05,
+      "target_prompt": "Assess whether this clip contains two separable target events."
+    },
+    {
+      "blind_id": "HEV2-6A40688CDFBF",
+      "tasks": [
+        "two_event"
+      ],
+      "media_path": "media/HEV2-6A40688CDFBF.mp4",
+      "fps": 24.0,
+      "duration_s": 10.041016,
+      "target_prompt": "Assess whether this clip contains two separable target events."
+    },
+    {
+      "blind_id": "HEV2-0CE60718C853",
+      "tasks": [
+        "two_event"
+      ],
+      "media_path": "media/HEV2-0CE60718C853.mp4",
+      "fps": 29.97,
+      "duration_s": 10.01001,
+      "target_prompt": "Assess whether this clip contains two separable target events."
+    },
+    {
+      "blind_id": "HEV2-B4A4461158F5",
+      "tasks": [
+        "two_event"
+      ],
+      "media_path": "media/HEV2-B4A4461158F5.mp4",
+      "fps": 29.97002997002997,
+      "duration_s": 10.043,
+      "target_prompt": "Assess whether this clip contains two separable target events."
+    },
+    {
+      "blind_id": "HEV2-7B8CA2F99EC2",
+      "tasks": [
+        "two_event"
+      ],
+      "media_path": "media/HEV2-7B8CA2F99EC2.mp4",
+      "fps": 29.97002997002997,
+      "duration_s": 10.01,
+      "target_prompt": "Assess whether this clip contains two separable target events."
+    },
+    {
+      "blind_id": "HEV2-AA5F3C51286F",
+      "tasks": [
+        "two_event"
+      ],
+      "media_path": "media/HEV2-AA5F3C51286F.mp4",
+      "fps": 30.0,
+      "duration_s": 8.0,
+      "target_prompt": "Assess whether this clip contains two separable target events."
+    },
+    {
+      "blind_id": "HEV2-8892044C3202",
+      "tasks": [
+        "two_event"
+      ],
+      "media_path": "media/HEV2-8892044C3202.mp4",
+      "fps": 30.0,
+      "duration_s": 8.0,
+      "target_prompt": "Assess whether this clip contains two separable target events."
+    },
+    {
+      "blind_id": "HEV2-633500956ABC",
+      "tasks": [
+        "two_event"
+      ],
+      "media_path": "media/HEV2-633500956ABC.mp4",
+      "fps": 29.97002997002997,
+      "duration_s": 8.041,
+      "target_prompt": "Assess whether this clip contains two separable target events."
+    },
+    {
+      "blind_id": "HEV2-C39DA1014A8B",
+      "tasks": [
+        "two_event"
+      ],
+      "media_path": "media/HEV2-C39DA1014A8B.mp4",
+      "fps": 25.0,
+      "duration_s": 10.04,
+      "target_prompt": "Assess whether this clip contains two separable target events."
+    },
+    {
+      "blind_id": "HEV2-55C398408CC6",
+      "tasks": [
+        "two_event"
+      ],
+      "media_path": "media/HEV2-55C398408CC6.mp4",
+      "fps": 23.976023976023978,
+      "duration_s": 8.049,
+      "target_prompt": "Assess whether this clip contains two separable target events."
+    },
+    {
+      "blind_id": "HEV2-4189EF7E68BE",
+      "tasks": [
+        "two_event"
+      ],
+      "media_path": "media/HEV2-4189EF7E68BE.mp4",
+      "fps": 29.97002997002997,
+      "duration_s": 10.043,
+      "target_prompt": "Assess whether this clip contains two separable target events."
+    },
+    {
+      "blind_id": "HEV2-60CFBC145034",
+      "tasks": [
+        "two_event"
+      ],
+      "media_path": "media/HEV2-60CFBC145034.mp4",
+      "fps": 29.97,
+      "duration_s": 8.008008,
+      "target_prompt": "Assess whether this clip contains two separable target events."
+    },
+    {
+      "blind_id": "HEV2-FAC3175457C5",
+      "tasks": [
+        "two_event"
+      ],
+      "media_path": "media/HEV2-FAC3175457C5.mp4",
+      "fps": 30.0,
+      "duration_s": 8.0,
+      "target_prompt": "Assess whether this clip contains two separable target events."
+    },
+    {
+      "blind_id": "HEV2-13762E023CB5",
+      "tasks": [
+        "two_event"
+      ],
+      "media_path": "media/HEV2-13762E023CB5.mp4",
+      "fps": 29.97002997002997,
+      "duration_s": 9.009,
+      "target_prompt": "Assess whether this clip contains two separable target events."
+    },
+    {
+      "blind_id": "HEV2-F8B1E66ED1D1",
+      "tasks": [
+        "two_event"
+      ],
+      "media_path": "media/HEV2-F8B1E66ED1D1.mp4",
+      "fps": 24.0,
+      "duration_s": 8.041016,
+      "target_prompt": "Assess whether this clip contains two separable target events."
+    },
+    {
+      "blind_id": "HEV2-D30EA9405205",
+      "tasks": [
+        "two_event"
+      ],
+      "media_path": "media/HEV2-D30EA9405205.mp4",
+      "fps": 25.0,
+      "duration_s": 10.04,
+      "target_prompt": "Assess whether this clip contains two separable target events."
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+[
+  {
+    "id": "CALIBRATION_SLICE_NOT_MATERIALIZED",
+    "status": "INCOMPLETE_ARTIFACTS",
+    "evidence_files": {
+      "results/axis_spec_v2/COHORT_AND_GOAL2_COMPUTE_PLAN.md": "1f2ff955654cecceb1f1a7453ceed93589db1815ce4974bd5d03872f144a2118",
+      "data/manifests/two_event_manifest.json": "9331f384e51c6cdfbb559e5c11e24ceb5ab9cf464c4636825247fe5fddf28ea0"
+    },
+    "evidence": "COHORT_AND_GOAL2_COMPUTE_PLAN.md defines a proposed 120-group design quota and explicitly says it is not a frozen sample size; no admitted clear/weak/absent/silent/unrelated-background development manifest exists on axis-spec-v2-goal1.",
+    "impact": "The 30 anchor candidates and 60 two-event candidates are curation pools, not the complete v2 calibration slice. The embedded manifest is locked and must not be rated as calibration evidence.",
+    "resolution": "After PI freeze, commit the admitted development manifest with all five approved strata and source-group exclusions, then rebuild and re-hash the blinded package without reading any measurer outcome."
+  },
+  {
+    "id": "STABLE_TARGET_EVENTS_NOT_ADJUDICATED",
+    "status": "INCOMPLETE_ARTIFACTS",
+    "evidence_files": {
+      "data/manifests/anchor_check_30.csv": "5939334f09f4c532cc15e28e32e5cb2ba7865574ab17edeeac30e76e5d0cff69"
+    },
+    "evidence": "The named 30-clip anchor manifest has no stable event IDs/descriptions or recoverable human intervals; ten candidates are multi-source and the historical aggregate does not identify its three no-event rows.",
+    "impact": "Generic rater-selected events cannot be pooled as agreement on one specified visible event. The Presence screen is implemented but current candidate rows cannot support Presence AC1.",
+    "resolution": "Run the signed blinded anchor-curation pass, adjudicate one stable event ID and description per admitted Presence item, and rebuild an authorized Presence manifest before collecting Presence ratings."
+  }
+]

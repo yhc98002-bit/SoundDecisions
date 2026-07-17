@@ -1,0 +1,44 @@
+{
+  "schema_version": "sounddecisions-human-eval-v2-1.0",
+  "instrument_version": "human-eval-pack-1.0",
+  "manifest_id": "known-answer-fixture",
+  "manifest_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "rater_id": "fixture-a",
+  "started_at": "2026-07-17T00:00:00Z",
+  "exported_at": "2026-07-17T00:10:00Z",
+  "item_order": ["HEV2-000000000001", "HEV2-000000000002", "HEV2-000000000003", "HEV2-000000000004"],
+  "ratings": [
+    {
+      "blind_id": "HEV2-000000000001",
+      "tasks": ["anchor_presence"],
+      "completed": true,
+      "anchor": {"status": "marked", "start_s": 0.0, "end_s": 1.0, "event_description": "first event"},
+      "presence": {"verdict": "target_present", "unrelated_background": false, "note": ""},
+      "pair_curation": null
+    },
+    {
+      "blind_id": "HEV2-000000000002",
+      "tasks": ["anchor_presence"],
+      "completed": true,
+      "anchor": {"status": "marked", "start_s": 2.0, "end_s": 3.0, "event_description": "second event"},
+      "presence": {"verdict": "target_present", "unrelated_background": false, "note": ""},
+      "pair_curation": null
+    },
+    {
+      "blind_id": "HEV2-000000000003",
+      "tasks": ["anchor_presence"],
+      "completed": true,
+      "anchor": {"status": "marked", "start_s": 4.0, "end_s": 5.0, "event_description": "third event"},
+      "presence": {"verdict": "absent", "unrelated_background": false, "note": ""},
+      "pair_curation": null
+    },
+    {
+      "blind_id": "HEV2-000000000004",
+      "tasks": ["anchor_presence"],
+      "completed": true,
+      "anchor": {"status": "marked", "start_s": 6.0, "end_s": 7.0, "event_description": "fourth event"},
+      "presence": {"verdict": "absent", "unrelated_background": false, "note": ""},
+      "pair_curation": null
+    }
+  ]
+}

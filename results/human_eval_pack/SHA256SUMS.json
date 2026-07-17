@@ -1,0 +1,10 @@
+{
+  "unblinding_map.sealed.json": "ebdba8ad3d4d4b266394b183ec4da9b83a134c1d48a1fe8aa41ae0a7d447c4c5",
+  "blinded_items.json": "892097cc63aba36b07f8cb2779f741a8b4b48db9f97a0a1fe42700b6cb0f09b3",
+  "ratings.schema.json": "7cfab18ef4328c4d88d1b8bf1576402f88d3820d49006c5ce7bd93c02e926099",
+  "blinded_items.schema.json": "f5e8d6eed97e390eecc986b9fe0be6c0e3b4337d6b3719fb89428d814b7973e5",
+  "rate.html": "e4f1bc292012310ffafe4ba7a75f85a777b8d9ffc28eec862ea9d64bd02d2673",
+  "INSTRUCTIONS.md": "cc7561dd1af3bdc6f007b140c264e7ac78cd8ec7b07827c820e6a9093b087127",
+  "score_ac1.py": "f8c0c2f4886cb25286d64aa11f8987332ddd97fec4a8d456f2ec09d6e35a9458",
+  "build_pack.py": "46966708f28096df108ac4762ecd2f9bec17d0cbd769bdb293316ed838b4b323"
+}

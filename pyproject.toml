@@ -10,7 +10,7 @@ requires-python = ">=3.10"
 dependencies = ["numpy>=1.24", "scipy>=1.10"]
 
 [project.optional-dependencies]
-dev = ["pytest>=7.0"]
+dev = ["pytest>=7.0", "jsonschema>=4.18"]
 
 [tool.setuptools]
 packages = ["foley_cw", "foley_cw.cli"]
