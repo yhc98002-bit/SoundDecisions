@@ -242,3 +242,15 @@ def test_assignment_is_deterministic_and_disjoint():
     flattened = [(row["video_id"], row["base_seed"]) for shard in shards for row in shard]
     assert len(flattened) == len(set(flattened)) == len(bases)
     assert recollect.assigned_bases(bases, 2, 4) == shards[2]
+
+
+def test_parallel_merge_validation_preserves_input_order(monkeypatch):
+    paths = [Path("shard-7"), Path("shard-2"), Path("shard-5")]
+
+    def fake_validate(path, *, deep):
+        assert deep is False
+        return ({"path": path.name}, [])
+
+    monkeypatch.setattr(recollect, "validate_feature_shard", fake_validate)
+    validated = recollect._validate_feature_shards_for_merge(paths)
+    assert [item[0]["path"] for item in validated] == [path.name for path in paths]

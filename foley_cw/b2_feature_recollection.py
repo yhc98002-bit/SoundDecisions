@@ -18,6 +18,7 @@ import subprocess
 import sys
 import time
 import zlib
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from typing import Any, Mapping, Sequence
 
@@ -743,10 +744,28 @@ def validate_feature_shard(
     return completion, manifests
 
 
+def _validate_feature_shards_for_merge(
+    completion_paths: Sequence[Path],
+) -> list[tuple[dict[str, Any], list[dict[str, Any]]]]:
+    """Validate immutable shards concurrently while preserving input order."""
+
+    worker_count = min(8, len(completion_paths))
+    with ThreadPoolExecutor(max_workers=worker_count) as executor:
+        return list(
+            executor.map(
+                lambda path: validate_feature_shard(path, deep=False),
+                completion_paths,
+            )
+        )
+
+
 def merge_feature_shards(completion_paths: Sequence[Path], out_dir: Path) -> Path:
     if not completion_paths:
         raise FeatureRecollectionError("no feature shard completions supplied")
-    validated = [validate_feature_shard(path, deep=False) for path in completion_paths]
+    # Shards are immutable and disjoint, so their read-only validation can run
+    # concurrently.  ``Executor.map`` preserves input order, keeping all
+    # downstream merge ordering and hashes identical to the serial reducer.
+    validated = _validate_feature_shards_for_merge(completion_paths)
     counts = {int(item[0]["shard_count"]) for item in validated}
     if len(counts) != 1:
         raise FeatureRecollectionError("feature shards use inconsistent shard counts")
