@@ -1,0 +1,96 @@
+{
+  "schema": "sounddecisions.class_internal_readout_implementation.v1",
+  "status": "FROZEN_BEFORE_B2_FEATURE_RECOLLECTION",
+  "parent_protocol": "PROTOCOL.json",
+  "parent_protocol_sha256": "5c4fc4025995c16e355feb8cc02fbb3627891d47f6df052becde4845eaa7bd09",
+  "scope": "exploratory Class continuity readout only; not event-centered Axis Specification v2 confirmation",
+  "targets": {
+    "primary": "unique confident fork-majority Class at the current B2 state; at least two confident forks; ties or insufficient support are missing",
+    "secondary": "confident deterministic B2 base-final Class, evaluated separately at every state"
+  },
+  "folds": {
+    "group": "video_id",
+    "outer_folds": 6,
+    "inner_folds": 4,
+    "ordering": "ascending SHA256('non-human-readout-v1:'+video_id)",
+    "assignment": "round-robin after ordering; inner folds reapply the same ordering to the current outer-training videos",
+    "all_seeds_and_progress_from_one_video_remain_together": true
+  },
+  "preprocessing": {
+    "fit_standardization_on_training_rows_only": true,
+    "constant_scale_replacement": 1.0,
+    "maximum_vector_width": 256,
+    "wide_vector_projection": "fixed outcome-independent Gaussian projection with seed SHA256('non-human-readout-v1:projection:'+view_name), entries N(0,1/sqrt(256)), float32",
+    "projection_is_identical_across_targets_progress_and_folds": true,
+    "class_weighting": "inverse training-class frequency normalized to mean one",
+    "missing_targets_are_excluded_not_imputed": true
+  },
+  "linear_probe": {
+    "model": "class-weighted ridge least-squares classifier with intercept",
+    "regularization_grid": [0.01, 0.1, 1.0],
+    "probabilities": "stable softmax of held-out ridge scores; no post-hoc calibration",
+    "tie_break": "larger regularization"
+  },
+  "mlp_probe": {
+    "input": "the same fixed projected pooled view",
+    "hidden_units": 64,
+    "activation": "relu",
+    "optimizer": "adam",
+    "learning_rate": 0.001,
+    "epochs": 120,
+    "batch_size": 64,
+    "early_stopping": false,
+    "weight_decay_grid": [0.0001, 0.001],
+    "tie_break": "larger weight decay"
+  },
+  "single_query_attention_probe": {
+    "input": "last conditional post-block token tensor",
+    "token_width_projection": "fixed outcome-independent Gaussian projection to 32 channels using SHA256('non-human-readout-v1:projection:attention_tokens')",
+    "trainable_parameters": "one 32-channel query and one linear multiclass head",
+    "attention": "softmax token dot query divided by sqrt(32), followed by weighted token pooling",
+    "optimizer": "adam",
+    "learning_rate": 0.01,
+    "epochs": 40,
+    "full_batch": true,
+    "early_stopping": false,
+    "weight_decay_grid": [0.0001, 0.001],
+    "tie_break": "larger weight decay"
+  },
+  "selection": {
+    "metric": "mean inner-fold balanced accuracy from candidate-level predictions",
+    "architecture_is_fixed_across_progress": true,
+    "independent_architecture_search_by_progress": false,
+    "ties": "lower capacity then stronger regularization"
+  },
+  "metrics": {
+    "balanced_accuracy": "macro recall over classes present in the evaluated target rows",
+    "per_class_recall": true,
+    "majority_margin": "balanced accuracy minus the paired majority/null balanced accuracy",
+    "expected_calibration_error": "10 equal-width confidence bins",
+    "selective_confidence_threshold": 0.5,
+    "coverage": "fraction with maximum predicted probability at least 0.5",
+    "abstention": "one minus coverage"
+  },
+  "uncertainty": {
+    "bootstrap_unit": "video_id",
+    "draws": 5000,
+    "seed": 20260717,
+    "interval": [0.025, 0.975],
+    "paired_differences": ["probe-minus-majority", "probe-minus-conditioning", "internal-minus-external_preview"]
+  },
+  "readout_points": {
+    "information": "earliest progress where the paired video-bootstrap lower 95% bounds are above zero versus both majority/null and conditioning-only",
+    "action": {
+      "balanced_accuracy_gte": 0.7,
+      "expected_calibration_error_lte": 0.1,
+      "coverage_gte": 0.8
+    }
+  },
+  "scientific_safeguards": {
+    "outer_predictions_only_in_reported_metrics": true,
+    "primary_and_secondary_targets_never_merged": true,
+    "feature_family_fixed_before_full_recollection": true,
+    "no_B2_outcome_tuning": true,
+    "candidate_level_predictions_persisted": true
+  }
+}
