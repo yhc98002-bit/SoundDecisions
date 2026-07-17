@@ -17,6 +17,8 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from foley_cw.b2_class_closure import (  # noqa: E402
+    DEFAULT_BOOTSTRAP_DRAWS,
+    DEFAULT_BOOTSTRAP_SEED,
     PannsBatchPredictor,
     SENSITIVITY_THRESHOLDS,
     load_merged_posteriors,
@@ -26,6 +28,7 @@ from foley_cw.b2_class_closure import (  # noqa: E402
     runtime_provenance,
     sha256_file,
     validate_shard_completion,
+    validate_class_protocol,
     write_inventory,
     write_multiseed_analysis,
 )
@@ -65,11 +68,18 @@ def build_parser() -> argparse.ArgumentParser:
 
     measure = subparsers.add_parser("measure", help="measure one immutable inventory shard")
     measure.add_argument("--inventory-manifest", type=Path, required=True)
+    measure.add_argument("--protocol", type=Path, required=True)
     measure.add_argument("--out-dir", type=Path, required=True)
     measure.add_argument("--shard", required=True, help="zero-based INDEX/COUNT")
     measure.add_argument("--device", default="cuda:0")
     measure.add_argument("--batch-size", type=int, default=8)
     measure.add_argument("--checkpoint", type=Path, required=True)
+    measure.add_argument("--abstain-delta", type=float, default=0.05)
+    measure.add_argument(
+        "--noncanonical",
+        action="store_true",
+        help="explicit synthetic-test mode; canonical pinned-asset checks are disabled",
+    )
     measure.add_argument(
         "--coarse-map", type=Path, default=ROOT / "configs" / "coarse_class_map.json"
     )
@@ -90,17 +100,27 @@ def build_parser() -> argparse.ArgumentParser:
 
     analyze = subparsers.add_parser("analyze", help="multi-seed continuity analysis")
     analyze.add_argument("--merged-completion", type=Path, required=True)
+    analyze.add_argument("--protocol", type=Path, required=True)
     analyze.add_argument("--out-dir", type=Path, required=True)
     analyze.add_argument(
         "--thresholds",
         type=_thresholds,
         default=SENSITIVITY_THRESHOLDS,
-        help="predeclared increasing threshold grid (default: 0.60,...,0.80)",
+        help="predeclared increasing threshold grid (default: 0.50,...,0.90)",
     )
-    analyze.add_argument("--video-bootstrap-draws", type=int, default=2000)
-    analyze.add_argument("--fork-bootstrap-draws", type=int, default=200)
-    analyze.add_argument("--bootstrap-seed", type=int, default=0)
+    analyze.add_argument(
+        "--video-bootstrap-draws", type=int, default=DEFAULT_BOOTSTRAP_DRAWS
+    )
+    analyze.add_argument(
+        "--fork-bootstrap-draws", type=int, default=DEFAULT_BOOTSTRAP_DRAWS
+    )
+    analyze.add_argument("--bootstrap-seed", type=int, default=DEFAULT_BOOTSTRAP_SEED)
     analyze.add_argument("--historical-json", type=Path, action="append", default=[])
+    analyze.add_argument(
+        "--noncanonical",
+        action="store_true",
+        help="explicit synthetic-test mode; production cardinality/provenance gates are disabled",
+    )
     return parser
 
 
@@ -115,6 +135,15 @@ def main(argv: list[str] | None = None) -> int:
         )
     elif args.command == "measure":
         shard_index, shard_count = parse_shard(args.shard)
+        # This hash/pin gate deliberately precedes PANNs construction and any
+        # output creation.
+        validate_class_protocol(
+            args.protocol,
+            checkpoint_path=args.checkpoint,
+            coarse_map_path=args.coarse_map,
+            abstain_delta=args.abstain_delta,
+            canonical=not args.noncanonical,
+        )
         predictor = PannsBatchPredictor(args.checkpoint, args.device)
         provenance = runtime_provenance(ROOT, command=sys.argv, device=args.device)
         provenance.update(
@@ -134,6 +163,8 @@ def main(argv: list[str] | None = None) -> int:
         result = measure_inventory_shard(
             args.inventory_manifest,
             args.out_dir,
+            protocol_path=args.protocol,
+            canonical=not args.noncanonical,
             shard_index=shard_index,
             shard_count=shard_count,
             coarse_map_path=args.coarse_map,
@@ -142,6 +173,7 @@ def main(argv: list[str] | None = None) -> int:
             tagger_revision=predictor.revision,
             tagger_checkpoint_sha256=predictor.checkpoint_sha256,
             measurer_revision=provenance["git_commit"],
+            abstain_delta=args.abstain_delta,
             provenance=provenance,
         )
     elif args.command == "validate-shard":
@@ -174,6 +206,8 @@ def main(argv: list[str] | None = None) -> int:
         result = write_multiseed_analysis(
             args.merged_completion,
             args.out_dir,
+            protocol_path=args.protocol,
+            canonical=not args.noncanonical,
             thresholds=args.thresholds,
             n_video_boot=args.video_bootstrap_draws,
             n_fork_boot=args.fork_bootstrap_draws,

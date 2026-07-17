@@ -33,7 +33,7 @@ from typing import Any, Callable, Iterable, Mapping, Sequence
 
 import numpy as np
 
-from .agreement import categorical_agreement, confident_agreement
+from .agreement import confident_agreement
 from .real_measurer import ABSTAIN, CLASS_ABSTAIN_DELTA, load_coarse_map
 from .types import AgreementMetric
 
@@ -42,7 +42,9 @@ INVENTORY_SCHEMA = "sounddecisions.b2_inventory.v1"
 POSTERIOR_SCHEMA = "sounddecisions.b2_class_posterior.v1"
 MERGE_SCHEMA = "sounddecisions.b2_class_posterior_merge.v1"
 ANALYSIS_SCHEMA = "sounddecisions.b2_class_multiseed.v1"
+PROTOCOL_SCHEMA = "sounddecisions_non_human_closure_protocol_v1"
 ABSTENTION_RULE_ID = "legacy_event_top1_cross_group_margin_delta_0.05_v1"
+COARSE_SCORE_SUMS_RULE_ID = "group_sum_all_527_sigmoid_outputs_v1"
 COARSE_POSTERIOR_RULE_ID = "normalized_group_sum_all_527_v1"
 EXPECTED_S_GRID = (0.05, 0.15, 0.25, 0.35, 0.45, 0.60, 0.75, 0.90)
 EXPECTED_SEEDS = tuple(range(17))
@@ -55,7 +57,55 @@ EXPECTED_SEED_SERIES = (
 EXPECTED_N_CLIPS = 48
 EXPECTED_K_FORKS = 12
 EXPECTED_527 = 527
-SENSITIVITY_THRESHOLDS = (0.60, 0.65, 0.70, 0.75, 0.80)
+SENSITIVITY_THRESHOLDS = (0.50, 0.60, 0.70, 0.80, 0.90)
+DEFAULT_BOOTSTRAP_DRAWS = 5000
+DEFAULT_BOOTSTRAP_SEED = 20260717
+VIDEO_DETERMINED_MIN = 0.90
+PINNED_CHECKPOINT_SHA256 = (
+    "e2ee543a27919542c2ea03eabaa70b24dcd4e6c8e05621de6b67a94e4c5058e6"
+)
+PINNED_PROTOCOL_SHA256 = (
+    "5c4fc4025995c16e355feb8cc02fbb3627891d47f6df052becde4845eaa7bd09"
+)
+PINNED_COARSE_MAP_SHA256 = (
+    "55b5a1d4116caa4503a6b4b17192425da487a9c4385a287e343d850795be4fe7"
+)
+PINNED_HISTORICAL_COMPARATOR_SHA256 = (
+    "4d191b1c53ce21c4e9b68b9c36e385b0fc7ea2edd607fc528e2e034047773bc0"
+)
+PINNED_HISTORICAL_S_COMMIT = 0.34593023255813954
+EXPECTED_GENERATION_MANIFEST_SHA256 = frozenset(
+    {
+        "5c3a334ecfcfb3e91504354c14c8e8dbae71b3bade088b21bec26fb06fd68ed3",
+        "b6e176949f531528ccb669759d2057fa0b1b1a14567633d3dd6a2d47e0a8a9e4",
+        "72bcd677376b1ca44278d7cb6e9ea61910cc07f06fc135b239cdbb54aa4ee6ee",
+        "ae3dfb2e0022043206d8d4fcf748a3ce68ba1a3898af560ff3e059ba217e3c51",
+    }
+)
+EXPECTED_GENERATION_REVISIONS = frozenset(
+    {
+        "dbd40d94d4867a53bdaad6d2524f4534817fddbf",
+        "dd7fdc006fe1f5b3baca4024854d37d533606f74",
+        "6ec5c0dbdfb2b45ca8a27d2a193015d97607d8db",
+        "07718809024a674bb938684e6cfdc520026d3122",
+    }
+)
+ALLOWED_SCIENTIFIC_STATUSES = frozenset(
+    {
+        "SUPPORTED_EXPLORATORILY",
+        "NOT_SUPPORTED",
+        "UNRESOLVED",
+        "NOT_TESTED",
+        "ENGINEERING_FAILURE",
+        "INCOMPLETE_ARTIFACTS",
+    }
+)
+REPLICATION_LABELS = (
+    "stable_across_seeds",
+    "heterogeneous_but_directionally_consistent",
+    "strongly_seed_dependent",
+    "not_reproduced",
+)
 
 
 class B2ClosureError(RuntimeError):
@@ -164,6 +214,85 @@ def _load_json(path: Path) -> dict[str, Any]:
     if not isinstance(value, dict):
         raise B2ClosureError(f"expected JSON object: {path}")
     return value
+
+
+def validate_class_protocol(
+    protocol_path: Path,
+    *,
+    checkpoint_path: Path | None = None,
+    coarse_map_path: Path | None = None,
+    abstain_delta: float = CLASS_ABSTAIN_DELTA,
+    canonical: bool,
+) -> dict[str, Any]:
+    """Validate the outcome-independent closure protocol and pinned assets.
+
+    Canonical callers invoke this before constructing a model or output file.
+    Noncanonical use is an explicit synthetic-test path and still records a
+    supplied protocol hash when one is provided.
+    """
+    path = Path(protocol_path)
+    protocol = _load_json(path)
+    digest = sha256_file(path)
+    if not canonical:
+        return {"path": str(path.resolve()), "sha256": digest, "payload": protocol}
+    if protocol.get("schema") != PROTOCOL_SCHEMA:
+        raise B2ClosureError(f"unexpected closure protocol schema: {protocol.get('schema')!r}")
+    if digest != PINNED_PROTOCOL_SHA256:
+        raise B2ClosureError("canonical closure protocol hash does not match the frozen Git artifact")
+    if protocol.get("status") != "EXPLORATORY_CONTINUITY":
+        raise B2ClosureError("canonical Class measurement requires exploratory continuity protocol")
+    freeze = protocol.get("outcome_freeze", {})
+    if freeze.get("b2_posteriors_inspected") is not False:
+        raise B2ClosureError("protocol is not outcome-blind for B2 posteriors")
+    config = protocol.get("class_measurement", {})
+    expected = {
+        "checkpoint_sha256": PINNED_CHECKPOINT_SHA256,
+        "coarse_map_path": "configs/coarse_class_map.json",
+        "coarse_map_sha256": PINNED_COARSE_MAP_SHA256,
+        "decision_rule": "legacy_event_restricted_top1_then_map_cross_group_margin",
+        "abstain_delta": CLASS_ABSTAIN_DELTA,
+        "full_posterior_dimension": EXPECTED_527,
+        "unscorable_if_confident_lt": 2,
+        "theta_commit": 0.7,
+        "video_determined_if_baseline_gte": VIDEO_DETERMINED_MIN,
+        "sensitivity_thresholds": list(SENSITIVITY_THRESHOLDS),
+        "progress": list(EXPECTED_S_GRID),
+    }
+    for key, value in expected.items():
+        if config.get(key) != value:
+            raise B2ClosureError(
+                f"canonical protocol Class field {key}={config.get(key)!r}; expected {value!r}"
+            )
+    bootstrap = config.get("bootstrap", {})
+    if (
+        bootstrap.get("unit") != "video"
+        or int(bootstrap.get("draws", -1)) != DEFAULT_BOOTSTRAP_DRAWS
+        or int(bootstrap.get("seed", -1)) != DEFAULT_BOOTSTRAP_SEED
+        or bootstrap.get("interval") != [0.025, 0.975]
+    ):
+        raise B2ClosureError("canonical protocol bootstrap settings are not pinned")
+    labels = config.get("exploratory_replication_labels", {})
+    if tuple(labels) != REPLICATION_LABELS:
+        raise B2ClosureError("canonical protocol replication labels/order changed")
+    comparator = config.get("historical_comparators", {})
+    if not math.isclose(
+        float(comparator.get("canonical_cfg1_confident_s_commit", float("nan"))),
+        PINNED_HISTORICAL_S_COMMIT,
+        abs_tol=1e-15,
+        rel_tol=0.0,
+    ):
+        raise B2ClosureError("canonical historical Class comparator changed")
+    if not math.isclose(float(abstain_delta), CLASS_ABSTAIN_DELTA, abs_tol=0.0):
+        raise B2ClosureError("canonical measurement must use abstain delta 0.05")
+    if checkpoint_path is not None:
+        checkpoint = Path(checkpoint_path)
+        if not checkpoint.is_file() or sha256_file(checkpoint) != PINNED_CHECKPOINT_SHA256:
+            raise B2ClosureError("canonical measurement checkpoint is absent or has the wrong hash")
+    if coarse_map_path is not None:
+        coarse_map = Path(coarse_map_path)
+        if not coarse_map.is_file() or sha256_file(coarse_map) != PINNED_COARSE_MAP_SHA256:
+            raise B2ClosureError("canonical measurement coarse map is absent or has the wrong hash")
+    return {"path": str(path.resolve()), "sha256": digest, "payload": protocol}
 
 
 def _safe_resolve(root: Path, relative: str) -> Path:
@@ -701,9 +830,9 @@ def validate_coarse_map(coarse_map: Mapping[str, Any]) -> tuple[list[str], np.nd
     return names, lookup
 
 
-def derive_coarse_posterior(
+def derive_coarse_scores(
     probabilities: np.ndarray, coarse_map: Mapping[str, Any]
-) -> tuple[np.ndarray, list[str]]:
+) -> tuple[np.ndarray, np.ndarray, list[str]]:
     probs = np.asarray(probabilities, dtype=np.float32)
     if probs.ndim != 2 or probs.shape[1] != EXPECTED_527:
         raise B2ClosureError(f"expected posterior shape (N,527), got {probs.shape}")
@@ -719,7 +848,15 @@ def derive_coarse_posterior(
     coarse = (sums / totals).astype(np.float32)
     if not np.allclose(coarse.sum(axis=1), 1.0, atol=1e-6, rtol=0.0):
         raise B2ClosureError("coarse posterior does not conserve normalized mass")
-    return coarse, names
+    return sums.astype(np.float32), coarse, names
+
+
+def derive_coarse_posterior(
+    probabilities: np.ndarray, coarse_map: Mapping[str, Any]
+) -> tuple[np.ndarray, list[str]]:
+    """Backward-compatible normalized coarse posterior helper."""
+    _raw_sums, normalized, names = derive_coarse_scores(probabilities, coarse_map)
+    return normalized, names
 
 
 def class_diagnostics_batch(
@@ -821,6 +958,7 @@ def build_posterior_arrays(
     tagger_revision: str,
     tagger_checkpoint_sha256: str,
     measurer_revision: str,
+    protocol_sha256: str,
     abstain_delta: float = CLASS_ABSTAIN_DELTA,
 ) -> dict[str, np.ndarray]:
     probs = np.asarray(probabilities, dtype=np.float32)
@@ -828,7 +966,7 @@ def build_posterior_arrays(
         raise B2ClosureError(
             f"probability cardinality mismatch: {probs.shape} for {len(records)} records"
         )
-    coarse, coarse_names = derive_coarse_posterior(probs, coarse_map)
+    coarse_sums, coarse, coarse_names = derive_coarse_scores(probs, coarse_map)
     diagnostics = class_diagnostics_batch(
         probs, coarse_map, abstain_delta=abstain_delta
     )
@@ -868,16 +1006,19 @@ def build_posterior_arrays(
         "schedule": _unicode_array([row["schedule"] for row in records]),
         "sample_rate": np.asarray([row["sample_rate"] for row in records], dtype=np.int32),
         "clipwise_output_527": probs,
+        "coarse_score_sums": coarse_sums,
         "coarse_posterior": coarse,
         "coarse_class_names": _unicode_array(coarse_names),
         "coarse_map_sha256": _scalar_text(coarse_map_sha256),
         "coarse_map_revision": _scalar_text(str(coarse_map.get("version", ""))),
+        "coarse_score_sums_rule_id": _scalar_text(COARSE_SCORE_SUMS_RULE_ID),
         "coarse_posterior_rule_id": _scalar_text(COARSE_POSTERIOR_RULE_ID),
         "abstention_rule_id": _scalar_text(ABSTENTION_RULE_ID),
         "abstain_delta": np.asarray(float(abstain_delta), dtype=np.float32),
         "tagger_revision": _scalar_text(tagger_revision),
         "tagger_checkpoint_sha256": _scalar_text(tagger_checkpoint_sha256),
         "measurer_revision": _scalar_text(measurer_revision),
+        "protocol_sha256": _scalar_text(protocol_sha256),
         **diagnostics,
     }
     return arrays
@@ -963,6 +1104,8 @@ def measure_inventory_shard(
     inventory_manifest_path: Path,
     out_dir: Path,
     *,
+    protocol_path: Path,
+    canonical: bool,
     shard_index: int,
     shard_count: int,
     coarse_map_path: Path,
@@ -972,9 +1115,42 @@ def measure_inventory_shard(
     tagger_revision: str,
     tagger_checkpoint_sha256: str,
     measurer_revision: str,
+    abstain_delta: float = CLASS_ABSTAIN_DELTA,
     provenance: Mapping[str, Any] | None = None,
 ) -> dict[str, Any]:
+    protocol_info = validate_class_protocol(
+        protocol_path,
+        coarse_map_path=coarse_map_path,
+        abstain_delta=abstain_delta,
+        canonical=canonical,
+    )
     records, inventory = load_inventory(inventory_manifest_path)
+    if canonical:
+        if inventory.get("canonical_b2") is not True:
+            raise B2ClosureError("canonical measurement requires a canonical B2 inventory")
+        if (
+            int(inventory.get("record_count", -1)) != 79152
+            or int(inventory.get("base_record_count", -1)) != 816
+            or int(inventory.get("fork_record_count", -1)) != 78336
+            or inventory.get("base_seeds") != list(EXPECTED_SEEDS)
+            or inventory.get("progress_grid") != list(EXPECTED_S_GRID)
+            or int(inventory.get("k_forks", -1)) != EXPECTED_K_FORKS
+        ):
+            raise B2ClosureError("canonical B2 inventory cardinality/progress mismatch")
+        if tagger_checkpoint_sha256 != PINNED_CHECKPOINT_SHA256:
+            raise B2ClosureError("canonical measurement tagger checkpoint hash is not pinned")
+        required_provenance = {
+            "node",
+            "device",
+            "command",
+            "python_executable",
+            "python_version",
+            "numpy_version",
+            "torch_version",
+            "git_commit",
+        }
+        if not provenance or not required_provenance.issubset(provenance):
+            raise B2ClosureError("canonical measurement runtime provenance is incomplete")
     assigned = assigned_inventory_records(records, shard_index, shard_count)
     if not assigned:
         raise B2ClosureError(f"shard {shard_index}/{shard_count} has no assigned records")
@@ -1002,6 +1178,8 @@ def measure_inventory_shard(
         tagger_revision=tagger_revision,
         tagger_checkpoint_sha256=tagger_checkpoint_sha256,
         measurer_revision=measurer_revision,
+        protocol_sha256=protocol_info["sha256"],
+        abstain_delta=abstain_delta,
     )
     out_dir = Path(out_dir)
     stem = f"CLASS_POSTERIOR_SHARD_{shard_index:05d}_OF_{shard_count:05d}"
@@ -1021,6 +1199,9 @@ def measure_inventory_shard(
         "inventory_manifest": str(Path(inventory_manifest_path).resolve()),
         "inventory_manifest_sha256": sha256_file(inventory_manifest_path),
         "inventory_records_sha256": inventory["records_sha256"],
+        "canonical_b2": bool(canonical),
+        "protocol": protocol_info["path"],
+        "protocol_sha256": protocol_info["sha256"],
         "data_file": data_path.name,
         "data_sha256": sha256_file(data_path),
         "data_bytes": data_path.stat().st_size,
@@ -1028,9 +1209,10 @@ def measure_inventory_shard(
         "coarse_map": str(map_path.resolve()),
         "coarse_map_sha256": coarse_map_sha,
         "coarse_map_revision": str(coarse_map["version"]),
+        "coarse_score_sums_rule_id": COARSE_SCORE_SUMS_RULE_ID,
         "coarse_posterior_rule_id": COARSE_POSTERIOR_RULE_ID,
         "abstention_rule_id": ABSTENTION_RULE_ID,
-        "abstain_delta": CLASS_ABSTAIN_DELTA,
+        "abstain_delta": float(abstain_delta),
         "tagger_revision": tagger_revision,
         "tagger_checkpoint_sha256": tagger_checkpoint_sha256,
         "measurer_revision": measurer_revision,
@@ -1059,6 +1241,7 @@ RECORD_ARRAY_KEYS = (
     "schedule",
     "sample_rate",
     "clipwise_output_527",
+    "coarse_score_sums",
     "coarse_posterior",
     "top1_index",
     "cross_group_runner_index",
@@ -1075,12 +1258,14 @@ SCALAR_ARRAY_KEYS = (
     "schema_version",
     "coarse_map_sha256",
     "coarse_map_revision",
+    "coarse_score_sums_rule_id",
     "coarse_posterior_rule_id",
     "abstention_rule_id",
     "abstain_delta",
     "tagger_revision",
     "tagger_checkpoint_sha256",
     "measurer_revision",
+    "protocol_sha256",
 )
 
 
@@ -1104,8 +1289,29 @@ def validate_posterior_arrays(
             f"posterior array keys mismatch: missing={sorted(required-set(arrays))}, "
             f"extra={sorted(set(arrays)-required)}"
         )
+    for key in SCALAR_ARRAY_KEYS:
+        scalar = np.asarray(arrays[key])
+        if scalar.ndim != 0 or scalar.dtype.hasobject:
+            raise B2ClosureError(f"posterior provenance {key} must be a non-object scalar")
     if str(np.asarray(arrays["schema_version"]).item()) != POSTERIOR_SCHEMA:
         raise B2ClosureError("posterior bundle schema mismatch")
+    if str(np.asarray(arrays["coarse_posterior_rule_id"]).item()) != COARSE_POSTERIOR_RULE_ID:
+        raise B2ClosureError("posterior bundle coarse-posterior rule mismatch")
+    if str(np.asarray(arrays["coarse_score_sums_rule_id"]).item()) != COARSE_SCORE_SUMS_RULE_ID:
+        raise B2ClosureError("posterior bundle raw coarse-sum rule mismatch")
+    if str(np.asarray(arrays["abstention_rule_id"]).item()) != ABSTENTION_RULE_ID:
+        raise B2ClosureError("posterior bundle abstention rule mismatch")
+    for key in (
+        "coarse_map_sha256",
+        "tagger_checkpoint_sha256",
+        "protocol_sha256",
+    ):
+        digest = str(np.asarray(arrays[key]).item())
+        if len(digest) != 64 or any(character not in "0123456789abcdef" for character in digest):
+            raise B2ClosureError(f"posterior bundle has invalid {key}")
+    for key in ("coarse_map_revision", "tagger_revision", "measurer_revision"):
+        if not str(np.asarray(arrays[key]).item()):
+            raise B2ClosureError(f"posterior bundle has empty {key}")
     ids = np.asarray(arrays["record_id"])
     if ids.ndim != 1 or ids.dtype.kind != "U":
         raise B2ClosureError("record_id must be a one-dimensional Unicode array")
@@ -1119,26 +1325,51 @@ def validate_posterior_arrays(
         if value.dtype.hasobject:
             raise B2ClosureError(f"record array {key} has forbidden object dtype")
     probs = np.asarray(arrays["clipwise_output_527"])
+    coarse_sums = np.asarray(arrays["coarse_score_sums"])
     coarse = np.asarray(arrays["coarse_posterior"])
     names = np.asarray(arrays["coarse_class_names"])
+    if (
+        names.ndim != 1
+        or names.dtype.kind != "U"
+        or names.size == 0
+        or len(set(names.tolist())) != names.size
+    ):
+        raise B2ClosureError("coarse class names must be a unique nonempty Unicode vector")
     if probs.dtype != np.float32 or probs.shape != (n, EXPECTED_527):
         raise B2ClosureError(f"invalid full posterior schema: {probs.dtype} {probs.shape}")
+    if coarse_sums.dtype != np.float32 or coarse_sums.shape != (n, names.size):
+        raise B2ClosureError(f"invalid raw coarse-sum schema: {coarse_sums.dtype} {coarse_sums.shape}")
     if coarse.dtype != np.float32 or coarse.shape != (n, names.size):
         raise B2ClosureError(f"invalid coarse posterior schema: {coarse.dtype} {coarse.shape}")
     if not np.isfinite(probs).all() or np.any((probs < 0) | (probs > 1)):
         raise B2ClosureError("full posterior contains invalid probabilities")
     if not np.isfinite(coarse).all() or np.any((coarse < 0) | (coarse > 1)):
         raise B2ClosureError("coarse posterior contains invalid probabilities")
+    if not np.isfinite(coarse_sums).all() or np.any(coarse_sums < 0):
+        raise B2ClosureError("raw coarse sums contain invalid scores")
+    if not np.allclose(
+        coarse_sums.sum(axis=1), probs.sum(axis=1), atol=5e-5, rtol=1e-7
+    ):
+        raise B2ClosureError("raw coarse sums do not conserve full-posterior score mass")
     if not np.allclose(coarse.sum(axis=1), 1.0, atol=1e-6, rtol=0.0):
         raise B2ClosureError("coarse posterior fails mass conservation")
+    normalized_sums = coarse_sums / coarse_sums.sum(axis=1, keepdims=True)
+    if not np.allclose(coarse, normalized_sums, atol=1e-7, rtol=0.0):
+        raise B2ClosureError("coarse posterior is not the normalized raw coarse-sum vector")
     if expected_ids is not None and ids.tolist() != list(expected_ids):
         raise B2ClosureError("posterior shard assignment does not match inventory")
     if coarse_map is not None:
-        expected_coarse, expected_names = derive_coarse_posterior(probs, coarse_map)
+        if str(np.asarray(arrays["coarse_map_revision"]).item()) != str(
+            coarse_map.get("version", "")
+        ):
+            raise B2ClosureError("stored coarse-map revision does not match the map")
+        expected_sums, expected_coarse, expected_names = derive_coarse_scores(probs, coarse_map)
         if names.tolist() != expected_names or not np.allclose(
+            coarse_sums, expected_sums, atol=1e-6, rtol=0.0
+        ) or not np.allclose(
             coarse, expected_coarse, atol=1e-7, rtol=0.0
         ):
-            raise B2ClosureError("coarse posterior does not match the frozen map")
+            raise B2ClosureError("raw/normalized coarse scores do not match the frozen map")
         expected_diag = class_diagnostics_batch(
             probs,
             coarse_map,
@@ -1161,6 +1392,51 @@ def validate_posterior_arrays(
         raise B2ClosureError("base records must have fork=-1 and progress=NaN")
     if np.any((role == "fork") & ((fork < 0) | ~np.isfinite(progress))):
         raise B2ClosureError("fork records require fork index and progress")
+
+
+def _scalar_item(arrays: Mapping[str, np.ndarray], key: str) -> Any:
+    value = np.asarray(arrays[key])
+    if value.ndim != 0:
+        raise B2ClosureError(f"posterior provenance {key} must be scalar")
+    return value.item()
+
+
+def _validate_completion_provenance(
+    completion: Mapping[str, Any], arrays: Mapping[str, np.ndarray]
+) -> None:
+    expected = {
+        "coarse_map_sha256": str(_scalar_item(arrays, "coarse_map_sha256")),
+        "coarse_map_revision": str(_scalar_item(arrays, "coarse_map_revision")),
+        "coarse_score_sums_rule_id": str(
+            _scalar_item(arrays, "coarse_score_sums_rule_id")
+        ),
+        "coarse_posterior_rule_id": str(
+            _scalar_item(arrays, "coarse_posterior_rule_id")
+        ),
+        "abstention_rule_id": str(_scalar_item(arrays, "abstention_rule_id")),
+        "tagger_revision": str(_scalar_item(arrays, "tagger_revision")),
+        "tagger_checkpoint_sha256": str(
+            _scalar_item(arrays, "tagger_checkpoint_sha256")
+        ),
+        "measurer_revision": str(_scalar_item(arrays, "measurer_revision")),
+        "protocol_sha256": str(_scalar_item(arrays, "protocol_sha256")),
+    }
+    for key, value in expected.items():
+        if completion.get(key) != value:
+            raise B2ClosureError(f"completion/NPZ provenance mismatch for {key}")
+    if not math.isclose(
+        float(completion.get("abstain_delta", float("nan"))),
+        float(_scalar_item(arrays, "abstain_delta")),
+        abs_tol=1e-8,
+        rel_tol=0.0,
+    ):
+        raise B2ClosureError("completion/NPZ provenance mismatch for abstain_delta")
+    for key in ("coarse_map_sha256", "tagger_checkpoint_sha256", "protocol_sha256"):
+        value = expected[key]
+        if len(value) != 64 or any(character not in "0123456789abcdef" for character in value):
+            raise B2ClosureError(f"invalid SHA256 provenance scalar {key}")
+    if int(completion.get("record_count", -1)) != int(np.asarray(arrays["record_id"]).size):
+        raise B2ClosureError("completion/NPZ record cardinality mismatch")
 
 
 def validate_shard_completion(
@@ -1201,6 +1477,12 @@ def validate_shard_completion(
     coarse_map = load_coarse_map(map_path)
     arrays = _load_npz(data_path)
     validate_posterior_arrays(arrays, expected_ids=expected_ids, coarse_map=coarse_map)
+    _validate_completion_provenance(completion, arrays)
+    protocol_path = Path(str(completion.get("protocol", "")))
+    if not protocol_path.is_file() or sha256_file(protocol_path) != completion.get(
+        "protocol_sha256"
+    ):
+        raise B2ClosureError("posterior shard protocol path/hash mismatch")
     if _array_schema(arrays) != completion.get("array_schema"):
         raise B2ClosureError("posterior shard array-schema manifest mismatch")
     return completion, arrays
@@ -1231,8 +1513,12 @@ def merge_posterior_shards(
         "inventory_manifest_sha256",
         "inventory_records_sha256",
         "batch_size",
+        "canonical_b2",
+        "protocol",
+        "protocol_sha256",
         "coarse_map_sha256",
         "coarse_map_revision",
+        "coarse_score_sums_rule_id",
         "coarse_posterior_rule_id",
         "abstention_rule_id",
         "abstain_delta",
@@ -1310,6 +1596,12 @@ def load_merged_posteriors(completion_path: Path) -> tuple[dict[str, np.ndarray]
         raise B2ClosureError("merged posterior hash mismatch")
     arrays = _load_npz(data_path)
     validate_posterior_arrays(arrays)
+    _validate_completion_provenance(completion, arrays)
+    protocol_path = Path(str(completion.get("protocol", "")))
+    if not protocol_path.is_file() or sha256_file(protocol_path) != completion.get(
+        "protocol_sha256"
+    ):
+        raise B2ClosureError("merged posterior protocol path/hash mismatch")
     if _array_schema(arrays) != completion.get("array_schema"):
         raise B2ClosureError("merged posterior array-schema mismatch")
     return arrays, completion
@@ -1337,7 +1629,7 @@ def _first_crossing(curve: Mapping[float, float], theta: float, *, sustained: bo
         if not math.isfinite(value) or value < theta:
             continue
         if sustained and any(
-            not math.isfinite(float(curve[later])) or float(curve[later]) < theta
+            math.isfinite(float(curve[later])) and float(curve[later]) < theta
             for later in grid[index + 1 :]
         ):
             continue
@@ -1347,7 +1639,7 @@ def _first_crossing(curve: Mapping[float, float], theta: float, *, sustained: bo
 
 def _majority_label(labels: Sequence[str]) -> tuple[str | None, float]:
     confident = [str(value) for value in labels if str(value) != ABSTAIN]
-    if not confident:
+    if len(confident) < 2:
         return None, float("nan")
     counts = Counter(confident)
     maximum = max(counts.values())
@@ -1408,7 +1700,9 @@ def build_commitment_cells(arrays: Mapping[str, np.ndarray]) -> tuple[list[dict[
                 "n_base_finals": len(indices),
                 "n_confident_base_finals": n_confident,
                 "base_abstention_rate": 1.0 - n_confident / len(indices),
-                "video_determined": bool(math.isfinite(agreement) and agreement >= 1.0 - 1e-9),
+                "video_determined": bool(
+                    math.isfinite(agreement) and agreement >= VIDEO_DETERMINED_MIN
+                ),
             }
         )
     cells: list[dict[str, Any]] = []
@@ -1519,43 +1813,56 @@ def summarize_thresholds(
     *,
     n_boot: int,
     seed: int,
-) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
+) -> tuple[list[dict[str, Any]], list[dict[str, Any]], list[dict[str, Any]]]:
     curves = _cell_curves(cells)
     baseline_by_video = {str(row["video_id"]): row for row in baselines}
     videos = sorted(baseline_by_video)
     seed_values = sorted({key[1] for key in curves})
     summaries: list[dict[str, Any]] = []
     video_rows: list[dict[str, Any]] = []
+    all_unit_rows: list[dict[str, Any]] = []
     rng = np.random.default_rng(seed)
     for threshold in thresholds:
         unit_rows: list[dict[str, Any]] = []
         for (video, base_seed), curve in sorted(curves.items()):
             determined = bool(baseline_by_video[video]["video_determined"])
+            n_scorable = sum(math.isfinite(float(value)) for value in curve.values())
             first = _first_crossing(curve, threshold, sustained=False)
             sustained = _first_crossing(curve, threshold, sustained=True)
-            status = "VIDEO_DETERMINED" if determined else (
-                "CROSSING" if first is not None else "NONCROSSING"
-            )
+            if determined:
+                status = "VIDEO_DETERMINED"
+            elif n_scorable == 0:
+                status = "UNSCORABLE"
+            elif first is not None:
+                status = "CROSSING"
+            else:
+                status = "NONCROSSING"
             unit_rows.append(
                 {
                     "video_id": video,
                     "base_seed": base_seed,
                     "theta_commit": float(threshold),
                     "status": status,
+                    "n_scorable_progress_points": n_scorable,
                     "first_crossing": first,
                     "sustained_crossing": sustained,
                 }
             )
-        eligible = [row for row in unit_rows if row["status"] != "VIDEO_DETERMINED"]
-        crossings = [float(row["first_crossing"]) for row in eligible if row["first_crossing"] is not None]
-        censored = [
-            float(row["first_crossing"]) if row["first_crossing"] is not None else 1.0
+        all_unit_rows.extend(unit_rows)
+        nondetermined = [
+            row for row in unit_rows if row["status"] != "VIDEO_DETERMINED"
+        ]
+        eligible = [row for row in nondetermined if row["status"] != "UNSCORABLE"]
+        crossings = [
+            float(row["first_crossing"])
             for row in eligible
+            if row["first_crossing"] is not None
         ]
         per_video_fraction = {
             video: _finite_mean(
-                1.0 if row["first_crossing"] is not None else 0.0
-                for row in eligible if row["video_id"] == video
+                1.0 if row["status"] == "CROSSING" else 0.0
+                for row in eligible
+                if row["video_id"] == video
             )
             for video in videos
             if not bool(baseline_by_video[video]["video_determined"])
@@ -1584,9 +1891,11 @@ def summarize_thresholds(
                     float(bool(row["video_determined"])) for row in baselines
                 ),
                 "n_video_seed_units": len(unit_rows),
-                "n_eligible_video_seed_units": len(eligible),
+                "n_nondetermined_video_seed_units": len(nondetermined),
+                "n_scorable_nondetermined_video_seed_units": len(eligible),
+                "n_unscorable": sum(row["status"] == "UNSCORABLE" for row in nondetermined),
                 "n_crossing": len(crossings),
-                "n_noncrossing": len(eligible) - len(crossings),
+                "n_noncrossing": sum(row["status"] == "NONCROSSING" for row in eligible),
                 "crossing_fraction": len(crossings) / len(eligible) if eligible else float("nan"),
                 "crossing_fraction_ci_low": cross_ci[0],
                 "crossing_fraction_ci_high": cross_ci[1],
@@ -1595,7 +1904,9 @@ def summarize_thresholds(
                 "noncrossing_fraction_ci_low": non_ci[0],
                 "noncrossing_fraction_ci_high": non_ci[1],
                 "mean_first_crossing_crossers": _finite_mean(crossings),
-                "censored_median": float(np.median(censored)) if censored else float("nan"),
+                "median_first_crossing_crossers": float(np.median(crossings))
+                if crossings else float("nan"),
+                "noncrossers_are_right_censored_without_numeric_imputation": True,
                 "n_sustained_crossing": sum(
                     row["sustained_crossing"] is not None for row in eligible
                 ),
@@ -1610,6 +1921,8 @@ def summarize_thresholds(
                 float(row["first_crossing"])
                 for row in selected if row["first_crossing"] is not None
             ]
+            unscorable_count = sum(row["status"] == "UNSCORABLE" for row in selected)
+            noncrossing_count = sum(row["status"] == "NONCROSSING" for row in selected)
             video_rows.append(
                 {
                     "video_id": video,
@@ -1624,8 +1937,10 @@ def summarize_thresholds(
                     "video_determined": bool(baseline_by_video[video]["video_determined"]),
                     "n_base_seeds": len(seed_values),
                     "n_crossing_seeds": len(crossing_values),
-                    "n_noncrossing_seeds": len(seed_values) - len(crossing_values),
-                    "crossing_seed_fraction": len(crossing_values) / len(seed_values),
+                    "n_noncrossing_seeds": noncrossing_count,
+                    "n_unscorable_seeds": unscorable_count,
+                    "crossing_seed_fraction_scorable": len(crossing_values)
+                    / max(len(crossing_values) + noncrossing_count, 1),
                     "mean_first_crossing": _finite_mean(crossing_values),
                     "median_first_crossing": float(np.median(crossing_values))
                     if crossing_values else float("nan"),
@@ -1634,7 +1949,121 @@ def summarize_thresholds(
                     ),
                 }
             )
-    return summaries, video_rows
+    return summaries, video_rows, all_unit_rows
+
+
+def pooled_and_seed_crossings(
+    cells: Sequence[Mapping[str, Any]],
+    thresholds: Sequence[float],
+    *,
+    n_boot: int,
+    seed: int,
+) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
+    progress_grid = sorted({float(row["progress"]) for row in cells})
+    videos = sorted({str(row["video_id"]) for row in cells})
+    seeds = sorted({int(row["base_seed"]) for row in cells})
+    pooled_curve = {
+        progress: _finite_mean(
+            float(row["commitment_gain"])
+            for row in cells
+            if float(row["progress"]) == progress
+        )
+        for progress in progress_grid
+    }
+    seed_curves = {
+        base_seed: {
+            progress: _finite_mean(
+                float(row["commitment_gain"])
+                for row in cells
+                if int(row["base_seed"]) == base_seed
+                and float(row["progress"]) == progress
+            )
+            for progress in progress_grid
+        }
+        for base_seed in seeds
+    }
+    per_video_curve = {
+        video: {
+            progress: _finite_mean(
+                float(row["commitment_gain"])
+                for row in cells
+                if str(row["video_id"]) == video
+                and float(row["progress"]) == progress
+            )
+            for progress in progress_grid
+        }
+        for video in videos
+    }
+    pooled_rows: list[dict[str, Any]] = []
+    seed_rows: list[dict[str, Any]] = []
+    rng = np.random.default_rng(seed)
+    for threshold in thresholds:
+        first = _first_crossing(pooled_curve, threshold, sustained=False)
+        sustained = _first_crossing(pooled_curve, threshold, sustained=True)
+        n_scorable = sum(math.isfinite(value) for value in pooled_curve.values())
+        bootstrap_first: list[float] = []
+        bootstrap_sustained: list[float] = []
+        n_boot_unscorable = 0
+        n_boot_noncrossing = 0
+        for _ in range(n_boot):
+            sampled = rng.integers(0, len(videos), size=len(videos))
+            curve = {
+                progress: _finite_mean(
+                    per_video_curve[videos[int(index)]][progress] for index in sampled
+                )
+                for progress in progress_grid
+            }
+            if not any(math.isfinite(value) for value in curve.values()):
+                n_boot_unscorable += 1
+                continue
+            draw_first = _first_crossing(curve, threshold, sustained=False)
+            draw_sustained = _first_crossing(curve, threshold, sustained=True)
+            if draw_first is None:
+                n_boot_noncrossing += 1
+            else:
+                bootstrap_first.append(draw_first)
+            if draw_sustained is not None:
+                bootstrap_sustained.append(draw_sustained)
+        first_ci = _percentile_interval(bootstrap_first)
+        sustained_ci = _percentile_interval(bootstrap_sustained)
+        pooled_rows.append(
+            {
+                "theta_commit": float(threshold),
+                "n_scorable_progress_points": n_scorable,
+                "status": "UNSCORABLE"
+                if n_scorable == 0
+                else ("CROSSING" if first is not None else "NONCROSSING"),
+                "first_crossing": first,
+                "first_crossing_bootstrap_ci_low": first_ci[0],
+                "first_crossing_bootstrap_ci_high": first_ci[1],
+                "sustained_crossing": sustained,
+                "sustained_crossing_bootstrap_ci_low": sustained_ci[0],
+                "sustained_crossing_bootstrap_ci_high": sustained_ci[1],
+                "bootstrap_draws": n_boot,
+                "bootstrap_unscorable_draws": n_boot_unscorable,
+                "bootstrap_noncrossing_draws": n_boot_noncrossing,
+                "bootstrap_sustained_crossing_draws": len(bootstrap_sustained),
+                "noncrossing_draws_not_numerically_imputed": True,
+            }
+        )
+        for base_seed in seeds:
+            curve = seed_curves[base_seed]
+            seed_n_scorable = sum(math.isfinite(value) for value in curve.values())
+            seed_first = _first_crossing(curve, threshold, sustained=False)
+            seed_sustained = _first_crossing(curve, threshold, sustained=True)
+            seed_rows.append(
+                {
+                    "base_seed": base_seed,
+                    "theta_commit": float(threshold),
+                    "n_scorable_progress_points": seed_n_scorable,
+                    "status": "UNSCORABLE"
+                    if seed_n_scorable == 0
+                    else ("CROSSING" if seed_first is not None else "NONCROSSING"),
+                    "first_crossing": seed_first,
+                    "sustained_crossing": seed_sustained,
+                }
+            )
+    return pooled_rows, seed_rows
 
 
 def _bootstrap_cell_measurement_variance(
@@ -1644,31 +2073,59 @@ def _bootstrap_cell_measurement_variance(
     n_boot: int,
     rng: np.random.Generator,
 ) -> tuple[float, float, float, float]:
-    labels_array = np.asarray([str(value) for value in labels])
-    confident = labels_array[labels_array != ABSTAIN]
-    full_values: list[float] = []
-    conditional_values: list[float] = []
-    for _ in range(n_boot):
-        sampled = labels_array[rng.integers(0, labels_array.size, size=labels_array.size)]
-        agreement, _ = _confident_pairwise(sampled.tolist())
-        value = _commit_gain(agreement, baseline)
-        if math.isfinite(value):
-            full_values.append(value)
-        if confident.size >= 2:
-            conditional = confident[rng.integers(0, confident.size, size=confident.size)]
-            conditional_agreement = categorical_agreement(conditional.tolist())
-            conditional_values.append(_commit_gain(conditional_agreement, baseline))
-    full_var = float(np.var(full_values, ddof=1)) if len(full_values) >= 2 else float("nan")
+    text_labels = [str(value) for value in labels]
+    confident_names = sorted({value for value in text_labels if value != ABSTAIN})
+    codebook = {value: index for index, value in enumerate(confident_names)}
+    codes = np.asarray(
+        [-1 if value == ABSTAIN else codebook[value] for value in text_labels],
+        dtype=np.int16,
+    )
+    confident = codes[codes >= 0]
+
+    def row_agreement(sampled: np.ndarray) -> np.ndarray:
+        n_confident = np.sum(sampled >= 0, axis=1)
+        matching_pairs = np.zeros(sampled.shape[0], dtype=np.float64)
+        for code in range(len(confident_names)):
+            count = np.sum(sampled == code, axis=1)
+            matching_pairs += count * (count - 1) / 2.0
+        all_pairs = n_confident * (n_confident - 1) / 2.0
+        return np.divide(
+            matching_pairs,
+            all_pairs,
+            out=np.full(sampled.shape[0], np.nan, dtype=np.float64),
+            where=all_pairs > 0,
+        )
+
+    def gain(values: np.ndarray) -> np.ndarray:
+        if not math.isfinite(baseline):
+            return np.full(values.shape, np.nan, dtype=np.float64)
+        denominator = 1.0 - baseline
+        if denominator <= 1e-9:
+            return np.zeros(values.shape, dtype=np.float64)
+        return np.clip((values - baseline) / denominator, 0.0, 1.0)
+
+    sampled = codes[rng.integers(0, codes.size, size=(n_boot, codes.size))]
+    full_values = gain(row_agreement(sampled))
+    full_values = full_values[np.isfinite(full_values)]
+    if confident.size >= 2:
+        conditional = confident[
+            rng.integers(0, confident.size, size=(n_boot, confident.size))
+        ]
+        conditional_values = gain(row_agreement(conditional))
+        conditional_values = conditional_values[np.isfinite(conditional_values)]
+    else:
+        conditional_values = np.asarray([], dtype=np.float64)
+    full_var = float(np.var(full_values, ddof=1)) if full_values.size >= 2 else float("nan")
     conditional_var = (
         float(np.var(conditional_values, ddof=1))
-        if len(conditional_values) >= 2 else float("nan")
+        if conditional_values.size >= 2 else float("nan")
     )
     abstention_increment = (
         max(full_var - conditional_var, 0.0)
         if math.isfinite(full_var) and math.isfinite(conditional_var)
         else float("nan")
     )
-    valid_fraction = len(full_values) / n_boot
+    valid_fraction = int(full_values.size) / n_boot
     return full_var, conditional_var, abstention_increment, valid_fraction
 
 
@@ -1712,25 +2169,31 @@ def _crossed_variance_components(
         method = "balanced_crossed_random_effects_anova_moments"
     else:
         grand = float(values.mean())
-        centered = {
-            (str(row["video_id"]), int(row["base_seed"])): float(row["commitment_gain"]) - grand
-            for row in finite
-        }
-        video_products: list[float] = []
-        seed_products: list[float] = []
-        for video in videos:
-            available = [seed for seed in seeds if (video, seed) in centered]
-            for left_index, left in enumerate(available):
-                for right in available[left_index + 1 :]:
-                    video_products.append(centered[(video, left)] * centered[(video, right)])
-        for base_seed in seeds:
-            available = [video for video in videos if (video, base_seed) in centered]
-            for left_index, left in enumerate(available):
-                for right in available[left_index + 1 :]:
-                    seed_products.append(centered[(left, base_seed)] * centered[(right, base_seed)])
+        centered_values = np.asarray(
+            [float(row["commitment_gain"]) - grand for row in finite], dtype=float
+        )
+
+        def shared_effect_covariance(group_values: Sequence[Any]) -> float:
+            unique = {value: index for index, value in enumerate(sorted(set(group_values)))}
+            codes = np.asarray([unique[value] for value in group_values], dtype=np.int32)
+            counts = np.bincount(codes, minlength=len(unique)).astype(float)
+            sums = np.bincount(
+                codes, weights=centered_values, minlength=len(unique)
+            )
+            square_sums = np.bincount(
+                codes, weights=centered_values**2, minlength=len(unique)
+            )
+            pair_products = float(np.sum((sums**2 - square_sums) / 2.0))
+            pair_count = float(np.sum(counts * (counts - 1.0) / 2.0))
+            return pair_products / pair_count if pair_count > 0 else float("nan")
+
+        video_raw = shared_effect_covariance(
+            [str(row["video_id"]) for row in finite]
+        )
+        seed_raw = shared_effect_covariance(
+            [int(row["base_seed"]) for row in finite]
+        )
         total = float(np.var(values, ddof=1))
-        video_raw = _finite_mean(video_products)
-        seed_raw = _finite_mean(seed_products)
         video_variance = max(video_raw, 0.0) if math.isfinite(video_raw) else 0.0
         seed_variance = max(seed_raw, 0.0) if math.isfinite(seed_raw) else 0.0
         interaction_plus_measurement = max(total - video_variance - seed_variance, 0.0)
@@ -1749,7 +2212,7 @@ def _crossed_variance_components(
     }
     component_total = sum(components.values())
     return {
-        "status": "ESTIMATED_EXPLORATORILY",
+        "scientific_status": "SUPPORTED_EXPLORATORILY",
         "method": method,
         "n_scorable": len(finite),
         "n_total": len(rows),
@@ -1776,10 +2239,19 @@ def variance_decomposition(
     cells: Sequence[Mapping[str, Any]],
     *,
     n_fork_boot: int,
+    n_video_boot: int,
     seed: int,
 ) -> dict[str, Any]:
     progress_grid = sorted({float(row["progress"]) for row in cells})
     rng = np.random.default_rng(seed)
+    video_rng = np.random.default_rng(seed)
+    all_videos = sorted({str(row["video_id"]) for row in cells})
+    video_bootstrap_samples = video_rng.integers(
+        0, len(all_videos), size=(n_video_boot, len(all_videos))
+    )
+    overall_draw_components: list[dict[str, list[float]]] = [
+        defaultdict(list) for _ in range(n_video_boot)
+    ]
     by_progress: list[dict[str, Any]] = []
     for progress in progress_grid:
         selected = [row for row in cells if float(row["progress"]) == progress]
@@ -1787,6 +2259,7 @@ def variance_decomposition(
         conditional_variances: list[float] = []
         abstention_variances: list[float] = []
         valid_fractions: list[float] = []
+        selected_with_variance: list[dict[str, Any]] = []
         for row in selected:
             full, conditional, abstention, valid = _bootstrap_cell_measurement_variance(
                 row["fork_labels"],
@@ -1798,6 +2271,13 @@ def variance_decomposition(
             conditional_variances.append(conditional)
             abstention_variances.append(abstention)
             valid_fractions.append(valid)
+            selected_with_variance.append(
+                {
+                    **row,
+                    "_fork_variance": full,
+                    "_abstention_variance": abstention,
+                }
+            )
         full_mean = _finite_mean(full_variances)
         conditional_mean = _finite_mean(conditional_variances)
         abstention_mean = _finite_mean(abstention_variances)
@@ -1806,15 +2286,54 @@ def variance_decomposition(
             fork_variance=full_mean if math.isfinite(full_mean) else 0.0,
             abstention_variance=abstention_mean if math.isfinite(abstention_mean) else 0.0,
         )
+        videos = sorted({str(row["video_id"]) for row in selected})
+        if videos != all_videos:
+            raise B2ClosureError("variance strata do not contain the same video clusters")
+        component_draws: dict[str, list[float]] = defaultdict(list)
+        for draw_index, sampled in enumerate(video_bootstrap_samples):
+            boot_rows: list[dict[str, Any]] = []
+            for cluster_index, sampled_index in enumerate(sampled):
+                source_video = videos[int(sampled_index)]
+                for row in selected_with_variance:
+                    if str(row["video_id"]) == source_video:
+                        boot_rows.append(
+                            {**row, "video_id": f"cluster{cluster_index:05d}:{source_video}"}
+                        )
+            boot_fork = _finite_mean(float(row["_fork_variance"]) for row in boot_rows)
+            boot_abstention = _finite_mean(
+                float(row["_abstention_variance"]) for row in boot_rows
+            )
+            boot_result = _crossed_variance_components(
+                boot_rows,
+                fork_variance=boot_fork if math.isfinite(boot_fork) else 0.0,
+                abstention_variance=(
+                    boot_abstention if math.isfinite(boot_abstention) else 0.0
+                ),
+            )
+            for name, value in boot_result.get("components", {}).items():
+                if math.isfinite(float(value)):
+                    component_draws[name].append(float(value))
+                    overall_draw_components[draw_index][name].append(float(value))
+        component_ci = {
+            name: {
+                "ci_low": _percentile_interval(values)[0],
+                "ci_high": _percentile_interval(values)[1],
+                "valid_draws": len(values),
+            }
+            for name, values in sorted(component_draws.items())
+        }
         by_progress.append(
             {
                 "progress": progress,
                 "fork_bootstrap_draws": n_fork_boot,
+                "video_cluster_bootstrap_draws": n_video_boot,
+                "video_cluster_bootstrap_seed": seed,
                 "fork_monte_carlo_variance_mean": full_mean,
                 "fork_conditional_confident_label_variance_mean": conditional_mean,
                 "abstention_increment_variance_mean": abstention_mean,
                 "fork_bootstrap_scorable_fraction_mean": _finite_mean(valid_fractions),
                 **components,
+                "component_video_bootstrap_ci": component_ci,
             }
         )
     component_names = (
@@ -1830,6 +2349,21 @@ def variance_decomposition(
         )
         for name in component_names
     }
+    overall_component_draws = {
+        name: [
+            _finite_mean(draw.get(name, []))
+            for draw in overall_draw_components
+        ]
+        for name in component_names
+    }
+    overall_component_ci = {
+        name: {
+            "ci_low": _percentile_interval(values)[0],
+            "ci_high": _percentile_interval(values)[1],
+            "valid_draws": sum(math.isfinite(value) for value in values),
+        }
+        for name, values in overall_component_draws.items()
+    }
     total = sum(value for value in overall_components.values() if math.isfinite(value))
     return {
         "model": "progress-stratified crossed random-effects method-of-moments",
@@ -1838,8 +2372,14 @@ def variance_decomposition(
             "within-cell nonparametric fork bootstrap; abstention increment is full-label "
             "bootstrap variance minus fixed-confident-count label bootstrap variance"
         ),
+        "variance_component_uncertainty": (
+            "video-cluster percentile bootstrap; all base seeds retained within sampled video"
+        ),
+        "video_cluster_bootstrap_draws": n_video_boot,
+        "video_cluster_bootstrap_seed": seed,
         "by_progress": by_progress,
         "overall_mean_components": overall_components,
+        "overall_mean_component_video_bootstrap_ci": overall_component_ci,
         "overall_mean_component_fractions": {
             name: value / total if total > 0 and math.isfinite(value) else float("nan")
             for name, value in overall_components.items()
@@ -1864,7 +2404,9 @@ def _json_safe(value: Any) -> Any:
     return value
 
 
-def _historical_inputs(paths: Sequence[Path]) -> list[dict[str, Any]]:
+def _historical_inputs(
+    paths: Sequence[Path], *, canonical: bool
+) -> list[dict[str, Any]]:
     rows: list[dict[str, Any]] = []
     for path in paths:
         data = _load_json(path)
@@ -1886,21 +2428,238 @@ def _historical_inputs(paths: Sequence[Path]) -> list[dict[str, Any]]:
                 "s_commit_confident": data.get("s_commit_confident"),
                 "theta_commit": data.get("theta_commit"),
                 "n_crossing_confident": data.get("n_crossing_confident"),
+                "reproduces_committed_csv": data.get("reproduces_committed_csv"),
+                "max_abs_delta": data.get("max_abs_delta"),
                 "curve_by_progress": curve,
             }
         )
+    if canonical:
+        pinned = [row for row in rows if row["sha256"] == PINNED_HISTORICAL_COMPARATOR_SHA256]
+        if len(pinned) != 1:
+            raise B2ClosureError(
+                "canonical analysis requires exactly one pinned WP-A2 Class comparator"
+            )
+        comparator = pinned[0]
+        if (
+            comparator["reproduces_committed_csv"] is not True
+            or float(comparator["max_abs_delta"]) != 0.0
+            or not math.isclose(
+                float(comparator["s_commit_confident"]),
+                PINNED_HISTORICAL_S_COMMIT,
+                abs_tol=1e-15,
+                rel_tol=0.0,
+            )
+            or not math.isclose(float(comparator["theta_commit"]), 0.7, abs_tol=0.0)
+        ):
+            raise B2ClosureError("pinned historical comparator content is inconsistent")
     return rows
+
+
+def validate_canonical_analysis_inputs(
+    arrays: Mapping[str, np.ndarray],
+    merged: Mapping[str, Any],
+    *,
+    protocol_path: Path,
+    historical_jsons: Sequence[Path],
+) -> dict[str, Any]:
+    protocol = validate_class_protocol(protocol_path, canonical=True)
+    if merged.get("canonical_b2") is not True:
+        raise B2ClosureError("production analysis requires canonical_b2=true")
+    if merged.get("protocol_sha256") != protocol["sha256"]:
+        raise B2ClosureError("merged posterior was measured under a different protocol")
+    inventory_path = Path(str(merged.get("inventory_manifest", "")))
+    if not inventory_path.is_file() or sha256_file(inventory_path) != merged.get(
+        "inventory_manifest_sha256"
+    ):
+        raise B2ClosureError("canonical merged inventory provenance is invalid")
+    records, inventory = load_inventory(inventory_path)
+    expected_inventory = {
+        "canonical_b2": True,
+        "record_count": 79152,
+        "base_record_count": 816,
+        "fork_record_count": 78336,
+        "base_seeds": list(EXPECTED_SEEDS),
+        "progress_grid": list(EXPECTED_S_GRID),
+        "k_forks": EXPECTED_K_FORKS,
+    }
+    for key, value in expected_inventory.items():
+        if inventory.get(key) != value:
+            raise B2ClosureError(
+                f"canonical inventory provenance mismatch for {key}: {inventory.get(key)!r}"
+            )
+    expected_ids = [str(row["record_id"]) for row in records]
+    if np.asarray(arrays["record_id"]).tolist() != expected_ids:
+        raise B2ClosureError("canonical merged posterior IDs/order differ from inventory")
+    for key, expected in (
+        ("record_count", len(expected_ids)),
+        ("record_ids_sha256", inventory["record_ids_sha256"]),
+        ("inventory_records_sha256", inventory["records_sha256"]),
+    ):
+        if merged.get(key) != expected:
+            raise B2ClosureError(f"canonical merged completion provenance mismatch for {key}")
+    if len(inventory.get("video_ids", [])) != EXPECTED_N_CLIPS or len(
+        inventory.get("roots", [])
+    ) != 4:
+        raise B2ClosureError("canonical inventory video/root cardinality mismatch")
+    n = int(np.asarray(arrays["record_id"]).size)
+    role = np.asarray(arrays["role"])
+    if (
+        n != 79152
+        or int(np.sum(role == "base")) != 816
+        or int(np.sum(role == "fork")) != 78336
+        or len(set(arrays["video_id"].tolist())) != EXPECTED_N_CLIPS
+        or sorted(set(int(value) for value in arrays["base_seed"].tolist()))
+        != list(EXPECTED_SEEDS)
+        or sorted(
+            {
+                _canonical_progress(value)
+                for value in arrays["progress"][np.isfinite(arrays["progress"])]
+            }
+        )
+        != list(EXPECTED_S_GRID)
+    ):
+        raise B2ClosureError("canonical merged posterior population cardinality mismatch")
+    for key, expected in (("cfg", 4.5), ("alpha", 0.8)):
+        values = np.asarray(arrays[key], dtype=float)
+        if not np.allclose(values, expected, atol=1e-7, rtol=0.0):
+            raise B2ClosureError(f"canonical merged posterior provenance mismatch for {key}")
+    for key, expected in (
+        ("schedule", "sqrt_down"),
+        ("sample_rate", 16000),
+        ("generation_model_variant", "small_16k"),
+    ):
+        if set(np.asarray(arrays[key]).tolist()) != {expected}:
+            raise B2ClosureError(f"canonical merged posterior provenance mismatch for {key}")
+    if set(arrays["generation_manifest_sha256"].tolist()) != set(
+        EXPECTED_GENERATION_MANIFEST_SHA256
+    ):
+        raise B2ClosureError("canonical generation-manifest hash set mismatch")
+    if set(arrays["generation_revision"].tolist()) != set(EXPECTED_GENERATION_REVISIONS):
+        raise B2ClosureError("canonical generation revision mismatch")
+    if str(_scalar_item(arrays, "coarse_map_sha256")) != PINNED_COARSE_MAP_SHA256:
+        raise B2ClosureError("canonical merged coarse-map hash mismatch")
+    if (
+        str(_scalar_item(arrays, "tagger_checkpoint_sha256"))
+        != PINNED_CHECKPOINT_SHA256
+    ):
+        raise B2ClosureError("canonical merged checkpoint hash mismatch")
+    if not str(_scalar_item(arrays, "tagger_revision")) or not str(
+        _scalar_item(arrays, "measurer_revision")
+    ):
+        raise B2ClosureError("canonical merged measurer revisions are missing")
+    historical = _historical_inputs(historical_jsons, canonical=True)
+    return {"protocol": protocol, "historical": historical, "inventory": inventory}
+
+
+def classify_frozen_replication(
+    pooled_crossings: Sequence[Mapping[str, Any]],
+    seed_crossings: Sequence[Mapping[str, Any]],
+    variance: Mapping[str, Any],
+    *,
+    progress_grid: Sequence[float],
+) -> dict[str, Any]:
+    pooled = next(
+        row for row in pooled_crossings if math.isclose(float(row["theta_commit"]), 0.7)
+    )
+    seed_rows = [
+        row for row in seed_crossings if math.isclose(float(row["theta_commit"]), 0.7)
+    ]
+    pooled_sustained = pooled.get("sustained_crossing")
+    seed_cross_by_045 = sum(
+        row.get("sustained_crossing") is not None
+        and float(row["sustained_crossing"]) <= 0.45
+        for row in seed_rows
+    ) / max(len(seed_rows), 1)
+    components = variance.get("overall_mean_components", {})
+    seed_variance = float(components.get("base_seed") or 0.0)
+    video_variance = float(components.get("video") or 0.0)
+    identifiable_total = sum(
+        float(value) for value in components.values() if value is not None and math.isfinite(float(value))
+    )
+    seed_variance_fraction = (
+        seed_variance / identifiable_total if identifiable_total > 0 else float("inf")
+    )
+    ci_low = pooled.get("sustained_crossing_bootstrap_ci_low")
+    ci_high = pooled.get("sustained_crossing_bootstrap_ci_high")
+    historical_in_ci = (
+        ci_low is not None
+        and ci_high is not None
+        and math.isfinite(float(ci_low))
+        and math.isfinite(float(ci_high))
+        and float(ci_low) <= PINNED_HISTORICAL_S_COMMIT <= float(ci_high)
+    )
+    nearest_historical_index = min(
+        range(len(progress_grid)),
+        key=lambda index: abs(float(progress_grid[index]) - PINNED_HISTORICAL_S_COMMIT),
+    )
+    point_within_one_step = False
+    if pooled_sustained is not None:
+        point_index = min(
+            range(len(progress_grid)),
+            key=lambda index: abs(float(progress_grid[index]) - float(pooled_sustained)),
+        )
+        point_within_one_step = abs(point_index - nearest_historical_index) <= 1
+
+    pooled_by_045 = pooled_sustained is not None and float(pooled_sustained) <= 0.45
+    if not pooled_by_045 or seed_cross_by_045 < 0.25:
+        label = "not_reproduced"
+        scientific_status = "NOT_SUPPORTED"
+    elif seed_variance >= video_variance or seed_cross_by_045 < 0.60:
+        label = "strongly_seed_dependent"
+        scientific_status = "UNRESOLVED"
+    elif (
+        seed_cross_by_045 >= 0.80
+        and seed_variance_fraction < 0.25
+        and (historical_in_ci or point_within_one_step)
+    ):
+        label = "stable_across_seeds"
+        scientific_status = "SUPPORTED_EXPLORATORILY"
+    else:
+        label = "heterogeneous_but_directionally_consistent"
+        scientific_status = "SUPPORTED_EXPLORATORILY"
+    if label not in REPLICATION_LABELS or scientific_status not in ALLOWED_SCIENTIFIC_STATUSES:
+        raise AssertionError("frozen replication classifier emitted an invalid label/status")
+    return {
+        "replication_label": label,
+        "scientific_status": scientific_status,
+        "rule_id": "protocol.class_measurement.exploratory_replication_labels.v1",
+        "pooled_sustained_crossing_theta_0.70": pooled_sustained,
+        "seed_curves_sustained_crossing_by_0.45_fraction": seed_cross_by_045,
+        "seed_variance": seed_variance,
+        "video_variance": video_variance,
+        "seed_variance_fraction_identifiable_total": seed_variance_fraction,
+        "historical_s_commit": PINNED_HISTORICAL_S_COMMIT,
+        "historical_within_pooled_bootstrap_interval": historical_in_ci,
+        "historical_within_one_sampled_step_of_point_estimate": point_within_one_step,
+    }
 
 
 def analyze_multiseed(
     arrays: Mapping[str, np.ndarray],
     *,
+    protocol_path: Path,
+    canonical: bool,
     thresholds: Sequence[float] = SENSITIVITY_THRESHOLDS,
-    n_video_boot: int = 2000,
-    n_fork_boot: int = 200,
-    seed: int = 0,
+    n_video_boot: int = DEFAULT_BOOTSTRAP_DRAWS,
+    n_fork_boot: int = DEFAULT_BOOTSTRAP_DRAWS,
+    seed: int = DEFAULT_BOOTSTRAP_SEED,
     historical_jsons: Sequence[Path] = (),
-) -> tuple[dict[str, Any], list[dict[str, Any]], list[dict[str, Any]], list[dict[str, Any]]]:
+) -> tuple[
+    dict[str, Any],
+    list[dict[str, Any]],
+    list[dict[str, Any]],
+    list[dict[str, Any]],
+    list[dict[str, Any]],
+]:
+    protocol_info = validate_class_protocol(protocol_path, canonical=canonical)
+    if canonical and (
+        tuple(float(value) for value in thresholds) != SENSITIVITY_THRESHOLDS
+        or n_video_boot != DEFAULT_BOOTSTRAP_DRAWS
+        or n_fork_boot != DEFAULT_BOOTSTRAP_DRAWS
+        or seed != DEFAULT_BOOTSTRAP_SEED
+    ):
+        raise B2ClosureError("canonical analysis settings differ from the frozen protocol")
+    historical = _historical_inputs(historical_jsons, canonical=canonical)
     cells, baselines = build_commitment_cells(arrays)
     progress_grid = sorted({float(row["progress"]) for row in cells})
     curve_ci = _video_cluster_curve_bootstrap(
@@ -1960,19 +2719,29 @@ def analyze_multiseed(
                     ),
                 }
             )
-    threshold_summary, video_crossings = summarize_thresholds(
+    threshold_summary, video_crossings, video_seed_crossings = summarize_thresholds(
         cells,
         baselines,
         thresholds,
         n_boot=n_video_boot,
-        seed=seed + 1,
+        seed=seed,
     )
-    variance = variance_decomposition(cells, n_fork_boot=n_fork_boot, seed=seed + 2)
+    pooled_crossings, seed_crossings = pooled_and_seed_crossings(
+        cells,
+        thresholds,
+        n_boot=n_video_boot,
+        seed=seed,
+    )
+    variance = variance_decomposition(
+        cells,
+        n_fork_boot=n_fork_boot,
+        n_video_boot=n_video_boot,
+        seed=seed,
+    )
     primary = next(
         (row for row in threshold_summary if math.isclose(row["theta_commit"], 0.70)),
         None,
     )
-    historical = _historical_inputs(historical_jsons)
     historical_comparisons: list[dict[str, Any]] = []
     curve_lookup = {row["progress"]: row for row in curve_rows}
     for item in historical:
@@ -1995,17 +2764,28 @@ def analyze_multiseed(
     clean_cells = [
         {key: value for key, value in row.items() if key != "fork_labels"} for row in cells
     ]
+    replication = classify_frozen_replication(
+        pooled_crossings,
+        seed_crossings,
+        variance,
+        progress_grid=progress_grid,
+    )
     summary = {
         "schema_version": ANALYSIS_SCHEMA,
-        "status": "EXPLORATORY_MULTI_SEED_REPLICATION",
+        "scientific_status": replication["scientific_status"],
+        "replication_label": replication["replication_label"],
+        "replication_classification": replication,
         "scientific_scope": "clip-level legacy Class continuity; not event-centered v2 PASS",
+        "protocol": protocol_info["path"],
+        "protocol_sha256": protocol_info["sha256"],
         "legacy_decision_rule": ABSTENTION_RULE_ID,
         "baseline": "video-conditioned confident pairwise agreement across 17 base finals",
         "commitment_gain": "clip((A_fork-A_ind)/(1-A_ind),0,1)",
-        "video_determined_rule": "A_ind >= 1 - 1e-9",
+        "video_determined_rule": "A_ind >= 0.90",
         "first_crossing_rule": "earliest sampled progress meeting theta",
         "registered_sustained_rule": (
-            "earliest sampled progress meeting theta and all later sampled points"
+            "earliest sampled progress meeting theta and all later scorable finite points; "
+            "unscorable later points are ignored and remain reported missing"
         ),
         "thresholds": [float(value) for value in thresholds],
         "video_cluster_bootstrap": {
@@ -2032,6 +2812,8 @@ def analyze_multiseed(
         "curves_by_progress": curve_rows,
         "curves_by_base_seed": seed_curve_rows,
         "threshold_sensitivity": threshold_summary,
+        "pooled_crossings": pooled_crossings,
+        "base_seed_crossings": seed_crossings,
         "theta_0.70_summary": primary,
         "variance_decomposition": variance,
         "historical_comparison_inputs": historical_comparisons,
@@ -2041,22 +2823,41 @@ def analyze_multiseed(
             "abstention variance is an identifiable subcomponent of fork resampling, not an independent measurer repeat",
         ],
     }
-    return _json_safe(summary), _json_safe(clean_cells), _json_safe(video_crossings), _json_safe(baselines)
+    if summary["scientific_status"] not in ALLOWED_SCIENTIFIC_STATUSES:
+        raise AssertionError("analysis emitted a noncanonical scientific status")
+    return (
+        _json_safe(summary),
+        _json_safe(clean_cells),
+        _json_safe(video_crossings),
+        _json_safe(baselines),
+        _json_safe(video_seed_crossings),
+    )
 
 
 def write_multiseed_analysis(
     merged_completion_path: Path,
     out_dir: Path,
     *,
+    protocol_path: Path,
+    canonical: bool,
     thresholds: Sequence[float] = SENSITIVITY_THRESHOLDS,
-    n_video_boot: int = 2000,
-    n_fork_boot: int = 200,
-    seed: int = 0,
+    n_video_boot: int = DEFAULT_BOOTSTRAP_DRAWS,
+    n_fork_boot: int = DEFAULT_BOOTSTRAP_DRAWS,
+    seed: int = DEFAULT_BOOTSTRAP_SEED,
     historical_jsons: Sequence[Path] = (),
 ) -> dict[str, Any]:
     arrays, merged = load_merged_posteriors(merged_completion_path)
-    summary, cells, video_crossings, baselines = analyze_multiseed(
+    if canonical:
+        validate_canonical_analysis_inputs(
+            arrays,
+            merged,
+            protocol_path=protocol_path,
+            historical_jsons=historical_jsons,
+        )
+    summary, cells, video_crossings, baselines, video_seed_crossings = analyze_multiseed(
         arrays,
+        protocol_path=protocol_path,
+        canonical=canonical,
         thresholds=thresholds,
         n_video_boot=n_video_boot,
         n_fork_boot=n_fork_boot,
@@ -2067,15 +2868,38 @@ def write_multiseed_analysis(
     summary_path = out_dir / "CLASS_MULTISEED_COMMITMENT.json"
     cells_path = out_dir / "CLASS_MULTISEED_COMMITMENT.csv"
     video_path = out_dir / "CLASS_VIDEO_CROSSING_DISTRIBUTIONS.csv"
+    video_seed_path = out_dir / "CLASS_VIDEO_SEED_CROSSINGS.csv"
+    pooled_path = out_dir / "CLASS_POOLED_CROSSINGS.csv"
+    seed_path = out_dir / "CLASS_BASE_SEED_CROSSINGS.csv"
     baseline_path = out_dir / "CLASS_VIDEO_BASELINES.csv"
     variance_path = out_dir / "CLASS_VARIANCE_DECOMPOSITION.json"
     atomic_json_create(summary_path, summary)
     atomic_csv_create(cells_path, cells, list(cells[0]))
     atomic_csv_create(video_path, video_crossings, list(video_crossings[0]))
+    atomic_csv_create(
+        video_seed_path, video_seed_crossings, list(video_seed_crossings[0])
+    )
+    atomic_csv_create(
+        pooled_path, summary["pooled_crossings"], list(summary["pooled_crossings"][0])
+    )
+    atomic_csv_create(
+        seed_path,
+        summary["base_seed_crossings"],
+        list(summary["base_seed_crossings"][0]),
+    )
     atomic_csv_create(baseline_path, baselines, list(baselines[0]))
     atomic_json_create(variance_path, summary["variance_decomposition"])
     outputs = []
-    for path in (summary_path, cells_path, video_path, baseline_path, variance_path):
+    for path in (
+        summary_path,
+        cells_path,
+        video_path,
+        video_seed_path,
+        pooled_path,
+        seed_path,
+        baseline_path,
+        variance_path,
+    ):
         outputs.append(
             {"path": path.name, "sha256": sha256_file(path), "bytes": path.stat().st_size}
         )
@@ -2085,6 +2909,11 @@ def write_multiseed_analysis(
         "merged_completion": str(Path(merged_completion_path).resolve()),
         "merged_completion_sha256": sha256_file(merged_completion_path),
         "merged_data_sha256": merged["data_sha256"],
+        "canonical_b2": bool(canonical),
+        "protocol": str(Path(protocol_path).resolve()),
+        "protocol_sha256": sha256_file(protocol_path),
+        "scientific_status": summary["scientific_status"],
+        "replication_label": summary["replication_label"],
         "thresholds": [float(value) for value in thresholds],
         "n_video_boot": n_video_boot,
         "n_fork_boot": n_fork_boot,

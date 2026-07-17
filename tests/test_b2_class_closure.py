@@ -13,8 +13,15 @@ import numpy as np
 import pytest
 
 from foley_cw.b2_class_closure import (
+    ALLOWED_SCIENTIFIC_STATUSES,
     B2ClosureError,
+    DEFAULT_BOOTSTRAP_DRAWS,
+    DEFAULT_BOOTSTRAP_SEED,
     POSTERIOR_SCHEMA,
+    SENSITIVITY_THRESHOLDS,
+    VIDEO_DETERMINED_MIN,
+    _first_crossing,
+    _majority_label,
     analyze_multiseed,
     assigned_inventory_records,
     build_commitment_cells,
@@ -24,12 +31,20 @@ from foley_cw.b2_class_closure import (
     load_inventory,
     measure_inventory_shard,
     merge_posterior_shards,
+    classify_frozen_replication,
+    pooled_and_seed_crossings,
     sha256_file,
+    summarize_thresholds,
     validate_posterior_arrays,
+    validate_class_protocol,
+    validate_canonical_analysis_inputs,
     validate_shard_completion,
     write_inventory,
 )
 from foley_cw.real_measurer import load_coarse_map
+
+
+PROTOCOL = Path("experiment/non_human_closure/PROTOCOL.json").resolve()
 
 
 def _write_json(path: Path, value: dict) -> None:
@@ -229,6 +244,8 @@ def _measure_two_shards(tmp_path, manifest_path, map_path):
         result = measure_inventory_shard(
             manifest_path,
             tmp_path / f"shard{index}",
+            protocol_path=PROTOCOL,
+            canonical=False,
             shard_index=index,
             shard_count=2,
             coarse_map_path=map_path,
@@ -254,12 +271,22 @@ def test_shard_schema_assignment_and_deterministic_npz(synthetic_inventory, tmp_
     assert arrays["clipwise_output_527"].shape == (len(expected), 527)
     assert arrays["clipwise_output_527"].dtype == np.float32
     assert np.allclose(arrays["coarse_posterior"].sum(axis=1), 1.0)
+    np.testing.assert_allclose(
+        arrays["coarse_score_sums"].sum(axis=1),
+        arrays["clipwise_output_527"].sum(axis=1),
+        rtol=0.0,
+        atol=1e-5,
+    )
     assert arrays["confident_label"].tolist() == ["group_a"] * len(expected)
     assert completion["tagger_checkpoint_sha256"] == "b" * 64
+    assert completion["protocol_sha256"] == sha256_file(PROTOCOL)
+    assert str(arrays["protocol_sha256"].item()) == completion["protocol_sha256"]
 
     duplicate = measure_inventory_shard(
         manifest_path,
         tmp_path / "duplicate",
+        protocol_path=PROTOCOL,
+        canonical=False,
         shard_index=0,
         shard_count=2,
         coarse_map_path=map_path,
@@ -392,6 +419,7 @@ def _analysis_arrays(tmp_path):
         tagger_revision="synthetic",
         tagger_checkpoint_sha256="5" * 64,
         measurer_revision="6" * 40,
+        protocol_sha256=sha256_file(PROTOCOL),
     )
     return arrays
 
@@ -413,13 +441,25 @@ def test_video_conditioned_baseline_prevents_cross_video_leakage(tmp_path):
 def test_analysis_is_deterministic_and_separates_crossing_cases(tmp_path):
     arrays = _analysis_arrays(tmp_path)
     first = analyze_multiseed(
-        arrays, thresholds=(0.60, 0.70, 0.80), n_video_boot=30, n_fork_boot=20, seed=7
+        arrays,
+        protocol_path=PROTOCOL,
+        canonical=False,
+        thresholds=(0.60, 0.70, 0.80),
+        n_video_boot=30,
+        n_fork_boot=20,
+        seed=7,
     )
     second = analyze_multiseed(
-        arrays, thresholds=(0.60, 0.70, 0.80), n_video_boot=30, n_fork_boot=20, seed=7
+        arrays,
+        protocol_path=PROTOCOL,
+        canonical=False,
+        thresholds=(0.60, 0.70, 0.80),
+        n_video_boot=30,
+        n_fork_boot=20,
+        seed=7,
     )
     assert first == second
-    summary, cells, video_rows, _baselines = first
+    summary, cells, video_rows, _baselines, video_seed_rows = first
     assert summary["cardinality"] == {
         "videos": 3,
         "base_seeds": 3,
@@ -433,6 +473,27 @@ def test_analysis_is_deterministic_and_separates_crossing_cases(tmp_path):
     assert {row["progress"] for row in cells} == {0.25, 0.75}
     assert any(row["n_noncrossing_seeds"] == 1 for row in video_rows)
     assert summary["variance_decomposition"]["measurer_repeatability_variance"] is None
+    for progress_row in summary["variance_decomposition"]["by_progress"]:
+        assert progress_row["video_cluster_bootstrap_draws"] == 30
+        assert progress_row["component_video_bootstrap_ci"]
+        assert all(
+            {"ci_low", "ci_high", "valid_draws"}.issubset(interval)
+            for interval in progress_row["component_video_bootstrap_ci"].values()
+        )
+    overall_ci = summary["variance_decomposition"][
+        "overall_mean_component_video_bootstrap_ci"
+    ]
+    assert set(overall_ci) == {
+        "video",
+        "base_seed",
+        "video_by_seed_interaction",
+        "fork_monte_carlo_nonabstention",
+        "abstention_within_fork_monte_carlo",
+    }
+    assert all(interval["valid_draws"] == 30 for interval in overall_ci.values())
+    assert len(video_seed_rows) == 3 * 3 * 3
+    assert len(summary["base_seed_crossings"]) == 3 * 3
+    assert summary["scientific_status"] in ALLOWED_SCIENTIFIC_STATUSES
 
 
 def test_schema_validator_detects_posterior_corruption(tmp_path):
@@ -444,3 +505,176 @@ def test_schema_validator_detects_posterior_corruption(tmp_path):
     corrupt["coarse_posterior"][0, 0] += 0.2
     with pytest.raises(B2ClosureError, match="mass conservation"):
         validate_posterior_arrays(corrupt)
+
+
+def test_frozen_protocol_defaults_and_pinned_asset_gate(tmp_path):
+    protocol = validate_class_protocol(PROTOCOL, canonical=True)["payload"]
+    class_protocol = protocol["class_measurement"]
+    assert tuple(class_protocol["sensitivity_thresholds"]) == SENSITIVITY_THRESHOLDS
+    assert class_protocol["bootstrap"] == {
+        "unit": "video",
+        "draws": DEFAULT_BOOTSTRAP_DRAWS,
+        "seed": DEFAULT_BOOTSTRAP_SEED,
+        "interval": [0.025, 0.975],
+    }
+    assert class_protocol["video_determined_if_baseline_gte"] == VIDEO_DETERMINED_MIN
+    with pytest.raises(B2ClosureError, match="abstain delta"):
+        validate_class_protocol(PROTOCOL, abstain_delta=0.051, canonical=True)
+    bad_checkpoint = tmp_path / "bad.pth"
+    bad_checkpoint.write_bytes(b"not the pinned checkpoint")
+    with pytest.raises(B2ClosureError, match="checkpoint"):
+        validate_class_protocol(
+            PROTOCOL,
+            checkpoint_path=bad_checkpoint,
+            coarse_map_path=Path("configs/coarse_class_map.json"),
+            canonical=True,
+        )
+    with pytest.raises(B2ClosureError, match="coarse map"):
+        validate_class_protocol(
+            PROTOCOL,
+            coarse_map_path=_make_coarse_map(tmp_path / "wrong_map.json"),
+            canonical=True,
+        )
+
+
+def test_completion_scalar_provenance_tamper_is_detected(synthetic_inventory, tmp_path):
+    _roots, manifest_path = synthetic_inventory
+    map_path = _make_coarse_map(tmp_path / "coarse.json")
+    completion_path = _measure_two_shards(tmp_path, manifest_path, map_path)[0]
+    completion = json.loads(completion_path.read_text())
+    completion["tagger_revision"] = "tampered"
+    completion_path.write_text(json.dumps(completion, sort_keys=True) + "\n")
+    with pytest.raises(B2ClosureError, match="completion/NPZ provenance"):
+        validate_shard_completion(completion_path)
+
+
+def test_sustained_crossing_ignores_later_unscorable_and_majority_requires_two():
+    curve = {0.05: 0.8, 0.15: float("nan"), 0.25: 0.9}
+    assert _first_crossing(curve, 0.7, sustained=True) == pytest.approx(0.05)
+    label, share = _majority_label(["group_a", "abstain"])
+    assert label is None and np.isnan(share)
+    assert _majority_label(["group_a", "group_a", "abstain"]) == (
+        "group_a",
+        1.0,
+    )
+
+
+def test_unscorable_partition_is_not_noncrossing_or_numeric_censoring():
+    cells = [
+        {"video_id": "v", "base_seed": 0, "progress": progress, "commitment_gain": float("nan")}
+        for progress in (0.05, 0.15)
+    ]
+    baselines = [
+        {
+            "video_id": "v",
+            "a_independent": 0.5,
+            "n_confident_base_finals": 2,
+            "base_abstention_rate": 0.0,
+            "video_determined": False,
+        }
+    ]
+    summaries, _videos, units = summarize_thresholds(
+        cells, baselines, (0.7,), n_boot=10, seed=3
+    )
+    assert units[0]["status"] == "UNSCORABLE"
+    assert summaries[0]["n_unscorable"] == 1
+    assert summaries[0]["n_noncrossing"] == 0
+    assert "censored_median" not in summaries[0]
+    assert summaries[0]["noncrossers_are_right_censored_without_numeric_imputation"]
+
+
+def test_pooled_and_all_17_seed_crossings_are_explicit():
+    cells = []
+    for video in ("v0", "v1"):
+        for base_seed in range(17):
+            for progress, gain in ((0.25, 0.2), (0.35, 0.8), (0.45, 0.9)):
+                cells.append(
+                    {
+                        "video_id": video,
+                        "base_seed": base_seed,
+                        "progress": progress,
+                        "commitment_gain": gain,
+                    }
+                )
+    pooled, per_seed = pooled_and_seed_crossings(
+        cells, (0.7,), n_boot=10, seed=DEFAULT_BOOTSTRAP_SEED
+    )
+    assert pooled[0]["sustained_crossing"] == pytest.approx(0.35)
+    assert len(per_seed) == 17
+    assert {row["base_seed"] for row in per_seed} == set(range(17))
+    assert all(row["sustained_crossing"] == pytest.approx(0.35) for row in per_seed)
+
+
+def test_frozen_four_way_replication_classifier():
+    def pooled(value):
+        return [
+            {
+                "theta_commit": 0.7,
+                "sustained_crossing": value,
+                "sustained_crossing_bootstrap_ci_low": 0.25,
+                "sustained_crossing_bootstrap_ci_high": 0.45,
+            }
+        ]
+
+    def seeds(n_early):
+        return [
+            {
+                "theta_commit": 0.7,
+                "sustained_crossing": 0.35 if index < n_early else 0.75,
+            }
+            for index in range(17)
+        ]
+
+    stable_variance = {
+        "overall_mean_components": {
+            "video": 1.0,
+            "base_seed": 0.1,
+            "video_by_seed_interaction": 0.2,
+            "fork_monte_carlo_nonabstention": 0.1,
+            "abstention_within_fork_monte_carlo": 0.0,
+        }
+    }
+    strong_variance = {
+        "overall_mean_components": {
+            "video": 0.1,
+            "base_seed": 0.2,
+            "video_by_seed_interaction": 0.2,
+            "fork_monte_carlo_nonabstention": 0.1,
+            "abstention_within_fork_monte_carlo": 0.0,
+        }
+    }
+    grid = (0.05, 0.15, 0.25, 0.35, 0.45, 0.6, 0.75, 0.9)
+    assert classify_frozen_replication(
+        pooled(0.35), seeds(17), stable_variance, progress_grid=grid
+    )["replication_label"] == "stable_across_seeds"
+    assert classify_frozen_replication(
+        pooled(0.35), seeds(11), stable_variance, progress_grid=grid
+    )["replication_label"] == "heterogeneous_but_directionally_consistent"
+    assert classify_frozen_replication(
+        pooled(0.35), seeds(17), strong_variance, progress_grid=grid
+    )["replication_label"] == "strongly_seed_dependent"
+    assert classify_frozen_replication(
+        pooled(0.6), seeds(17), stable_variance, progress_grid=grid
+    )["replication_label"] == "not_reproduced"
+
+
+def test_canonical_analysis_requires_pinned_historical_comparator(tmp_path):
+    arrays = _analysis_arrays(tmp_path)
+    with pytest.raises(B2ClosureError, match="pinned WP-A2 Class comparator"):
+        analyze_multiseed(
+            arrays,
+            protocol_path=PROTOCOL,
+            canonical=True,
+            historical_jsons=(),
+        )
+
+
+def test_production_analysis_rejects_noncanonical_population_before_output(tmp_path):
+    arrays = _analysis_arrays(tmp_path)
+    with pytest.raises(B2ClosureError, match="canonical_b2=true"):
+        validate_canonical_analysis_inputs(
+            arrays,
+            {"canonical_b2": False},
+            protocol_path=PROTOCOL,
+            historical_jsons=[Path("results/arc4_wpA2/class_reconstruction.json")],
+        )
