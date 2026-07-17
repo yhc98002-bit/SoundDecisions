@@ -219,6 +219,27 @@ def test_protocol_hash_and_offline_guard(monkeypatch, tmp_path):
     assert lineage.validate_attempt(attempt, expected_protocol_sha256=PROTOCOL_SHA)["status"] == "PASS"
 
 
+def test_environment_provenance_serializes_cuda_uuid(monkeypatch):
+    class NonJsonCudaUuid:
+        def __str__(self):
+            return "GPU-test-uuid"
+
+    props = types.SimpleNamespace(uuid=NonJsonCudaUuid(), total_memory=123)
+    monkeypatch.setattr(torch.cuda, "is_available", lambda: True)
+    monkeypatch.setattr(torch.cuda, "current_device", lambda: 0)
+    monkeypatch.setattr(torch.cuda, "get_device_name", lambda _index: "test-gpu")
+    monkeypatch.setattr(torch.cuda, "get_device_properties", lambda _index: props)
+    monkeypatch.setattr(
+        lineage.subprocess,
+        "check_output",
+        lambda *args, **kwargs: "0, GPU-test-uuid, test-gpu, 0, 123, 100\n",
+    )
+
+    provenance = lineage.environment_provenance("cuda:0")
+    assert provenance["cuda_device_uuid"] == "GPU-test-uuid"
+    json.dumps(provenance, allow_nan=False)
+
+
 def test_same_forward_real_api_contract_and_historical_pool():
     packet = _packet_arrays()
     arrays, metadata = _capture(packet, "nonce")

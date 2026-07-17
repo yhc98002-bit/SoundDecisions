@@ -62,3 +62,53 @@
 - GPU occupancy snapshot at `2026-07-17T15:36:16+08:00`: only `an12:4`
   (`GPU-cc0f...`) and `an12:7` (`GPU-f76f...`) were idle with 81,226 MiB free.
   All `an29` GPUs and the other `an12` GPUs had active neighboring jobs.
+
+## Checkpoint 3 — audited launch code and canonical B2 inventory
+
+- Status: complete.
+- Hardened B-1 lineage code is committed through `440fd96`. The final protocol
+  SHA-256 is `5c4fc4025995c16e355feb8cc02fbb3627891d47f6df052becde4845eaa7bd09`.
+  The focused B-1 suite passes 7/7; an integration-topology correction records
+  fused blocks as latent self-attention rather than inventing a clip-key map.
+- Hardened Class code is committed through `f0c4649`; focused Class tests pass
+  19/19 after adding a fail-before-model deterministic-CuBLAS environment gate.
+- Four immutable inventory workers independently hashed and header-validated
+  all four B2 roots. The fail-closed merge validated the exact union: 79,152
+  records = 816 base finals + 78,336 fork finals, 48 videos, seeds 0--16,
+  eight progress points, and 12 forks per state. Merged manifest SHA-256:
+  `a5c5e721650e486f09fe70231d96e61f85904e0f17dc793ff3088b67646c3df2`.
+- The deterministic B-1 selection/asset gate passed without model replay.
+  Selection completion SHA-256:
+  `022f6157ecd58c48493f8260ce321061d7e2c8c8d33abee0604e8ef894e21e7a`.
+- First Class smoke attempt: `ENGINEERING_FAILURE` before artifact creation.
+  PyTorch deterministic mode correctly rejected CuBLAS without
+  `CUBLAS_WORKSPACE_CONFIG`; the traceback is preserved with SHA-256
+  `c48f6f83566c82fd8d80ca8212dfda8f0a7a4f764f5a6266505a29e7ec13a65a`.
+  No threshold, taxonomy, or scientific rule changed. The retry uses the
+  documented `:4096:8` setting and a new immutable output root.
+
+## Checkpoint 4 — Class measurement launch and B-1 packet retry
+
+- Status: active; no Class outcome analysis or held-out lineage replay has
+  occurred at this checkpoint.
+- The second Class smoke wrote a complete-looking shard, but independent
+  validation rejected it because the persisted normalized coarse posterior
+  was not bitwise derived from the persisted fp32 coarse sums. The invalid
+  artifact remains quarantined; completion SHA-256 is
+  `3f2016b147d428e4e0a9831426f1500f1b286cd72757cefe013b03b0929d2426`.
+- The persisted-posterior lineage was corrected without changing the coarse
+  map, abstention rule, or any scientific threshold. The third smoke passed
+  full inventory-bound validation; completion SHA-256 is
+  `8436b9e84067e28f80f36fa76a9be41562628c92226f10959b2c9dda22e5810d`.
+- Seven immutable Class measurement shards were launched across every A800
+  with sufficient observed memory on `an12` and `an29`. The first three
+  shards completed with 11,308 records each and independently passed the
+  inventory-bound validator; the four `an29` shards remain active.
+- The first B-1 packet attempt stopped while writing the first unit because
+  PyTorch exposed the device UUID as a non-JSON `_CUuuid` object. It produced
+  no completed unit or attempt and did not run a same-forward replay. The
+  partial immutable root and log (SHA-256
+  `c904c21ca145f9246761bbfd49a8195a6e45b15cf66892d4891373a1b34a83b2`)
+  are preserved. The provenance encoder now converts the UUID to its canonical
+  string, with a regression test; this is an engineering retry, not a gate
+  failure and not evidence about clip `1002`.

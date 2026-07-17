@@ -577,7 +577,13 @@ def environment_provenance(device: str, mmaudio_root: Path | None = None,
             info["cuda_device_index"] = int(index)
             info["cuda_device_name"] = torch.cuda.get_device_name(index)
             props = torch.cuda.get_device_properties(index)
-            info["cuda_device_uuid"] = getattr(props, "uuid", None)
+            # PyTorch exposes this as a private ``_CUuuid`` object on some
+            # CUDA builds.  Preserve its canonical printable identity while
+            # keeping the provenance document strictly JSON serializable.
+            device_uuid = getattr(props, "uuid", None)
+            info["cuda_device_uuid"] = (
+                None if device_uuid is None else str(device_uuid)
+            )
             info["cuda_total_memory"] = int(props.total_memory)
             try:
                 smi = subprocess.check_output([
