@@ -1182,19 +1182,11 @@ class SameForwardCapture:
             summary_key = prefix + "__derived_clip_summary_fp32"
             q_fp32 = q.detach().to(torch.float32)
             k_fp32 = k.detach().to(torch.float32)
-            probability_all = torch.softmax(
-                torch.matmul(q_fp32, k_fp32.transpose(-2, -1)) /
-                float(q.shape[-1]) ** 0.5,
-                dim=-1,
-            )
             latent_len = self._active_lengths.get("latent")
             clip_len = self._active_lengths.get("clip")
             if latent_len is None or clip_len is None:
                 raise ArtifactValidationError(f"attention lengths unavailable at {site}")
-            clip_start, clip_stop = latent_len, latent_len + clip_len
-            clip_probability = probability_all[:, :, :latent_len, clip_start:clip_stop]
             latent_output = actual_output[:, :latent_len]
-            clip_probability_array = clip_probability.cpu().numpy().astype(np.float32)
             self._arrays[q_key] = q_fp32.cpu().numpy()
             self._arrays[k_key] = k_fp32.cpu().numpy()
             self._arrays[v_key] = v.detach().to(torch.float32).cpu().numpy()
@@ -1203,9 +1195,7 @@ class SameForwardCapture:
             self._arrays[latent_summary_key] = latent_output.detach().to(
                 torch.float32
             ).mean(dim=1).cpu().numpy()
-            self._arrays[prob_key] = clip_probability_array
-            self._arrays[summary_key] = _attention_summary(clip_probability_array)
-            self._attention.append({
+            record = {
                 "capture_nonce": self._nonce,
                 "pass_index": self._pass_index,
                 "pass_role": role,
@@ -1216,20 +1206,47 @@ class SameForwardCapture:
                 "actual_attention_output": out_key,
                 "actual_latent_query_output": latent_out_key,
                 "actual_latent_query_summary": latent_summary_key,
-                "probability_map": prob_key,
-                "probability_summary": summary_key,
                 "latent_query_slice": [0, latent_len],
-                "clip_key_slice": [clip_start, clip_stop],
-                "attention_scale": f"1/sqrt({int(q.shape[-1])})",
-                "mask": None,
-                "softmax_dtype": "torch.float32",
-                "summary_contract": "numpy.mean(float32_map,axis=(heads,latent_query),dtype=float64)->float32",
-                "probability_map_provenance": (
-                    "RECOMPUTED_DERIVED latent-query/clip-key slice of "
-                    "softmax(fp32(Q)@fp32(K)^T/sqrt(d)); "
-                    "not exposed by scaled_dot_product_attention"
-                ),
-            })
+            }
+            if str(site).startswith("joint."):
+                probability_all = torch.softmax(
+                    torch.matmul(q_fp32, k_fp32.transpose(-2, -1)) /
+                    float(q.shape[-1]) ** 0.5,
+                    dim=-1,
+                )
+                clip_start, clip_stop = latent_len, latent_len + clip_len
+                clip_probability = probability_all[:, :, :latent_len, clip_start:clip_stop]
+                clip_probability_array = clip_probability.cpu().numpy().astype(np.float32)
+                if clip_probability_array.shape[-1] != clip_len or clip_len < 1:
+                    raise ArtifactValidationError(f"joint attention clip slice invalid at {site}")
+                self._arrays[prob_key] = clip_probability_array
+                self._arrays[summary_key] = _attention_summary(clip_probability_array)
+                record.update({
+                    "probability_map": prob_key,
+                    "probability_summary": summary_key,
+                    "clip_key_slice": [clip_start, clip_stop],
+                    "attention_scale": f"1/sqrt({int(q.shape[-1])})",
+                    "mask": None,
+                    "softmax_dtype": "torch.float32",
+                    "summary_contract": (
+                        "numpy.mean(float32_map,axis=(heads,latent_query),dtype=float64)->float32"
+                    ),
+                    "probability_map_provenance": (
+                        "RECOMPUTED_DERIVED latent-query/clip-key slice of "
+                        "softmax(fp32(Q)@fp32(K)^T/sqrt(d)); "
+                        "not exposed by scaled_dot_product_attention"
+                    ),
+                })
+            else:
+                record.update({
+                    "probability_map": None,
+                    "probability_summary": None,
+                    "clip_key_slice": None,
+                    "probability_map_provenance": (
+                        "NOT_APPLICABLE fused block is latent self-attention with no clip-key slice"
+                    ),
+                })
+            self._attention.append(record)
         return actual_output
 
     @contextmanager
@@ -1424,6 +1441,8 @@ def _comparison_records(arrays: Mapping[str, np.ndarray], capture: Mapping[str, 
     for attention in capture["attention"]:
         map_key = attention["probability_map"]
         summary_key = attention["probability_summary"]
+        if map_key is None or summary_key is None:
+            continue
         recomputed = _attention_summary(readback[map_key])
         rows.append(_exact_comparison(
             ATTENTION_SUMMARY_COMPARISON, summary_key,
@@ -1669,8 +1688,13 @@ def validate_replay_unit(root: Path) -> tuple[dict[str, Any], dict[str, np.ndarr
     for row in attention:
         if row.get("capture_nonce") != capture.get("capture_nonce"):
             raise ArtifactValidationError(f"attention parent mismatch: {root}")
-        if "RECOMPUTED_DERIVED" not in row.get("probability_map_provenance", ""):
-            raise ArtifactValidationError(f"derived attention map mislabeled: {root}")
+        if str(row.get("site", "")).startswith("joint."):
+            if "RECOMPUTED_DERIVED" not in row.get("probability_map_provenance", ""):
+                raise ArtifactValidationError(f"derived attention map mislabeled: {root}")
+            if not row.get("probability_map") or not row.get("probability_summary"):
+                raise ArtifactValidationError(f"joint attention summary absent: {root}")
+        elif row.get("probability_map") is not None or row.get("probability_summary") is not None:
+            raise ArtifactValidationError(f"fused self-attention falsely exposes clip map: {root}")
     required_keys = _required_replay_keys(capture)
     if set(arrays) != required_keys:
         raise ArtifactValidationError(

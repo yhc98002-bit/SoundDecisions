@@ -233,8 +233,12 @@ def test_same_forward_real_api_contract_and_historical_pool():
         assert np.array_equal(arrays[row["pooled_original"]], arrays[row["pooled_repaired"]])
     for row in metadata["attention"]:
         assert row["actual_latent_query_output"] in arrays
-        assert row["probability_summary"] in arrays
-        assert "RECOMPUTED_DERIVED" in row["probability_map_provenance"]
+        if row["site"].startswith("joint."):
+            assert row["probability_summary"] in arrays
+            assert "RECOMPUTED_DERIVED" in row["probability_map_provenance"]
+        else:
+            assert row["probability_summary"] is None
+            assert "NOT_APPLICABLE" in row["probability_map_provenance"]
 
 
 def test_real_replay_preserves_normalized_tweedie_before_inplace_unnormalize(tmp_path):
