@@ -76,6 +76,30 @@
       "schedule": "sqrt_down",
       "steps": 20,
       "duration_seconds": 8.0,
+      "asset_contract": {
+        "mmaudio_git_commit": "974010a026c731054592d8f777218bd9d85a6c24",
+        "mmaudio_backend_sha256": "8524a57f81468602ba03fee8cb134211b4acb35f3e0356fdd225f20c98d6f845",
+        "mmaudio_weights": {
+          "weights/mmaudio_small_16k.pth": "61987bcbd6fc689af063075d7efaef29425f65df155dac589c07fa8173a03c1c",
+          "ext_weights/best_netG.pt": "970ca75ee4d5ce583e9396a4534acb14971ea2b4f1c22e038f476680c868a789",
+          "ext_weights/synchformer_state_dict.pth": "8aff082f2df5c3bc52759db0c865c7ee772ae6400b860d1b7e90413f2defb67c"
+        },
+        "panns_checkpoint_sha256": "e2ee543a27919542c2ea03eabaa70b24dcd4e6c8e05621de6b67a94e4c5058e6",
+        "panns_labels_sha256": "cdd1049833c4b86127c2773ac0d14a2754b6a6d0d1798002ed5c66e699708429",
+        "panns_loader_sha256": "f8f0c9a709e8d8246959625ac45445863eb415d948c5574c87053d02d3a5fd2f",
+        "clip_hf_model": "apple/DFN5B-CLIP-ViT-H-14-384",
+        "clip_hf_revision": "01b771ed0d1395ca5ffdd279897d665ebe00dfd2",
+        "clip_snapshot_files": {
+          "open_clip_config.json": "56abccffc4875142ac955f96cec904a1bd4434d6",
+          "open_clip_pytorch_model.bin": "c07a17b547d461c60a3cce5062b26bf8545b13de602c4c59d8490361eb716033"
+        },
+        "offline_environment": {
+          "HF_HUB_OFFLINE": "1",
+          "TRANSFORMERS_OFFLINE": "1",
+          "HF_HUB_DISABLE_XET": "1",
+          "HF_HOME_required": true
+        }
+      },
       "progress": [0.05, 0.15, 0.25, 0.35, 0.45, 0.6, 0.75, 0.9],
       "tolerance_quantile": 0.999,
       "quantile_method": "higher",
