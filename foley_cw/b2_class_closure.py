@@ -106,10 +106,25 @@ REPLICATION_LABELS = (
     "strongly_seed_dependent",
     "not_reproduced",
 )
+CUDA_DETERMINISTIC_WORKSPACE_CONFIGS = frozenset({":4096:8", ":16:8"})
 
 
 class B2ClosureError(RuntimeError):
     """Raised when an integrity or scientific-contract check fails."""
+
+
+def validate_cuda_determinism_environment(device: str) -> str | None:
+    """Fail before model construction if deterministic CUDA GEMM is not configured."""
+    if not str(device).startswith("cuda"):
+        return None
+    observed = os.environ.get("CUBLAS_WORKSPACE_CONFIG")
+    if observed not in CUDA_DETERMINISTIC_WORKSPACE_CONFIGS:
+        allowed = ", ".join(sorted(CUDA_DETERMINISTIC_WORKSPACE_CONFIGS))
+        raise B2ClosureError(
+            "deterministic CUDA PANNs requires CUBLAS_WORKSPACE_CONFIG to be one of "
+            f"{allowed}; observed {observed!r}"
+        )
+    return observed
 
 
 def sha256_file(path: Path) -> str:
@@ -1075,6 +1090,7 @@ class PannsBatchPredictor:
             raise FileNotFoundError(
                 f"PANNs checkpoint not found locally: {checkpoint}; downloads are forbidden"
             )
+        validate_cuda_determinism_environment(device)
         import torch
 
         from .measurers_panns_cnn14 import load_cnn14_16k
@@ -2942,6 +2958,7 @@ def runtime_provenance(repo: Path, *, command: Sequence[str], device: str) -> di
         "node": socket.gethostname(),
         "device": device,
         "cuda_visible_devices": os.environ.get("CUDA_VISIBLE_DEVICES", ""),
+        "cublas_workspace_config": os.environ.get("CUBLAS_WORKSPACE_CONFIG"),
         "command": list(command),
         "python_executable": os.path.realpath(os.sys.executable),
         "python_version": platform.python_version(),

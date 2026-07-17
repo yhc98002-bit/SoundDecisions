@@ -37,6 +37,7 @@ from foley_cw.b2_class_closure import (
     summarize_thresholds,
     validate_posterior_arrays,
     validate_class_protocol,
+    validate_cuda_determinism_environment,
     validate_canonical_analysis_inputs,
     validate_shard_completion,
     write_inventory,
@@ -678,3 +679,17 @@ def test_production_analysis_rejects_noncanonical_population_before_output(tmp_p
             protocol_path=PROTOCOL,
             historical_jsons=[Path("results/arc4_wpA2/class_reconstruction.json")],
         )
+
+
+def test_cuda_determinism_workspace_gate(monkeypatch):
+    monkeypatch.delenv("CUBLAS_WORKSPACE_CONFIG", raising=False)
+    with pytest.raises(B2ClosureError, match="CUBLAS_WORKSPACE_CONFIG"):
+        validate_cuda_determinism_environment("cuda:0")
+    monkeypatch.setenv("CUBLAS_WORKSPACE_CONFIG", ":4096:8")
+    assert validate_cuda_determinism_environment("cuda:0") == ":4096:8"
+    monkeypatch.setenv("CUBLAS_WORKSPACE_CONFIG", ":16:8")
+    assert validate_cuda_determinism_environment("cuda") == ":16:8"
+    monkeypatch.setenv("CUBLAS_WORKSPACE_CONFIG", "bad")
+    with pytest.raises(B2ClosureError, match="observed 'bad'"):
+        validate_cuda_determinism_environment("cuda:0")
+    assert validate_cuda_determinism_environment("cpu") is None
