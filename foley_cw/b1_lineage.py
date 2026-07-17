@@ -14,6 +14,7 @@ used as identity evidence.
 from __future__ import annotations
 
 import hashlib
+import io
 import itertools
 import json
 import os
@@ -1399,7 +1400,8 @@ def _exact_comparison(comparison_type: str, lhs_key: str, rhs_key: str,
 
 
 def _comparison_records(arrays: Mapping[str, np.ndarray], capture: Mapping[str, Any],
-                        readback: Mapping[str, np.ndarray]) -> list[dict[str, Any]]:
+                        readback: Mapping[str, np.ndarray], *,
+                        include_atomic: bool = True) -> list[dict[str, Any]]:
     rows: list[dict[str, Any]] = []
     for record in capture["tokens"]:
         lhs_key = record["pooled_original"]
@@ -1456,12 +1458,13 @@ def _comparison_records(arrays: Mapping[str, np.ndarray], capture: Mapping[str, 
             pass_role=attention["pass_role"], site=attention["site"],
             capture_nonce=capture["capture_nonce"],
         ))
-    for key in sorted(arrays):
-        rows.append(_exact_comparison(
-            ATOMIC_READBACK_COMPARISON, key, f"atomic_readback:{key}",
-            arrays[key], readback[key], pass_role="storage", site=key,
-            capture_nonce=capture["capture_nonce"],
-        ))
+    if include_atomic:
+        for key in sorted(arrays):
+            rows.append(_exact_comparison(
+                ATOMIC_READBACK_COMPARISON, key, f"atomic_readback:{key}",
+                arrays[key], readback[key], pass_role="storage", site=key,
+                capture_nonce=capture["capture_nonce"],
+            ))
     return rows
 
 
@@ -1617,24 +1620,69 @@ def validate_replay_unit(root: Path) -> tuple[dict[str, Any], dict[str, np.ndarr
     completion = _load_json(completion_path)
     if completion.get("status") != "COMPLETE" or completion.get("stage") != "replay":
         raise ArtifactValidationError(f"invalid replay completion: {root}")
-    _validate_inventory(root, completion, unit=True)
-    manifest = _load_json(root / "manifest.json")
+    expected_inventory = completion.get("inventory")
+    if not isinstance(expected_inventory, list):
+        raise ArtifactValidationError(f"replay unit completion inventory absent: {root}")
+    if completion.get("inventory_sha256") != sha256_bytes(
+        canonical_json_bytes(expected_inventory)
+    ):
+        raise ArtifactValidationError(f"replay unit inventory digest mismatch: {root}")
+    manifest_raw = (root / "manifest.json").read_bytes()
+    arrays_raw = (root / "arrays.npz").read_bytes()
+    preview_raw = (root / "external_preview.wav").read_bytes()
+    actual_inventory = [
+        {
+            "path": "arrays.npz",
+            "size": len(arrays_raw),
+            "sha256": sha256_bytes(arrays_raw),
+        },
+        {
+            "path": "external_preview.wav",
+            "size": len(preview_raw),
+            "sha256": sha256_bytes(preview_raw),
+        },
+        {
+            "path": "manifest.json",
+            "size": len(manifest_raw),
+            "sha256": sha256_bytes(manifest_raw),
+        },
+    ]
+    if actual_inventory != expected_inventory:
+        raise ArtifactValidationError(f"inventory/hash mismatch in {root}")
+    try:
+        manifest = json.loads(manifest_raw)
+    except Exception as exc:
+        raise ArtifactValidationError(f"invalid replay manifest {root}: {exc}") from exc
+    if not isinstance(manifest, dict):
+        raise ArtifactValidationError(f"replay manifest is not an object: {root}")
     protocol = validate_protocol_binding(root.parent.parent)
     if manifest.get("schema") != REPLAY_SCHEMA or manifest.get("unit_id") != root.name:
         raise ArtifactValidationError(f"replay schema/unit conflict: {root}")
     if manifest.get("protocol_sha256") != protocol["sha256"]:
         raise ArtifactValidationError(f"replay protocol parent mismatch: {root}")
-    if manifest.get("arrays_file_sha256") != sha256_file(root / "arrays.npz"):
+    if manifest.get("arrays_file_sha256") != sha256_bytes(arrays_raw):
         raise ArtifactValidationError(f"replay npz hash mismatch: {root}")
-    arrays = _load_npz_verified(root / "arrays.npz", manifest.get("arrays", {}))
+    try:
+        with np.load(io.BytesIO(arrays_raw), allow_pickle=False) as archive:
+            descriptors = manifest.get("arrays", {})
+            if set(archive.files) != set(descriptors):
+                raise ArtifactValidationError(f"replay array-key mismatch: {root}")
+            arrays = {key: np.array(archive[key], copy=True) for key in archive.files}
+    except ArtifactValidationError:
+        raise
+    except Exception as exc:
+        raise ArtifactValidationError(f"cannot load replay arrays {root}: {exc}") from exc
+    for key, array in arrays.items():
+        if describe_array(array) != manifest["arrays"][key]:
+            raise ArtifactValidationError(f"array descriptor/hash mismatch: {root}:{key}")
     if set(arrays) != set(manifest.get("required_array_keys", [])):
         raise ArtifactValidationError(f"replay required-array contract mismatch: {root}")
     preview = manifest.get("external_preview", {})
-    if preview.get("sha256") != sha256_file(root / "external_preview.wav"):
+    if preview.get("sha256") != sha256_bytes(preview_raw):
         raise ArtifactValidationError(f"preview hash mismatch: {root}")
     try:
         import soundfile as sf
-        waveform, sample_rate = sf.read(root / "external_preview.wav", dtype="float32")
+        waveform, sample_rate = sf.read(io.BytesIO(preview_raw), dtype="float32")
     except Exception as exc:
         raise ArtifactValidationError(f"cannot read preview waveform {root}: {exc}") from exc
     describe_array(np.asarray(waveform))
@@ -1712,9 +1760,43 @@ def validate_replay_unit(root: Path) -> tuple[dict[str, Any], dict[str, np.ndarr
         raise ArtifactValidationError(f"forbidden reduction-order comparison gates {root}")
     if policy.get("protocol_gating_comparisons") != list(_PROTOCOL_GATE_TEXT):
         raise ArtifactValidationError(f"protocol gate comparisons are incomplete: {root}")
-    recomputed = _comparison_records(arrays, capture, arrays)
-    if canonical_json_bytes(recomputed) != canonical_json_bytes(manifest.get("comparisons", [])):
+    stored_comparisons = manifest.get("comparisons", [])
+    if not isinstance(stored_comparisons, list):
+        raise ArtifactValidationError(f"stored comparison ledger is invalid: {root}")
+    stored_nonatomic = [
+        row for row in stored_comparisons
+        if row.get("comparison_type") != ATOMIC_READBACK_COMPARISON
+    ]
+    stored_atomic = [
+        row for row in stored_comparisons
+        if row.get("comparison_type") == ATOMIC_READBACK_COMPARISON
+    ]
+    recomputed = _comparison_records(arrays, capture, arrays, include_atomic=False)
+    if canonical_json_bytes(recomputed) != canonical_json_bytes(stored_nonatomic):
         raise ArtifactValidationError(f"stored comparison metrics do not recompute: {root}")
+    if len(stored_atomic) != len(arrays):
+        raise ArtifactValidationError(f"atomic readback ledger cardinality mismatch: {root}")
+    atomic_by_key = {str(row.get("lhs")): row for row in stored_atomic}
+    if set(atomic_by_key) != set(arrays):
+        raise ArtifactValidationError(f"atomic readback tensor inventory mismatch: {root}")
+    for key in sorted(arrays):
+        row = atomic_by_key[key]
+        metrics = row.get("metrics", {})
+        if (
+            row.get("rhs") != f"atomic_readback:{key}"
+            or row.get("pass_role") != "storage"
+            or row.get("site") != key
+            or row.get("capture_nonce") != capture.get("capture_nonce")
+            or row.get("eligible_for_tolerance") is not False
+            or row.get("required_exact") is not True
+            or float(metrics.get("relative_l2", -1)) != 0.0
+            or float(metrics.get("absolute_l2", -1)) != 0.0
+            or float(metrics.get("max_abs", -1)) != 0.0
+            or float(metrics.get("exact_fraction", -1)) != 1.0
+            or abs(float(metrics.get("cosine", 0.0)) - 1.0) > 1e-12
+        ):
+            raise ArtifactValidationError(f"atomic readback identity invalid: {root}:{key}")
+    recomputed.extend(stored_atomic)
     for comparison in recomputed:
         for metric_name, value in comparison.get("metrics", {}).items():
             if not np.isfinite(float(value)) or (
@@ -1730,6 +1812,104 @@ def validate_replay_unit(root: Path) -> tuple[dict[str, Any], dict[str, np.ndarr
                     f"{comparison['comparison_type']}:{comparison.get('site')}"
                 )
     return manifest, arrays
+
+
+def _validate_replay_attempt_once(
+    root: Path,
+    *,
+    expected_protocol_sha256: str | None,
+    keep_arrays: bool,
+) -> tuple[dict[str, Any], list[dict[str, Any]]]:
+    """Validate each replay archive once and reconstruct its root inventory.
+
+    Unit completion ledgers already bind the large files.  Reconstructing the
+    root inventory from those deeply validated ledgers avoids a second full
+    read of every archive while preserving the exact same hash coverage.
+    """
+    root = Path(root)
+    completion_path = root / "COMPLETED.json"
+    completion = _load_json(completion_path)
+    if (
+        completion.get("schema") != ATTEMPT_SCHEMA
+        or completion.get("status") != "COMPLETE"
+        or completion.get("stage") != "replay"
+    ):
+        raise ArtifactValidationError(f"invalid replay attempt completion: {root}")
+    protocol = validate_protocol_binding(root, expected_protocol_sha256)
+    expected_inventory = completion.get("inventory")
+    if not isinstance(expected_inventory, list):
+        raise ArtifactValidationError(f"replay attempt inventory absent: {root}")
+    if completion.get("inventory_sha256") != sha256_bytes(
+        canonical_json_bytes(expected_inventory)
+    ):
+        raise ArtifactValidationError(f"replay attempt inventory digest mismatch: {root}")
+    actual_inventory = []
+    for name in ("PROTOCOL.json", "PROTOCOL_BINDING.json"):
+        path = root / name
+        actual_inventory.append(
+            {"path": name, "size": path.stat().st_size, "sha256": sha256_file(path)}
+        )
+    identities: dict[bytes, str] = {}
+    records: list[dict[str, Any]] = []
+    unit_roots = sorted(path for path in (root / "units").iterdir() if path.is_dir())
+    for unit_root in unit_roots:
+        manifest, arrays = validate_replay_unit(unit_root)
+        identity_key = canonical_json_bytes(manifest["identity"])
+        if identity_key in identities:
+            raise ArtifactValidationError(
+                f"conflicting replay identity in {unit_root} and {identities[identity_key]}"
+            )
+        identities[identity_key] = str(unit_root)
+        unit_completion_path = unit_root / "COMPLETED.json"
+        unit_completion = _load_json(unit_completion_path)
+        prefix = f"units/{unit_root.name}/"
+        actual_inventory.append(
+            {
+                "path": prefix + "COMPLETED.json",
+                "size": unit_completion_path.stat().st_size,
+                "sha256": sha256_file(unit_completion_path),
+            }
+        )
+        actual_inventory.extend(
+            {**row, "path": prefix + str(row["path"])}
+            for row in unit_completion["inventory"]
+        )
+        if keep_arrays:
+            records.append(
+                {"unit_root": unit_root, "manifest": manifest, "arrays": arrays}
+            )
+    actual_inventory.sort(key=lambda row: row["path"])
+    current_paths = sorted(
+        path.relative_to(root).as_posix()
+        for path in root.rglob("*")
+        if path.is_file() and path.name != "COMPLETED.json"
+    )
+    expected_paths = sorted(row["path"] for row in expected_inventory)
+    # The root completion itself is excluded; nested unit completions are not.
+    current_paths.extend(
+        sorted(
+            path.relative_to(root).as_posix()
+            for path in root.glob("units/*/COMPLETED.json")
+        )
+    )
+    current_paths = sorted(set(current_paths))
+    if current_paths != expected_paths or actual_inventory != expected_inventory:
+        raise ArtifactValidationError(f"replay attempt inventory/hash mismatch: {root}")
+    completed_units = len(unit_roots)
+    if completed_units != int(completion.get("expected_units", -1)):
+        raise ArtifactValidationError(
+            f"replay unit cardinality {completed_units} != completion ledger"
+        )
+    summary = {
+        "root": str(root),
+        "stage": "replay",
+        "status": "PASS",
+        "units": completed_units,
+        "inventory_sha256": completion["inventory_sha256"],
+        "completion_sha256": sha256_file(completion_path),
+        "protocol_sha256": protocol["sha256"],
+    }
+    return summary, records
 
 
 def _real_replay_one(
@@ -1966,6 +2146,13 @@ def validate_attempt(root: Path, expected_stage: str | None = None,
     stage = completion.get("stage")
     if expected_stage is not None and stage != expected_stage:
         raise ArtifactValidationError(f"attempt stage {stage!r} != {expected_stage!r}")
+    if stage == "replay":
+        summary, _records = _validate_replay_attempt_once(
+            root,
+            expected_protocol_sha256=expected_protocol_sha256,
+            keep_arrays=False,
+        )
+        return summary
     _validate_inventory(root, completion)
     units_dir = root / "units"
     identities: dict[bytes, str] = {}
@@ -1974,8 +2161,6 @@ def validate_attempt(root: Path, expected_stage: str | None = None,
         for unit_root in sorted(path for path in units_dir.iterdir() if path.is_dir()):
             if stage == "packets":
                 manifest, _ = validate_packet_unit(unit_root)
-            elif stage == "replay":
-                manifest, _ = validate_replay_unit(unit_root)
             else:
                 raise ArtifactValidationError(f"unexpected units for stage {stage}: {unit_root}")
             key = canonical_json_bytes(manifest["identity"])
@@ -2034,28 +2219,25 @@ def _replay_records(replay_attempt_roots: Sequence[Path], *,
     completion_hashes: set[str] = set()
     replay_instances: set[str] = set()
     for attempt_root in roots:
-        summary = validate_attempt(
-            attempt_root, expected_stage="replay",
+        summary, attempt_records = _validate_replay_attempt_once(
+            attempt_root,
             expected_protocol_sha256=expected_protocol_sha256,
+            keep_arrays=True,
         )
         if summary["completion_sha256"] in completion_hashes:
             raise ArtifactValidationError("fresh replay attempts share a completion hash")
         completion_hashes.add(summary["completion_sha256"])
-        attempt_records: list[dict[str, Any]] = []
-        for unit_root in sorted((attempt_root / "units").iterdir()):
-            if not unit_root.is_dir():
-                continue
-            manifest, arrays = validate_replay_unit(unit_root)
+        for record in attempt_records:
+            manifest = record["manifest"]
             instance = manifest.get("provenance", {}).get("replay_instance_id")
             if not instance:
-                raise ArtifactValidationError(f"replay instance identity absent: {unit_root}")
+                raise ArtifactValidationError(
+                    f"replay instance identity absent: {record['unit_root']}"
+                )
             replay_instances.add(str(instance))
-            attempt_records.append({
+            record.update({
                 "attempt_root": attempt_root,
                 "attempt_completion_sha256": summary["completion_sha256"],
-                "unit_root": unit_root,
-                "manifest": manifest,
-                "arrays": arrays,
             })
         records.extend(attempt_records)
     if len(replay_instances) < 2:

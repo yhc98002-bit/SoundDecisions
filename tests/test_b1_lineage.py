@@ -368,6 +368,25 @@ def test_calibration_physically_rejects_heldout(tmp_path):
         )
 
 
+def test_replay_reducer_deep_validates_each_unit_once(monkeypatch, tmp_path):
+    packets = _make_packets(tmp_path / "packets", lineage.CALIBRATION_CLIPS)
+    left = _make_replay(tmp_path / "replays", packets, "calibration", "left")
+    right = _make_replay(tmp_path / "replays", packets, "calibration", "right")
+    original = lineage.validate_replay_unit
+    calls = []
+
+    def counted(root):
+        calls.append(Path(root))
+        return original(root)
+
+    monkeypatch.setattr(lineage, "validate_replay_unit", counted)
+    records = lineage._replay_records(
+        [left, right], expected_protocol_sha256=PROTOCOL_SHA
+    )
+    assert len(records) == 2 * len(lineage.CALIBRATION_CLIPS) * len(lineage.S_POINTS)
+    assert len(calls) == len(records)
+
+
 def test_phase1_rng_and_higher_quantile_contract():
     assert np.array_equal(
         lineage.phase1_rng(0, "3780", "ind", 12).standard_normal(8),
