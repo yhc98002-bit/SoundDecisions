@@ -1,0 +1,163 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Outcome-blind legacy Material reference manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "frozen",
+    "exploratory_scope",
+    "outcome_blind",
+    "candidate_margins_inspected",
+    "candidate_embeddings_inspected",
+    "protocol_sha256",
+    "source_provenance",
+    "rules",
+    "coverage",
+    "trials"
+  ],
+  "properties": {
+    "schema": {"const": "sounddecisions_legacy_material_reference_manifest_v1"},
+    "frozen": {"const": true},
+    "exploratory_scope": {"type": "string", "minLength": 1},
+    "outcome_blind": {"const": true},
+    "candidate_margins_inspected": {"const": false},
+    "candidate_embeddings_inspected": {"const": false},
+    "protocol_sha256": {"$ref": "#/definitions/sha256"},
+    "source_provenance": {"type": "object"},
+    "rules": {"type": "object"},
+    "coverage": {
+      "type": "object",
+      "required": ["complete_candidate_videos", "valid_cells", "valid_videos_by_progress"],
+      "properties": {
+        "complete_candidate_videos": {"type": "integer", "minimum": 20},
+        "valid_cells": {"type": "integer", "minimum": 640},
+        "valid_videos_by_progress": {
+          "type": "object",
+          "minProperties": 8,
+          "additionalProperties": {"type": "integer", "minimum": 20}
+        }
+      }
+    },
+    "trials": {
+      "type": "array",
+      "minItems": 640,
+      "items": {"$ref": "#/definitions/trial"}
+    }
+  },
+  "definitions": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "scene": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["audioset_category", "source_type", "discrete_vs_rest"],
+      "properties": {
+        "audioset_category": {"type": "string", "minLength": 1},
+        "source_type": {"type": "string", "minLength": 1},
+        "discrete_vs_rest": {"type": "string", "minLength": 1}
+      }
+    },
+    "candidate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "candidate_id", "video_id", "subject_index", "progress",
+        "retained_final_generation_id", "coarse_class"
+      ],
+      "properties": {
+        "candidate_id": {"type": "string", "minLength": 1},
+        "video_id": {"type": "string", "minLength": 1},
+        "subject_index": {"type": "integer", "minimum": 0, "maximum": 3},
+        "progress": {"enum": [0.05, 0.15, 0.25, 0.35, 0.45, 0.6, 0.75, 0.9]},
+        "retained_final_generation_id": {"type": "string", "minLength": 1},
+        "coarse_class": {"type": "string", "minLength": 1, "not": {"const": "abstain"}}
+      }
+    },
+    "positive": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["reference_id", "video_id", "generation_id"],
+      "properties": {
+        "reference_id": {"type": "string", "minLength": 1},
+        "video_id": {"type": "string", "minLength": 1},
+        "generation_id": {"type": "string", "minLength": 1}
+      }
+    },
+    "negative": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["reference_id", "video_id", "generation_id", "coarse_class"],
+      "properties": {
+        "reference_id": {"type": "string", "minLength": 1},
+        "video_id": {"type": "string", "minLength": 1},
+        "generation_id": {"type": "string", "minLength": 1},
+        "coarse_class": {"type": "string", "minLength": 1, "not": {"const": "abstain"}}
+      }
+    },
+    "matching": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "candidate_material", "negative_material", "material_difference_source",
+        "candidate_scene_metadata", "negative_scene_metadata",
+        "candidate_timing_s", "negative_timing_s", "candidate_timing_source",
+        "negative_timing_source", "timing_distance_s",
+        "candidate_loudness_dbfs", "negative_loudness_dbfs", "loudness_distance_db",
+        "difficulty", "timing_seconds_lte", "loudness_db_lte",
+        "normalized_distance", "selection_tiebreak_sha256"
+      ],
+      "properties": {
+        "candidate_material": {"$ref": "#/definitions/material"},
+        "negative_material": {"$ref": "#/definitions/material"},
+        "material_difference_source": {"type": "string", "minLength": 1},
+        "candidate_scene_metadata": {"$ref": "#/definitions/scene"},
+        "negative_scene_metadata": {"$ref": "#/definitions/scene"},
+        "candidate_timing_s": {"type": "number", "minimum": 0},
+        "negative_timing_s": {"type": "number", "minimum": 0},
+        "candidate_timing_source": {"type": "string", "minLength": 1},
+        "negative_timing_source": {"type": "string", "minLength": 1},
+        "timing_distance_s": {"type": "number", "minimum": 0, "maximum": 1},
+        "candidate_loudness_dbfs": {"type": "number"},
+        "negative_loudness_dbfs": {"type": "number"},
+        "loudness_distance_db": {"type": "number", "minimum": 0, "maximum": 9},
+        "difficulty": {"enum": ["hard", "medium", "easy"]},
+        "timing_seconds_lte": {"enum": [0.25, 0.5, 1.0]},
+        "loudness_db_lte": {"enum": [3.0, 6.0, 9.0]},
+        "normalized_distance": {"type": "number", "minimum": 0, "maximum": 2},
+        "selection_tiebreak_sha256": {"$ref": "#/definitions/sha256"}
+      }
+    },
+    "orientation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "randomization_seed", "algorithm", "orientation_sha256",
+        "positive_slot", "negative_slot", "correct_choice"
+      ],
+      "properties": {
+        "randomization_seed": {"type": "integer", "minimum": 0},
+        "algorithm": {"type": "string", "minLength": 1},
+        "orientation_sha256": {"$ref": "#/definitions/sha256"},
+        "positive_slot": {"enum": ["A", "B"]},
+        "negative_slot": {"enum": ["A", "B"]},
+        "correct_choice": {"enum": ["A", "B"]}
+      }
+    },
+    "material": {
+      "enum": ["CERAMICS", "CLOTH", "GLASS", "METAL", "PAPER", "PLASTIC", "ROCKS", "WOOD"]
+    },
+    "trial": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["trial_id", "candidate", "positive", "negative", "matching", "ab_orientation"],
+      "properties": {
+        "trial_id": {"type": "string", "minLength": 1},
+        "candidate": {"$ref": "#/definitions/candidate"},
+        "positive": {"$ref": "#/definitions/positive"},
+        "negative": {"$ref": "#/definitions/negative"},
+        "matching": {"$ref": "#/definitions/matching"},
+        "ab_orientation": {"$ref": "#/definitions/orientation"}
+      }
+    }
+  }
+}
