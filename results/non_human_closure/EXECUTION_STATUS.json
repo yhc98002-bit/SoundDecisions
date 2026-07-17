@@ -10,8 +10,8 @@
   "workstreams": {
     "class_multiseed": "NOT_TESTED",
     "feature_lineage_and_internal_readout": "NOT_TESTED",
-    "material_continuity_2afc": "NOT_TESTED"
+    "material_continuity_2afc": "INCOMPLETE_ARTIFACTS"
   },
-  "current_checkpoint": "outcome_independent_protocol_frozen",
-  "updated_at": "2026-07-17T14:55:00+08:00"
+  "current_checkpoint": "prelaunch_code_repairs_and_parallel_b2_inventory",
+  "updated_at": "2026-07-17T15:48:00+08:00"
 }

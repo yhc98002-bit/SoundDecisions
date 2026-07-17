@@ -1,0 +1,34 @@
+{
+  "schema": "sounddecisions_material_continuity_2afc_report_v1",
+  "scientific_status": "INCOMPLETE_ARTIFACTS",
+  "evidence_scope": "legacy continuity; not event-centered Material v2",
+  "reference_gate": {
+    "scientific_status": "INCOMPLETE_ARTIFACTS",
+    "valid_videos": 3,
+    "required_videos": 20,
+    "valid_cells": 96,
+    "required_cells": 640,
+    "reference_manifest_frozen": false,
+    "reason": "Existing non-human metadata cannot provide sufficient complete four-subject matched trials under the outcome-independent rule."
+  },
+  "measurement": {
+    "candidate_previews_replayed": 0,
+    "candidate_embeddings_measured": 0,
+    "two_afc_accuracy": null,
+    "auroc": null,
+    "margin_distribution": null,
+    "indifference_rate": null,
+    "video_bootstrap_interval": null,
+    "negative_difficulty_results": null,
+    "historical_cosine_comparison": null,
+    "external_readout_curve": null,
+    "scientific_status": "NOT_TESTED"
+  },
+  "conclusions": {
+    "valid_material_2afc_possible": false,
+    "material_readout_window_distinct_from_class": "UNRESOLVED",
+    "interpretation": "The blocker is missing valid metadata-matched coverage, not evidence against Material continuity."
+  },
+  "evidence_summary": "MATERIAL_REFERENCE_INSUFFICIENCY_SUMMARY.json"
+}
+

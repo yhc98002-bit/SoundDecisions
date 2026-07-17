@@ -35,3 +35,30 @@
 - Frozen `experiment/non_human_closure/PROTOCOL.json` before inspecting B2
   posteriors, Material candidate margins, or held-out clip 1002.
 - Validation: JSON parse and `git diff --check` (see checkpoint commit).
+
+## Checkpoint 2 — pre-launch implementation audits and Material gate
+
+- Status: partial; Class and B-1 launches remain blocked on code corrections.
+- An independent Class audit rejected the first implementation before posterior
+  measurement. It found frozen-default drift, insufficient pinned-asset
+  enforcement, incorrect unscorable crossing semantics, and missing required
+  replication/variance summaries. The defects are being corrected with
+  regression tests; no B2 posterior has been produced or inspected.
+- An independent B-1 audit rejected the first pilot implementation before any
+  GPU replay or held-out access. It found an in-place Tweedie mutation, a
+  vacuous within-call comparator, missing fresh-device/repeat reducers, and
+  incomplete held-out isolation and validation. The held-out clip `1002`
+  remains unopened.
+- The outcome-blind Material feasibility gate was reproduced into immutable
+  storage. Exact inventory was 200 videos / 6,400 cells, but strict existing-
+  metadata matching produced only 3 complete four-subject videos / 96 cells,
+  below the frozen 20-video / 640-cell floor. Workstream C therefore stopped as
+  `INCOMPLETE_ARTIFACTS` before candidate replay or margin measurement.
+- The first read-only B2 inventory attempt on the login node exhausted memory
+  after hashing part of the bank and exited without a completion artifact. This
+  is an engineering attempt, not a scientific result. The retry will run on a
+  compute node with substantially more available RAM after the audited code is
+  committed.
+- GPU occupancy snapshot at `2026-07-17T15:36:16+08:00`: only `an12:4`
+  (`GPU-cc0f...`) and `an12:7` (`GPU-f76f...`) were idle with 81,226 MiB free.
+  All `an29` GPUs and the other `an12` GPUs had active neighboring jobs.
