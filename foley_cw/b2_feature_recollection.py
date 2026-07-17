@@ -266,6 +266,74 @@ def _capture_state(
     return arrays, capture
 
 
+def build_probe_views(
+    arrays: Mapping[str, np.ndarray], capture: Mapping[str, Any]
+) -> dict[str, np.ndarray]:
+    """Outcome-blind fixed views consumed by the predeclared probe families."""
+    conditioning_parts: list[np.ndarray] = []
+    for field in ("clip_f", "sync_f", "text_f"):
+        value = np.asarray(arrays[f"conditions__{field}"], dtype=np.float32)
+        flat = value.reshape(-1, value.shape[-1])
+        conditioning_parts.extend((flat.mean(axis=0), flat.std(axis=0)))
+    for field in ("clip_f_c", "text_f_c"):
+        conditioning_parts.append(
+            np.asarray(arrays[f"conditions__{field}"], dtype=np.float32).reshape(-1)
+        )
+    conditional_tokens = [
+        row for row in capture.get("tokens", []) if row.get("pass_role") == "conditional"
+    ]
+    if len(conditional_tokens) != 12:
+        raise FeatureRecollectionError("probe views require exactly 12 conditional blocks")
+    pooled = np.concatenate(
+        [np.asarray(arrays[row["pooled_repaired"]], np.float32).reshape(-1)
+         for row in conditional_tokens]
+    )
+    token_stats = np.concatenate(
+        [np.asarray(arrays[row["token_stats"]], np.float32).reshape(-1)
+         for row in conditional_tokens]
+    )
+    attention_tokens = np.asarray(
+        arrays[conditional_tokens[-1]["persisted_tokens"]], dtype=np.float32
+    )
+    if attention_tokens.ndim != 3 or attention_tokens.shape[0] != 1:
+        raise FeatureRecollectionError("single-query view requires (1,tokens,width) fp32")
+    cross_parts: list[np.ndarray] = []
+    conditional_attention = [
+        row for row in capture.get("attention", []) if row.get("pass_role") == "conditional"
+    ]
+    if len(conditional_attention) != 3:
+        raise FeatureRecollectionError("probe views require three selected conditional attentions")
+    for row in conditional_attention:
+        cross_parts.append(
+            np.asarray(arrays[row["actual_latent_query_summary"]], np.float32).reshape(-1)
+        )
+        if row.get("probability_summary") is not None:
+            cross_parts.append(
+                np.asarray(arrays[row["probability_summary"]], np.float32).reshape(-1)
+            )
+    views = {
+        "conditioning": np.concatenate(conditioning_parts).astype(np.float32),
+        "external_preview": np.concatenate(
+            (
+                np.asarray(arrays["panns_embedding_fp32"], np.float32).reshape(-1),
+                np.asarray(arrays["panns_clipwise_output_fp32"], np.float32).reshape(-1),
+            )
+        ).astype(np.float32),
+        "latent": np.asarray(arrays["packet_x_s_fp32"], np.float32).reshape(-1),
+        "velocity": np.asarray(arrays["returned_velocity_fp32"], np.float32).reshape(-1),
+        "tweedie": np.asarray(arrays["tweedie_latent_fp32"], np.float32).reshape(-1),
+        "pooled": pooled.astype(np.float32),
+        "token_statistics": token_stats.astype(np.float32),
+        "attention_tokens": attention_tokens[0].astype(np.float32),
+        "selected_cross_attention": np.concatenate(cross_parts).astype(np.float32),
+    }
+    for key, value in views.items():
+        describe_array(value)
+        if key != "attention_tokens" and value.ndim != 1:
+            raise FeatureRecollectionError(f"probe view {key} is not a vector")
+    return views
+
+
 def write_feature_unit(
     shard_root: Path,
     *,
@@ -292,6 +360,9 @@ def write_feature_unit(
     descriptors = {key: describe_array(value) for key, value in normalized.items()}
     arrays_path = root / "arrays.npz"
     deterministic_npz_create(arrays_path, normalized)
+    probe_views = build_probe_views(normalized, capture)
+    probe_path = root / "probe_views.npz"
+    deterministic_npz_create(probe_path, probe_views)
     manifest = {
         "schema": UNIT_SCHEMA,
         "protocol_sha256": protocol["sha256"],
@@ -309,6 +380,12 @@ def write_feature_unit(
         "arrays_file_bytes": arrays_path.stat().st_size,
         "required_array_keys": sorted(required),
         "arrays": descriptors,
+        "probe_views_file": probe_path.name,
+        "probe_views_file_sha256": sha256_file(probe_path),
+        "probe_views_file_bytes": probe_path.stat().st_size,
+        "probe_views": {
+            key: describe_array(value) for key, value in probe_views.items()
+        },
         "capture": dict(capture),
         "provenance": dict(provenance),
     }
@@ -321,6 +398,8 @@ def write_feature_unit(
         "manifest_sha256": sha256_file(manifest_path),
         "arrays_sha256": manifest["arrays_file_sha256"],
         "arrays_bytes": manifest["arrays_file_bytes"],
+        "probe_views_sha256": manifest["probe_views_file_sha256"],
+        "probe_views_bytes": manifest["probe_views_file_bytes"],
     }
     atomic_json_create(root / "COMPLETED.json", completion)
     return root
@@ -345,6 +424,19 @@ def validate_feature_unit(root: Path, *, deep: bool = False) -> dict[str, Any]:
         or arrays_path.stat().st_size != int(completion.get("arrays_bytes", -1))
     ):
         raise FeatureRecollectionError(f"unit arrays hash/size mismatch: {root}")
+    probe_path = root / str(manifest.get("probe_views_file", ""))
+    if (
+        sha256_file(probe_path) != completion.get("probe_views_sha256")
+        or completion.get("probe_views_sha256") != manifest.get("probe_views_file_sha256")
+        or probe_path.stat().st_size != int(completion.get("probe_views_bytes", -1))
+    ):
+        raise FeatureRecollectionError(f"unit probe-view hash/size mismatch: {root}")
+    expected_views = {
+        "conditioning", "external_preview", "latent", "velocity", "tweedie",
+        "pooled", "token_statistics", "attention_tokens", "selected_cross_attention",
+    }
+    if set(manifest.get("probe_views", {})) != expected_views:
+        raise FeatureRecollectionError(f"probe-view schema mismatch: {root}")
     identity = manifest.get("identity", {})
     if feature_unit_id(
         str(identity.get("video_id", "")),
@@ -399,6 +491,14 @@ def validate_feature_unit(root: Path, *, deep: bool = False) -> dict[str, Any]:
                 for key in archive.files:
                     if describe_array(np.asarray(archive[key])) != manifest["arrays"][key]:
                         raise FeatureRecollectionError(f"array descriptor mismatch: {root}:{key}")
+            with np.load(probe_path, allow_pickle=False) as archive:
+                if set(archive.files) != expected_views:
+                    raise FeatureRecollectionError(f"probe-view NPZ key mismatch: {root}")
+                for key in archive.files:
+                    if describe_array(np.asarray(archive[key])) != manifest["probe_views"][key]:
+                        raise FeatureRecollectionError(
+                            f"probe-view descriptor mismatch: {root}:{key}"
+                        )
         except FeatureRecollectionError:
             raise
         except Exception as exc:
@@ -560,6 +660,7 @@ def collect_feature_shard(
                     "completion_sha256": sha256_file(unit / "COMPLETED.json"),
                     "manifest_sha256": sha256_file(unit / "manifest.json"),
                     "arrays_sha256": sha256_file(unit / "arrays.npz"),
+                    "probe_views_sha256": sha256_file(unit / "probe_views.npz"),
                 }
             )
         print(
@@ -634,6 +735,8 @@ def validate_feature_shard(
             raise FeatureRecollectionError(f"feature manifest list hash mismatch: {unit_root}")
         if sha256_file(unit_root / "arrays.npz") != row.get("arrays_sha256"):
             raise FeatureRecollectionError(f"feature arrays list hash mismatch: {unit_root}")
+        if sha256_file(unit_root / "probe_views.npz") != row.get("probe_views_sha256"):
+            raise FeatureRecollectionError(f"feature probe-view list hash mismatch: {unit_root}")
         if manifest.get("protocol_sha256") != protocol["sha256"]:
             raise FeatureRecollectionError(f"feature unit protocol mismatch: {unit_root}")
         manifests.append(manifest)
@@ -688,6 +791,9 @@ def merge_feature_shards(completion_paths: Sequence[Path], out_dir: Path) -> Pat
                     "arrays_path": str((unit_root / "arrays.npz").resolve()),
                     "arrays_sha256": manifest["arrays_file_sha256"],
                     "arrays_bytes": manifest["arrays_file_bytes"],
+                    "probe_views_path": str((unit_root / "probe_views.npz").resolve()),
+                    "probe_views_sha256": manifest["probe_views_file_sha256"],
+                    "probe_views_bytes": manifest["probe_views_file_bytes"],
                     "base_final_audio_sha256": manifest["base_final_identity"][
                         "bank_audio_sha256"
                     ],
@@ -748,6 +854,7 @@ __all__ = [
     "UNIT_SCHEMA",
     "assigned_bases",
     "base_records",
+    "build_probe_views",
     "collect_feature_shard",
     "feature_unit_id",
     "merge_feature_shards",

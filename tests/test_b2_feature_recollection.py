@@ -169,12 +169,17 @@ def test_feature_unit_schema_and_deep_readback(tmp_path):
     }
     assert len(manifest["capture"]["tokens"]) == 24
     assert len(manifest["capture"]["attention"]) == 6
+    assert set(manifest["probe_views"]) == {
+        "conditioning", "external_preview", "latent", "velocity", "tweedie",
+        "pooled", "token_statistics", "attention_tokens", "selected_cross_attention",
+    }
 
 
 def test_feature_npz_is_byte_deterministic(tmp_path):
     left = _write_one(tmp_path / "left")
     right = _write_one(tmp_path / "right")
     assert sha256_file(left / "arrays.npz") == sha256_file(right / "arrays.npz")
+    assert sha256_file(left / "probe_views.npz") == sha256_file(right / "probe_views.npz")
 
 
 def test_feature_corruption_is_rejected(tmp_path):
@@ -209,6 +214,7 @@ def test_partial_shard_is_rejected(monkeypatch, tmp_path):
         "completion_sha256": sha256_file(unit / "COMPLETED.json"),
         "manifest_sha256": sha256_file(unit / "manifest.json"),
         "arrays_sha256": sha256_file(unit / "arrays.npz"),
+        "probe_views_sha256": sha256_file(unit / "probe_views.npz"),
     }
     completion = {
         "schema": recollect.SHARD_SCHEMA,
