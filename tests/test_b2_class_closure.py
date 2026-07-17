@@ -27,6 +27,7 @@ from foley_cw.b2_class_closure import (
     build_commitment_cells,
     build_posterior_arrays,
     deterministic_npz_create,
+    derive_coarse_scores,
     inventory_b2_roots,
     load_inventory,
     measure_inventory_shard,
@@ -693,3 +694,14 @@ def test_cuda_determinism_workspace_gate(monkeypatch):
     with pytest.raises(B2ClosureError, match="observed 'bad'"):
         validate_cuda_determinism_environment("cuda:0")
     assert validate_cuda_determinism_environment("cpu") is None
+
+
+def test_normalized_coarse_vector_is_reconstructible_from_persisted_raw_sums():
+    rng = np.random.default_rng(20260717)
+    probabilities = rng.uniform(1e-7, 1.0, size=(31, 527)).astype(np.float32)
+    coarse_map = load_coarse_map(Path("configs/coarse_class_map.json"))
+    raw_sums, normalized, _names = derive_coarse_scores(probabilities, coarse_map)
+    reconstructed = raw_sums / raw_sums.sum(
+        axis=1, keepdims=True, dtype=np.float32
+    )
+    assert np.array_equal(normalized, reconstructed)

@@ -857,13 +857,17 @@ def derive_coarse_scores(
     sums = np.zeros((probs.shape[0], len(names)), dtype=np.float64)
     for class_index, group_index in enumerate(lookup):
         sums[:, int(group_index)] += probs[:, class_index]
-    totals = sums.sum(axis=1, keepdims=True)
+    raw_sums = sums.astype(np.float32)
+    totals = raw_sums.sum(axis=1, keepdims=True, dtype=np.float32)
     if np.any(totals <= 0.0):
         raise B2ClosureError("cannot normalize an all-zero 527-way posterior")
-    coarse = (sums / totals).astype(np.float32)
+    # Normalize the exact fp32 raw sums that are persisted.  This makes the
+    # stored normalized vector lineage-reconstructible byte-for-byte from its
+    # stored parent rather than from an unavailable float64 accumulator.
+    coarse = (raw_sums / totals).astype(np.float32)
     if not np.allclose(coarse.sum(axis=1), 1.0, atol=1e-6, rtol=0.0):
         raise B2ClosureError("coarse posterior does not conserve normalized mass")
-    return sums.astype(np.float32), coarse, names
+    return raw_sums, coarse, names
 
 
 def derive_coarse_posterior(
