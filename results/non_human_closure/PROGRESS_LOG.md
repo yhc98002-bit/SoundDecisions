@@ -112,3 +112,28 @@
   are preserved. The provenance encoder now converts the UUID to its canonical
   string, with a regression test; this is an engineering retry, not a gate
   failure and not evidence about clip `1002`.
+
+## Checkpoint 5 — complete posterior shards and clean replay relaunch gate
+
+- Status: active; Class posteriors are measured but not yet scientifically
+  analysed, and the B-1 calibration/held-out gate has not been reduced.
+- All seven Class shards completed and passed independent inventory-bound
+  validation. Their exact union is 79,152 records; the seven completion hashes
+  are recorded in the run ledger and will be rebound by the canonical merge.
+- The corrected B-1 packet attempt passed recursive validation for the exact
+  five clips, eight registered progress points, and 40 units. Completion
+  SHA-256 is
+  `9b8e2de82d62f69641e98809f67eb3cde69d9bbadb94a3229bccb1b4745a384a`.
+- The first Class merge attempt failed before output creation because the
+  reducer treated execution batch size as a cross-shard scientific invariant.
+  The workers deliberately used batch 32 on the idle GPU and batch 8 on
+  colocated GPUs. The reducer now keeps batch size per input shard while still
+  requiring identical protocol, checkpoint, taxonomy, abstention, measurer,
+  and inventory provenance. The complete Class suite passes 21/21.
+- Two calibration replay attempts were interrupted and quarantined at 30/32
+  and 31/32 completed units, respectively, after an on-disk source edit was
+  detected while their Python processes were alive. This prevents a late
+  provenance snapshot from hashing code different from the already-loaded
+  module. Neither attempt has a root completion, neither will enter tolerance
+  calibration, and clip `1002` remains unreplayed. Fresh attempts will launch
+  only from the next clean commit.

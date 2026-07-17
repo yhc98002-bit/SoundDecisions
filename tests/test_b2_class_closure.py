@@ -240,7 +240,7 @@ def _fake_posterior(waveforms):
     return output
 
 
-def _measure_two_shards(tmp_path, manifest_path, map_path):
+def _measure_two_shards(tmp_path, manifest_path, map_path, batch_sizes=(3, 3)):
     completions = []
     for index in range(2):
         result = measure_inventory_shard(
@@ -253,7 +253,7 @@ def _measure_two_shards(tmp_path, manifest_path, map_path):
             coarse_map_path=map_path,
             posterior_fn=_fake_posterior,
             audio_loader=_fake_audio_loader,
-            batch_size=3,
+            batch_size=batch_sizes[index],
             tagger_revision="synthetic-tagger",
             tagger_checkpoint_sha256="b" * 64,
             measurer_revision="c" * 40,
@@ -342,6 +342,21 @@ def test_complete_merge_has_exact_inventory_coverage(synthetic_inventory, tmp_pa
         records, inventory = load_inventory(manifest_path)
         assert arrays["record_id"].tolist() == [row["record_id"] for row in records]
         assert result["record_ids_sha256"] == inventory["record_ids_sha256"]
+
+
+def test_merge_retains_heterogeneous_batch_sizes_as_per_shard_provenance(
+    synthetic_inventory, tmp_path
+):
+    _roots, manifest_path = synthetic_inventory
+    map_path = _make_coarse_map(tmp_path / "coarse.json")
+    completions = _measure_two_shards(
+        tmp_path, manifest_path, map_path, batch_sizes=(3, 4)
+    )
+    result = merge_posterior_shards(
+        manifest_path, completions, tmp_path / "merged_heterogeneous_batches"
+    )
+    assert [row["batch_size"] for row in result["input_shards"]] == [3, 4]
+    assert "batch_size" not in result
 
 
 def _posterior_for_label(label: str) -> np.ndarray:

@@ -1532,7 +1532,6 @@ def merge_posterior_shards(
     invariant_fields = (
         "inventory_manifest_sha256",
         "inventory_records_sha256",
-        "batch_size",
         "canonical_b2",
         "protocol",
         "protocol_sha256",
@@ -1595,6 +1594,10 @@ def merge_posterior_shards(
                 "completion_sha256": sha256_file(path),
                 "data_sha256": completion["data_sha256"],
                 "record_count": completion["record_count"],
+                # Batch size is execution provenance, not a measurement
+                # invariant.  Heterogeneous GPUs may safely use different
+                # batches; retain each value without pretending it is global.
+                "batch_size": completion["batch_size"],
             }
             for path, (completion, _arrays) in sorted(
                 zip(completion_paths, validated), key=lambda item: int(item[1][0]["shard_index"])
