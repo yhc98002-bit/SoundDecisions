@@ -1,0 +1,17 @@
+{
+  "schema": "sounddecisions_non_human_closure_status_v1",
+  "status": "IN_PROGRESS",
+  "evidence_tier": "exploratory_continuity",
+  "starting_commit": "a1e8f3ae324e8886379c19c5bc312d7ebc942946",
+  "branch": "agent/non-human-closure",
+  "sealed_confirmatory_cohort_used": false,
+  "b6_used": false,
+  "human_blocked_axis_v2_pass_allowed": false,
+  "workstreams": {
+    "class_multiseed": "NOT_TESTED",
+    "feature_lineage_and_internal_readout": "NOT_TESTED",
+    "material_continuity_2afc": "NOT_TESTED"
+  },
+  "current_checkpoint": "outcome_independent_protocol_frozen",
+  "updated_at": "2026-07-17T14:55:00+08:00"
+}

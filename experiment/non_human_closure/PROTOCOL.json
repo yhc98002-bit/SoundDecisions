@@ -1,0 +1,190 @@
+{
+  "schema": "sounddecisions_non_human_closure_protocol_v1",
+  "status": "EXPLORATORY_CONTINUITY",
+  "starting_commit": "a1e8f3ae324e8886379c19c5bc312d7ebc942946",
+  "outcome_freeze": {
+    "recorded_at": "2026-07-17T14:55:00+08:00",
+    "b2_posteriors_inspected": false,
+    "material_candidate_margins_inspected": false,
+    "heldout_clip_1002_opened": false
+  },
+  "scope": {
+    "allowed": [
+      "B2 clip-level legacy Class posterior measurement and multi-seed analysis",
+      "same-forward feature-lineage engineering and Class internal readout",
+      "legacy clip-level Material continuity 2AFC where strict metadata matching is feasible"
+    ],
+    "forbidden": [
+      "Presence",
+      "Timing",
+      "event-centered v2 Class",
+      "event-centered v2 Material",
+      "Binding",
+      "B6",
+      "condition swap",
+      "causal intervention",
+      "map scheduling",
+      "sealed confirmatory evaluation",
+      "second backbone",
+      "paper writing"
+    ]
+  },
+  "class_measurement": {
+    "checkpoint_sha256": "e2ee543a27919542c2ea03eabaa70b24dcd4e6c8e05621de6b67a94e4c5058e6",
+    "coarse_map_path": "configs/coarse_class_map.json",
+    "coarse_map_sha256": "55b5a1d4116caa4503a6b4b17192425da487a9c4385a287e343d850795be4fe7",
+    "decision_rule": "legacy_event_restricted_top1_then_map_cross_group_margin",
+    "abstain_delta": 0.05,
+    "full_posterior_dimension": 527,
+    "coarse_posterior": "sum mapped 527 sigmoid outputs by legacy coarse group; persist raw sums and sum-normalized vector; neither replaces the frozen hard-label rule",
+    "commitment_metric": "pairwise exact-match among non-abstaining labels",
+    "unscorable_if_confident_lt": 2,
+    "video_baseline": "pairwise confident agreement over the 17 B2 base-final labels for that video",
+    "commitment_gain": "clip((fork_agreement-video_baseline)/(1-video_baseline),0,1)",
+    "theta_commit": 0.7,
+    "video_determined_if_baseline_gte": 0.9,
+    "sensitivity_thresholds": [0.5, 0.6, 0.7, 0.8, 0.9],
+    "progress": [0.05, 0.15, 0.25, 0.35, 0.45, 0.6, 0.75, 0.9],
+    "crossings": [
+      "first sampled progress at or above threshold",
+      "first sampled progress at or above threshold that remains above at every later scorable point"
+    ],
+    "bootstrap": {
+      "unit": "video",
+      "draws": 5000,
+      "seed": 20260717,
+      "interval": [0.025, 0.975]
+    },
+    "historical_comparators": {
+      "canonical_cfg1_confident_s_commit": 0.34593023255813954,
+      "same_cfg45_historical_s_commit": 0.32649
+    },
+    "exploratory_replication_labels": {
+      "stable_across_seeds": "pooled sustained crossing <=0.45, historical 0.35 is within the video-bootstrap interval or one sampled step of the point estimate, >=0.80 of seed curves cross by 0.45, and seed variance is <0.25 of identifiable total",
+      "heterogeneous_but_directionally_consistent": "pooled sustained crossing <=0.45 and >=0.60 of seed curves cross by 0.45, but the stable criteria fail",
+      "strongly_seed_dependent": "seed variance is at least video variance or fewer than 0.60 but at least 0.25 of seed curves cross by 0.45",
+      "not_reproduced": "pooled sustained crossing >0.45 or fewer than 0.25 of seed curves cross by 0.45"
+    }
+  },
+  "lineage": {
+    "pilot": {
+      "calibration_clips": ["3780", "1813", "3112", "1048"],
+      "heldout_clip": "1002",
+      "independent_index": 12,
+      "seed": 0,
+      "cfg": 1.0,
+      "schedule": "sqrt_down",
+      "steps": 20,
+      "duration_seconds": 8.0,
+      "progress": [0.05, 0.15, 0.25, 0.35, 0.45, 0.6, 0.75, 0.9],
+      "tolerance_quantile": 0.999,
+      "quantile_method": "higher",
+      "safety_factor": 2.0,
+      "epsilon_floor": null,
+      "selected_attention_sites": [
+        "joint_blocks.0",
+        "joint_blocks.last",
+        "fused_blocks.last"
+      ],
+      "gating_comparisons": [
+        "same-native-tensor original fp32 pooling vs repaired fp32 pooling",
+        "in-memory tensor vs atomic readback",
+        "stored Tweedie vs same-order reducer recomputation",
+        "stored derived attention summary vs same-contract reducer recomputation",
+        "corresponding exact-packet replay outputs across registered devices/repeats"
+      ],
+      "forbidden_identity_comparisons": [
+        "mean(float16(tokens)) vs float16(mean(fp32 tokens))",
+        "independently regenerated states with different hashes",
+        "recomputed attention probabilities vs fused attention output"
+      ]
+    },
+    "full_recollection": {
+      "population": "48 B2 videos x 17 base seeds x 8 progress points",
+      "base_trajectory_cfg": 4.5,
+      "base_trajectory_seed_contract": "SeedSequence([base_seed,crc32(clip),crc32('base')])",
+      "require_banked_base_final_identity": true,
+      "store_fp32_post_block_tokens": true,
+      "store_large_tensors_outside_git": true
+    }
+  },
+  "class_readout": {
+    "targets": {
+      "primary": "unique confident fork-majority Class at the current B2 state; >=2 confident forks; ties/insufficient support are missing",
+      "secondary": "confident deterministic B2 base-final Class"
+    },
+    "group": "video",
+    "outer_folds": 6,
+    "inner_folds": 4,
+    "fold_assignment": "ascending SHA256('non-human-readout-v1:'+video_id), round-robin",
+    "families": [
+      "majority/null",
+      "video-conditioning-only",
+      "external-preview PANNs representation",
+      "latent-only",
+      "velocity-only",
+      "Tweedie-latent",
+      "pooled linear",
+      "fixed-capacity MLP",
+      "token statistics",
+      "single-query token attention",
+      "selected cross-attention representation"
+    ],
+    "linear_regularization_grid": [0.01, 0.1, 1.0],
+    "mlp_hidden_units": 64,
+    "mlp_alpha_grid": [0.0001, 0.001],
+    "single_query_width": 32,
+    "single_query_weight_decay_grid": [0.0001, 0.001],
+    "selection_metric": "inner-fold balanced accuracy; ties choose lower capacity then stronger regularization",
+    "metrics": [
+      "balanced_accuracy",
+      "per_class_recall",
+      "margin_over_majority",
+      "expected_calibration_error",
+      "coverage",
+      "abstention"
+    ],
+    "selective_confidence_threshold": 0.5,
+    "information_readout": "earliest progress whose paired video-bootstrap lower 95% bound exceeds both the null and conditioning-only baselines",
+    "action_readout": {
+      "balanced_accuracy_gte": 0.7,
+      "expected_calibration_error_lte": 0.1,
+      "coverage_gte": 0.8
+    }
+  },
+  "material_continuity": {
+    "evidence_scope": "legacy clip-level continuity only",
+    "candidate_population": "200 clips x 4 subjects x 8 progress points",
+    "admissible_material_evidence": {
+      "source_field": "FoleyBench ucs_category",
+      "exact_categories": [
+        "CERAMICS",
+        "CLOTH",
+        "GLASS",
+        "METAL",
+        "PAPER",
+        "PLASTIC",
+        "ROCKS",
+        "WOOD"
+      ],
+      "caption_inference_allowed": false,
+      "embedding_defined_truth_allowed": false
+    },
+    "positive": "same-video retained final Material embeddings excluding the candidate subject ID",
+    "negative": "different video, exact confident coarse Class, different admissible UCS material category, same AudioSet category/source type/discrete status",
+    "timing_covariate": "existing automatic detector timing only",
+    "loudness_covariate": "deterministic RMS dBFS derived from retained original MP4 audio before any candidate replay or margin measurement",
+    "matching_bands": [
+      {"difficulty": "hard", "timing_seconds_lte": 0.25, "loudness_db_lte": 3.0},
+      {"difficulty": "medium", "timing_seconds_lte": 0.5, "loudness_db_lte": 6.0},
+      {"difficulty": "easy", "timing_seconds_lte": 1.0, "loudness_db_lte": 9.0}
+    ],
+    "selection_tiebreak": "difficulty, normalized timing distance plus loudness distance, SHA256('material-negative-v1:'+candidate_id+':'+negative_id)",
+    "indifference_margin": 0.0,
+    "orientation_seed": 20260717,
+    "minimum_valid_candidate_videos": 20,
+    "minimum_valid_videos_per_progress": 20,
+    "minimum_valid_cells": 640,
+    "insufficient_action": "emit INCOMPLETE_ARTIFACTS before candidate replay"
+  }
+}
