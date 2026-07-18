@@ -1287,7 +1287,11 @@ def _readout_decisions(metric_rows: Sequence[dict[str, Any]]) -> dict[str, Any]:
         elif external is not None:
             conclusion = "internal readout not earlier than external preview"
             status = "NOT_SUPPORTED"
-        if conditioning_dominates:
+        # If external preview already clears conditioning while no internal
+        # family does, the directional question is resolved: internal readout
+        # is not earlier.  Reserve the conditioning-dominates label for cases
+        # where neither internal state nor external preview clears it.
+        if conditioning_dominates and external is None:
             conclusion = "conditioning explains most predictive information"
             status = "UNRESOLVED"
         result[target] = {

@@ -156,6 +156,46 @@ def test_metrics_and_paired_video_bootstrap_are_deterministic():
     assert first["majority_null"]["balanced_accuracy"] == pytest.approx(0.5)
 
 
+def test_external_without_internal_is_reported_not_earlier():
+    rows = []
+    for target in readout.TARGETS:
+        for progress in readout.S_POINTS:
+            for family in readout.FAMILY_IDS:
+                external_supported = family == "external_preview" and progress >= 0.45
+                rows.append(
+                    {
+                        "target": target,
+                        "progress": progress,
+                        "family": family,
+                        "balanced_accuracy": 0.2,
+                        "expected_calibration_error": 0.2,
+                        "coverage": 0.5,
+                        "paired_balanced_accuracy_differences": {
+                            "minus_majority_null": {
+                                "point": 0.1 if external_supported else 0.0,
+                                "ci": [0.01, 0.2] if external_supported else [-0.1, 0.1],
+                            },
+                            "minus_conditioning_only": {
+                                "point": 0.1 if external_supported else 0.0,
+                                "ci": [0.01, 0.2] if external_supported else [-0.1, 0.1],
+                            },
+                            "minus_external_preview": {
+                                "point": 0.0,
+                                "ci": [-0.1, 0.1],
+                            },
+                        },
+                    }
+                )
+    decisions = readout._readout_decisions(rows)
+    for target in readout.TARGETS:
+        assert decisions[target]["external_preview_information_progress"] == 0.45
+        assert decisions[target]["earliest_supported_internal_progress"] is None
+        assert decisions[target]["conclusion"] == (
+            "internal readout not earlier than external preview"
+        )
+        assert decisions[target]["scientific_status"] == "NOT_SUPPORTED"
+
+
 def test_target_validator_rejects_corruption_before_science(tmp_path):
     rows_path = tmp_path / "targets.jsonl"
     atomic_jsonl_create(rows_path, [{"candidate_id": "one"}])
