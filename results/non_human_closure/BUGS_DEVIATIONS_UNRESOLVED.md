@@ -43,6 +43,22 @@ weakened after held-out inspection.
   merged posterior and the exact 6,528-cell CSV.
 - Fixed-capacity MLP fits reached the frozen 120-iteration cap and emitted
   convergence warnings. The cap was not raised after results were inspected.
+- The required Claude/Opus cross-model audit launched with a path-only prompt
+  but returned `Not logged in` with zero input/output tokens. Prompt, raw JSON,
+  and debug trace are preserved under `audit/`. This is an audit-process
+  `ENGINEERING_FAILURE`, not a scientific failure or external review verdict.
+- A multiline SSH wrapper used for the final create-only materialization smoke
+  test returned without launching the remote commands and created no scientific
+  output. Its log is preserved as `ENGINEERING_FAILURE`; an explicit remote
+  directory creation followed by a single-line launch produced and validated
+  the complete 37-output bundle.
+- The first exact bundle-validator pass used a `1e-8` probability-sum tolerance,
+  tighter than the float32 single-query softmax producer. A full read-only scan
+  found maximum sum error `1.606e-7` across 113,212 vectors and none above
+  `1e-6`. The validator now uses the outcome-independent bound
+  `min(1e-6 producer gate, class_count × float32_epsilon)`, while also enforcing
+  the 15-way width and `[0,1]` range; acceptance and corruption tests are
+  retained. No prediction or scientific metric changed.
 
 ## Recorded deviations
 
@@ -83,7 +99,8 @@ weakened after held-out inspection.
   not sustained later. Fresh-video replication is required.
 - The same-progress external baseline is a trained PANNs representation probe,
   not the historical direct preview-label readout. Its `s=0.45` information
-  point is not the historical `s≈0.75` action-readout point.
+  point is not the historical direct preview-label reliability/readout point
+  near `s≈0.75`.
 - No representation meets the frozen action-readout criterion; this result is
   `NOT_SUPPORTED`, not `UNRESOLVED`.
 - Existing metadata supports only 3 complete Material videos / 96 cells. Valid
@@ -92,3 +109,6 @@ weakened after held-out inspection.
   `UNRESOLVED`.
 - Presence, Timing, event-centered Class/Material, Binding, B6, interventions,
   map scheduling, sealed confirmation, and a second backbone are `NOT_TESTED`.
+- Cross-model audit independence remains unavailable until Claude CLI
+  authentication is supplied. The completed Class, readout, and deliverable
+  audits were independent agent passes but not a substitute external model.

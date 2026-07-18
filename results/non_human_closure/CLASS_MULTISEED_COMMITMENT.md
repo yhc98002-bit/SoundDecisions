@@ -4,7 +4,7 @@ Scientific status: `NOT_SUPPORTED`. This is an exploratory multi-seed continuity
 
 At the registered all-cell pooled sustained threshold theta=0.70, the point crossing is `s=0.90`. In the 5,000-draw video bootstrap, 3,767 draws cross and 1,233 are noncrossing; among crossing draws, the conditional percentile range is `[0.75, 0.90]`. This range is not an unconditional confidence interval. The frozen classification is `not_reproduced`.
 
-The historical estimate `s=0.346` is a crossers-only mean of unsustained individual first crossings, whereas the frozen B2 decision is an all-cell pooled sustained crossing. They are different estimands. The historical value lies outside the conditional pooled range and is more than one sampled step from the pooled point, but the individual B2 evidence must be read separately below.
+The historical estimate `s=0.346` is a crossers-only mean of unsustained individual first crossings, whereas the frozen B2 decision is an all-cell pooled sustained crossing. They are different estimands, so the conditional pooled range is not a compatibility interval for the historical value. The individual B2 evidence must be read separately below.
 
 Individual video-seed units are heterogeneous: 582/634 scorable nondetermined units cross, 52 do not, and 29 remain unscorable. Among crossers only, the mean first crossing is 0.300 and median is 0.25; noncrossers are right-censored and never imputed.
 

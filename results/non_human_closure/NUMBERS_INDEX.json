@@ -95,32 +95,32 @@
     },
     {
       "id": "class_variance_video",
-      "value": {"variance": 0.079268387812896, "fraction": 0.4219440577086575, "ci": [0.04357748036277037, 0.10477248773047186]},
+      "value": {"variance": 0.079268387812896, "fraction": 0.4219440577086575, "variance_ci": [0.04357748036277037, 0.10477248773047186]},
       "artifact": "CLASS_VARIANCE_DECOMPOSITION.json",
       "selector": "/overall_mean_components/video and associated fraction/CI"
     },
     {
       "id": "class_variance_additive_seed",
-      "value": {"variance": 0.0, "fraction": 0.0, "ci": [0.0, 0.0026051019872359747]},
+      "value": {"variance": 0.0, "fraction": 0.0, "variance_ci": [0.0, 0.0026051019872359747]},
       "artifact": "CLASS_VARIANCE_DECOMPOSITION.json",
       "selector": "/overall_mean_components/base_seed and associated fraction/CI",
       "limitation": "Boundary-clipped to zero after negative raw moments in every progress stratum."
     },
     {
       "id": "class_variance_video_seed_interaction",
-      "value": {"variance": 0.07821180226158783, "fraction": 0.41631987375417095, "ci": [0.06329242866729369, 0.09240922879530693]},
+      "value": {"variance": 0.07821180226158783, "fraction": 0.41631987375417095, "variance_ci": [0.06329242866729369, 0.09240922879530693]},
       "artifact": "CLASS_VARIANCE_DECOMPOSITION.json",
       "selector": "/overall_mean_components/video_by_seed_interaction and associated fraction/CI"
     },
     {
       "id": "class_variance_fork_monte_carlo_nonabstention",
-      "value": {"variance": 0.028044886328483527, "fraction": 0.14928237424671387, "ci": [0.023118317114490194, 0.03296764845397094]},
+      "value": {"variance": 0.028044886328483527, "fraction": 0.14928237424671387, "variance_ci": [0.023118317114490194, 0.03296764845397094]},
       "artifact": "CLASS_VARIANCE_DECOMPOSITION.json",
       "selector": "/overall_mean_components/fork_monte_carlo_nonabstention and associated fraction/CI"
     },
     {
       "id": "class_variance_abstention_subcomponent",
-      "value": {"variance": 0.0023396093645211904, "fraction": 0.012453694290457638, "ci": [0.001819658246306574, 0.0029127213414469493]},
+      "value": {"variance": 0.0023396093645211904, "fraction": 0.012453694290457638, "variance_ci": [0.001819658246306574, 0.0029127213414469493]},
       "artifact": "CLASS_VARIANCE_DECOMPOSITION.json",
       "selector": "/overall_mean_components/abstention_within_fork_monte_carlo and associated fraction/CI",
       "limitation": "Subcomponent of fork resampling, not an independent variance term."
@@ -196,7 +196,7 @@
       "id": "material_inventory",
       "value": {"videos": 200, "cells": 6400, "surviving_subject_final_embeddings": 800},
       "artifact": "MATERIAL_REFERENCE_INSUFFICIENCY_SUMMARY.json",
-      "selector": "/coverage plus canonical legacy inventory",
+      "selector": "/legacy_inventory/{legacy_journal_videos,legacy_cells_inventoried,surviving_subject_final_embeddings}",
       "scope": "legacy clip-level continuity only"
     },
     {

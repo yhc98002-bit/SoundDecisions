@@ -38,3 +38,13 @@ def test_require_fails_closed():
     materialize.require(True, "ok")
     with pytest.raises(materialize.MaterializationError, match="evidence"):
         materialize.require(False, "missing evidence")
+
+
+def test_canonical_output_contract_is_exact_and_duplicate_safe():
+    expected = sorted(materialize.EXPECTED_MATERIALIZED_OUTPUTS)
+    assert len(expected) == 37
+    materialize.require_canonical_output_paths(expected)
+    with pytest.raises(materialize.MaterializationError, match="duplicate"):
+        materialize.require_canonical_output_paths(expected + [expected[0]])
+    with pytest.raises(materialize.MaterializationError, match="37-file"):
+        materialize.require_canonical_output_paths(expected[:-1])

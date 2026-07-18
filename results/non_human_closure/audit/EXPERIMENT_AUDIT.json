@@ -1,0 +1,78 @@
+{
+  "schema": "sounddecisions.non_human_experiment_audit.v1",
+  "review_verdict": "WARN",
+  "scientific_bundle_blocked": false,
+  "cross_model_audit": {
+    "status": "ENGINEERING_FAILURE",
+    "review_verdict_available": false,
+    "reason": "Not logged in · Please run /login",
+    "model_tokens": 0,
+    "cost_usd": 0,
+    "prompt": "EXPERIMENT_AUDIT_PROMPT.md",
+    "prompt_sha256": "0098c1a60750cf1f47cebb47c54b2bfbe55cc53f7f739d3e3accb86036bf8dcd",
+    "raw_result": "EXPERIMENT_AUDIT_RAW.json",
+    "raw_result_sha256": "e7f7014cbac892c0f862e3aff820094cf09c9a0ebd42b05443b40e9395dfe2f7",
+    "debug_trace": "EXPERIMENT_AUDIT_TRACE.log",
+    "debug_trace_sha256": "cf5889e79207c2b646228ea3f4cc649a5d9859a372a3da109fa765360b92f04f"
+  },
+  "completed_read_only_audits": [
+    {
+      "scope": "Class commitment and variance",
+      "verdict": "WARN",
+      "blocking_findings": [],
+      "verified": [
+        "registered all-cell theta=0.70 pooled sustained crossing is 0.90",
+        "3767 bootstrap draws cross and 1233 are noncrossing",
+        "all five reported variance components and video-bootstrap intervals"
+      ]
+    },
+    {
+      "scope": "nested grouped Class readout",
+      "verdict": "WARN",
+      "blocking_findings": [],
+      "verified": [
+        "113212 unique outer predictions",
+        "48-video grouped outer and inner folds without overlap",
+        "all 176 report metric cells reconstructed",
+        "fork pooled MLP information support only at 0.45 and 0.60",
+        "no internal family simultaneously exceeds conditioning-only and external preview, and no action-readout cell"
+      ]
+    },
+    {
+      "scope": "required deliverables, hashes, and cardinalities",
+      "verdict": "PASS",
+      "blocking_findings": [],
+      "verified": [
+        "core reports and candidate predictions are present",
+        "6528 feature-manifest units",
+        "materialization and feature checksums",
+        "protocol-transition disclosure"
+      ]
+    }
+  ],
+  "corrections_applied": [
+    "Distinguished historical crossers-only unsustained first-crossing mean from the frozen all-cell pooled sustained estimand.",
+    "Persisted a post-hoc video-determined exclusion sensitivity and kept the registered status unchanged.",
+    "Clarified that pooled crossing percentiles are conditional on bootstrap draws that cross.",
+    "Disclosed boundary clipping of additive seed variance and fixed finite-baseline uncertainty.",
+    "Disclosed pointwise unadjusted readout intervals, nonsustained pooled-MLP support, proxy-target coverage, MLP convergence warnings, and external-baseline mismatch with historical direct readout.",
+    "Added repeated MLP and single-query fits with exact prediction-hash equality checks.",
+    "Disclosed the Material protocol-hash transition and verified that only B-1 asset fields changed."
+  ],
+  "residual_risks": [
+    "No cross-model review verdict is available because the external CLI was unauthenticated.",
+    "Class measurer repeatability and finite 17-final baseline uncertainty are not separately estimated.",
+    "Readout targets are model-output-derived continuity proxies with incomplete target coverage.",
+    "Pointwise probe comparisons are unadjusted across families and progress points.",
+    "Readout shard completions omit executable source/git hashes, although frozen implementation and input hashes are present.",
+    "Valid Material matched-negative coverage is insufficient, so no 2AFC measurement exists."
+  ],
+  "scientific_statuses": {
+    "class_frozen_replication": "NOT_SUPPORTED",
+    "class_variance_decomposition": "SUPPORTED_EXPLORATORILY",
+    "fork_internal_information_signal": "SUPPORTED_EXPLORATORILY",
+    "internal_earlier_than_external": "NOT_SUPPORTED",
+    "material_2afc": "INCOMPLETE_ARTIFACTS",
+    "material_distinct_window": "UNRESOLVED"
+  }
+}

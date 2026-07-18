@@ -27,6 +27,38 @@ EXPECTED_TRAJECTORIES = 816
 EXPECTED_VIDEOS = 48
 EXPECTED_READOUT_PREDICTIONS = 113_212
 PROGRESSES = (0.05, 0.15, 0.25, 0.35, 0.45, 0.60, 0.75, 0.90)
+EXPECTED_MATERIALIZED_OUTPUTS = frozenset({
+    "CLASS_BASE_SEED_CROSSINGS.csv",
+    "CLASS_INTERNAL_READOUT_OUTER_PREDICTIONS.jsonl.gz",
+    "CLASS_INTERNAL_READOUT_REPORT.json",
+    "CLASS_INTERNAL_READOUT_REPORT.md",
+    "CLASS_MULTISEED_COMMITMENT.csv",
+    "CLASS_MULTISEED_COMMITMENT.json",
+    "CLASS_MULTISEED_COMMITMENT.md",
+    "CLASS_POOLED_CROSSINGS.csv",
+    "CLASS_POSTERIOR_MEASUREMENT_REPORT.json",
+    "CLASS_POSTERIOR_MEASUREMENT_REPORT.md",
+    "CLASS_VARIANCE_DECOMPOSITION.json",
+    "CLASS_VARIANCE_DECOMPOSITION.md",
+    "CLASS_VIDEO_BASELINES.csv",
+    "CLASS_VIDEO_CROSSING_DISTRIBUTIONS.csv",
+    "CLASS_VIDEO_SEED_CROSSINGS.csv",
+    "FEATURE_LINEAGE_REPORT.json",
+    "FEATURE_LINEAGE_REPORT.md",
+    "MATERIAL_CONTINUITY_2AFC_REPORT.json",
+    "MATERIAL_CONTINUITY_2AFC_REPORT.md",
+    "MATERIAL_REFERENCE_INSUFFICIENCY.json",
+    "MATERIAL_REFERENCE_INSUFFICIENCY_SUMMARY.json",
+    "MATERIAL_SOURCE_AUDIO_LOUDNESS.json",
+    "feature_manifests/B1_HELDOUT_COMPLETION.json",
+    "feature_manifests/B1_HELDOUT_REPORT.json",
+    "feature_manifests/B1_TOLERANCE.json",
+    "feature_manifests/FEATURE_CHECKSUMS.sha256",
+    "feature_manifests/FEATURE_MANIFEST_INDEX.json",
+    "feature_manifests/FEATURE_RECOLLECTION_COMPLETION.json",
+    "feature_manifests/FEATURE_RECOLLECTION_MANIFEST.jsonl",
+    *(f"feature_manifests/FEATURE_SHARD_{index:02d}_COMPLETION.json" for index in range(8)),
+})
 
 
 class MaterializationError(RuntimeError):
@@ -54,6 +86,16 @@ def load_json(path: Path) -> dict[str, Any]:
 def require(condition: bool, message: str) -> None:
     if not condition:
         raise MaterializationError(message)
+
+
+def require_canonical_output_paths(paths: Iterable[str]) -> None:
+    """Require the exact, duplicate-free 37-file materialization contract."""
+    rows = list(paths)
+    require(len(rows) == len(set(rows)), "duplicate materialized output path")
+    require(
+        set(rows) == EXPECTED_MATERIALIZED_OUTPUTS,
+        "materialized output path set differs from the canonical 37-file contract",
+    )
 
 
 def write_json_create(path: Path, value: Mapping[str, Any]) -> Path:
@@ -234,7 +276,7 @@ def commitment_markdown(commitment: Mapping[str, Any]) -> str:
         "",
         f"At the registered all-cell pooled sustained threshold theta=0.70, the point crossing is `s={replication['pooled_sustained_crossing_theta_0.70']:.2f}`. In the 5,000-draw video bootstrap, 3,767 draws cross and 1,233 are noncrossing; among crossing draws, the conditional percentile range is `[0.75, 0.90]`. This range is not an unconditional confidence interval. The frozen classification is `not_reproduced`.",
         "",
-        f"The historical estimate `s={replication['historical_s_commit']:.3f}` is a crossers-only mean of unsustained individual first crossings, whereas the frozen B2 decision is an all-cell pooled sustained crossing. They are different estimands. The historical value lies outside the conditional pooled range and is more than one sampled step from the pooled point, but the individual B2 evidence must be read separately below.",
+        f"The historical estimate `s={replication['historical_s_commit']:.3f}` is a crossers-only mean of unsustained individual first crossings, whereas the frozen B2 decision is an all-cell pooled sustained crossing. They are different estimands, so the conditional pooled range is not a compatibility interval for the historical value. The individual B2 evidence must be read separately below.",
         "",
         f"Individual video-seed units are heterogeneous: {primary['n_crossing']}/{primary['n_scorable_nondetermined_video_seed_units']} scorable nondetermined units cross, {primary['n_noncrossing']} do not, and {primary['n_unscorable']} remain unscorable. Among crossers only, the mean first crossing is {primary['mean_first_crossing_crossers']:.3f} and median is {primary['median_first_crossing_crossers']:.2f}; noncrossers are right-censored and never imputed.",
         "",
@@ -459,6 +501,29 @@ def materialize(
     material_source = artifact_root / "material" / "feasibility" / "MATERIAL_REFERENCE_INSUFFICIENCY.json"
     loudness_source = artifact_root / "material" / "feasibility" / "SOURCE_AUDIO_LOUDNESS.json"
     material_summary = load_json(support_dir / "MATERIAL_REFERENCE_INSUFFICIENCY_SUMMARY.json")
+    legacy_inventory = material_summary.get("legacy_inventory", {})
+    require(
+        legacy_inventory.get("legacy_journal_videos") == 200
+        and legacy_inventory.get("candidate_indices") == [0, 1, 2, 3]
+        and legacy_inventory.get("legacy_cells_inventoried") == 6_400
+        and legacy_inventory.get("surviving_subject_final_embeddings") == 800,
+        "Material legacy inventory binding mismatch",
+    )
+    require(
+        legacy_inventory.get("measurements_sha256")
+        == material_summary.get("canonical_evidence", {}).get("measurements_sha256"),
+        "Material legacy inventory measurement hash mismatch",
+    )
+    coverage_cross_check = legacy_inventory.get("coverage_cross_check", {})
+    require(
+        coverage_cross_check
+        == {
+            "subjects_with_strict_match": 52,
+            "excluded_subjects": 748,
+            "candidate_subjects_total": 800,
+        },
+        "Material legacy inventory coverage cross-check mismatch",
+    )
     require(
         sha256_file(material_source) == material_summary["canonical_evidence"]["sha256"],
         "Material insufficiency hash mismatch",
@@ -477,7 +542,9 @@ def materialize(
         source = support_dir / name
         destination = result_dir / name
         require(source.is_file(), f"supporting Material report missing: {source}")
+        require(not source.is_symlink(), f"supporting Material report may not be a symlink: {source}")
         if source.resolve() == destination.resolve():
+            outputs.append(destination)
             continue
         outputs.append(copy_create(source, destination))
     outputs.append(write_json_create(result_dir / "CLASS_POSTERIOR_MEASUREMENT_REPORT.json", posterior))
@@ -547,6 +614,9 @@ def materialize(
     )
     outputs.append(write_text_create(feature_dir / "FEATURE_CHECKSUMS.sha256", checksum_text))
 
+    relative_outputs = [str(path.relative_to(result_dir)) for path in outputs]
+    require_canonical_output_paths(relative_outputs)
+
     materialization = {
         "schema": "sounddecisions.non_human_materialization.v1",
         "artifact_status": "COMPLETE",
@@ -574,16 +644,27 @@ def validate_materialization(artifact_root: Path, result_dir: Path) -> dict[str,
     manifest = load_json(result_dir / "MATERIALIZATION_MANIFEST.json")
     require(manifest.get("artifact_status") == "COMPLETE", "materialization manifest incomplete")
     require(manifest.get("artifact_root") == str(artifact_root), "materialization artifact-root mismatch")
-    for item in manifest.get("outputs", []):
-        path = result_dir / str(item["path"])
+    require(manifest.get("protocol_sha256") == PROTOCOL_SHA256, "materialization protocol mismatch")
+    rows = manifest.get("outputs")
+    require(isinstance(rows, list), "materialization outputs are not a list")
+    observed_paths: list[str] = []
+    for item in rows:
+        require(isinstance(item, dict), "materialization output row is not an object")
+        relative = Path(str(item["path"]))
+        require(not relative.is_absolute() and ".." not in relative.parts, "unsafe materialized path")
+        relative_text = relative.as_posix()
+        observed_paths.append(relative_text)
+        path = result_dir / relative
+        require(path.is_file() and not path.is_symlink(), f"materialized file missing/unsafe: {path}")
         require(path.stat().st_size == int(item["bytes"]), f"materialized size mismatch: {path}")
         require(sha256_file(path) == item["sha256"], f"materialized hash mismatch: {path}")
+    require_canonical_output_paths(observed_paths)
     posterior_report(artifact_root)
     validate_readout(artifact_root)
     lineage_report(artifact_root)
     return {
         "status": "PASS",
-        "validated_outputs": len(manifest.get("outputs", [])),
+        "validated_outputs": len(rows),
         "manifest_sha256": sha256_file(result_dir / "MATERIALIZATION_MANIFEST.json"),
     }
 

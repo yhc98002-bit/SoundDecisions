@@ -1,0 +1,135 @@
+2026-07-18T19:57:15.591Z [DEBUG] MDM settings load completed in 901ms
+2026-07-18T19:57:27.593Z [DEBUG] Broken symlink or missing file encountered for settings.json at path: /XYFS02/HDD_POOL/paratera_xy/pxy1289/HaocunYe/Research/SoundDecisions-non-human-closure/.claude/settings.json
+2026-07-18T19:57:29.792Z [DEBUG] Broken symlink or missing file encountered for settings.json at path: /XYFS02/HDD_POOL/paratera_xy/pxy1289/HaocunYe/Research/SoundDecisions-non-human-closure/.claude/settings.local.json
+2026-07-18T19:57:30.095Z [DEBUG] Broken symlink or missing file encountered for settings.json at path: /etc/claude-code/managed-settings.json
+2026-07-18T19:57:30.491Z [DEBUG] CA certs: Config fallback - globalEnv keys: , settingsEnv keys: none
+2026-07-18T19:57:32.792Z [DEBUG] [init] configureGlobalMTLS starting
+2026-07-18T19:57:32.890Z [DEBUG] [init] configureGlobalMTLS complete
+2026-07-18T19:57:32.890Z [DEBUG] [init] configureGlobalAgents starting
+2026-07-18T19:57:32.990Z [DEBUG] CA certs: stores=bundled,system, extraCertsPath=undefined
+2026-07-18T19:57:33.194Z [DEBUG] CA certs: Loaded 120 bundled root certificates
+2026-07-18T19:57:35.594Z [DEBUG] CA certs: Loaded 276 system CA certificates
+2026-07-18T19:57:35.595Z [DEBUG] mTLS: Creating HTTPS agent with custom certificates
+2026-07-18T19:57:36.393Z [DEBUG] [init] configureGlobalAgents complete
+2026-07-18T19:57:37.095Z [DEBUG] Error log sink initialized
+2026-07-18T19:57:59.690Z [DEBUG] [ToolSearch:optimistic] mode=tst, ENABLE_TOOL_SEARCH=undefined, result=true
+2026-07-18T19:58:00.991Z [DEBUG] [claudeai-mcp] Disabled: API-key auth precedence active
+2026-07-18T19:58:00.994Z [DEBUG] [STARTUP] Loading MCP configs...
+2026-07-18T19:58:02.695Z [DEBUG] [STARTUP] Running setup()...
+2026-07-18T19:58:03.593Z [DEBUG] Loading skills from: managed=/etc/claude-code/.claude/skills, user=/HOME/paratera_xy/pxy1289/.claude/skills, project=[]
+2026-07-18T19:58:04.192Z [DEBUG] Broken symlink or missing file encountered for settings.json at path: /etc/claude-code/managed-settings.json
+2026-07-18T19:58:04.593Z [DEBUG] Broken symlink or missing file encountered for settings.json at path: /XYFS02/HDD_POOL/paratera_xy/pxy1289/HaocunYe/Research/SoundDecisions-non-human-closure/.claude/settings.json
+2026-07-18T19:58:04.595Z [DEBUG] Broken symlink or missing file encountered for settings.json at path: /XYFS02/HDD_POOL/paratera_xy/pxy1289/HaocunYe/Research/SoundDecisions-non-human-closure/.claude/settings.local.json
+2026-07-18T19:58:04.893Z [DEBUG] Error log sink initialized
+2026-07-18T19:58:05.890Z [DEBUG] installed_plugins.json doesn't exist, returning empty V2 object
+2026-07-18T19:58:06.194Z [DEBUG] Acquired PID lock for 2.1.195 (PID 2023520)
+2026-07-18T19:58:06.195Z [DEBUG] Acquired PID lock on running version: /HOME/paratera_xy/pxy1289/.local/share/claude/versions/2.1.195
+2026-07-18T19:58:06.394Z [DEBUG] [STARTUP] setup() completed in 3598ms
+2026-07-18T19:58:06.590Z [DEBUG] Cleared CA certificates cache
+2026-07-18T19:58:06.591Z [DEBUG] Cleared mTLS configuration cache
+2026-07-18T19:58:06.592Z [DEBUG] Cleared proxy agent cache
+2026-07-18T19:58:06.593Z [DEBUG] CA certs: stores=bundled,system, extraCertsPath=undefined
+2026-07-18T19:58:06.692Z [DEBUG] CA certs: Loaded 120 bundled root certificates
+2026-07-18T19:58:06.692Z [DEBUG] CA certs: Loaded 276 system CA certificates
+2026-07-18T19:58:06.694Z [DEBUG] mTLS: Creating HTTPS agent with custom certificates
+2026-07-18T19:58:08.690Z [DEBUG] [STARTUP] Loading commands and agents...
+2026-07-18T19:58:09.292Z [DEBUG] Failed to stat directory /etc/claude-code/.claude/commands: ENOENT: no such file or directory, statx '/etc/claude-code/.claude/commands'
+2026-07-18T19:58:09.292Z [DEBUG] Failed to stat directory /HOME/paratera_xy/pxy1289/.claude/commands: ENOENT: no such file or directory, statx '/HOME/paratera_xy/pxy1289/.claude/commands'
+2026-07-18T19:58:09.293Z [DEBUG] Failed to stat directory /XYFS02/HDD_POOL/paratera_xy/pxy1289/HaocunYe/Research/SoundDecisions/.claude/commands: ENOENT: no such file or directory, statx '/XYFS02/HDD_POOL/paratera_xy/pxy1289/HaocunYe/Research/SoundDecisions/.claude/commands'
+2026-07-18T19:58:09.294Z [DEBUG] Failed to stat directory /etc/claude-code/.claude/agents: ENOENT: no such file or directory, statx '/etc/claude-code/.claude/agents'
+2026-07-18T19:58:09.294Z [DEBUG] Failed to stat directory /HOME/paratera_xy/pxy1289/.claude/agents: ENOENT: no such file or directory, statx '/HOME/paratera_xy/pxy1289/.claude/agents'
+2026-07-18T19:58:09.294Z [DEBUG] Failed to stat directory /XYFS02/HDD_POOL/paratera_xy/pxy1289/HaocunYe/Research/SoundDecisions/.claude/agents: ENOENT: no such file or directory, statx '/XYFS02/HDD_POOL/paratera_xy/pxy1289/HaocunYe/Research/SoundDecisions/.claude/agents'
+2026-07-18T19:58:41.992Z [DEBUG] Loaded 77 unique skills (77 unconditional, 0 conditional, managed: 0, user: 77, project: 0, additional: 0, legacy commands: 0)
+2026-07-18T19:58:44.492Z [DEBUG] Git remote URL: https://github.com/yhc98002-bit/SoundDecisions.git
+2026-07-18T19:58:44.493Z [DEBUG] Parsed repository: github.com/yhc98002-bit/SoundDecisions from URL: https://github.com/yhc98002-bit/SoundDecisions.git
+2026-07-18T19:59:12.492Z [DEBUG] Found 0 plugins (0 enabled, 0 disabled)
+2026-07-18T19:59:12.692Z [DEBUG] getPluginSkills: Processing 0 enabled plugins
+2026-07-18T19:59:12.693Z [DEBUG] Total plugin workflows loaded: 0
+2026-07-18T19:59:12.790Z [DEBUG] Registered 0 hooks from 0 plugins
+2026-07-18T19:59:12.895Z [DEBUG] Total plugin commands loaded: 0
+2026-07-18T19:59:12.991Z [DEBUG] Total plugin agents loaded: 0
+2026-07-18T19:59:13.593Z [DEBUG] Total plugin skills loaded: 0 (0 duplicate/user-owned entries skipped)
+2026-07-18T19:59:13.595Z [DEBUG] getSkills returning: 77 skill dir commands, 0 plugin skills, 20 bundled skills, 0 builtin plugin skills
+2026-07-18T19:59:15.591Z [DEBUG] [STARTUP] Commands and agents loaded in 66901ms
+2026-07-18T19:59:17.790Z [DEBUG] Lock acquisition took longer than expected - another Claude instance may be running
+2026-07-18T19:59:17.894Z [DEBUG] [LSP MANAGER] initializeLspServerManager() called
+2026-07-18T19:59:17.991Z [DEBUG] [LSP MANAGER] Created manager instance, state=pending
+2026-07-18T19:59:17.991Z [DEBUG] [LSP MANAGER] Starting async initialization (generation 1)
+2026-07-18T19:59:17.992Z [DEBUG] Starting background startup prefetches
+2026-07-18T19:59:18.092Z [DEBUG] [Bootstrap] Skipped: no usable OAuth, WIF, or API key
+2026-07-18T19:59:18.097Z [DEBUG] [STARTUP] MCP configs resolved in 71998ms (awaited at +77103ms)
+2026-07-18T19:59:18.592Z [DEBUG] Cleared CA certificates cache
+2026-07-18T19:59:18.592Z [DEBUG] Cleared mTLS configuration cache
+2026-07-18T19:59:18.592Z [DEBUG] Cleared proxy agent cache
+2026-07-18T19:59:18.592Z [DEBUG] CA certs: stores=bundled,system, extraCertsPath=undefined
+2026-07-18T19:59:18.593Z [DEBUG] CA certs: Loaded 120 bundled root certificates
+2026-07-18T19:59:18.593Z [DEBUG] CA certs: Loaded 276 system CA certificates
+2026-07-18T19:59:18.593Z [DEBUG] mTLS: Creating HTTPS agent with custom certificates
+2026-07-18T19:59:18.791Z [DEBUG] Total LSP servers loaded: 0
+2026-07-18T19:59:18.792Z [DEBUG] Initialized versioned plugins system with 0 plugins
+2026-07-18T19:59:22.196Z [DEBUG] Lock acquisition took longer than expected - another Claude instance may be running
+2026-07-18T19:59:26.795Z [DEBUG] Fast mode unavailable: Fast mode is not available in the Agent SDK
+2026-07-18T19:59:31.292Z [DEBUG] [MCP] --mcp-config servers running fully async (nonblocking)
+2026-07-18T19:59:31.992Z [DEBUG] [MCP] claude.ai connectors running fully async (nonblocking)
+2026-07-18T19:59:32.494Z [DEBUG] [LSP SERVER MANAGER] getAllLspServers returned 0 server(s)
+2026-07-18T19:59:33.297Z [DEBUG] LSP manager initialized with 0 servers
+2026-07-18T19:59:38.790Z [DEBUG] [Perfetto] initializePerfettoTracing called, env value: undefined
+2026-07-18T19:59:38.993Z [DEBUG] [3P telemetry] isTelemetryEnabled=false (CLAUDE_CODE_ENABLE_TELEMETRY=undefined)
+2026-07-18T19:59:43.190Z [DEBUG] LSP server manager initialized successfully
+2026-07-18T19:59:43.796Z [DEBUG] LSP notification handlers registered successfully for all 0 server(s)
+2026-07-18T19:59:55.994Z [DEBUG] [auto-mode] verifyAutoModeGateAccess: enabledState=opt-in disabledBySettings=false model=claude-opus-4-8 modelSupported=true disableFastModeBreakerFires=false carouselAvailable=true canEnterAuto=true
+2026-07-18T20:00:19.295Z [DEBUG] [ScheduledTasks] scheduler start() — enabled=false, hasTasks=false
+2026-07-18T20:00:30.494Z [DEBUG] Tool search disabled: ToolSearchTool is not available (may have been disallowed via disallowedTools).
+2026-07-18T20:00:31.292Z [DEBUG] attribution header x-anthropic-billing-header: cc_version=2.1.195.b24; cc_entrypoint=sdk-cli; cch=00000;
+2026-07-18T20:00:31.392Z [DEBUG] Fast mode unavailable: Fast mode is not available in the Agent SDK
+2026-07-18T20:00:31.696Z [DEBUG] Fast mode unavailable: Fast mode is not available in the Agent SDK
+2026-07-18T20:00:32.891Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-07-18T20:00:32.895Z [DEBUG] [API:auth] OAuth token check starting
+2026-07-18T20:00:37.090Z [DEBUG] installPluginsForHeadless: starting
+2026-07-18T20:00:37.291Z [DEBUG] installPluginsForHeadless: no marketplaces declared
+2026-07-18T20:00:37.392Z [DEBUG] Failed to stat directory /etc/claude-code/.claude/output-styles: ENOENT: no such file or directory, statx '/etc/claude-code/.claude/output-styles'
+2026-07-18T20:00:37.392Z [DEBUG] Failed to stat directory /HOME/paratera_xy/pxy1289/.claude/output-styles: ENOENT: no such file or directory, statx '/HOME/paratera_xy/pxy1289/.claude/output-styles'
+2026-07-18T20:00:37.393Z [DEBUG] Failed to stat directory /XYFS02/HDD_POOL/paratera_xy/pxy1289/HaocunYe/Research/SoundDecisions/.claude/output-styles: ENOENT: no such file or directory, statx '/XYFS02/HDD_POOL/paratera_xy/pxy1289/HaocunYe/Research/SoundDecisions/.claude/output-styles'
+2026-07-18T20:00:37.696Z [DEBUG] Total plugin output styles loaded: 0
+2026-07-18T20:00:47.596Z [DEBUG] act_dont_rederive_arm_active source=growthbook
+2026-07-18T20:01:05.092Z [DEBUG] [API:auth] OAuth token check complete
+2026-07-18T20:01:07.191Z [DEBUG] Fast mode unavailable: Fast mode is not available in the Agent SDK
+2026-07-18T20:01:07.893Z [DEBUG] [API:timing] dispatching to firstParty model=claude-haiku-4-5-20251001
+2026-07-18T20:01:09.591Z [ERROR] API error (attempt 1/11): Could not resolve authentication method. Expected one of apiKey, authToken, credentials, config, or profile to be set. Or for one of the "X-Api-Key" or "Authorization" headers to be explicitly omitted
+2026-07-18T20:01:10.190Z [ERROR] Error in API request: Could not resolve authentication method. Expected one of apiKey, authToken, credentials, config, or profile to be set. Or for one of the "X-Api-Key" or "Authorization" headers to be explicitly omitted
+2026-07-18T20:01:10.395Z [ERROR] API error x-client-request-id=d846cef5-96f9-4645-9e16-d14d3e30cdb8 (give this to the API team for server-log lookup)
+2026-07-18T20:01:10.395Z [ERROR] API invalid_api_key: [REDACTED] not resolve authentication method. Expected one of apiKey, authToken, credentials, config, or profile to be set. Or for one of the "X-Api-Key" or "Authorization" headers to be explicitly omitted
+2026-07-18T20:01:10.891Z [WARN] [3P telemetry] Event dropped (no event logger initialized): api_error
+2026-07-18T20:01:12.993Z [DEBUG] Watching for changes in skill/command directories: /HOME/paratera_xy/pxy1289/.claude/skills...
+2026-07-18T20:01:36.194Z [DEBUG] Watching for changes in setting files /HOME/paratera_xy/pxy1289/.claude/settings.json...
+2026-07-18T20:01:43.490Z [DEBUG] LSP Diagnostics: getLSPDiagnosticAttachments called
+2026-07-18T20:01:43.494Z [DEBUG] LSP Diagnostics: Checking registry - 0 pending
+2026-07-18T20:01:43.591Z [DEBUG] Hooks: Found 0 total hooks in registry
+2026-07-18T20:01:43.791Z [DEBUG] Sending 90 skills via attachment (initial)
+2026-07-18T20:01:44.091Z [DEBUG] Hooks: checkForNewResponses returning 0 responses
+2026-07-18T20:01:45.991Z [DEBUG] Fast mode unavailable: Fast mode is not available in the Agent SDK
+2026-07-18T20:01:51.091Z [DEBUG] Dynamic tool loading: 0/17 deferred tools included
+2026-07-18T20:01:51.192Z [DEBUG] attribution header x-anthropic-billing-header: cc_version=2.1.195.bf9; cc_entrypoint=sdk-cli; cch=00000;
+2026-07-18T20:01:51.290Z [DEBUG] Fast mode unavailable: Fast mode is not available in the Agent SDK
+2026-07-18T20:01:51.292Z [DEBUG] Fast mode unavailable: Fast mode is not available in the Agent SDK
+2026-07-18T20:01:51.690Z [DEBUG] [API:request] Creating client, ANTHROPIC_CUSTOM_HEADERS present: false, has Authorization header: false
+2026-07-18T20:01:51.690Z [DEBUG] [API:auth] OAuth token check starting
+2026-07-18T20:01:51.695Z [DEBUG] [API:auth] OAuth token check complete
+2026-07-18T20:01:52.091Z [DEBUG] Fast mode unavailable: Fast mode is not available in the Agent SDK
+2026-07-18T20:01:52.095Z [DEBUG] [API:timing] dispatching to firstParty model=claude-opus-4-8
+2026-07-18T20:01:52.495Z [ERROR] API error (attempt 1/11): Could not resolve authentication method. Expected one of apiKey, authToken, credentials, config, or profile to be set. Or for one of the "X-Api-Key" or "Authorization" headers to be explicitly omitted
+2026-07-18T20:01:52.793Z [ERROR] Error in API request: Could not resolve authentication method. Expected one of apiKey, authToken, credentials, config, or profile to be set. Or for one of the "X-Api-Key" or "Authorization" headers to be explicitly omitted
+2026-07-18T20:01:52.793Z [ERROR] API error x-client-request-id=10046e6e-3354-4477-869d-c9ea9a0695bb (give this to the API team for server-log lookup)
+2026-07-18T20:01:52.793Z [ERROR] API invalid_api_key: [REDACTED] not resolve authentication method. Expected one of apiKey, authToken, credentials, config, or profile to be set. Or for one of the "X-Api-Key" or "Authorization" headers to be explicitly omitted
+2026-07-18T20:01:53.691Z [DEBUG] Fast mode unavailable: Fast mode is not available in the Agent SDK
+2026-07-18T20:01:55.595Z [DEBUG] LSP server manager shut down successfully
+2026-07-18T20:01:55.892Z [ERROR] Failed to check metrics opt-out status: Auth error: No API key available
+2026-07-18T20:01:55.892Z [DEBUG] Metrics export disabled by organization setting
+2026-07-18T20:01:55.893Z [DEBUG] BigQuery metrics exporter flush complete
+2026-07-18T20:01:55.894Z [DEBUG] BigQuery metrics exporter flush complete
+2026-07-18T20:01:55.894Z [DEBUG] BigQuery metrics exporter shutdown complete
+2026-07-18T20:01:58.393Z [DEBUG] Ripgrep first use test: PASSED (mode=embedded, path=/HOME/paratera_xy/pxy1289/.local/share/claude/versions/2.1.195)
+2026-07-18T20:01:58.594Z [DEBUG] "rg error (signal=undefined, code=2, stderr: rg: /HOME/paratera_xy/pxy1289/.claude/plugins/cache: IO error for operation on /HOME/paratera_xy/pxy1289/.claude/plugins/cache: No such file or directory (os error 2)\n), 0 results"
+2026-07-18T20:02:02.092Z [DEBUG] Lock acquisition took longer than expected - another Claude instance may be running
+2026-07-18T20:02:11.995Z [ERROR] [3P telemetry] OTEL diag error: {"message":"Operation timed out.","originalLine":"454","originalColumn":"110282","line":"454","column":"110282","sourceURL":"/$bunfs/root/src/entrypoints/cli.js","stack":"Error: Operation timed out.\n    at <anonymous> (/$bunfs/root/src/entrypoints/cli.js:454:110282)","name":"Error"}
+2026-07-18T20:02:12.790Z [DEBUG] Released PID lock for 2.1.195

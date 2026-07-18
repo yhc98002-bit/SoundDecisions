@@ -19,7 +19,7 @@ Valid legacy Material 2AFC could not be constructed. Existing outcome-independen
 | Class variance decomposition | Video and video-by-seed interaction dominate | `SUPPORTED_EXPLORATORILY` |
 | B-1 same-forward identity | Gate passed; engineering lineage established | `NOT_TESTED` scientifically |
 | Fork-majority internal information | Pooled MLP first qualifies at `s=0.45` | `SUPPORTED_EXPLORATORILY` |
-| Internal readout earlier than external | Same point for primary target; absent for secondary | `NOT_SUPPORTED` |
+| Internal readout earlier than external | Same point for primary; no qualifying internal point for secondary | `NOT_SUPPORTED` |
 | Action-quality Class readout | No representation qualifies | `NOT_SUPPORTED` |
 | Valid legacy Material 2AFC | Insufficient metadata-matched coverage | `INCOMPLETE_ARTIFACTS` |
 | Material window distinct from Class | No valid Material curve | `UNRESOLVED` |
@@ -29,7 +29,7 @@ Valid legacy Material 2AFC could not be constructed. Existing outcome-independen
 
 Not under the frozen pooled-sustained replication rule. The exact 48-video, 17-seed bank contains 816 base finals and 78,336 fork finals. All 79,152 WAVs were measured once with the pinned PANNs Class measurer; the full 527-way outputs, normalized coarse posteriors, abstention fields, identities, and hashes are retained in the immutable artifact root.
 
-At the registered all-cell pooled sustained threshold `theta=0.70`, the point crossing is `s=0.90`. Across 5,000 video-cluster bootstrap draws, 3,767 cross and 1,233 are noncrossing. Conditional on crossing, the percentile range is `[0.75, 0.90]`; this is not an unconditional confidence interval. The historical estimate is `s=0.34593`, outside that conditional range and more than one sampled progress step from the new point estimate. The frozen classifier therefore assigns `not_reproduced` / `NOT_SUPPORTED`.
+At the registered all-cell pooled sustained threshold `theta=0.70`, the point crossing is `s=0.90`. Across 5,000 video-cluster bootstrap draws, 3,767 cross and 1,233 are noncrossing. Conditional on crossing, the percentile range is `[0.75, 0.90]`; this is not an unconditional confidence interval, nor is it a statistical compatibility interval for the unlike historical estimand. The frozen classifier assigns `not_reproduced` / `NOT_SUPPORTED` because the pooled curve does not sustain by its `s≤0.45` cutoff and no base-seed curve sustains by that cutoff.
 
 The threshold sensitivity is substantial and must remain visible:
 
@@ -43,7 +43,7 @@ The threshold sensitivity is substantial and must remain visible:
 
 The historical `s=0.34593` was the mean **unsustained individual first crossing** among historical crossers, not a pooled sustained crossing. The closest B2 individual summary is correspondingly early but heterogeneous: nine of 48 videos are video-determined, and among the remaining 663 video-seed units, 634 are scorable; 582 cross, 52 do not, and 29 are unscorable. Among crossers only, mean first crossing is `0.2997` and median is `0.25`; 526 have a sustained crossing, and noncrossers are right-censored without numeric imputation. This individual result is directionally consistent with an early window but is not the registered replication estimand.
 
-The registered pooled curve includes the nine video-determined videos. All nine have `A_ind=1`, for which normalized commitment gain is fixed to zero. An explicitly post-hoc, read-only sensitivity excluding those videos moves the `theta=0.70` pooled sustained crossing from `s=0.90` to `s=0.60`; it still does not cross by the frozen `s≤0.45` reproduction cutoff. Thus the registered status is unchanged, but `s=0.90` must be understood as the all-cell estimate rather than a characterization of nondetermined videos alone. At `theta=0.70`, 13 registered base-seed curves have sustained crossing at `s=0.90` and four are noncrossing; none has sustained crossing by `s=0.45`.
+The registered pooled curve includes the nine video-determined videos. All nine have `A_ind=1`, for which normalized commitment gain is fixed to zero. An explicitly post-hoc, read-only sensitivity excluding those videos moves the `theta=0.70` pooled sustained crossing from `s=0.90` to `s=0.60`; it still does not cross by the frozen `s≤0.45` reproduction cutoff. Thus the registered status is unchanged, but `s=0.90` must be understood as the all-cell estimate rather than a characterization of nondetermined videos alone. At `theta=0.70`, 13 registered base-seed curves sustain at `s=0.90`; three never cross, and one crosses at `s=0.75` but is not sustained. None sustains by `s=0.45`.
 
 The appropriate frozen-rule classification is therefore **not reproduced, with substantial video-by-seed heterogeneity**. It is not “stable across seeds.” The early individual first-crossing evidence must remain visible, but it cannot substitute for the registered pooled sustained result.
 
@@ -92,9 +92,9 @@ For the secondary ODE-final target, no internal representation clears conditioni
 
 Internal readout is not earlier under the frozen operational rule. For fork-majority, pooled MLP and external preview both first qualify at `s=0.45`; pooled MLP is not significantly better than external at that point. For ODE-final, external preview qualifies at `s=0.45` and no internal family qualifies anywhere. The earlier-than-external claim is `NOT_SUPPORTED` for both targets; this is not proof that earlier internal information is absent.
 
-No representation reaches the predeclared action criterion of balanced accuracy at least `0.70`, ECE at most `0.10`, and coverage at least `0.80`. The information point here is therefore distinct from the historical statement that external preview becomes reliably actionable around `s≈0.75`; the two criteria should not be conflated.
+No representation reaches the predeclared action criterion of balanced accuracy at least `0.70`, ECE at most `0.10`, and coverage at least `0.80`. The information point here is therefore distinct from the historical direct preview-label reliability/readout point near `s≈0.75`; the two criteria should not be conflated.
 
-The external baseline here is a trained probe over the same-progress PANNs preview representation, not the historical direct preview-label readout. Its exploratory information point at `s=0.45` therefore cannot be substituted for the historical external action-readout estimate near `s≈0.75`.
+The external baseline here is a trained probe over the same-progress PANNs preview representation, not the historical direct preview-label readout. Its exploratory information point at `s=0.45` therefore cannot be substituted for the historical direct preview-label reliability/readout estimate near `s≈0.75`.
 
 Evaluation used six outer and four inner video-group folds. Every seed, progress point, representation, and target from a video remains in one outer fold. Hyperparameters were selected only on inner video folds. The retained output contains all 113,212 outer-fold candidate predictions, probabilities, selected parameters, target coverage, and paired video-bootstrap statistics. Primary fork-majority coverage ranges from 675 to 729 of 816 candidates by progress; secondary ODE-final coverage is 576/816 at every progress. Missing targets are explicit and never imputed.
 
@@ -130,6 +130,16 @@ ModelScope mirrors were unavailable. The run used already-present, hash-pinned l
 The outcome-blind Material feasibility artifact is bound to protocol SHA-256 `a9f2a84653495045be039b17d1113de21fe1f6e951fffc0e5b65deb925473f39`, while subsequent Class/B-1/readout artifacts use the final SHA-256 `5c4fc4025995c16e355feb8cc02fbb3627891d47f6df052becde4845eaa7bd09`. The sole intervening protocol edit, committed in `86f18c5`, added a pinned B-1 asset/offline-environment contract. It did not alter the Material reference, matching, coverage, or stop rules, so the earlier fail-closed Material result remains rule-identical. Both revisions and the diff are retained in Git.
 
 The complete attempt ledger and unresolved items are in `BUGS_DEVIATIONS_UNRESOLVED.md`; exact commands and environment bindings are in `REPRO.json` and `COMMANDS.md`.
+
+The requested independent Claude/Opus integrity audit was launched with the
+path-only checklist in `audit/EXPERIMENT_AUDIT_PROMPT.md`, but the CLI returned
+`Not logged in` with zero model tokens. The raw JSON and debug trace are
+preserved and the cross-model audit process is `ENGINEERING_FAILURE`; it is not
+reported as an external PASS. Three independent read-only agent audits of
+Class, readout, and deliverable integrity did complete. They found no blocking
+data or split-integrity defect, but produced the estimand, boundary-estimate,
+pointwise-inference, provenance, and determinism corrections recorded here and
+in `audit/EXPERIMENT_AUDIT.{json,md}`.
 
 ## 9. Single next experiment
 

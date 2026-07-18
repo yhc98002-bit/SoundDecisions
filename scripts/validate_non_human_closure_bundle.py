@@ -14,6 +14,8 @@ from typing import Any, Iterable
 
 EXPECTED_PREDICTIONS = 113_212
 EXPECTED_FEATURE_UNITS = 6_528
+EXPECTED_PROBABILITY_WIDTH = 15
+FLOAT32_EPSILON = 2.0 ** -23
 REQUIRED = (
     "NON_HUMAN_TRACK_REPORT.md",
     "EXECUTION_STATUS.json",
@@ -33,6 +35,8 @@ REQUIRED = (
     "MATERIAL_CONTINUITY_2AFC_REPORT.json",
     "MATERIAL_CONTINUITY_2AFC_REPORT.md",
     "MATERIAL_REFERENCE_INSUFFICIENCY.json",
+    "MATERIAL_REFERENCE_INSUFFICIENCY_SUMMARY.json",
+    "MATERIAL_SOURCE_AUDIO_LOUDNESS.json",
     "NUMBERS_INDEX.json",
     "REPRO.json",
     "COMMANDS.md",
@@ -95,7 +99,7 @@ def validate_checksum_file(root: Path, checksum_path: Path, *, exact: bool) -> i
         actual = {
             str(path.relative_to(root))
             for path in root.rglob("*")
-            if path.is_file() and path != checksum_path
+            if path.is_file() and not path.is_symlink() and path != checksum_path
         }
         require(set(rows) == actual, "global checksum coverage is not exact")
     return len(rows)
@@ -117,6 +121,30 @@ def validate_feature_manifest(path: Path) -> dict[str, int]:
     require(len(keys) == EXPECTED_FEATURE_UNITS, "feature manifest cardinality mismatch")
     require(len(videos) == 48, "feature manifest video count mismatch")
     return {"units": len(keys), "videos": len(videos)}
+
+
+def require_probability_simplex(probabilities: list[float], key: Any) -> None:
+    """Validate serialized probabilities at the producer's lowest precision.
+
+    The bounded single-query family computes its softmax in float32 before the
+    values are widened to float64 for JSON serialization.  A component-count
+    scaled float32 epsilon, capped at the producer's existing 1e-6 simplex
+    gate, is therefore the predeclared numerical contract; this is independent
+    of observed labels, predictions, or scientific metrics.
+    """
+    require(
+        len(probabilities) == EXPECTED_PROBABILITY_WIDTH,
+        f"probability-vector width mismatch: {key}",
+    )
+    require(
+        all(math.isfinite(value) and 0.0 <= value <= 1.0 for value in probabilities),
+        f"invalid probabilities: {key}",
+    )
+    tolerance = min(1e-6, FLOAT32_EPSILON * len(probabilities))
+    require(
+        abs(math.fsum(probabilities) - 1.0) <= tolerance,
+        f"probabilities do not sum to one within float32 bound: {key}",
+    )
 
 
 def validate_predictions(path: Path) -> dict[str, int]:
@@ -142,9 +170,7 @@ def validate_predictions(path: Path) -> dict[str, int]:
                 require(video_folds[video] == fold, f"outer-fold video leakage: {video}")
             video_folds[video] = fold
             probabilities = [float(value) for value in row["probabilities"]]
-            require(probabilities, f"empty probability vector: {key}")
-            require(all(math.isfinite(value) and value >= 0.0 for value in probabilities), f"invalid probabilities: {key}")
-            require(abs(sum(probabilities) - 1.0) <= 1e-8, f"probabilities do not sum to one: {key}")
+            require_probability_simplex(probabilities, key)
     require(len(keys) == EXPECTED_PREDICTIONS, "outer prediction cardinality mismatch")
     require(len(video_folds) == 48, "outer prediction video count mismatch")
     return {"predictions": len(keys), "videos": len(video_folds)}
@@ -189,9 +215,73 @@ def validate_bundle(result_dir: Path) -> dict[str, Any]:
     require(material.get("scientific_status") == "INCOMPLETE_ARTIFACTS", "Material status mismatch")
     require(material["measurement"]["candidate_previews_replayed"] == 0, "invalid Material replay")
     require(material["measurement"]["two_afc_accuracy"] is None, "invented Material metric")
+    material_summary = load_json(result_dir / "MATERIAL_REFERENCE_INSUFFICIENCY_SUMMARY.json")
+    legacy_inventory = material_summary.get("legacy_inventory", {})
+    require(
+        legacy_inventory.get("legacy_journal_videos") == 200
+        and legacy_inventory.get("legacy_cells_inventoried") == 6_400
+        and legacy_inventory.get("surviving_subject_final_embeddings") == 800
+        and legacy_inventory.get("candidate_indices") == [0, 1, 2, 3],
+        "Material legacy inventory binding mismatch",
+    )
+    require(
+        legacy_inventory.get("measurements_sha256")
+        == material_summary["canonical_evidence"].get("measurements_sha256"),
+        "Material inventory measurement hash mismatch",
+    )
+
+    materialization = load_json(result_dir / "MATERIALIZATION_MANIFEST.json")
+    materialized_paths = [str(row["path"]) for row in materialization.get("outputs", [])]
+    require(len(materialized_paths) == len(set(materialized_paths)) == 37, "materialization path cardinality mismatch")
+    require(
+        {
+            "MATERIAL_CONTINUITY_2AFC_REPORT.json",
+            "MATERIAL_CONTINUITY_2AFC_REPORT.md",
+            "MATERIAL_REFERENCE_INSUFFICIENCY_SUMMARY.json",
+        }.issubset(materialized_paths),
+        "Material support reports are not bound by materialization manifest",
+    )
 
     numbers = load_json(result_dir / "NUMBERS_INDEX.json")
     require(numbers.get("status") == "COMPLETE" and len(numbers.get("numbers", [])) >= 30, "numbers index incomplete")
+    indexed = {str(row["id"]): row.get("value") for row in numbers["numbers"]}
+    require(len(indexed) == len(numbers["numbers"]), "duplicate numbers-index id")
+    require(indexed.get("class_total_wavs") == posterior["record_count"], "indexed posterior count mismatch")
+    require(
+        indexed.get("class_registered_all_cell_crossing_theta_070")
+        == commitment["replication_classification"]["pooled_sustained_crossing_theta_0.70"],
+        "indexed Class crossing mismatch",
+    )
+    require(
+        indexed.get("class_nondetermined_posthoc_sustained_crossing")
+        == sensitivity["nondetermined_only_sustained_crossing"],
+        "indexed sensitivity crossing mismatch",
+    )
+    variance = load_json(result_dir / "CLASS_VARIANCE_DECOMPOSITION.json")
+    require(
+        indexed["class_variance_video"]["variance"]
+        == variance["overall_mean_components"]["video"],
+        "indexed video variance mismatch",
+    )
+    require(
+        indexed["class_variance_video_seed_interaction"]["variance"]
+        == variance["overall_mean_components"]["video_by_seed_interaction"],
+        "indexed interaction variance mismatch",
+    )
+    require(indexed.get("readout_outer_predictions") == readout["prediction_count"], "indexed readout count mismatch")
+    require(
+        indexed.get("material_status") == material["scientific_status"],
+        "indexed Material status mismatch",
+    )
+    require(
+        indexed.get("material_inventory")
+        == {
+            "videos": legacy_inventory["legacy_journal_videos"],
+            "cells": legacy_inventory["legacy_cells_inventoried"],
+            "surviving_subject_final_embeddings": legacy_inventory["surviving_subject_final_embeddings"],
+        },
+        "indexed Material inventory mismatch",
+    )
     repro = load_json(result_dir / "REPRO.json")
     require(repro.get("status") == "COMPLETE", "REPRO incomplete")
 

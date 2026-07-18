@@ -35,9 +35,9 @@
       "sha256": "aa2feee890b995c70b298f9bff8df4036c88fde7f4cb9837e33f455c0b291d24"
     },
     {
-      "bytes": 2555,
+      "bytes": 2521,
       "path": "CLASS_MULTISEED_COMMITMENT.md",
-      "sha256": "5916f428b623c6fe122e0672132b2e224f5b07e7add7f162418a40ad7db939c6"
+      "sha256": "89de13f64b1a9d53e5aec89ba4f5792e14bd8186553da192a6e91763356b65ec"
     },
     {
       "bytes": 667,
@@ -90,9 +90,24 @@
       "sha256": "c5f102120bc30a72108b94f2cbfc98323b057560db867c19e658ffb39e69319a"
     },
     {
+      "bytes": 1283,
+      "path": "MATERIAL_CONTINUITY_2AFC_REPORT.json",
+      "sha256": "49cb530f618e66c054ca6b7b2983cc3a745b55d90d11adba801c02328d0844d6"
+    },
+    {
+      "bytes": 1454,
+      "path": "MATERIAL_CONTINUITY_2AFC_REPORT.md",
+      "sha256": "d838426a5dbb764bd414daf7faf343f2b7c2c7f74a5607a0b8dfc35a2e56e104"
+    },
+    {
       "bytes": 88769,
       "path": "MATERIAL_REFERENCE_INSUFFICIENCY.json",
       "sha256": "1bf4adf7eee37766665d421312b59f819d35d4fcf88b1ae14d784ec931b82dd8"
+    },
+    {
+      "bytes": 3323,
+      "path": "MATERIAL_REFERENCE_INSUFFICIENCY_SUMMARY.json",
+      "sha256": "abe021a52fdd5c9a73e87dc6e4fc1c98cffc8748d0be0a15a2f2838e50ea8e89"
     },
     {
       "bytes": 42058,

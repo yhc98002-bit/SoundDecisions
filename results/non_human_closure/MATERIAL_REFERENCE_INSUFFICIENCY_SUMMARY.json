@@ -9,8 +9,28 @@
     "source_audio_loudness_path": "/XYFS02/HDD_POOL/paratera_xy/pxy1289/HaocunYe/Research/SoundDecisions-non-human-artifacts/nhc_20260717T151345p0800_a052920/material/feasibility/SOURCE_AUDIO_LOUDNESS.json",
     "source_audio_loudness_sha256": "94fe9dd962965580d52f2063afa25cb68c1e371eeaae7e292ac8de0657672807",
     "source_audio_loudness_bytes": 42058,
+    "measurements_sha256": "85fd0fc905dbcf031e2ce43ab9d4832cd1b14d7c42fb3e01e34fb4549e013ad7",
     "git_commit": "ea0077285f22117910e2722d69bddc642f554e1c",
     "protocol_sha256": "a9f2a84653495045be039b17d1113de21fe1f6e951fffc0e5b65deb925473f39"
+  },
+  "legacy_inventory": {
+    "legacy_journal_videos": 200,
+    "subjects_per_video": 4,
+    "candidate_indices": [0, 1, 2, 3],
+    "progress_points": 8,
+    "legacy_cells_inventoried": 6400,
+    "retained_material_final_embeddings_all_indices": 3200,
+    "surviving_subject_final_embeddings": 800,
+    "unique_candidate_clips": 200,
+    "per_candidate_index": {"0": 200, "1": 200, "2": 200, "3": 200},
+    "inventory_errors": 0,
+    "measurements_sha256": "85fd0fc905dbcf031e2ce43ab9d4832cd1b14d7c42fb3e01e34fb4549e013ad7",
+    "derivation": "Exact retained p1cfg1 Material embedding rows whose clip is one of the 200 outcome-blind Phase-2 inventory keys and whose candidate index is in [0,1,2,3].",
+    "coverage_cross_check": {
+      "subjects_with_strict_match": 52,
+      "excluded_subjects": 748,
+      "candidate_subjects_total": 800
+    }
   },
   "coverage": {
     "legacy_journal_videos": 200,

@@ -228,11 +228,45 @@
 - The materializer independently revalidated posterior cardinality and hashes,
   B-1 gate isolation and tolerances, feature shard cardinalities and hashes,
   readout targets, candidate predictions, and the fail-closed Material stop.
-- A fresh create-only smoke reproduction generated and validated all 34
-  materialized outputs in an independent result directory.
+- A fresh create-only smoke reproduction generated and validated the complete
+  37-output materialization contract in an independent result directory.
 - An independent result audit identified an estimand distinction: historical
   `s_commit` is an individual unsustained crossing mean, while the frozen B2
   decision uses an all-cell pooled sustained crossing. The integrated report
   now discloses both the early individual B2 evidence and the registered
   `NOT_SUPPORTED` decision. A post-hoc nondetermined-video sensitivity crosses
   at `s=0.60`, so it does not alter the frozen `s≤0.45` reproduction decision.
+
+## Checkpoint 10 — integrity audit and final validation
+
+- Status: complete with one precisely evidenced audit-process limitation.
+- Three read-only audits independently reconstructed the Class result and
+  variance, all 113,212 readout predictions and 176 report metric cells, video
+  split integrity, feature cardinality, and deliverable hashes. Their findings
+  drove the estimand, conditional-interval, seed-boundary, proxy-target,
+  pointwise-inference, convergence, external-baseline, protocol-history, and
+  deterministic-repeat disclosures in the final report.
+- The requested Claude/Opus cross-model audit was launched from a path-only
+  prompt, but the CLI returned `Not logged in` with zero tokens and zero cost.
+  Prompt, raw JSON, and debug trace are preserved. Its process status is
+  `ENGINEERING_FAILURE`; no external-model PASS is claimed.
+- The complete focused closure suite passed on `an12`: 95 tests. The only two
+  warnings are the expected frozen 120-iteration MLP convergence warnings.
+  The suite includes exact repeat-prediction hashes for the MLP and single-query
+  attention probes, leakage tests, partial-shard tests, corruption tests, schema
+  tests, and create-only reproduction tests.
+- A fresh immutable materialization created 38 files and validated all 37
+  manifest-bound outputs. The canonical bundle now validates the same 37-file
+  output contract, all 14 feature checksum targets, and a byte-identical fresh
+  video-determined sensitivity reproduction. The Material inventory index is
+  explicitly bound to the 800 retained `j0..j3` subject-final embeddings in the
+  exact 200-video Phase-2 subset (52 matched + 748 excluded subjects).
+- One multiline SSH wrapper attempt created neither an output directory nor
+  scientific records; it is retained as `ENGINEERING_FAILURE` audit evidence.
+  The explicit rerun completed and validated normally.
+- The first exact bundle validation exposed an engineering-only numerical
+  contract error: `1e-8` was tighter than the float32 attention-softmax output.
+  Across all 113,212 vectors the maximum sum error was `1.606e-7`. The corrected
+  validator freezes `min(1e-6, class_count × float32_epsilon)`, enforces the
+  15-way width and `[0,1]` range, adds corruption tests, and leaves every
+  retained prediction and reported metric byte-identical.
