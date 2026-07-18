@@ -1,0 +1,81 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sounddecisions.local/schemas/human-presence-round2-ac1-v1.schema.json",
+  "title": "SoundDecisions Round-2 multi-rater AC1 report",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "analysis_scope",
+    "source_manifest_id",
+    "source_manifest_sha256",
+    "n_raters",
+    "source_exports",
+    "questions",
+    "interpretation"
+  ],
+  "properties": {
+    "schema_version": {"const": "sounddecisions-human-presence-ac1-v1.0"},
+    "analysis_scope": {"const": "multi_rater_interrater_agreement"},
+    "source_manifest_id": {"type": "string", "minLength": 1},
+    "source_manifest_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "n_raters": {"type": "integer", "minimum": 2},
+    "source_exports": {
+      "type": "array",
+      "minItems": 2,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["rater_id", "sha256"],
+        "properties": {
+          "rater_id": {"type": "string", "minLength": 1},
+          "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+        }
+      }
+    },
+    "questions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["presence_verdict", "unrelated_background"],
+      "properties": {
+        "presence_verdict": {"$ref": "#/$defs/ac1"},
+        "unrelated_background": {"$ref": "#/$defs/ac1"}
+      }
+    },
+    "interpretation": {
+      "const": "Inter-rater reliability only; this report does not establish semantic correctness."
+    }
+  },
+  "$defs": {
+    "category": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["value", "count", "item_balanced_marginal"],
+      "properties": {
+        "value": {"type": ["string", "boolean"]},
+        "count": {"type": "integer", "minimum": 0},
+        "item_balanced_marginal": {"type": "number", "minimum": 0, "maximum": 1}
+      }
+    },
+    "ac1": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "ac1",
+        "observed_agreement",
+        "expected_agreement",
+        "n_items",
+        "n_ratings",
+        "categories"
+      ],
+      "properties": {
+        "ac1": {"type": ["number", "null"]},
+        "observed_agreement": {"type": ["number", "null"]},
+        "expected_agreement": {"type": ["number", "null"]},
+        "n_items": {"type": "integer", "minimum": 0},
+        "n_ratings": {"type": "integer", "minimum": 0},
+        "categories": {"type": "array", "items": {"$ref": "#/$defs/category"}}
+      }
+    }
+  }
+}

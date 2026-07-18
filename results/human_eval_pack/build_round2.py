@@ -9,6 +9,7 @@ import json
 import os
 from pathlib import Path
 import shutil
+import subprocess
 import tempfile
 from typing import Any, Mapping
 
@@ -132,6 +133,35 @@ def _copy_verified(source: Path, target: Path) -> None:
     os.replace(partial, target)
 
 
+def _probe_media_streams(source: Path) -> tuple[int, int]:
+    """Return video/audio stream counts, failing closed when ffprobe cannot inspect input."""
+
+    executable = shutil.which("ffprobe")
+    if executable is None:
+        raise RuntimeError("ffprobe is required to verify Round-2 audio-bearing media")
+    completed = subprocess.run(
+        [
+            executable,
+            "-v", "error",
+            "-show_entries", "stream=codec_type",
+            "-of", "json",
+            str(source),
+        ],
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    if completed.returncode != 0:
+        raise ValueError(f"ffprobe could not inspect {source}: {completed.stderr.strip()}")
+    try:
+        streams = json.loads(completed.stdout).get("streams", [])
+    except json.JSONDecodeError as exc:
+        raise ValueError(f"ffprobe returned invalid JSON for {source}") from exc
+    video_count = sum(stream.get("codec_type") == "video" for stream in streams)
+    audio_count = sum(stream.get("codec_type") == "audio" for stream in streams)
+    return video_count, audio_count
+
+
 def build_package(catalog_path: Path, output_dir: Path, media_root: Path) -> dict[str, Any]:
     """Build a new package directory without overwriting any prior output."""
 
@@ -174,6 +204,12 @@ def build_package(catalog_path: Path, output_dir: Path, media_root: Path) -> dic
             source = media_root / relative
             if not source.is_file():
                 raise FileNotFoundError(f"required blinded video is missing: {source}")
+            video_count, audio_count = _probe_media_streams(source)
+            if video_count < 1 or audio_count < 1:
+                raise ValueError(
+                    f"Round-2 source must contain video and audio streams: {source} "
+                    f"(video={video_count}, audio={audio_count})"
+                )
             _copy_verified(source, temporary / relative)
             copied_media.add(relative)
 
@@ -197,7 +233,10 @@ def main() -> int:
         "--media-root",
         type=Path,
         required=True,
-        help="directory containing the catalog's relative media/ paths",
+        help=(
+            "audio-bearing blinded pack root containing the catalog's relative media/ "
+            "paths; do not use the silent Round-1 release"
+        ),
     )
     args = parser.parse_args()
     manifest = build_package(args.event_catalog, args.output_dir, args.media_root)

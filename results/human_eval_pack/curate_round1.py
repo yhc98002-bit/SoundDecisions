@@ -85,19 +85,20 @@ def _validated_interval(
 
 def _event(
     blind_id: str,
-    index: int,
+    suffix: str,
     description: str,
     interval: Mapping[str, Any],
     duration_s: float,
     source: str,
 ) -> dict[str, Any]:
     clean_description = description.strip()
-    _require(bool(clean_description), f"{blind_id}-E{index}: event description is empty")
+    event_id = f"{blind_id}-{suffix}"
+    _require(bool(clean_description), f"{event_id}: event description is empty")
     return {
-        "event_id": f"{blind_id}-E{index}",
+        "event_id": event_id,
         "description": clean_description,
         "anchor": _validated_interval(
-            interval, duration_s=duration_s, context=f"{blind_id}-E{index}"
+            interval, duration_s=duration_s, context=event_id
         ),
         "event_source": source,
     }
@@ -151,9 +152,9 @@ def build_event_catalog(
 
         if "anchor_curation" in source_item["tasks"]:
             response = rating["anchor_curation"]
-            description = source_item["candidate_caption"].strip()
-            _require(bool(description), f"{blind_id}: candidate caption is empty")
+            description = response["event_description"].strip()
             if response["status"] == "marked":
+                _require(bool(description), f"{blind_id}: marked anchor event description is empty")
                 interval = _validated_interval(
                     response, duration_s=duration_s, context=f"{blind_id}.anchor_curation"
                 )
@@ -164,7 +165,7 @@ def build_event_catalog(
                     "curator_note": response["note"],
                 }
                 anchor_events = [
-                    _event(blind_id, 1, description, interval, duration_s, "anchor_curation")
+                    _event(blind_id, "A1", description, interval, duration_s, "anchor_curation")
                 ]
                 counts["anchor_eligible"] += 1
             elif response["status"] == "too_uncertain":
@@ -189,7 +190,7 @@ def build_event_catalog(
                 pair_events = [
                     _event(
                         blind_id,
-                        index,
+                        f"P{index}",
                         response[f"event_{index}"]["description"],
                         response[f"event_{index}"],
                         duration_s,
@@ -218,8 +219,8 @@ def build_event_catalog(
             else:
                 raise ValueError(f"{blind_id}: completed two-event curation has invalid verdict")
 
-        # A confirmed pair is the more specific event definition on overlap.
-        selected_events = pair_events if pair_events else anchor_events
+        # These are distinct estimands; never infer that an anchor event equals pair event 1.
+        selected_events = anchor_events + pair_events
         counts["events_eligible"] += len(selected_events)
         output_items.append(
             {
@@ -234,15 +235,15 @@ def build_event_catalog(
         )
 
     return {
-        "schema_version": "sounddecisions-human-event-catalog-v1.0",
-        "catalog_id": f"{manifest['manifest_id']}-event-catalog-v1",
+        "schema_version": "sounddecisions-human-event-catalog-v2.0",
+        "catalog_id": f"{manifest['manifest_id']}-event-catalog-v2",
         "source_manifest_id": manifest["manifest_id"],
         "source_manifest_sha256": manifest_sha256,
         "source_export_sha256": export_sha256,
         "curator_id": ratings["rater_id"],
         "curator_exported_at": ratings["exported_at"],
         "analysis_scope": "single_curator_event_definition_not_agreement_evidence",
-        "event_selection_rule": "confirmed_two_event_precedes_marked_anchor_on_overlap",
+        "event_preservation_rule": "preserve_eligible_anchor_and_confirmed_pair_events_separately",
         "counts": counts,
         "items": output_items,
     }

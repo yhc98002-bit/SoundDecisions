@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://sounddecisions.local/schemas/human-event-catalog-v1.schema.json",
+  "$id": "https://sounddecisions.local/schemas/human-event-catalog-v2.schema.json",
   "title": "SoundDecisions Round-1 event catalog",
   "type": "object",
   "additionalProperties": false,
@@ -13,12 +13,12 @@
     "curator_id",
     "curator_exported_at",
     "analysis_scope",
-    "event_selection_rule",
+    "event_preservation_rule",
     "counts",
     "items"
   ],
   "properties": {
-    "schema_version": {"const": "sounddecisions-human-event-catalog-v1.0"},
+    "schema_version": {"const": "sounddecisions-human-event-catalog-v2.0"},
     "catalog_id": {"type": "string", "minLength": 1, "maxLength": 240},
     "source_manifest_id": {"type": "string", "minLength": 1, "maxLength": 200},
     "source_manifest_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
@@ -26,8 +26,8 @@
     "curator_id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$"},
     "curator_exported_at": {"type": "string", "format": "date-time"},
     "analysis_scope": {"const": "single_curator_event_definition_not_agreement_evidence"},
-    "event_selection_rule": {
-      "const": "confirmed_two_event_precedes_marked_anchor_on_overlap"
+    "event_preservation_rule": {
+      "const": "preserve_eligible_anchor_and_confirmed_pair_events_separately"
     },
     "counts": {
       "type": "object",
@@ -70,7 +70,7 @@
       "additionalProperties": false,
       "required": ["event_id", "description", "anchor", "event_source"],
       "properties": {
-        "event_id": {"type": "string", "pattern": "^HEV2-[0-9A-F]{12}-E[12]$"},
+        "event_id": {"type": "string", "pattern": "^HEV2-[0-9A-F]{12}-(A1|P1|P2)$"},
         "description": {"type": "string", "minLength": 1, "maxLength": 2000},
         "anchor": {"$ref": "#/$defs/interval"},
         "event_source": {"enum": ["anchor_curation", "two_event_curation"]}
@@ -82,7 +82,7 @@
       "required": ["status", "description", "anchor", "curator_note"],
       "properties": {
         "status": {"enum": ["eligible", "unresolved"]},
-        "description": {"type": "string", "minLength": 1, "maxLength": 2000},
+        "description": {"type": "string", "maxLength": 2000},
         "anchor": {
           "oneOf": [{"$ref": "#/$defs/interval"}, {"type": "null"}]
         },
@@ -128,7 +128,7 @@
         },
         "events": {
           "type": "array",
-          "maxItems": 2,
+          "maxItems": 3,
           "items": {"$ref": "#/$defs/event"}
         }
       }
