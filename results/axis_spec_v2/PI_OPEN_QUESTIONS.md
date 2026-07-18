@@ -1,4 +1,6 @@
-# PI checkpoint: Axis Specification v2
+> **SUPERSEDED FOR HUMAN CURATION (2026-07-19).** No PI signature or electronic approval artifact is required. The current user directive authorizes the Round-1 human-curation release; unresolved scientific questions remain constraints on later measurement and claims.
+
+# Historical PI checkpoint: Axis Specification v2
 
 Status: **DECISIONS REQUIRED; GOAL 2 BLOCKED.** These are scientific freeze
 questions, not routine engineering blockers. The executor will not choose them

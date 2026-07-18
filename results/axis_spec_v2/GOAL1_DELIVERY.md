@@ -1,4 +1,4 @@
-> **GOAL 1 DELIVERED; GOAL 2 NOT AUTHORIZED.** This package is a draft for dual-PI review. No axis definition is frozen, no quarantine is released, and no measurement, generation, or probe execution occurred.
+> **HISTORICAL CHECKPOINT.** The 2026-07-19 operational update retired electronic signatures and authorized human event curation only. No quarantine, measurement, generation, probe, model, or GPU work is released by that update.
 
 # SoundDecisions Axis Specification v2: Goal-1 delivery
 

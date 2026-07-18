@@ -1,4 +1,4 @@
-> **DRAFT - NOT FROZEN.** Goal 2, quarantine release, measurement, and generation remain unauthorized until both PIs sign this specification and the sign-off is recorded by amendment.
+> **OPERATIONAL UPDATE (2026-07-19).** Electronic-signature and freeze-envelope gates are retired. Human event curation is authorized under versioned Git and manifest hashes. This does not release B2/B6 or authorize model inference, GPU work, or downstream measurement; the pre-release language below remains audit history.
 
 # SoundDecisions Axis Specification v2
 
