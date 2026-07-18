@@ -1,0 +1,34 @@
+{
+  "schema_version": "sounddecisions-human-curation-release-v1",
+  "release_id": "round1_curation_v1",
+  "status": "CURATION_AUTHORIZED",
+  "counts": {
+    "anchor_curation": 30,
+    "two_event_curation": 60,
+    "total_tasks": 90,
+    "unique_videos": 82
+  },
+  "manifest": {
+    "path": "round1_blinded_items.json",
+    "sha256": "4b09407c03c2f7d1e4ae08f1c6162771596e579a5408cea9d3205286dff7ad0b"
+  },
+  "sealed_unblinding_map": {
+    "path": "unblinding_map.sealed.json",
+    "sha256": "ebdba8ad3d4d4b266394b183ec4da9b83a134c1d48a1fe8aa41ae0a7d447c4c5"
+  },
+  "zip": {
+    "path": "releases/round1_curation_v1.zip",
+    "sha256": "885c623dc8fe26a8fa16aa4a1e63f970215d5fb8d992ded35cab2a570e83eae4",
+    "size_bytes": 81530850
+  },
+  "release_directory_sha256": "bc974dc5387845446cf2127f058abe92ff0f8637e53cc3e861b13ec8676ce969",
+  "source_contract_sha256": {
+    "anchor_candidates": "5939334f09f4c532cc15e28e32e5cb2ba7865574ab17edeeac30e76e5d0cff69",
+    "two_event_candidates": "9331f384e51c6cdfbb559e5c11e24ceb5ab9cf464c4636825247fe5fddf28ea0",
+    "clips_index": "695b5a93e3d52ea8fcb406a95aa7b6891c60f09fff93f6299f5359e739e5216f",
+    "html_template": "af3b8325c3dec47f2cd7b23c57bef8c660903378768dd20b9ba2a692b0275a59",
+    "instructions": "e3011ca0102dc5b1030933887d5aae1b0a86d63da0492d3ea173e47142920dcb",
+    "manifest_schema": "65c9de8fa7e0f48800c762dbb1eb97ee5230fd577e768ce276aa86edf19b88ec",
+    "ratings_schema": "5e44ccde0d862bc0410bb7c205118c150832e339ffcee9346798ae3cfdbaa750"
+  }
+}
