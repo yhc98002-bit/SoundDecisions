@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Round 2 Presence rating</title>
+  <style>
+    :root { color-scheme: light; font-family: system-ui, sans-serif; background: #f4f5f6; color: #17191c; }
+    * { box-sizing: border-box; }
+    body { margin: 0; }
+    main { max-width: 980px; margin: 0 auto; padding: 24px; }
+    h1 { font-size: 1.55rem; margin: 0 0 8px; }
+    h2 { font-size: 1.15rem; margin: 0 0 8px; }
+    .panel { background: white; border: 1px solid #cfd3d7; border-radius: 6px; padding: 20px; margin-bottom: 16px; }
+    .muted { color: #5d636b; }
+    .warning { border-left: 5px solid #b45309; padding-left: 12px; }
+    label { display: block; margin: 10px 0 5px; font-weight: 650; }
+    input[type="text"], textarea { width: 100%; padding: 9px; border: 1px solid #8a929a; border-radius: 4px; font: inherit; }
+    textarea { min-height: 72px; resize: vertical; }
+    button, select { min-height: 40px; padding: 7px 13px; font: inherit; }
+    button { border: 1px solid #555d66; border-radius: 4px; background: white; cursor: pointer; }
+    button.primary { background: #175c36; color: white; border-color: #175c36; font-weight: 700; }
+    button.export { background: #174e8c; color: white; border-color: #174e8c; font-size: 1.05rem; font-weight: 750; }
+    button:disabled { opacity: .45; cursor: not-allowed; }
+    .row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+    .spread { justify-content: space-between; }
+    video { width: 100%; max-height: 55vh; background: #000; margin: 12px 0; }
+    .fixed { border: 1px solid #aab0b6; background: #f7f8f9; padding: 12px; border-radius: 4px; }
+    .fixed strong { display: block; margin-bottom: 4px; }
+    fieldset { border: 1px solid #b9bec4; margin: 16px 0; padding: 12px; }
+    fieldset label { display: inline-flex; align-items: center; margin: 7px 18px 7px 0; font-weight: 500; gap: 5px; }
+    #status { min-height: 1.4em; font-weight: 650; }
+    #session { display: none; }
+    #progress-track { height: 8px; background: #d8dde1; border-radius: 4px; overflow: hidden; }
+    #progress-fill { height: 100%; width: 0; background: #175c36; }
+    @media (max-width: 600px) { main { padding: 12px; } .panel { padding: 14px; } }
+  </style>
+</head>
+<body>
+<main>
+  <section id="start" class="panel">
+    <h1>Round 2: Presence rating</h1>
+    <p class="warning">Use a different evaluator ID from the person who curated the target events. Event definitions are fixed.</p>
+    <label for="rater-id">Evaluator ID</label>
+    <input id="rater-id" type="text" maxlength="64" autocomplete="off" placeholder="Assigned evaluator ID">
+    <div class="row" style="margin-top:14px">
+      <button id="start-button" class="primary">Start / resume</button>
+      <span id="start-status" role="status"></span>
+    </div>
+  </section>
+
+  <section id="session">
+    <div class="panel">
+      <div class="row spread"><strong id="progress-text"></strong><span id="autosave">Saved locally</span></div>
+      <div id="progress-track"><div id="progress-fill"></div></div>
+    </div>
+    <div class="panel">
+      <div class="row spread"><h2 id="event-id"></h2><span id="item-index"></span></div>
+      <div class="fixed">
+        <strong>Fixed target event</strong>
+        <div id="event-description"></div>
+        <strong style="margin-top:10px">Fixed visual anchor</strong>
+        <div id="event-anchor"></div>
+      </div>
+      <video id="video" controls preload="metadata"></video>
+      <div class="row">
+        <button id="step-back" title="Step back one source frame">-1 frame</button>
+        <button id="step-forward" title="Step forward one source frame">+1 frame</button>
+        <label for="speed" style="margin:0">Speed</label>
+        <select id="speed"><option value="0.25">0.25x</option><option value="0.5">0.5x</option><option value="1" selected>1x</option></select>
+      </div>
+      <p id="rubric" class="fixed"></p>
+      <fieldset>
+        <legend>Presence verdict</legend>
+        <label><input type="radio" name="verdict" value="target_present"> Target-present</label>
+        <label><input type="radio" name="verdict" value="absent"> Absent</label>
+        <label><input type="radio" name="verdict" value="uncertain"> Uncertain</label>
+      </fieldset>
+      <fieldset>
+        <legend>Salient unrelated background audio</legend>
+        <label><input type="radio" name="background" value="true"> Present</label>
+        <label><input type="radio" name="background" value="false"> Not present</label>
+      </fieldset>
+      <label for="note">Optional note</label>
+      <textarea id="note" maxlength="2000"></textarea>
+      <div id="status" role="status"></div>
+    </div>
+    <div class="panel row spread">
+      <div class="row"><button id="previous">Previous</button><button id="next" class="primary">Save &amp; next</button></div>
+      <div class="row">
+        <button id="import-button">Import JSON</button>
+        <input id="import-file" type="file" accept="application/json,.json" hidden>
+        <button id="export-button" class="export">Export ratings JSON</button>
+      </div>
+    </div>
+  </section>
+</main>
+<script id="round2-manifest" type="application/json" data-sha256="__ROUND2_MANIFEST_SHA256__">__ROUND2_MANIFEST_JSON__</script>
+<script>
+(() => {
+  "use strict";
+  const manifestNode = document.getElementById("round2-manifest");
+  const manifest = JSON.parse(manifestNode.textContent);
+  const manifestSha = manifestNode.dataset.sha256;
+  const byId = id => document.getElementById(id);
+  const state = { raterId: null, startedAt: null, order: [], ratings: {}, index: 0 };
+  const raterPattern = /^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$/;
+
+  function fnv1a(text) {
+    let hash = 2166136261;
+    for (let i = 0; i < text.length; i++) { hash ^= text.charCodeAt(i); hash = Math.imul(hash, 16777619); }
+    return hash >>> 0;
+  }
+  function mulberry32(seed) {
+    return () => { let t = seed += 0x6D2B79F5; t = Math.imul(t ^ t >>> 15, t | 1); t ^= t + Math.imul(t ^ t >>> 7, t | 61); return ((t ^ t >>> 14) >>> 0) / 4294967296; };
+  }
+  function shuffled(values, raterId) {
+    const result = values.slice(); const random = mulberry32(fnv1a(`round2:${manifestSha}:${raterId}`));
+    for (let i = result.length - 1; i > 0; i--) { const j = Math.floor(random() * (i + 1)); [result[i], result[j]] = [result[j], result[i]]; }
+    return result;
+  }
+  async function sha256Hex(value) {
+    if (!globalThis.crypto || !globalThis.crypto.subtle) throw new Error("This browser cannot verify evaluator separation offline.");
+    const bytes = new TextEncoder().encode(value);
+    const digest = await globalThis.crypto.subtle.digest("SHA-256", bytes);
+    return Array.from(new Uint8Array(digest), byte => byte.toString(16).padStart(2, "0")).join("");
+  }
+  async function assertDifferentRater(raterId) {
+    if (await sha256Hex(raterId.trim().toLowerCase()) === manifest.curator_rater_id_sha256) {
+      throw new Error("Round-2 evaluator must be different from the Round-1 curator.");
+    }
+  }
+  function storageKey() { return `sounddecisions-round2:${manifestSha}:${state.raterId}`; }
+  function blankRating(eventId) { return { event_id: eventId, completed: false, presence: { verdict: null, unrelated_background: null, note: "" } }; }
+  function itemById(eventId) { return manifest.items.find(item => item.event_id === eventId); }
+  function saveLocal() {
+    localStorage.setItem(storageKey(), JSON.stringify({ startedAt: state.startedAt, order: state.order, ratings: state.ratings, index: state.index }));
+    byId("autosave").textContent = `Saved locally at ${new Date().toLocaleTimeString()}`;
+  }
+  function loadLocal() {
+    try {
+      const raw = localStorage.getItem(storageKey()); if (!raw) return false;
+      const saved = JSON.parse(raw);
+      if (!saved || typeof saved !== "object" || typeof saved.startedAt !== "string" || !saved.ratings || typeof saved.ratings !== "object" || Array.isArray(saved.ratings)) return false;
+      const ratings = validateRatingSet(saved.order, Object.values(saved.ratings));
+      state.startedAt = saved.startedAt; state.order = saved.order.slice(); state.ratings = ratings;
+      state.index = Number.isInteger(saved.index) ? Math.min(Math.max(saved.index, 0), state.order.length - 1) : 0;
+      return true;
+    } catch (_) { return false; }
+  }
+  function syncRating() {
+    if (!state.order.length) return;
+    const rating = state.ratings[state.order[state.index]];
+    const selected = document.querySelector('input[name="verdict"]:checked');
+    rating.presence.verdict = selected ? selected.value : null;
+    const background = document.querySelector('input[name="background"]:checked');
+    rating.presence.unrelated_background = background ? background.value === "true" : null;
+    rating.presence.note = byId("note").value;
+    rating.completed = rating.presence.verdict !== null && typeof rating.presence.unrelated_background === "boolean";
+    saveLocal();
+  }
+  function render() {
+    const eventId = state.order[state.index], item = itemById(eventId), rating = state.ratings[eventId];
+    byId("event-id").textContent = item.event_id;
+    byId("item-index").textContent = `${state.index + 1} / ${state.order.length}`;
+    byId("event-description").textContent = item.event_description;
+    byId("event-anchor").textContent = `${item.anchor.start_s.toFixed(3)} s to ${item.anchor.end_s.toFixed(3)} s`;
+    byId("video").src = item.media_path; byId("video").playbackRate = Number(byId("speed").value);
+    document.querySelectorAll('input[name="verdict"]').forEach(input => { input.checked = input.value === rating.presence.verdict; });
+    document.querySelectorAll('input[name="background"]').forEach(input => { input.checked = rating.presence.unrelated_background !== null && input.value === String(rating.presence.unrelated_background); });
+    byId("note").value = rating.presence.note;
+    byId("previous").disabled = state.index === 0; byId("next").textContent = state.index === state.order.length - 1 ? "Save" : "Save & next";
+    const completed = Object.values(state.ratings).filter(value => value.completed).length;
+    byId("progress-text").textContent = `${completed} of ${state.order.length} completed`;
+    byId("progress-fill").style.width = `${100 * completed / state.order.length}%`;
+    byId("status").textContent = "";
+  }
+  function exportPayload() {
+    syncRating();
+    return {
+      schema_version: "sounddecisions-human-presence-ratings-v1-1.0",
+      instrument_version: manifest.instrument_version,
+      manifest_id: manifest.manifest_id,
+      manifest_sha256: manifestSha,
+      rater_id: state.raterId,
+      started_at: state.startedAt,
+      exported_at: new Date().toISOString(),
+      item_order: state.order.slice(),
+      ratings: state.order.map(eventId => state.ratings[eventId])
+    };
+  }
+  function validateRatingSet(order, rows) {
+    const expected = new Set(manifest.items.map(item => item.event_id));
+    if (!Array.isArray(order) || order.length !== expected.size || order.some(id => !expected.has(id)) || new Set(order).size !== expected.size) throw new Error("Export item order does not match the manifest.");
+    if (!Array.isArray(rows) || rows.length !== expected.size) throw new Error("Export rating set does not match the manifest.");
+    const ratings = {};
+    for (const rating of rows) {
+      if (!rating || typeof rating !== "object" || Object.keys(rating).sort().join(",") !== "completed,event_id,presence" || !expected.has(rating.event_id) || ratings[rating.event_id]) throw new Error("Export contains an invalid or duplicate event ID.");
+      const presence = rating.presence;
+      if (!presence || typeof presence !== "object" || Object.keys(presence).sort().join(",") !== "note,unrelated_background,verdict" || ![null,"target_present","absent","uncertain"].includes(presence.verdict) || ![null,true,false].includes(presence.unrelated_background) || typeof presence.note !== "string" || presence.note.length > 2000) throw new Error("Export contains an invalid Presence response.");
+      if (typeof rating.completed !== "boolean" || (rating.completed && (presence.verdict === null || typeof presence.unrelated_background !== "boolean"))) throw new Error("Export completion state is invalid.");
+      ratings[rating.event_id] = rating;
+    }
+    return ratings;
+  }
+  function validateImport(payload) {
+    const keys = ["schema_version","instrument_version","manifest_id","manifest_sha256","rater_id","started_at","exported_at","item_order","ratings"];
+    if (!payload || typeof payload !== "object" || keys.some(key => !(key in payload))) throw new Error("Invalid Round-2 export.");
+    if (payload.schema_version !== "sounddecisions-human-presence-ratings-v1-1.0" || payload.instrument_version !== manifest.instrument_version) throw new Error("Export schema or instrument version mismatch.");
+    if (payload.manifest_id !== manifest.manifest_id || payload.manifest_sha256 !== manifestSha) throw new Error("Export belongs to a different manifest.");
+    if (payload.rater_id !== state.raterId) throw new Error("Export evaluator ID does not match this session.");
+    return validateRatingSet(payload.item_order, payload.ratings);
+  }
+  async function startSession() {
+    try {
+      if (manifest.status !== "RATING_AUTHORIZED_SINGLE_RATER") throw new Error("This manifest is not authorized for rating.");
+      const raterId = byId("rater-id").value.trim(); if (!raterPattern.test(raterId)) throw new Error("Enter a valid evaluator ID.");
+      await assertDifferentRater(raterId); state.raterId = raterId;
+      if (!loadLocal()) { state.startedAt = new Date().toISOString(); state.order = shuffled(manifest.items.map(item => item.event_id), raterId); state.ratings = Object.fromEntries(state.order.map(id => [id, blankRating(id)])); state.index = 0; saveLocal(); }
+      byId("start").style.display = "none"; byId("session").style.display = "block"; render();
+    } catch (error) { byId("start-status").textContent = error.message; }
+  }
+  byId("rubric").textContent = manifest.rubric;
+  byId("start-button").addEventListener("click", startSession);
+  byId("rater-id").addEventListener("keydown", event => { if (event.key === "Enter") startSession(); });
+  byId("previous").addEventListener("click", () => { syncRating(); if (state.index > 0) state.index--; render(); });
+  byId("next").addEventListener("click", () => { syncRating(); if (state.index < state.order.length - 1) state.index++; render(); });
+  document.querySelectorAll('input[name="verdict"]').forEach(input => input.addEventListener("change", syncRating));
+  document.querySelectorAll('input[name="background"]').forEach(input => input.addEventListener("change", syncRating));
+  byId("note").addEventListener("input", syncRating);
+  byId("speed").addEventListener("change", () => { byId("video").playbackRate = Number(byId("speed").value); });
+  byId("step-back").addEventListener("click", () => { const item = itemById(state.order[state.index]); byId("video").currentTime = Math.max(0, byId("video").currentTime - 1 / item.fps); });
+  byId("step-forward").addEventListener("click", () => { const item = itemById(state.order[state.index]); byId("video").currentTime = Math.min(item.duration_s, byId("video").currentTime + 1 / item.fps); });
+  byId("export-button").addEventListener("click", () => { const blob = new Blob([JSON.stringify(exportPayload(), null, 2) + "\n"], {type:"application/json"}); const link = document.createElement("a"); link.href = URL.createObjectURL(blob); link.download = `presence_ratings_${state.raterId}.json`; link.click(); setTimeout(() => URL.revokeObjectURL(link.href), 1000); });
+  byId("import-button").addEventListener("click", () => byId("import-file").click());
+  byId("import-file").addEventListener("change", async event => { try { const file = event.target.files[0]; if (!file) return; const payload = JSON.parse(await file.text()); await assertDifferentRater(payload.rater_id || ""); const ratings = validateImport(payload); state.startedAt = payload.started_at; state.order = payload.item_order.slice(); state.ratings = ratings; state.index = 0; saveLocal(); render(); byId("status").textContent = "Import restored."; } catch (error) { byId("status").textContent = error.message; } finally { event.target.value = ""; } });
+})();
+</script>
+</body>
+</html>

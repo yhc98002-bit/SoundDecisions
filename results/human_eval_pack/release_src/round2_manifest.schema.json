@@ -1,0 +1,78 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sounddecisions.local/schemas/human-presence-round2-items-v1.schema.json",
+  "title": "SoundDecisions blinded Round-2 Presence manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "instrument_version",
+    "manifest_id",
+    "status",
+    "source_catalog_id",
+    "source_catalog_sha256",
+    "curator_rater_id_sha256",
+    "counts",
+    "rubric",
+    "items"
+  ],
+  "properties": {
+    "schema_version": {"const": "sounddecisions-human-presence-items-v1-1.0"},
+    "instrument_version": {"const": "human-eval-round2-presence-1.0"},
+    "manifest_id": {"type": "string", "minLength": 1, "maxLength": 260},
+    "status": {"const": "RATING_AUTHORIZED_SINGLE_RATER"},
+    "source_catalog_id": {"type": "string", "minLength": 1, "maxLength": 240},
+    "source_catalog_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "curator_rater_id_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "counts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["events", "unique_videos"],
+      "properties": {
+        "events": {"type": "integer", "minimum": 1},
+        "unique_videos": {"type": "integer", "minimum": 1}
+      }
+    },
+    "rubric": {
+      "const": "For one specified visible event, determine whether a corresponding audio event occurs near its anchor: present, absent, or uncertain. Salient unrelated background audio does not count. The unit is the event."
+    },
+    "items": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/item"}
+    }
+  },
+  "$defs": {
+    "interval": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["start_s", "end_s"],
+      "properties": {
+        "start_s": {"type": "number", "minimum": 0},
+        "end_s": {"type": "number", "minimum": 0}
+      }
+    },
+    "item": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "event_id",
+        "blind_id",
+        "media_path",
+        "fps",
+        "duration_s",
+        "event_description",
+        "anchor"
+      ],
+      "properties": {
+        "event_id": {"type": "string", "pattern": "^HEV2-[0-9A-F]{12}-E[12]$"},
+        "blind_id": {"type": "string", "pattern": "^HEV2-[0-9A-F]{12}$"},
+        "media_path": {"type": "string", "pattern": "^media/HEV2-[0-9A-F]{12}\\.mp4$"},
+        "fps": {"type": "number", "exclusiveMinimum": 0},
+        "duration_s": {"type": "number", "exclusiveMinimum": 0},
+        "event_description": {"type": "string", "minLength": 1, "maxLength": 2000},
+        "anchor": {"$ref": "#/$defs/interval"}
+      }
+    }
+  }
+}

@@ -1,0 +1,137 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sounddecisions.local/schemas/human-event-catalog-v1.schema.json",
+  "title": "SoundDecisions Round-1 event catalog",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "catalog_id",
+    "source_manifest_id",
+    "source_manifest_sha256",
+    "source_export_sha256",
+    "curator_id",
+    "curator_exported_at",
+    "analysis_scope",
+    "event_selection_rule",
+    "counts",
+    "items"
+  ],
+  "properties": {
+    "schema_version": {"const": "sounddecisions-human-event-catalog-v1.0"},
+    "catalog_id": {"type": "string", "minLength": 1, "maxLength": 240},
+    "source_manifest_id": {"type": "string", "minLength": 1, "maxLength": 200},
+    "source_manifest_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "source_export_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "curator_id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$"},
+    "curator_exported_at": {"type": "string", "format": "date-time"},
+    "analysis_scope": {"const": "single_curator_event_definition_not_agreement_evidence"},
+    "event_selection_rule": {
+      "const": "confirmed_two_event_precedes_marked_anchor_on_overlap"
+    },
+    "counts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "items_total",
+        "anchor_eligible",
+        "anchor_unresolved",
+        "pair_eligible",
+        "pair_rejected",
+        "events_eligible"
+      ],
+      "properties": {
+        "items_total": {"type": "integer", "minimum": 1},
+        "anchor_eligible": {"type": "integer", "minimum": 0},
+        "anchor_unresolved": {"type": "integer", "minimum": 0},
+        "pair_eligible": {"type": "integer", "minimum": 0},
+        "pair_rejected": {"type": "integer", "minimum": 0},
+        "events_eligible": {"type": "integer", "minimum": 0}
+      }
+    },
+    "items": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/item"}
+    }
+  },
+  "$defs": {
+    "interval": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["start_s", "end_s"],
+      "properties": {
+        "start_s": {"type": "number", "minimum": 0},
+        "end_s": {"type": "number", "minimum": 0}
+      }
+    },
+    "event": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["event_id", "description", "anchor", "event_source"],
+      "properties": {
+        "event_id": {"type": "string", "pattern": "^HEV2-[0-9A-F]{12}-E[12]$"},
+        "description": {"type": "string", "minLength": 1, "maxLength": 2000},
+        "anchor": {"$ref": "#/$defs/interval"},
+        "event_source": {"enum": ["anchor_curation", "two_event_curation"]}
+      }
+    },
+    "anchor_result": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "description", "anchor", "curator_note"],
+      "properties": {
+        "status": {"enum": ["eligible", "unresolved"]},
+        "description": {"type": "string", "minLength": 1, "maxLength": 2000},
+        "anchor": {
+          "oneOf": [{"$ref": "#/$defs/interval"}, {"type": "null"}]
+        },
+        "curator_note": {"type": "string", "maxLength": 2000}
+      }
+    },
+    "pair_result": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "events", "curator_note"],
+      "properties": {
+        "status": {"enum": ["eligible", "rejected"]},
+        "events": {
+          "type": "array",
+          "maxItems": 2,
+          "items": {"$ref": "#/$defs/event"}
+        },
+        "curator_note": {"type": "string", "maxLength": 2000}
+      }
+    },
+    "item": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "blind_id",
+        "media_path",
+        "fps",
+        "duration_s",
+        "anchor_curation",
+        "two_event_curation",
+        "events"
+      ],
+      "properties": {
+        "blind_id": {"type": "string", "pattern": "^HEV2-[0-9A-F]{12}$"},
+        "media_path": {"type": "string", "pattern": "^media/HEV2-[0-9A-F]{12}\\.mp4$"},
+        "fps": {"type": "number", "exclusiveMinimum": 0},
+        "duration_s": {"type": "number", "exclusiveMinimum": 0},
+        "anchor_curation": {
+          "oneOf": [{"$ref": "#/$defs/anchor_result"}, {"type": "null"}]
+        },
+        "two_event_curation": {
+          "oneOf": [{"$ref": "#/$defs/pair_result"}, {"type": "null"}]
+        },
+        "events": {
+          "type": "array",
+          "maxItems": 2,
+          "items": {"$ref": "#/$defs/event"}
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sounddecisions.local/schemas/human-presence-round2-summary-v1.schema.json",
+  "title": "SoundDecisions single-rater Presence summary",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "analysis_scope",
+    "source_manifest_id",
+    "source_manifest_sha256",
+    "source_export_sha256",
+    "rater_id",
+    "counts",
+    "coverage_rate",
+    "verdict_counts",
+    "unrelated_background_counts",
+    "limitation"
+  ],
+  "properties": {
+    "schema_version": {"const": "sounddecisions-human-presence-summary-v1.0"},
+    "analysis_scope": {"const": "single_rater_descriptive_only"},
+    "source_manifest_id": {"type": "string", "minLength": 1},
+    "source_manifest_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "source_export_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "rater_id": {"type": "string", "minLength": 1},
+    "counts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["events_total", "completed", "incomplete"],
+      "properties": {
+        "events_total": {"type": "integer", "minimum": 1},
+        "completed": {"type": "integer", "minimum": 0},
+        "incomplete": {"type": "integer", "minimum": 0}
+      }
+    },
+    "coverage_rate": {"type": "number", "minimum": 0, "maximum": 1},
+    "verdict_counts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["target_present", "absent", "uncertain"],
+      "properties": {
+        "target_present": {"type": "integer", "minimum": 0},
+        "absent": {"type": "integer", "minimum": 0},
+        "uncertain": {"type": "integer", "minimum": 0}
+      }
+    },
+    "unrelated_background_counts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["true", "false"],
+      "properties": {
+        "true": {"type": "integer", "minimum": 0},
+        "false": {"type": "integer", "minimum": 0}
+      }
+    },
+    "limitation": {
+      "const": "Single-rater descriptive summary only; inter-rater agreement and AC1 are not computed from one export."
+    }
+  }
+}
