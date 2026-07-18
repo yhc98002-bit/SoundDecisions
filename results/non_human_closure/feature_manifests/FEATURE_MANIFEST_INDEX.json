@@ -1,0 +1,87 @@
+{
+  "artifact_status": "COMPLETE",
+  "large_tensor_root": "/XYFS02/HDD_POOL/paratera_xy/pxy1289/HaocunYe/Research/SoundDecisions-non-human-artifacts/nhc_20260717T151345p0800_a052920/b1_full/feature_shards",
+  "large_tensors_in_git": false,
+  "progress_points": [
+    0.05,
+    0.15,
+    0.25,
+    0.35,
+    0.45,
+    0.6,
+    0.75,
+    0.9
+  ],
+  "recollection_completion_sha256": "351e191a55d6d3eaa57ac0d1a1081bcf77d8df46ce331773a271275f906cf759",
+  "recollection_manifest_sha256": "1aca68300a485e4831f73aae286026bf69a97d7545bca3ce9eb702e24b968c3c",
+  "schema": "sounddecisions.feature_manifest_index.v1",
+  "shards": [
+    {
+      "git_manifest": "feature_manifests/FEATURE_SHARD_00_COMPLETION.json",
+      "git_manifest_sha256": "418cd3cccacb8b50c9511a5e3cc69b2865432507f5f65ab243c85370823c6906",
+      "shard_index": 0,
+      "source": "/XYFS02/HDD_POOL/paratera_xy/pxy1289/HaocunYe/Research/SoundDecisions-non-human-artifacts/nhc_20260717T151345p0800_a052920/b1_full/feature_shards/an12_gpu4_shard0_of8_355f6f6/FEATURE_SHARD_COMPLETION.json",
+      "source_sha256": "418cd3cccacb8b50c9511a5e3cc69b2865432507f5f65ab243c85370823c6906",
+      "unit_count": 816
+    },
+    {
+      "git_manifest": "feature_manifests/FEATURE_SHARD_01_COMPLETION.json",
+      "git_manifest_sha256": "4562c654cbdc7c39509f19213d7351efa79f055cf384b7ee7420cbbe738dcaf1",
+      "shard_index": 1,
+      "source": "/XYFS02/HDD_POOL/paratera_xy/pxy1289/HaocunYe/Research/SoundDecisions-non-human-artifacts/nhc_20260717T151345p0800_a052920/b1_full/feature_shards/an12_gpu5_shard1_of8_355f6f6/FEATURE_SHARD_COMPLETION.json",
+      "source_sha256": "4562c654cbdc7c39509f19213d7351efa79f055cf384b7ee7420cbbe738dcaf1",
+      "unit_count": 816
+    },
+    {
+      "git_manifest": "feature_manifests/FEATURE_SHARD_02_COMPLETION.json",
+      "git_manifest_sha256": "3913d708e3627e7e85c20cc3076a681feefa6ecf7245d7fc63f358964921d961",
+      "shard_index": 2,
+      "source": "/XYFS02/HDD_POOL/paratera_xy/pxy1289/HaocunYe/Research/SoundDecisions-non-human-artifacts/nhc_20260717T151345p0800_a052920/b1_full/feature_shards/an12_gpu6_shard2_of8_355f6f6/FEATURE_SHARD_COMPLETION.json",
+      "source_sha256": "3913d708e3627e7e85c20cc3076a681feefa6ecf7245d7fc63f358964921d961",
+      "unit_count": 816
+    },
+    {
+      "git_manifest": "feature_manifests/FEATURE_SHARD_03_COMPLETION.json",
+      "git_manifest_sha256": "c36673bf543b043c9103ee068e73230342a15fecef0295e24d6c048709fe16f7",
+      "shard_index": 3,
+      "source": "/XYFS02/HDD_POOL/paratera_xy/pxy1289/HaocunYe/Research/SoundDecisions-non-human-artifacts/nhc_20260717T151345p0800_a052920/b1_full/feature_shards/an12_gpu7_shard3_of8_355f6f6/FEATURE_SHARD_COMPLETION.json",
+      "source_sha256": "c36673bf543b043c9103ee068e73230342a15fecef0295e24d6c048709fe16f7",
+      "unit_count": 816
+    },
+    {
+      "git_manifest": "feature_manifests/FEATURE_SHARD_04_COMPLETION.json",
+      "git_manifest_sha256": "cef970b64078f631a0347ba245e827a951f55f132f0133d2853b7497533f23af",
+      "shard_index": 4,
+      "source": "/XYFS02/HDD_POOL/paratera_xy/pxy1289/HaocunYe/Research/SoundDecisions-non-human-artifacts/nhc_20260717T151345p0800_a052920/b1_full/feature_shards/an12_gpu4_replica2_shard4_of8_355f6f6/FEATURE_SHARD_COMPLETION.json",
+      "source_sha256": "cef970b64078f631a0347ba245e827a951f55f132f0133d2853b7497533f23af",
+      "unit_count": 816
+    },
+    {
+      "git_manifest": "feature_manifests/FEATURE_SHARD_05_COMPLETION.json",
+      "git_manifest_sha256": "fb2486b281906c720b081a694c99b10daecacbcf050772e5c141f832f9723ba7",
+      "shard_index": 5,
+      "source": "/XYFS02/HDD_POOL/paratera_xy/pxy1289/HaocunYe/Research/SoundDecisions-non-human-artifacts/nhc_20260717T151345p0800_a052920/b1_full/feature_shards/an12_gpu5_replica2_shard5_of8_355f6f6/FEATURE_SHARD_COMPLETION.json",
+      "source_sha256": "fb2486b281906c720b081a694c99b10daecacbcf050772e5c141f832f9723ba7",
+      "unit_count": 816
+    },
+    {
+      "git_manifest": "feature_manifests/FEATURE_SHARD_06_COMPLETION.json",
+      "git_manifest_sha256": "a85985928944589d3c350a80cfd179ae328ac3acbc4afc11af8f71bb175f2cd5",
+      "shard_index": 6,
+      "source": "/XYFS02/HDD_POOL/paratera_xy/pxy1289/HaocunYe/Research/SoundDecisions-non-human-artifacts/nhc_20260717T151345p0800_a052920/b1_full/feature_shards/an12_gpu6_replica2_shard6_of8_355f6f6/FEATURE_SHARD_COMPLETION.json",
+      "source_sha256": "a85985928944589d3c350a80cfd179ae328ac3acbc4afc11af8f71bb175f2cd5",
+      "unit_count": 816
+    },
+    {
+      "git_manifest": "feature_manifests/FEATURE_SHARD_07_COMPLETION.json",
+      "git_manifest_sha256": "233b277493ea74388d472ee51361dd7dbce13c2a7a6c6c70b9a63427d58e62d4",
+      "shard_index": 7,
+      "source": "/XYFS02/HDD_POOL/paratera_xy/pxy1289/HaocunYe/Research/SoundDecisions-non-human-artifacts/nhc_20260717T151345p0800_a052920/b1_full/feature_shards/an12_gpu7_replica2_shard7_of8_355f6f6/FEATURE_SHARD_COMPLETION.json",
+      "source_sha256": "233b277493ea74388d472ee51361dd7dbce13c2a7a6c6c70b9a63427d58e62d4",
+      "unit_count": 816
+    }
+  ],
+  "trajectory_count": 816,
+  "unit_count": 6528,
+  "video_count": 48
+}

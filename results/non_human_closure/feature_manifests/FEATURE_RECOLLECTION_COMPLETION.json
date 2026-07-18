@@ -1,0 +1,83 @@
+{
+  "base_trajectory_count": 816,
+  "canonical_b2": true,
+  "feature_collector_sha256": "4de307abb9b5241a1ca2dc7f83ef2f3bcd18730a16b23c79b9dfa04d83f2d5a7",
+  "input_shards": [
+    {
+      "completion": "/XYFS02/HDD_POOL/paratera_xy/pxy1289/HaocunYe/Research/SoundDecisions-non-human-artifacts/nhc_20260717T151345p0800_a052920/b1_full/feature_shards/an12_gpu4_shard0_of8_355f6f6/FEATURE_SHARD_COMPLETION.json",
+      "completion_sha256": "418cd3cccacb8b50c9511a5e3cc69b2865432507f5f65ab243c85370823c6906",
+      "shard_index": 0,
+      "unit_count": 816
+    },
+    {
+      "completion": "/XYFS02/HDD_POOL/paratera_xy/pxy1289/HaocunYe/Research/SoundDecisions-non-human-artifacts/nhc_20260717T151345p0800_a052920/b1_full/feature_shards/an12_gpu5_shard1_of8_355f6f6/FEATURE_SHARD_COMPLETION.json",
+      "completion_sha256": "4562c654cbdc7c39509f19213d7351efa79f055cf384b7ee7420cbbe738dcaf1",
+      "shard_index": 1,
+      "unit_count": 816
+    },
+    {
+      "completion": "/XYFS02/HDD_POOL/paratera_xy/pxy1289/HaocunYe/Research/SoundDecisions-non-human-artifacts/nhc_20260717T151345p0800_a052920/b1_full/feature_shards/an12_gpu6_shard2_of8_355f6f6/FEATURE_SHARD_COMPLETION.json",
+      "completion_sha256": "3913d708e3627e7e85c20cc3076a681feefa6ecf7245d7fc63f358964921d961",
+      "shard_index": 2,
+      "unit_count": 816
+    },
+    {
+      "completion": "/XYFS02/HDD_POOL/paratera_xy/pxy1289/HaocunYe/Research/SoundDecisions-non-human-artifacts/nhc_20260717T151345p0800_a052920/b1_full/feature_shards/an12_gpu7_shard3_of8_355f6f6/FEATURE_SHARD_COMPLETION.json",
+      "completion_sha256": "c36673bf543b043c9103ee068e73230342a15fecef0295e24d6c048709fe16f7",
+      "shard_index": 3,
+      "unit_count": 816
+    },
+    {
+      "completion": "/XYFS02/HDD_POOL/paratera_xy/pxy1289/HaocunYe/Research/SoundDecisions-non-human-artifacts/nhc_20260717T151345p0800_a052920/b1_full/feature_shards/an12_gpu4_replica2_shard4_of8_355f6f6/FEATURE_SHARD_COMPLETION.json",
+      "completion_sha256": "cef970b64078f631a0347ba245e827a951f55f132f0133d2853b7497533f23af",
+      "shard_index": 4,
+      "unit_count": 816
+    },
+    {
+      "completion": "/XYFS02/HDD_POOL/paratera_xy/pxy1289/HaocunYe/Research/SoundDecisions-non-human-artifacts/nhc_20260717T151345p0800_a052920/b1_full/feature_shards/an12_gpu5_replica2_shard5_of8_355f6f6/FEATURE_SHARD_COMPLETION.json",
+      "completion_sha256": "fb2486b281906c720b081a694c99b10daecacbcf050772e5c141f832f9723ba7",
+      "shard_index": 5,
+      "unit_count": 816
+    },
+    {
+      "completion": "/XYFS02/HDD_POOL/paratera_xy/pxy1289/HaocunYe/Research/SoundDecisions-non-human-artifacts/nhc_20260717T151345p0800_a052920/b1_full/feature_shards/an12_gpu6_replica2_shard6_of8_355f6f6/FEATURE_SHARD_COMPLETION.json",
+      "completion_sha256": "a85985928944589d3c350a80cfd179ae328ac3acbc4afc11af8f71bb175f2cd5",
+      "shard_index": 6,
+      "unit_count": 816
+    },
+    {
+      "completion": "/XYFS02/HDD_POOL/paratera_xy/pxy1289/HaocunYe/Research/SoundDecisions-non-human-artifacts/nhc_20260717T151345p0800_a052920/b1_full/feature_shards/an12_gpu7_replica2_shard7_of8_355f6f6/FEATURE_SHARD_COMPLETION.json",
+      "completion_sha256": "233b277493ea74388d472ee51361dd7dbce13c2a7a6c6c70b9a63427d58e62d4",
+      "shard_index": 7,
+      "unit_count": 816
+    }
+  ],
+  "inventory_manifest_sha256": "a5c5e721650e486f09fe70231d96e61f85904e0f17dc793ff3088b67646c3df2",
+  "inventory_records_sha256": "3023a6820a7d58d2e8459de9873daadcc659a05ec2605318723e519f05879d9c",
+  "lineage_gate": {
+    "attempt": "/XYFS02/HDD_POOL/paratera_xy/pxy1289/HaocunYe/Research/SoundDecisions-non-human-artifacts/nhc_20260717T151345p0800_a052920/b1/heldout/heldout_v1",
+    "completion_sha256": "96fe3e6909b84597d97617acfa27f5912a5d6d4e643b63539b7c811a46827a5c",
+    "report_sha256": "426e38bc86f36b55f7f364c4bb960079e188bff85b02d509d703cd15804b543c",
+    "status": "PASS",
+    "tolerance_sha256": "2abbbae24cb249c22894d08c03a506374ce5b8a5fbf742be7e553f2220a80863"
+  },
+  "manifest": "FEATURE_RECOLLECTION_MANIFEST.jsonl",
+  "manifest_bytes": 7827456,
+  "manifest_sha256": "1aca68300a485e4831f73aae286026bf69a97d7545bca3ce9eb702e24b968c3c",
+  "progress_points": [
+    0.05,
+    0.15,
+    0.25,
+    0.35,
+    0.45,
+    0.6,
+    0.75,
+    0.9
+  ],
+  "project_git_commit": "355f6f6d029944dae347c2fedb3a69b7aae4987b",
+  "protocol_sha256": "5c4fc4025995c16e355feb8cc02fbb3627891d47f6df052becde4845eaa7bd09",
+  "schema": "sounddecisions.b2_feature_recollection_merge.v1",
+  "status": "COMPLETE",
+  "unit_count": 6528,
+  "video_count": 48
+}

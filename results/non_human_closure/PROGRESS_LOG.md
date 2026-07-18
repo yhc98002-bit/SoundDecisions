@@ -147,11 +147,12 @@
   posterior-data SHA-256 is
   `a381e0f8e662aae482959f0cd2e7fe46f3cb1e8ef2ef7040b4e65913ff86cd1e`.
 - Under the registered pooled sustained commitment criterion (theta 0.70),
-  the crossing is `s=0.90`, with video-bootstrap interval `[0.75, 0.90]`.
-  The historical `s≈0.35` result therefore did not reproduce and is assigned
-  `NOT_SUPPORTED` in this exploratory multi-seed replication. Individual
-  crossings remain heterogeneous and often early; they are not collapsed into
-  a first-crossing mean.
+  the point crossing is `s=0.90`. Of 5,000 video-bootstrap draws, 3,767 cross
+  and 1,233 are noncrossing; the conditional percentile range among crossing
+  draws is `[0.75, 0.90]`. The historical `s≈0.35` result therefore did not
+  reproduce and is assigned `NOT_SUPPORTED` in this exploratory multi-seed
+  replication. Individual crossings remain heterogeneous and often early;
+  they are not collapsed into a first-crossing mean.
 - The registered variance decomposition attributes 42.19% to video, 0% to an
   additive base-seed component, 41.63% to video-by-seed interaction, 14.93% to
   fork Monte Carlo non-abstention variance, and 1.25% to the identifiable

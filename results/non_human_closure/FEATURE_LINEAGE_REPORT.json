@@ -1,0 +1,73 @@
+{
+  "artifact_status": "COMPLETE",
+  "engineering_failures_preserved": [
+    "two interrupted calibration attempts after source guard detection",
+    "two held-out launches stopped before model load when HF_HUB_DISABLE_XET was omitted",
+    "one serial feature merge terminated before output creation and replaced by deterministic parallel validation"
+  ],
+  "feature_recollection": {
+    "base_trajectories": 816,
+    "collector_project_git_commit": "355f6f6d029944dae347c2fedb3a69b7aae4987b",
+    "completion_sha256": "351e191a55d6d3eaa57ac0d1a1081bcf77d8df46ce331773a271275f906cf759",
+    "feature_collector_sha256": "4de307abb9b5241a1ca2dc7f83ef2f3bcd18730a16b23c79b9dfa04d83f2d5a7",
+    "lineage_gate": {
+      "attempt": "/XYFS02/HDD_POOL/paratera_xy/pxy1289/HaocunYe/Research/SoundDecisions-non-human-artifacts/nhc_20260717T151345p0800_a052920/b1/heldout/heldout_v1",
+      "completion_sha256": "96fe3e6909b84597d97617acfa27f5912a5d6d4e643b63539b7c811a46827a5c",
+      "report_sha256": "426e38bc86f36b55f7f364c4bb960079e188bff85b02d509d703cd15804b543c",
+      "status": "PASS",
+      "tolerance_sha256": "2abbbae24cb249c22894d08c03a506374ce5b8a5fbf742be7e553f2220a80863"
+    },
+    "manifest_sha256": "1aca68300a485e4831f73aae286026bf69a97d7545bca3ce9eb702e24b968c3c",
+    "primary_evidence_uses_legacy_25600_bundles": false,
+    "progress_points": [
+      0.05,
+      0.15,
+      0.25,
+      0.35,
+      0.45,
+      0.6,
+      0.75,
+      0.9
+    ],
+    "shard_count": 8,
+    "state_units": 6528,
+    "status": "COMPLETE",
+    "videos": 48
+  },
+  "large_tensors_in_git": false,
+  "large_tensors_location": "/XYFS02/HDD_POOL/paratera_xy/pxy1289/HaocunYe/Research/SoundDecisions-non-human-artifacts/nhc_20260717T151345p0800_a052920/b1_full/feature_shards",
+  "protocol_sha256": "5c4fc4025995c16e355feb8cc02fbb3627891d47f6df052becde4845eaa7bd09",
+  "same_forward_gate": {
+    "calibration_clips": [
+      "3780",
+      "1813",
+      "3112",
+      "1048"
+    ],
+    "calibration_completion_sha256": "26a498c969c145405f548d84ee159f6718059668b2a3b5318a1934d1abd5bd19",
+    "calibration_replay_units": 64,
+    "evaluated_heldout_metrics": 1960,
+    "failure_count": 0,
+    "forbidden_comparison": "mean_fp16_tokens_vs_fp16_mean_fp32_tokens",
+    "heldout_clip": "1002",
+    "heldout_completion_sha256": "96fe3e6909b84597d97617acfa27f5912a5d6d4e643b63539b7c811a46827a5c",
+    "heldout_replay_units": 16,
+    "heldout_report_sha256": "426e38bc86f36b55f7f364c4bb960079e188bff85b02d509d703cd15804b543c",
+    "progress_points": [
+      0.05,
+      0.15,
+      0.25,
+      0.35,
+      0.45,
+      0.6,
+      0.75,
+      0.9
+    ],
+    "status": "PASS",
+    "tolerance_sha256": "2abbbae24cb249c22894d08c03a506374ce5b8a5fbf742be7e553f2220a80863",
+    "tolerance_unchanged": true
+  },
+  "schema": "sounddecisions.feature_lineage_report.v1",
+  "scientific_status": "NOT_TESTED",
+  "scope": "engineering identity gate and lineage-valid B2 feature recollection"
+}

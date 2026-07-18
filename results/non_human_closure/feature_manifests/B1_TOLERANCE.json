@@ -1,0 +1,2494 @@
+{
+  "calibration_clips": [
+    "3780",
+    "1813",
+    "3112",
+    "1048"
+  ],
+  "created_utc": "2026-07-17T11:39:24.142615Z",
+  "cross_replay_rows": 7776,
+  "eligible_comparison_classes": [
+    "stored_tweedie_vs_same_order_recompute",
+    "exact_packet_cross_replay"
+  ],
+  "exact_comparison_classes": [
+    "same_native_fp32_mean_equivalent",
+    "packet_to_device_fp32_identity",
+    "packet_to_device_time_identity",
+    "in_memory_vs_atomic_readback",
+    "stored_attention_summary_vs_contract_recompute"
+  ],
+  "forbidden_comparison": "mean_fp16_tokens_vs_fp16_mean_fp32_tokens",
+  "heldout_clip": "1002",
+  "heldout_rejected": true,
+  "progress_points": [
+    0.05,
+    0.15,
+    0.25,
+    0.35,
+    0.45,
+    0.6,
+    0.75,
+    0.9
+  ],
+  "protocol_sha256": "5c4fc4025995c16e355feb8cc02fbb3627891d47f6df052becde4845eaa7bd09",
+  "schema": "sounddecisions_b1_same_forward_tolerance_v1",
+  "selection_method": "q0.999(method=higher) * 2",
+  "source_replay_attempts": [
+    {
+      "completion_sha256": "f8d6b10ea22a08dd3429571ba50f87daf90708116a5943b5ec6832d8a30ca66b",
+      "path": "/XYFS02/HDD_POOL/paratera_xy/pxy1289/HaocunYe/Research/SoundDecisions-non-human-artifacts/nhc_20260717T151345p0800_a052920/b1/replay/cal_replay_a_v2"
+    },
+    {
+      "completion_sha256": "27d0475b8e43dfa6df9b0aafa5ca371e1b1fabe05a8f41b4745b9ee82f525b16",
+      "path": "/XYFS02/HDD_POOL/paratera_xy/pxy1289/HaocunYe/Research/SoundDecisions-non-human-artifacts/nhc_20260717T151345p0800_a052920/b1/replay/cal_replay_b_v2"
+    }
+  ],
+  "source_replay_units": 64,
+  "status": "FROZEN",
+  "strata": [
+    "same_visible_device_fresh_process"
+  ],
+  "thresholds": {
+    "exact_packet_cross_replay:attention__conditional__fused_7__actual_latent_query_output_fp32": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:attention__conditional__fused_7__actual_latent_query_summary_fp32": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:attention__conditional__fused_7__actual_output": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:attention__conditional__fused_7__k": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:attention__conditional__fused_7__q": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:attention__conditional__fused_7__v": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:attention__conditional__joint_0__actual_latent_query_output_fp32": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:attention__conditional__joint_0__actual_latent_query_summary_fp32": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:attention__conditional__joint_0__actual_output": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:attention__conditional__joint_0__derived_clip_summary_fp32": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:attention__conditional__joint_0__derived_latent_to_clip_probability_fp32": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:attention__conditional__joint_0__k": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:attention__conditional__joint_0__q": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:attention__conditional__joint_0__v": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:attention__conditional__joint_3__actual_latent_query_output_fp32": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:attention__conditional__joint_3__actual_latent_query_summary_fp32": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:attention__conditional__joint_3__actual_output": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:attention__conditional__joint_3__derived_clip_summary_fp32": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:attention__conditional__joint_3__derived_latent_to_clip_probability_fp32": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:attention__conditional__joint_3__k": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:attention__conditional__joint_3__q": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:attention__conditional__joint_3__v": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:attention__empty__fused_7__actual_latent_query_output_fp32": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:attention__empty__fused_7__actual_latent_query_summary_fp32": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:attention__empty__fused_7__actual_output": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:attention__empty__fused_7__k": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:attention__empty__fused_7__q": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:attention__empty__fused_7__v": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:attention__empty__joint_0__actual_latent_query_output_fp32": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:attention__empty__joint_0__actual_latent_query_summary_fp32": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:attention__empty__joint_0__actual_output": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:attention__empty__joint_0__derived_clip_summary_fp32": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:attention__empty__joint_0__derived_latent_to_clip_probability_fp32": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:attention__empty__joint_0__k": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:attention__empty__joint_0__q": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:attention__empty__joint_0__v": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:attention__empty__joint_3__actual_latent_query_output_fp32": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:attention__empty__joint_3__actual_latent_query_summary_fp32": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:attention__empty__joint_3__actual_output": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:attention__empty__joint_3__derived_clip_summary_fp32": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:attention__empty__joint_3__derived_latent_to_clip_probability_fp32": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:attention__empty__joint_3__k": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:attention__empty__joint_3__q": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:attention__empty__joint_3__v": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:mean_after_quantization_fp32__conditional__fused_0": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:mean_after_quantization_fp32__conditional__fused_1": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:mean_after_quantization_fp32__conditional__fused_2": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:mean_after_quantization_fp32__conditional__fused_3": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:mean_after_quantization_fp32__conditional__fused_4": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:mean_after_quantization_fp32__conditional__fused_5": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:mean_after_quantization_fp32__conditional__fused_6": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:mean_after_quantization_fp32__conditional__fused_7": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:mean_after_quantization_fp32__conditional__joint_0": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:mean_after_quantization_fp32__conditional__joint_1": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:mean_after_quantization_fp32__conditional__joint_2": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:mean_after_quantization_fp32__conditional__joint_3": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:mean_after_quantization_fp32__empty__fused_0": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:mean_after_quantization_fp32__empty__fused_1": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:mean_after_quantization_fp32__empty__fused_2": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:mean_after_quantization_fp32__empty__fused_3": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:mean_after_quantization_fp32__empty__fused_4": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:mean_after_quantization_fp32__empty__fused_5": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:mean_after_quantization_fp32__empty__fused_6": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:mean_after_quantization_fp32__empty__fused_7": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:mean_after_quantization_fp32__empty__joint_0": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:mean_after_quantization_fp32__empty__joint_1": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:mean_after_quantization_fp32__empty__joint_2": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:mean_after_quantization_fp32__empty__joint_3": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:panns_clipwise_output_fp32": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:panns_embedding_fp32": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:pooled_original_prequant_fp32__conditional__fused_0": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:pooled_original_prequant_fp32__conditional__fused_1": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:pooled_original_prequant_fp32__conditional__fused_2": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:pooled_original_prequant_fp32__conditional__fused_3": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:pooled_original_prequant_fp32__conditional__fused_4": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:pooled_original_prequant_fp32__conditional__fused_5": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:pooled_original_prequant_fp32__conditional__fused_6": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:pooled_original_prequant_fp32__conditional__fused_7": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:pooled_original_prequant_fp32__conditional__joint_0": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:pooled_original_prequant_fp32__conditional__joint_1": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:pooled_original_prequant_fp32__conditional__joint_2": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:pooled_original_prequant_fp32__conditional__joint_3": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:pooled_original_prequant_fp32__empty__fused_0": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:pooled_original_prequant_fp32__empty__fused_1": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:pooled_original_prequant_fp32__empty__fused_2": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:pooled_original_prequant_fp32__empty__fused_3": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:pooled_original_prequant_fp32__empty__fused_4": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:pooled_original_prequant_fp32__empty__fused_5": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:pooled_original_prequant_fp32__empty__fused_6": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:pooled_original_prequant_fp32__empty__fused_7": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:pooled_original_prequant_fp32__empty__joint_0": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:pooled_original_prequant_fp32__empty__joint_1": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:pooled_original_prequant_fp32__empty__joint_2": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:pooled_original_prequant_fp32__empty__joint_3": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:pooled_repaired_prequant_fp32__conditional__fused_0": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:pooled_repaired_prequant_fp32__conditional__fused_1": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:pooled_repaired_prequant_fp32__conditional__fused_2": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:pooled_repaired_prequant_fp32__conditional__fused_3": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:pooled_repaired_prequant_fp32__conditional__fused_4": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:pooled_repaired_prequant_fp32__conditional__fused_5": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:pooled_repaired_prequant_fp32__conditional__fused_6": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:pooled_repaired_prequant_fp32__conditional__fused_7": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:pooled_repaired_prequant_fp32__conditional__joint_0": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:pooled_repaired_prequant_fp32__conditional__joint_1": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:pooled_repaired_prequant_fp32__conditional__joint_2": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:pooled_repaired_prequant_fp32__conditional__joint_3": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:pooled_repaired_prequant_fp32__empty__fused_0": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:pooled_repaired_prequant_fp32__empty__fused_1": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:pooled_repaired_prequant_fp32__empty__fused_2": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:pooled_repaired_prequant_fp32__empty__fused_3": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:pooled_repaired_prequant_fp32__empty__fused_4": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:pooled_repaired_prequant_fp32__empty__fused_5": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:pooled_repaired_prequant_fp32__empty__fused_6": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:pooled_repaired_prequant_fp32__empty__fused_7": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:pooled_repaired_prequant_fp32__empty__joint_0": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:pooled_repaired_prequant_fp32__empty__joint_1": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:pooled_repaired_prequant_fp32__empty__joint_2": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:pooled_repaired_prequant_fp32__empty__joint_3": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:post_block_tokens_dequantized_fp32__conditional__fused_0": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:post_block_tokens_dequantized_fp32__conditional__fused_1": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:post_block_tokens_dequantized_fp32__conditional__fused_2": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:post_block_tokens_dequantized_fp32__conditional__fused_3": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:post_block_tokens_dequantized_fp32__conditional__fused_4": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:post_block_tokens_dequantized_fp32__conditional__fused_5": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:post_block_tokens_dequantized_fp32__conditional__fused_6": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:post_block_tokens_dequantized_fp32__conditional__fused_7": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:post_block_tokens_dequantized_fp32__conditional__joint_0": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:post_block_tokens_dequantized_fp32__conditional__joint_1": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:post_block_tokens_dequantized_fp32__conditional__joint_2": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:post_block_tokens_dequantized_fp32__conditional__joint_3": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:post_block_tokens_dequantized_fp32__empty__fused_0": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:post_block_tokens_dequantized_fp32__empty__fused_1": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:post_block_tokens_dequantized_fp32__empty__fused_2": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:post_block_tokens_dequantized_fp32__empty__fused_3": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:post_block_tokens_dequantized_fp32__empty__fused_4": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:post_block_tokens_dequantized_fp32__empty__fused_5": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:post_block_tokens_dequantized_fp32__empty__fused_6": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:post_block_tokens_dequantized_fp32__empty__fused_7": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:post_block_tokens_dequantized_fp32__empty__joint_0": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:post_block_tokens_dequantized_fp32__empty__joint_1": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:post_block_tokens_dequantized_fp32__empty__joint_2": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:post_block_tokens_dequantized_fp32__empty__joint_3": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:post_block_tokens_fp32__conditional__fused_0": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:post_block_tokens_fp32__conditional__fused_1": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:post_block_tokens_fp32__conditional__fused_2": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:post_block_tokens_fp32__conditional__fused_3": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:post_block_tokens_fp32__conditional__fused_4": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:post_block_tokens_fp32__conditional__fused_5": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:post_block_tokens_fp32__conditional__fused_6": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:post_block_tokens_fp32__conditional__fused_7": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:post_block_tokens_fp32__conditional__joint_0": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:post_block_tokens_fp32__conditional__joint_1": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:post_block_tokens_fp32__conditional__joint_2": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:post_block_tokens_fp32__conditional__joint_3": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:post_block_tokens_fp32__empty__fused_0": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:post_block_tokens_fp32__empty__fused_1": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:post_block_tokens_fp32__empty__fused_2": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:post_block_tokens_fp32__empty__fused_3": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:post_block_tokens_fp32__empty__fused_4": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:post_block_tokens_fp32__empty__fused_5": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:post_block_tokens_fp32__empty__fused_6": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:post_block_tokens_fp32__empty__fused_7": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:post_block_tokens_fp32__empty__joint_0": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:post_block_tokens_fp32__empty__joint_1": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:post_block_tokens_fp32__empty__joint_2": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:post_block_tokens_fp32__empty__joint_3": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:post_block_tokens_quantized_fp16__conditional__fused_0": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:post_block_tokens_quantized_fp16__conditional__fused_1": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:post_block_tokens_quantized_fp16__conditional__fused_2": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:post_block_tokens_quantized_fp16__conditional__fused_3": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:post_block_tokens_quantized_fp16__conditional__fused_4": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:post_block_tokens_quantized_fp16__conditional__fused_5": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:post_block_tokens_quantized_fp16__conditional__fused_6": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:post_block_tokens_quantized_fp16__conditional__fused_7": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:post_block_tokens_quantized_fp16__conditional__joint_0": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:post_block_tokens_quantized_fp16__conditional__joint_1": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:post_block_tokens_quantized_fp16__conditional__joint_2": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:post_block_tokens_quantized_fp16__conditional__joint_3": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:post_block_tokens_quantized_fp16__empty__fused_0": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:post_block_tokens_quantized_fp16__empty__fused_1": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:post_block_tokens_quantized_fp16__empty__fused_2": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:post_block_tokens_quantized_fp16__empty__fused_3": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:post_block_tokens_quantized_fp16__empty__fused_4": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:post_block_tokens_quantized_fp16__empty__fused_5": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:post_block_tokens_quantized_fp16__empty__fused_6": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:post_block_tokens_quantized_fp16__empty__fused_7": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:post_block_tokens_quantized_fp16__empty__joint_0": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:post_block_tokens_quantized_fp16__empty__joint_1": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:post_block_tokens_quantized_fp16__empty__joint_2": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:post_block_tokens_quantized_fp16__empty__joint_3": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:returned_velocity_fp32": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:returned_velocity_native": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:token_mean_fp32__conditional__fused_0": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:token_mean_fp32__conditional__fused_1": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:token_mean_fp32__conditional__fused_2": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:token_mean_fp32__conditional__fused_3": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:token_mean_fp32__conditional__fused_4": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:token_mean_fp32__conditional__fused_5": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:token_mean_fp32__conditional__fused_6": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:token_mean_fp32__conditional__fused_7": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:token_mean_fp32__conditional__joint_0": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:token_mean_fp32__conditional__joint_1": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:token_mean_fp32__conditional__joint_2": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:token_mean_fp32__conditional__joint_3": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:token_mean_fp32__empty__fused_0": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:token_mean_fp32__empty__fused_1": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:token_mean_fp32__empty__fused_2": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:token_mean_fp32__empty__fused_3": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:token_mean_fp32__empty__fused_4": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:token_mean_fp32__empty__fused_5": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:token_mean_fp32__empty__fused_6": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:token_mean_fp32__empty__fused_7": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:token_mean_fp32__empty__joint_0": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:token_mean_fp32__empty__joint_1": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:token_mean_fp32__empty__joint_2": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:token_mean_fp32__empty__joint_3": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:token_stats_fp32__conditional__fused_0": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:token_stats_fp32__conditional__fused_1": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:token_stats_fp32__conditional__fused_2": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:token_stats_fp32__conditional__fused_3": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:token_stats_fp32__conditional__fused_4": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:token_stats_fp32__conditional__fused_5": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:token_stats_fp32__conditional__fused_6": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:token_stats_fp32__conditional__fused_7": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:token_stats_fp32__conditional__joint_0": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:token_stats_fp32__conditional__joint_1": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:token_stats_fp32__conditional__joint_2": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:token_stats_fp32__conditional__joint_3": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:token_stats_fp32__empty__fused_0": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:token_stats_fp32__empty__fused_1": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:token_stats_fp32__empty__fused_2": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:token_stats_fp32__empty__fused_3": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:token_stats_fp32__empty__fused_4": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:token_stats_fp32__empty__fused_5": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:token_stats_fp32__empty__fused_6": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:token_stats_fp32__empty__fused_7": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:token_stats_fp32__empty__joint_0": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:token_stats_fp32__empty__joint_1": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:token_stats_fp32__empty__joint_2": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:token_stats_fp32__empty__joint_3": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:tweedie_latent_fp32": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:tweedie_latent_normalized_native": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "exact_packet_cross_replay:tweedie_latent_unnormalized_fp32": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 32,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    },
+    "stored_tweedie_vs_same_order_recompute": {
+      "epsilon_floor": null,
+      "method": "higher",
+      "metric": "relative_l2",
+      "multiplier": 2.0,
+      "n": 64,
+      "quantile": 0.999,
+      "raw_quantile": 0.0,
+      "tolerance": 0.0
+    }
+  }
+}

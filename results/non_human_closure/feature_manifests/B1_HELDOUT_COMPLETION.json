@@ -1,0 +1,31 @@
+{
+  "completed_units": 0,
+  "completed_utc": "2026-07-17T11:53:41.163649Z",
+  "expected_units": 0,
+  "inventory": [
+    {
+      "path": "HELDOUT_DELTAS.json",
+      "sha256": "3facea90a10c91c0231f74b1c78981b12f00d357d146b5f7b50fd02b7b50f116",
+      "size": 2656422
+    },
+    {
+      "path": "HELDOUT_REPORT.json",
+      "sha256": "426e38bc86f36b55f7f364c4bb960079e188bff85b02d509d703cd15804b543c",
+      "size": 1616
+    },
+    {
+      "path": "PROTOCOL.json",
+      "sha256": "5c4fc4025995c16e355feb8cc02fbb3627891d47f6df052becde4845eaa7bd09",
+      "size": 9565
+    },
+    {
+      "path": "PROTOCOL_BINDING.json",
+      "sha256": "1f3da3aa1c32a7c05ab6d9bd173cc24996c8013ffbc622aba691916db504722b",
+      "size": 459
+    }
+  ],
+  "inventory_sha256": "0161ac7d991240e23f3773a53d47bb83041da1d15bbd5acd6dcdbbd04efd1cee",
+  "schema": "sounddecisions_b1_immutable_attempt_v1",
+  "stage": "heldout",
+  "status": "COMPLETE"
+}

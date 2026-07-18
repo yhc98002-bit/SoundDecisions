@@ -1,0 +1,182 @@
+{
+  "artifact_root": "/XYFS02/HDD_POOL/paratera_xy/pxy1289/HaocunYe/Research/SoundDecisions-non-human-artifacts/nhc_20260717T151345p0800_a052920",
+  "artifact_status": "COMPLETE",
+  "class_status": "NOT_SUPPORTED",
+  "material_status": "INCOMPLETE_ARTIFACTS",
+  "outputs": [
+    {
+      "bytes": 2180,
+      "path": "CLASS_BASE_SEED_CROSSINGS.csv",
+      "sha256": "efe641fb4642955e2f5f7cafdba347c012ef8ee04e3c421424ab1e10020ef596"
+    },
+    {
+      "bytes": 14042456,
+      "path": "CLASS_INTERNAL_READOUT_OUTER_PREDICTIONS.jsonl.gz",
+      "sha256": "6463c4b23a1df34d92d89efd3161ff8ce43e65e510c7ca2130a57e96de291ca3"
+    },
+    {
+      "bytes": 401453,
+      "path": "CLASS_INTERNAL_READOUT_REPORT.json",
+      "sha256": "a849854be83d11a8f358cf5b06bca518de57bd9645a82f70260ad64913a7eb37"
+    },
+    {
+      "bytes": 14902,
+      "path": "CLASS_INTERNAL_READOUT_REPORT.md",
+      "sha256": "93ed484e46f2e5bb5db406c89adcb2eaf9a2c9ef316739360ea0c27b76ee70c9"
+    },
+    {
+      "bytes": 491868,
+      "path": "CLASS_MULTISEED_COMMITMENT.csv",
+      "sha256": "9bbc3b57bc5dfdbe93557ed55cc888e866d2466b8e3680695782632ba559688f"
+    },
+    {
+      "bytes": 94174,
+      "path": "CLASS_MULTISEED_COMMITMENT.json",
+      "sha256": "aa2feee890b995c70b298f9bff8df4036c88fde7f4cb9837e33f455c0b291d24"
+    },
+    {
+      "bytes": 2019,
+      "path": "CLASS_MULTISEED_COMMITMENT.md",
+      "sha256": "4ce7bb738fc18c7ff64a8040fc0392ad2390b52db24e973c7c592ab0765c9d99"
+    },
+    {
+      "bytes": 667,
+      "path": "CLASS_POOLED_CROSSINGS.csv",
+      "sha256": "ef01c1871ac1a158e79959e6430b0f041b8dc7f058d16623a0a63a53b5cf12a4"
+    },
+    {
+      "bytes": 12596,
+      "path": "CLASS_POSTERIOR_MEASUREMENT_REPORT.json",
+      "sha256": "348408ba49298f457d05a81ed098cff081dd4144cd2c3895a46125ae76492628"
+    },
+    {
+      "bytes": 1335,
+      "path": "CLASS_POSTERIOR_MEASUREMENT_REPORT.md",
+      "sha256": "8ffe2168611d657874fb49168d605e4bfa3bbe4cbae0572c22a6c7ad37af74c7"
+    },
+    {
+      "bytes": 22391,
+      "path": "CLASS_VARIANCE_DECOMPOSITION.json",
+      "sha256": "64f2b8dc11b0e873c43bc41812b38b307b19bb0356731f7054b02a139e2ede1c"
+    },
+    {
+      "bytes": 1165,
+      "path": "CLASS_VARIANCE_DECOMPOSITION.md",
+      "sha256": "778e1935e9221020b955da5b9f73da5d9427d429362b7a76ee95e6453f20173c"
+    },
+    {
+      "bytes": 2410,
+      "path": "CLASS_VIDEO_BASELINES.csv",
+      "sha256": "b0bcdc3a168e68025c3ab1a1198ed75f2c2c3eb490d99355f6b8aa3dd0e57a6c"
+    },
+    {
+      "bytes": 21780,
+      "path": "CLASS_VIDEO_CROSSING_DISTRIBUTIONS.csv",
+      "sha256": "cc4a43505e0bb06b99c1dac0adfc0fb76929915755ff63b05e12871f1e2cd9fd"
+    },
+    {
+      "bytes": 126951,
+      "path": "CLASS_VIDEO_SEED_CROSSINGS.csv",
+      "sha256": "8f298905a9fb754a31e2873dee4f2e3a8b1a2a6079a33ce82e1879adf163f3b6"
+    },
+    {
+      "bytes": 2953,
+      "path": "FEATURE_LINEAGE_REPORT.json",
+      "sha256": "e35a3a6ccd4a4fae217e879c5dcccb4735273784105b0b5d797167e6e610b745"
+    },
+    {
+      "bytes": 1217,
+      "path": "FEATURE_LINEAGE_REPORT.md",
+      "sha256": "c5f102120bc30a72108b94f2cbfc98323b057560db867c19e658ffb39e69319a"
+    },
+    {
+      "bytes": 88769,
+      "path": "MATERIAL_REFERENCE_INSUFFICIENCY.json",
+      "sha256": "1bf4adf7eee37766665d421312b59f819d35d4fcf88b1ae14d784ec931b82dd8"
+    },
+    {
+      "bytes": 42058,
+      "path": "MATERIAL_SOURCE_AUDIO_LOUDNESS.json",
+      "sha256": "94fe9dd962965580d52f2063afa25cb68c1e371eeaae7e292ac8de0657672807"
+    },
+    {
+      "bytes": 921,
+      "path": "feature_manifests/B1_HELDOUT_COMPLETION.json",
+      "sha256": "96fe3e6909b84597d97617acfa27f5912a5d6d4e643b63539b7c811a46827a5c"
+    },
+    {
+      "bytes": 1616,
+      "path": "feature_manifests/B1_HELDOUT_REPORT.json",
+      "sha256": "426e38bc86f36b55f7f364c4bb960079e188bff85b02d509d703cd15804b543c"
+    },
+    {
+      "bytes": 71999,
+      "path": "feature_manifests/B1_TOLERANCE.json",
+      "sha256": "2abbbae24cb249c22894d08c03a506374ce5b8a5fbf742be7e553f2220a80863"
+    },
+    {
+      "bytes": 1357,
+      "path": "feature_manifests/FEATURE_CHECKSUMS.sha256",
+      "sha256": "fc8339a7a66d8a92aa84eaa5dfc6a34e6d9a2ce440e13f32d13ed76f1974d1a3"
+    },
+    {
+      "bytes": 5124,
+      "path": "feature_manifests/FEATURE_MANIFEST_INDEX.json",
+      "sha256": "f7a1b84fa74b2ff36e5b3f466dc914897a449c014cd97447d4f5305102db69ef"
+    },
+    {
+      "bytes": 4532,
+      "path": "feature_manifests/FEATURE_RECOLLECTION_COMPLETION.json",
+      "sha256": "351e191a55d6d3eaa57ac0d1a1081bcf77d8df46ce331773a271275f906cf759"
+    },
+    {
+      "bytes": 7827456,
+      "path": "feature_manifests/FEATURE_RECOLLECTION_MANIFEST.jsonl",
+      "sha256": "1aca68300a485e4831f73aae286026bf69a97d7545bca3ce9eb702e24b968c3c"
+    },
+    {
+      "bytes": 355201,
+      "path": "feature_manifests/FEATURE_SHARD_00_COMPLETION.json",
+      "sha256": "418cd3cccacb8b50c9511a5e3cc69b2865432507f5f65ab243c85370823c6906"
+    },
+    {
+      "bytes": 355185,
+      "path": "feature_manifests/FEATURE_SHARD_01_COMPLETION.json",
+      "sha256": "4562c654cbdc7c39509f19213d7351efa79f055cf384b7ee7420cbbe738dcaf1"
+    },
+    {
+      "bytes": 355193,
+      "path": "feature_manifests/FEATURE_SHARD_02_COMPLETION.json",
+      "sha256": "3913d708e3627e7e85c20cc3076a681feefa6ecf7245d7fc63f358964921d961"
+    },
+    {
+      "bytes": 355185,
+      "path": "feature_manifests/FEATURE_SHARD_03_COMPLETION.json",
+      "sha256": "c36673bf543b043c9103ee068e73230342a15fecef0295e24d6c048709fe16f7"
+    },
+    {
+      "bytes": 355185,
+      "path": "feature_manifests/FEATURE_SHARD_04_COMPLETION.json",
+      "sha256": "cef970b64078f631a0347ba245e827a951f55f132f0133d2853b7497533f23af"
+    },
+    {
+      "bytes": 355193,
+      "path": "feature_manifests/FEATURE_SHARD_05_COMPLETION.json",
+      "sha256": "fb2486b281906c720b081a694c99b10daecacbcf050772e5c141f832f9723ba7"
+    },
+    {
+      "bytes": 355185,
+      "path": "feature_manifests/FEATURE_SHARD_06_COMPLETION.json",
+      "sha256": "a85985928944589d3c350a80cfd179ae328ac3acbc4afc11af8f71bb175f2cd5"
+    },
+    {
+      "bytes": 355185,
+      "path": "feature_manifests/FEATURE_SHARD_07_COMPLETION.json",
+      "sha256": "233b277493ea74388d472ee51361dd7dbce13c2a7a6c6c70b9a63427d58e62d4"
+    }
+  ],
+  "protocol_sha256": "5c4fc4025995c16e355feb8cc02fbb3627891d47f6df052becde4845eaa7bd09",
+  "readout_status": "NOT_SUPPORTED",
+  "result_dir": "/XYFS02/HDD_POOL/paratera_xy/pxy1289/HaocunYe/Research/SoundDecisions-non-human-closure/results/non_human_closure",
+  "schema": "sounddecisions.non_human_materialization.v1"
+}
