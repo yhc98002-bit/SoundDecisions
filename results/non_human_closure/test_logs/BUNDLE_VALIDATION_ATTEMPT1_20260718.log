@@ -1,0 +1,10 @@
+status=ENGINEERING_FAILURE
+node=an12
+scope=committed-bundle validator only; scientific artifacts were read-only
+command=python scripts/validate_non_human_closure_bundle.py --result-dir results/non_human_closure
+failure=BundleError: probabilities do not sum to one under the validator's fixed 1e-8 threshold
+first_key=fork_majority,s=0.05,single_query_attention,1002__seed0__s0.05
+diagnosis=single-query softmax is produced in float32 and widened to float64 for JSON; the validator threshold was below the producer precision
+full_scan=113212 vectors; max absolute sum error 1.6056709917222634e-07; 0 vectors exceeded 1e-6
+resolution=enforce 15 values in [0,1] and replace 1e-8 with min(1e-6 producer gate, component_count * float32_epsilon); add acceptance/corruption tests
+scientific_effect=none
