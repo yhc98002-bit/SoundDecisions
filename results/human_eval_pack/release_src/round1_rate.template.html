@@ -1,0 +1,820 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SoundDecisions Round-1 Curation</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #17202a;
+      --muted: #59636e;
+      --line: #cbd2d9;
+      --panel: #ffffff;
+      --page: #f2f4f5;
+      --accent: #126c57;
+      --accent-dark: #0c4d3e;
+      --warn: #8a4b08;
+      --danger: #9b2c2c;
+      --focus: #0b66c3;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--page);
+      color: var(--ink);
+      font: 16px/1.45 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    button, input, textarea { font: inherit; }
+    button, .file-button {
+      min-height: 42px;
+      border: 1px solid #9ba5ae;
+      border-radius: 6px;
+      background: #fff;
+      color: var(--ink);
+      cursor: pointer;
+      padding: 8px 13px;
+    }
+    button:hover, .file-button:hover { border-color: #59636e; background: #f7f8f8; }
+    button:focus-visible, input:focus-visible, textarea:focus-visible, .file-button:focus-within {
+      outline: 3px solid color-mix(in srgb, var(--focus) 35%, transparent);
+      outline-offset: 2px;
+    }
+    button:disabled { cursor: not-allowed; opacity: .48; }
+    button.primary { border-color: var(--accent); background: var(--accent); color: #fff; font-weight: 700; }
+    button.primary:hover { background: var(--accent-dark); }
+    button.export { min-height: 50px; padding-inline: 20px; }
+    button.danger { border-color: var(--danger); color: var(--danger); }
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 15px clamp(16px, 4vw, 48px);
+      border-bottom: 1px solid var(--line);
+      background: #fff;
+    }
+    header h1 { margin: 0; font-size: 1.2rem; letter-spacing: 0; }
+    header span { color: var(--muted); font-size: .9rem; }
+    main { max-width: 1240px; margin: 0 auto; padding: 24px; }
+    .panel {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      padding: 20px;
+    }
+    .setup { max-width: 720px; margin: 4vh auto; }
+    .setup h2, .form h2 { margin-top: 0; letter-spacing: 0; }
+    .setup-row, .toolbar, .navigation, .mark-row, .speed-row, .tabs {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .setup-row { margin-top: 22px; }
+    .setup-row input { flex: 1 1 230px; }
+    label.field { display: block; margin-top: 15px; font-weight: 700; }
+    input[type="text"], textarea {
+      width: 100%;
+      border: 1px solid #9ba5ae;
+      border-radius: 5px;
+      padding: 10px;
+      background: #fff;
+      color: var(--ink);
+    }
+    textarea { min-height: 76px; resize: vertical; }
+    .status { margin-top: 16px; border-left: 4px solid var(--line); padding: 10px 12px; background: #f7f8f8; }
+    .status.ok { border-color: var(--accent); }
+    .status.warn { border-color: var(--warn); }
+    .status.error { border-color: var(--danger); }
+    .hidden { display: none !important; }
+    .toolbar { justify-content: space-between; margin-bottom: 14px; }
+    .toolbar-group { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .tabs { gap: 0; border-bottom: 1px solid var(--line); margin-bottom: 18px; }
+    .tab { border: 0; border-bottom: 3px solid transparent; border-radius: 0; min-height: 48px; }
+    .tab[aria-selected="true"] { border-color: var(--accent); color: var(--accent-dark); font-weight: 700; }
+    .workspace { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(330px, .85fr); gap: 18px; }
+    .media-panel { align-self: start; }
+    .item-heading { display: flex; justify-content: space-between; gap: 12px; align-items: baseline; }
+    .item-heading h2 { margin: 0; font-size: 1.05rem; letter-spacing: 0; overflow-wrap: anywhere; }
+    .item-heading span { color: var(--muted); white-space: nowrap; }
+    video { width: 100%; aspect-ratio: 16 / 9; background: #050505; margin-top: 12px; }
+    .caption {
+      border-left: 4px solid var(--accent);
+      margin: 14px 0 0;
+      padding: 10px 12px;
+      background: #eef6f3;
+      overflow-wrap: anywhere;
+    }
+    .caption strong { display: block; margin-bottom: 3px; }
+    .video-controls { justify-content: space-between; margin-top: 10px; }
+    .time { min-width: 150px; text-align: right; font-variant-numeric: tabular-nums; }
+    .speed[aria-pressed="true"] { border-color: var(--accent); color: var(--accent-dark); font-weight: 700; }
+    .rubric { border-left: 4px solid #5b6670; padding: 10px 12px; background: #f5f6f7; margin-bottom: 18px; }
+    fieldset { border: 1px solid var(--line); border-radius: 6px; margin: 15px 0; padding: 14px; }
+    legend { font-weight: 700; padding: 0 6px; }
+    .choice { display: block; padding: 7px 0; }
+    .interval { border-top: 1px solid var(--line); margin-top: 15px; padding-top: 15px; }
+    .interval h3 { margin: 0 0 8px; font-size: 1rem; }
+    .interval-value { margin: 8px 0 0; color: var(--muted); font-variant-numeric: tabular-nums; }
+    .navigation { justify-content: space-between; margin-top: 18px; }
+    .save-state { color: var(--muted); font-size: .88rem; }
+    .file-button { display: inline-flex; align-items: center; }
+    .file-button input { position: absolute; width: 1px; height: 1px; opacity: 0; }
+    @media (max-width: 850px) {
+      main { padding: 14px; }
+      .workspace { grid-template-columns: 1fr; }
+      .form { min-height: 0; }
+      .time { text-align: left; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Round-1 Event Curation</h1>
+    <span id="header-state">Offline instrument</span>
+  </header>
+  <main>
+    <section id="setup-screen" class="panel setup">
+      <h2>Open curation session</h2>
+      <p>Enter the assigned lead-curator ID. Existing progress for the same ID resumes from this browser.</p>
+      <label class="field" for="rater-id">Lead-curator ID</label>
+      <div class="setup-row">
+        <input id="rater-id" type="text" maxlength="64" autocomplete="off" spellcheck="false">
+        <button id="start-button" class="primary" type="button" disabled>Start</button>
+        <label class="file-button">Import JSON<input id="import-file" type="file" accept="application/json,.json"></label>
+      </div>
+      <div id="manifest-status" class="status" role="status">Opening embedded manifest...</div>
+    </section>
+
+    <section id="curation-screen" class="hidden">
+      <div class="toolbar">
+        <div class="toolbar-group"><strong id="active-rater"></strong><span id="save-state" class="save-state"></span></div>
+        <div class="toolbar-group">
+          <button id="close-session" type="button">Close session</button>
+          <button id="export-button" class="primary export" type="button">Export ratings JSON</button>
+        </div>
+      </div>
+      <nav class="tabs" aria-label="Curation tasks">
+        <button class="tab" type="button" data-screen="anchor" aria-selected="true">Anchor curation <span data-progress="anchor"></span></button>
+        <button class="tab" type="button" data-screen="pair" aria-selected="false">Two-event curation <span data-progress="pair"></span></button>
+      </nav>
+
+      <div class="workspace">
+        <section class="panel media-panel">
+          <div class="item-heading"><h2 id="item-title">Item</h2><span id="item-counter"></span></div>
+          <video id="item-video" controls muted playsinline preload="metadata" controlsList="nodownload noremoteplayback"></video>
+          <div class="toolbar video-controls">
+            <div class="toolbar-group">
+              <button id="step-back" type="button">-1 frame</button>
+              <button id="step-forward" type="button">+1 frame</button>
+            </div>
+            <div class="speed-row" aria-label="Playback speed">
+              <button class="speed" type="button" data-speed="0.25" aria-pressed="false">0.25x</button>
+              <button class="speed" type="button" data-speed="0.5" aria-pressed="false">0.5x</button>
+              <button class="speed" type="button" data-speed="1" aria-pressed="true">1x</button>
+            </div>
+            <span id="time-readout" class="time">0.000 s</span>
+          </div>
+          <p class="caption"><strong>Candidate caption</strong><span id="candidate-caption"></span></p>
+          <div id="media-status" class="status hidden" role="alert"></div>
+        </section>
+
+        <section id="form-panel" class="panel form" aria-live="polite"></section>
+      </div>
+
+      <div class="navigation">
+        <button id="previous-item" type="button">Previous item</button>
+        <button id="next-item" class="primary" type="button">Next item</button>
+      </div>
+      <div id="app-status" class="status hidden" role="alert"></div>
+    </section>
+  </main>
+
+  <script id="manifest-data" type="application/json" data-sha256="__ROUND1_MANIFEST_SHA256__">__ROUND1_MANIFEST_JSON__</script>
+  <script id="instrument-code">
+  "use strict";
+
+  const SCHEMA_VERSION = "sounddecisions-human-curation-ratings-v1-1.0";
+  const MANIFEST_SCHEMA_VERSION = "sounddecisions-human-curation-items-v1-1.0";
+  const INSTRUMENT_VERSION = "human-eval-round1-curation-1.0";
+  const ALLOWED_TASKS = new Set(["anchor_curation", "two_event_curation"]);
+  const SCREENS = ["anchor", "pair"];
+
+  function hashString(text) {
+    let hash = 0x811c9dc5;
+    for (let index = 0; index < text.length; index += 1) {
+      hash ^= text.charCodeAt(index);
+      hash = Math.imul(hash, 0x01000193);
+    }
+    return hash >>> 0;
+  }
+
+  function mulberry32(seed) {
+    return function random() {
+      let value = seed += 0x6d2b79f5;
+      value = Math.imul(value ^ value >>> 15, value | 1);
+      value ^= value + Math.imul(value ^ value >>> 7, value | 61);
+      return ((value ^ value >>> 14) >>> 0) / 4294967296;
+    };
+  }
+
+  function deterministicShuffle(items, raterId) {
+    const shuffled = Array.from(items);
+    const random = mulberry32(hashString(String(raterId)));
+    for (let index = shuffled.length - 1; index > 0; index -= 1) {
+      const selected = Math.floor(random() * (index + 1));
+      [shuffled[index], shuffled[selected]] = [shuffled[selected], shuffled[index]];
+    }
+    return shuffled;
+  }
+
+  function deepClone(value) { return JSON.parse(JSON.stringify(value)); }
+  function hasExactFields(value, fields) {
+    if (!value || typeof value !== "object" || Array.isArray(value)) return false;
+    const keys = Object.keys(value);
+    return keys.length === fields.length && keys.every(key => fields.includes(key));
+  }
+  function textWithin(value, maximum) { return typeof value === "string" && Array.from(value).length <= maximum; }
+  function isNumberOrNull(value) { return value === null || (Number.isFinite(value) && value >= 0); }
+  function validInterval(value) {
+    return Boolean(value) && Number.isFinite(value.start_s) && value.start_s >= 0 &&
+      Number.isFinite(value.end_s) && value.end_s >= value.start_s;
+  }
+  function validPartialInterval(value) {
+    if (!value || !isNumberOrNull(value.start_s) || !isNumberOrNull(value.end_s)) return false;
+    return value.start_s === null || value.end_s === null || value.start_s <= value.end_s;
+  }
+  function validEvent(value) {
+    return value !== null && hasExactFields(value, ["description", "start_s", "end_s"]) &&
+      textWithin(value.description, 500) && validPartialInterval(value);
+  }
+  function isRfc3339(value) {
+    if (typeof value !== "string") return false;
+    const match = value.match(/^(\d{4})-(\d{2})-(\d{2})[Tt](\d{2}):(\d{2}):(\d{2})(?:\.\d+)?(?:[Zz]|([+-])(\d{2}):(\d{2}))$/);
+    if (!match) return false;
+    const year = Number(match[1]);
+    const month = Number(match[2]);
+    const day = Number(match[3]);
+    const hour = Number(match[4]);
+    const minute = Number(match[5]);
+    const second = Number(match[6]);
+    if (month < 1 || month > 12 || day < 1 || day > new Date(Date.UTC(year, month, 0)).getUTCDate()) return false;
+    if (hour > 23 || minute > 59 || second > 59) return false;
+    if (match[8] !== undefined && (Number(match[8]) > 23 || Number(match[9]) > 59)) return false;
+    return !Number.isNaN(Date.parse(value));
+  }
+
+  function cleanRaterId(value) {
+    const cleaned = String(value).trim();
+    if (!/^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$/.test(cleaned)) {
+      throw new Error("Lead-curator ID must begin with a letter or number and contain at most 64 letters, numbers, dots, underscores, or hyphens.");
+    }
+    return cleaned;
+  }
+
+  function validateManifest(raw) {
+    if (!raw || typeof raw !== "object" || Array.isArray(raw)) throw new Error("Manifest must be a JSON object.");
+    const fields = ["schema_version", "instrument_version", "manifest_id", "status", "default_fps", "counts", "items"];
+    if (!hasExactFields(raw, fields)) throw new Error("Manifest has missing or unexpected fields.");
+    if (raw.schema_version !== MANIFEST_SCHEMA_VERSION || raw.instrument_version !== INSTRUMENT_VERSION) throw new Error("Manifest version is not supported.");
+    if (typeof raw.manifest_id !== "string" || raw.manifest_id.length === 0 || raw.manifest_id.length > 200) throw new Error("Manifest ID is invalid.");
+    if (raw.status !== "CURATION_AUTHORIZED") throw new Error(`Manifest is not authorized for curation (${raw.status || "missing status"}).`);
+    if (!Number.isFinite(raw.default_fps) || raw.default_fps <= 0) throw new Error("Manifest default_fps must be positive.");
+    if (!hasExactFields(raw.counts, ["anchor_curation", "two_event_curation", "total_tasks", "unique_videos"])) throw new Error("Manifest counts are invalid.");
+    if (!Array.isArray(raw.items) || raw.items.length === 0) throw new Error("Manifest has no items.");
+
+    const seen = new Set();
+    const items = raw.items.map(item => {
+      const itemFields = ["blind_id", "tasks", "media_path", "fps", "duration_s", "candidate_caption"];
+      if (!hasExactFields(item, itemFields)) throw new Error("Manifest item has missing or unexpected fields.");
+      if (!/^HEV2-[0-9A-F]{12}$/.test(item.blind_id)) throw new Error("Manifest contains an invalid blind ID.");
+      if (seen.has(item.blind_id)) throw new Error(`Duplicate blind ID: ${item.blind_id}.`);
+      seen.add(item.blind_id);
+      if (!Array.isArray(item.tasks) || item.tasks.length < 1 || item.tasks.length > 2 || new Set(item.tasks).size !== item.tasks.length || item.tasks.some(task => !ALLOWED_TASKS.has(task))) throw new Error(`Unsupported task assignment for ${item.blind_id}.`);
+      if (item.media_path !== `media/${item.blind_id}.mp4`) throw new Error(`Media path for ${item.blind_id} is not blinded.`);
+      if (!Number.isFinite(item.fps) || item.fps <= 0 || !Number.isFinite(item.duration_s) || item.duration_s <= 0) throw new Error(`Media metadata for ${item.blind_id} is invalid.`);
+      if (!textWithin(item.candidate_caption, 2000) || item.candidate_caption.trim().length === 0) throw new Error(`Candidate caption for ${item.blind_id} is invalid.`);
+      return deepClone(item);
+    });
+    const anchorCount = items.filter(item => item.tasks.includes("anchor_curation")).length;
+    const pairCount = items.filter(item => item.tasks.includes("two_event_curation")).length;
+    const expectedCounts = [anchorCount, pairCount, anchorCount + pairCount, items.length];
+    const declaredCounts = [raw.counts.anchor_curation, raw.counts.two_event_curation, raw.counts.total_tasks, raw.counts.unique_videos];
+    if (declaredCounts.some((value, index) => !Number.isInteger(value) || value !== expectedCounts[index])) throw new Error("Manifest counts do not match its items.");
+    return { ...deepClone(raw), items };
+  }
+
+  function assertCurationAuthorized(manifest) {
+    if (!manifest || manifest.status !== "CURATION_AUTHORIZED") throw new Error("This manifest is not authorized for Round-1 curation.");
+  }
+
+  function blankRating(item) {
+    const rating = { blind_id: item.blind_id, tasks: Array.from(item.tasks), completed: false };
+    if (item.tasks.includes("anchor_curation")) {
+      rating.anchor_curation = { status: "unrated", start_s: null, end_s: null, note: "" };
+    }
+    if (item.tasks.includes("two_event_curation")) {
+      rating.two_event_curation = { verdict: null, event_1: null, event_2: null, note: "" };
+    }
+    return rating;
+  }
+
+  function markAnchorTooUncertain(anchor) {
+    anchor.status = "too_uncertain";
+    return anchor;
+  }
+
+  function setPairVerdict(pair, verdict) {
+    if (!["confirm", "reject", null].includes(verdict)) throw new Error("Unsupported pair verdict.");
+    pair.verdict = verdict;
+    return pair;
+  }
+
+  function isCompleted(rating) {
+    let complete = true;
+    if (rating.tasks.includes("anchor_curation")) {
+      const anchor = rating.anchor_curation;
+      complete = complete && (anchor.status === "too_uncertain" || (anchor.status === "marked" && validInterval(anchor)));
+    }
+    if (rating.tasks.includes("two_event_curation")) {
+      const pair = rating.two_event_curation;
+      const confirmed = pair.verdict === "confirm" && validEvent(pair.event_1) && validEvent(pair.event_2) &&
+        pair.event_1.description.trim().length > 0 && pair.event_2.description.trim().length > 0 &&
+        validInterval(pair.event_1) && validInterval(pair.event_2) && pair.event_1.start_s <= pair.event_2.start_s;
+      complete = complete && (pair.verdict === "reject" || confirmed);
+    }
+    return complete;
+  }
+
+  function assertRatingShape(rating) {
+    if (!rating || typeof rating !== "object" || !/^HEV2-[0-9A-F]{12}$/.test(rating.blind_id || "")) throw new Error("A rating has an invalid blind ID.");
+    const allowed = ["blind_id", "tasks", "completed", "anchor_curation", "two_event_curation"];
+    if (Object.keys(rating).some(field => !allowed.includes(field))) throw new Error(`Unexpected rating field for ${rating.blind_id}.`);
+    if (!Array.isArray(rating.tasks) || rating.tasks.length < 1 || rating.tasks.length > 2 || new Set(rating.tasks).size !== rating.tasks.length || rating.tasks.some(task => !ALLOWED_TASKS.has(task)) || typeof rating.completed !== "boolean") throw new Error(`Invalid task list for ${rating.blind_id}.`);
+    if (rating.tasks.includes("anchor_curation")) {
+      const anchor = rating.anchor_curation;
+      if (!hasExactFields(anchor, ["status", "start_s", "end_s", "note"]) || !["unrated", "marked", "too_uncertain"].includes(anchor.status) || !validPartialInterval(anchor) || !textWithin(anchor.note, 2000)) throw new Error(`Invalid anchor curation for ${rating.blind_id}.`);
+      if (anchor.status === "marked" && !validInterval(anchor)) throw new Error(`Marked anchor is incomplete for ${rating.blind_id}.`);
+    } else if ("anchor_curation" in rating) throw new Error(`Unexpected anchor curation for ${rating.blind_id}.`);
+    if (rating.tasks.includes("two_event_curation")) {
+      const pair = rating.two_event_curation;
+      if (!hasExactFields(pair, ["verdict", "event_1", "event_2", "note"]) || ![null, "confirm", "reject"].includes(pair.verdict) || !textWithin(pair.note, 2000)) throw new Error(`Invalid two-event curation for ${rating.blind_id}.`);
+      if ((pair.event_1 !== null && !validEvent(pair.event_1)) || (pair.event_2 !== null && !validEvent(pair.event_2))) throw new Error(`Invalid event draft for ${rating.blind_id}.`);
+    } else if ("two_event_curation" in rating) throw new Error(`Unexpected two-event curation for ${rating.blind_id}.`);
+    if (rating.completed && !isCompleted(rating)) throw new Error(`Completed rating is incomplete for ${rating.blind_id}.`);
+  }
+
+  function assertExportShape(value) {
+    const fields = ["schema_version", "instrument_version", "manifest_id", "manifest_sha256", "rater_id", "started_at", "exported_at", "item_order", "ratings"];
+    if (!hasExactFields(value, fields)) throw new Error("Ratings JSON has missing or unexpected top-level fields.");
+    if (value.schema_version !== SCHEMA_VERSION || value.instrument_version !== INSTRUMENT_VERSION) throw new Error("Ratings version is not supported.");
+    if (typeof value.manifest_id !== "string" || value.manifest_id.length === 0 || value.manifest_id.length > 200 || !/^[0-9a-f]{64}$/.test(value.manifest_sha256)) throw new Error("Ratings manifest identity is invalid.");
+    cleanRaterId(value.rater_id);
+    if (!isRfc3339(value.started_at) || !isRfc3339(value.exported_at)) throw new Error("Rating timestamps must be RFC3339 date-times.");
+    if (!Array.isArray(value.item_order) || value.item_order.length === 0 || new Set(value.item_order).size !== value.item_order.length || value.item_order.some(id => !/^HEV2-[0-9A-F]{12}$/.test(id))) throw new Error("Ratings item_order is invalid.");
+    if (!Array.isArray(value.ratings) || value.ratings.length !== value.item_order.length) throw new Error("Ratings and item_order differ in length.");
+    const seen = new Set();
+    value.ratings.forEach((rating, index) => {
+      assertRatingShape(rating);
+      if (seen.has(rating.blind_id)) throw new Error("Ratings contain duplicate blind IDs.");
+      seen.add(rating.blind_id);
+      if (value.item_order[index] !== rating.blind_id) throw new Error("Ratings are not in item_order.");
+    });
+  }
+
+  function importExportJson(input) {
+    const value = typeof input === "string" ? JSON.parse(input) : deepClone(input);
+    assertExportShape(value);
+    return deepClone(value);
+  }
+
+  function assertRatingsMatchManifest(payload, manifest, manifestSha256) {
+    if (payload.manifest_id !== manifest.manifest_id || payload.manifest_sha256 !== manifestSha256) throw new Error("Ratings do not match this manifest revision.");
+    const itemMap = new Map(manifest.items.map(item => [item.blind_id, item]));
+    if (payload.item_order.length !== itemMap.size || payload.item_order.some(id => !itemMap.has(id))) throw new Error("Ratings item set does not match the manifest.");
+    payload.ratings.forEach(rating => {
+      const item = itemMap.get(rating.blind_id);
+      if (!item || rating.tasks.length !== item.tasks.length || rating.tasks.some(task => !item.tasks.includes(task))) throw new Error(`Rating tasks do not match the manifest for ${rating.blind_id}.`);
+    });
+  }
+
+  function prepareImport(input, manifest, manifestSha256) {
+    assertCurationAuthorized(manifest);
+    const payload = importExportJson(input);
+    assertRatingsMatchManifest(payload, manifest, manifestSha256);
+    return payload;
+  }
+
+  function roundTripExport(payload) { return importExportJson(JSON.stringify(payload)); }
+
+  const app = {
+    manifest: null,
+    manifestSha256: null,
+    session: null,
+    screen: "anchor",
+    indices: { anchor: 0, pair: 0 },
+    playbackRate: 1
+  };
+
+  function byId(id) { return document.getElementById(id); }
+  function setStatus(element, message, kind = "") {
+    element.textContent = message;
+    element.className = `status${kind ? ` ${kind}` : ""}`;
+  }
+  function sessionStorageKey(manifestId, raterId) {
+    return `sounddecisions:${INSTRUMENT_VERSION}:${manifestId}:${raterId}`;
+  }
+
+  function openEmbeddedManifest(text, sha256) {
+    if (!/^[0-9a-f]{64}$/.test(sha256)) throw new Error("Embedded manifest SHA256 is invalid.");
+    const manifest = validateManifest(JSON.parse(text));
+    app.manifest = manifest;
+    app.manifestSha256 = sha256;
+    const anchorCount = manifest.counts.anchor_curation;
+    const pairCount = manifest.counts.two_event_curation;
+    setStatus(byId("manifest-status"), `Authorized curation manifest: ${anchorCount} anchor and ${pairCount} two-event assignments.`, "ok");
+    byId("start-button").disabled = false;
+  }
+
+  function newSession(raterId) {
+    const ordered = deterministicShuffle(app.manifest.items, raterId);
+    return {
+      schema_version: SCHEMA_VERSION,
+      instrument_version: INSTRUMENT_VERSION,
+      manifest_id: app.manifest.manifest_id,
+      manifest_sha256: app.manifestSha256,
+      rater_id: raterId,
+      started_at: new Date().toISOString(),
+      exported_at: new Date().toISOString(),
+      item_order: ordered.map(item => item.blind_id),
+      ratings: ordered.map(blankRating)
+    };
+  }
+
+  function saveSession() {
+    if (!app.session || !app.manifest) return;
+    app.session.ratings.forEach(rating => { rating.completed = isCompleted(rating); });
+    const stored = { ...app.session, indices: app.indices, screen: app.screen };
+    try {
+      localStorage.setItem(sessionStorageKey(app.manifest.manifest_id, app.session.rater_id), JSON.stringify(stored));
+      byId("save-state").textContent = `Saved locally at ${new Date().toLocaleTimeString()}`;
+    } catch (error) {
+      byId("save-state").textContent = `Local save failed: ${error.message}`;
+    }
+    renderProgress();
+  }
+
+  function startSession() {
+    try {
+      assertCurationAuthorized(app.manifest);
+      const raterId = cleanRaterId(byId("rater-id").value);
+      const savedText = localStorage.getItem(sessionStorageKey(app.manifest.manifest_id, raterId));
+      const saved = savedText ? JSON.parse(savedText) : newSession(raterId);
+      const savedIndices = saved.indices;
+      const savedScreen = saved.screen;
+      delete saved.indices;
+      delete saved.screen;
+      app.session = saved;
+      assertExportShape(app.session);
+      assertRatingsMatchManifest(app.session, app.manifest, app.manifestSha256);
+      app.indices = savedIndices && Number.isInteger(savedIndices.anchor) && Number.isInteger(savedIndices.pair) ? savedIndices : { anchor: 0, pair: 0 };
+      app.screen = SCREENS.includes(savedScreen) ? savedScreen : "anchor";
+      byId("active-rater").textContent = `Lead curator: ${raterId}`;
+      byId("header-state").textContent = "Session open";
+      byId("setup-screen").classList.add("hidden");
+      byId("curation-screen").classList.remove("hidden");
+      renderAll();
+      saveSession();
+    } catch (error) {
+      setStatus(byId("manifest-status"), error.message, "error");
+    }
+  }
+
+  function screenItems(screen = app.screen) {
+    if (!app.session || !app.manifest) return [];
+    const task = screen === "pair" ? "two_event_curation" : "anchor_curation";
+    const map = new Map(app.manifest.items.map(item => [item.blind_id, item]));
+    return app.session.item_order.map(id => map.get(id)).filter(item => item && item.tasks.includes(task));
+  }
+
+  function currentItem() {
+    const items = screenItems();
+    if (!items.length) return null;
+    app.indices[app.screen] = Math.max(0, Math.min(app.indices[app.screen], items.length - 1));
+    return items[app.indices[app.screen]];
+  }
+  function ratingFor(blindId) { return app.session.ratings.find(rating => rating.blind_id === blindId); }
+  function roundSeconds(value) { return Math.round(Number(value) * 1000) / 1000; }
+  function formatTime(value) { return Number.isFinite(value) ? `${value.toFixed(3)} s` : "not marked"; }
+  function videoTime() { return roundSeconds(byId("item-video").currentTime || 0); }
+
+  function enforceMuted(video) {
+    video.muted = true;
+    video.defaultMuted = true;
+    video.volume = 0;
+    return video.muted && video.volume === 0;
+  }
+
+  function updateTimeReadout() {
+    const video = byId("item-video");
+    const duration = Number.isFinite(video.duration) ? ` / ${video.duration.toFixed(3)} s` : "";
+    byId("time-readout").textContent = `${(video.currentTime || 0).toFixed(3)} s${duration}`;
+  }
+
+  function stepFrame(direction) {
+    const item = currentItem();
+    if (!item) return;
+    const video = byId("item-video");
+    video.pause();
+    const duration = Number.isFinite(video.duration) ? video.duration : item.duration_s;
+    video.currentTime = Math.max(0, Math.min(video.currentTime + direction / item.fps, duration));
+    updateTimeReadout();
+  }
+
+  function setPlaybackRate(rate) {
+    app.playbackRate = rate;
+    byId("item-video").playbackRate = rate;
+    document.querySelectorAll(".speed").forEach(button => button.setAttribute("aria-pressed", String(Number(button.dataset.speed) === rate)));
+  }
+
+  function renderProgress() {
+    if (!app.session) return;
+    const anchorRatings = app.session.ratings.filter(rating => rating.tasks.includes("anchor_curation"));
+    const pairRatings = app.session.ratings.filter(rating => rating.tasks.includes("two_event_curation"));
+    const values = {
+      anchor: `${anchorRatings.filter(rating => isCompleted({ ...rating, tasks: ["anchor_curation"] })).length}/${anchorRatings.length}`,
+      pair: `${pairRatings.filter(rating => isCompleted({ ...rating, tasks: ["two_event_curation"] })).length}/${pairRatings.length}`
+    };
+    document.querySelectorAll("[data-progress]").forEach(element => { element.textContent = `(${values[element.dataset.progress]})`; });
+  }
+
+  function intervalMarkup(label, prefix, interval) {
+    return `<div class="interval">
+      <h3>${label}</h3>
+      <div class="mark-row">
+        <button type="button" data-mark="${prefix}-start">Mark start</button>
+        <button type="button" data-mark="${prefix}-end">Mark end</button>
+        <button type="button" data-clear="${prefix}">Clear</button>
+      </div>
+      <p class="interval-value">Start: ${formatTime(interval && interval.start_s)}<br>End: ${formatTime(interval && interval.end_s)}</p>
+    </div>`;
+  }
+
+  function escapeHtml(value) {
+    return String(value).replace(/[&<>'"]/g, character => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" })[character]);
+  }
+
+  function renderAnchorForm(rating) {
+    const anchor = rating.anchor_curation;
+    byId("form-panel").innerHTML = `<h2>Anchor curation</h2>
+      <div class="rubric"><strong>Rule:</strong> Select the first clearly visible discrete occurrence that matches the candidate caption. Mark its closed visual interval [start, end]. Choose Too uncertain when no defensible interval can be marked. Do not use audio.</div>
+      ${intervalMarkup("Visible event interval", "anchor", anchor)}
+      <div class="interval"><button id="too-uncertain" type="button" class="danger" aria-pressed="${anchor.status === "too_uncertain"}">Too uncertain</button></div>
+      <label class="field" for="anchor-note">Optional note</label>
+      <textarea id="anchor-note" maxlength="2000">${escapeHtml(anchor.note)}</textarea>`;
+    byId("form-panel").querySelectorAll("[data-mark]").forEach(button => button.addEventListener("click", () => {
+      const edge = button.dataset.mark.endsWith("start") ? "start_s" : "end_s";
+      anchor[edge] = videoTime();
+      anchor.status = validInterval(anchor) ? "marked" : "unrated";
+      saveSession();
+      renderForm();
+    }));
+    byId("form-panel").querySelector("[data-clear='anchor']").addEventListener("click", () => {
+      Object.assign(anchor, { status: "unrated", start_s: null, end_s: null });
+      saveSession();
+      renderForm();
+    });
+    byId("too-uncertain").addEventListener("click", () => {
+      markAnchorTooUncertain(anchor);
+      saveSession();
+      renderForm();
+    });
+    byId("anchor-note").addEventListener("input", event => { anchor.note = event.target.value; saveSession(); });
+  }
+
+  function renderPairForm(rating) {
+    const pair = rating.two_event_curation;
+    byId("form-panel").innerHTML = `<h2>Two-event curation</h2>
+      <div class="rubric"><strong>Rule:</strong> Confirm only when two separable target events are clearly visible. Describe each event and mark both closed visual intervals in chronological order. Otherwise reject.</div>
+      <fieldset><legend>Do two separable target events exist?</legend>
+        <label class="choice"><input type="radio" name="pair-verdict" value="confirm" ${pair.verdict === "confirm" ? "checked" : ""}> Confirm</label>
+        <label class="choice"><input type="radio" name="pair-verdict" value="reject" ${pair.verdict === "reject" ? "checked" : ""}> Reject</label>
+      </fieldset>
+      <div id="pair-details" class="${pair.verdict === "confirm" ? "" : "hidden"}">
+        <label class="field" for="event-1-description">Event 1 description</label>
+        <textarea id="event-1-description" maxlength="500">${escapeHtml(pair.event_1 && pair.event_1.description || "")}</textarea>
+        ${intervalMarkup("Event 1 interval", "event-1", pair.event_1)}
+        <label class="field" for="event-2-description">Event 2 description</label>
+        <textarea id="event-2-description" maxlength="500">${escapeHtml(pair.event_2 && pair.event_2.description || "")}</textarea>
+        ${intervalMarkup("Event 2 interval", "event-2", pair.event_2)}
+      </div>
+      <label class="field" for="pair-note">Optional note</label>
+      <textarea id="pair-note" maxlength="2000">${escapeHtml(pair.note)}</textarea>`;
+    byId("form-panel").querySelectorAll("input[name='pair-verdict']").forEach(input => input.addEventListener("change", () => {
+      setPairVerdict(pair, input.value);
+      saveSession();
+      renderForm();
+    }));
+    byId("form-panel").querySelectorAll("[data-mark]").forEach(button => button.addEventListener("click", () => {
+      const eventKey = button.dataset.mark.startsWith("event-1") ? "event_1" : "event_2";
+      const edge = button.dataset.mark.endsWith("start") ? "start_s" : "end_s";
+      pair[eventKey] ||= { description: "", start_s: null, end_s: null };
+      pair[eventKey][edge] = videoTime();
+      saveSession();
+      renderForm();
+    }));
+    byId("form-panel").querySelectorAll("[data-clear]").forEach(button => button.addEventListener("click", () => {
+      const eventKey = button.dataset.clear === "event-1" ? "event_1" : "event_2";
+      const description = pair[eventKey] && pair[eventKey].description || "";
+      pair[eventKey] = { description, start_s: null, end_s: null };
+      saveSession();
+      renderForm();
+    }));
+    for (const number of [1, 2]) {
+      const field = byId(`event-${number}-description`);
+      if (field) field.addEventListener("input", event => {
+        const eventKey = `event_${number}`;
+        pair[eventKey] ||= { description: "", start_s: null, end_s: null };
+        pair[eventKey].description = event.target.value;
+        saveSession();
+      });
+    }
+    byId("pair-note").addEventListener("input", event => { pair.note = event.target.value; saveSession(); });
+  }
+
+  function renderForm() {
+    const item = currentItem();
+    if (!item) {
+      byId("form-panel").innerHTML = "<h2>No assignments</h2><p>This manifest has no items for this task.</p>";
+      return;
+    }
+    const rating = ratingFor(item.blind_id);
+    if (app.screen === "anchor") renderAnchorForm(rating);
+    else renderPairForm(rating);
+  }
+
+  function renderItem() {
+    const item = currentItem();
+    const video = byId("item-video");
+    setStatus(byId("media-status"), "");
+    byId("media-status").classList.add("hidden");
+    enforceMuted(video);
+    if (!item) {
+      byId("item-title").textContent = "No item";
+      byId("item-counter").textContent = "0 of 0";
+      byId("candidate-caption").textContent = "";
+      video.removeAttribute("src");
+      video.load();
+      return;
+    }
+    const items = screenItems();
+    byId("item-title").textContent = item.blind_id;
+    byId("item-counter").textContent = `${app.indices[app.screen] + 1} of ${items.length}`;
+    byId("candidate-caption").textContent = item.candidate_caption;
+    video.src = item.media_path;
+    enforceMuted(video);
+    video.playbackRate = app.playbackRate;
+    video.load();
+    byId("previous-item").disabled = app.indices[app.screen] === 0;
+    byId("next-item").disabled = app.indices[app.screen] >= items.length - 1;
+    updateTimeReadout();
+  }
+
+  function renderAll() {
+    document.querySelectorAll(".tab").forEach(tab => tab.setAttribute("aria-selected", String(tab.dataset.screen === app.screen)));
+    renderProgress();
+    renderItem();
+    renderForm();
+  }
+
+  function moveItem(delta) {
+    const items = screenItems();
+    app.indices[app.screen] = Math.max(0, Math.min(app.indices[app.screen] + delta, Math.max(0, items.length - 1)));
+    saveSession();
+    renderAll();
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  function switchScreen(screen) {
+    if (!SCREENS.includes(screen)) return;
+    app.screen = screen;
+    saveSession();
+    renderAll();
+  }
+
+  function buildExport() {
+    app.session.ratings.forEach(rating => { rating.completed = isCompleted(rating); });
+    return roundTripExport({
+      schema_version: SCHEMA_VERSION,
+      instrument_version: INSTRUMENT_VERSION,
+      manifest_id: app.session.manifest_id,
+      manifest_sha256: app.session.manifest_sha256,
+      rater_id: app.session.rater_id,
+      started_at: app.session.started_at,
+      exported_at: new Date().toISOString(),
+      item_order: Array.from(app.session.item_order),
+      ratings: deepClone(app.session.ratings)
+    });
+  }
+
+  function exportRatings() {
+    try {
+      const payload = buildExport();
+      const blob = new Blob([`${JSON.stringify(payload, null, 2)}\n`], { type: "application/json" });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = `ratings_${payload.rater_id}.json`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(link.href);
+      const remaining = payload.ratings.filter(rating => !rating.completed).length;
+      setStatus(byId("app-status"), remaining ? `Exported; ${remaining} item(s) remain incomplete.` : "Exported; every assignment is complete.", remaining ? "warn" : "ok");
+      byId("app-status").classList.remove("hidden");
+    } catch (error) {
+      setStatus(byId("app-status"), error.message, "error");
+      byId("app-status").classList.remove("hidden");
+    }
+  }
+
+  function importRatingsText(text) {
+    const payload = prepareImport(text, app.manifest, app.manifestSha256);
+    byId("rater-id").value = payload.rater_id;
+    localStorage.setItem(sessionStorageKey(payload.manifest_id, payload.rater_id), JSON.stringify({ ...payload, indices: { anchor: 0, pair: 0 }, screen: "anchor" }));
+    startSession();
+  }
+
+  function bindEvents() {
+    byId("start-button").addEventListener("click", startSession);
+    byId("rater-id").addEventListener("keydown", event => { if (event.key === "Enter") startSession(); });
+    byId("import-file").addEventListener("change", async event => {
+      const file = event.target.files[0];
+      if (!file) return;
+      try { importRatingsText(await file.text()); }
+      catch (error) { setStatus(byId("manifest-status"), error.message, "error"); }
+      finally { event.target.value = ""; }
+    });
+    byId("export-button").addEventListener("click", exportRatings);
+    byId("close-session").addEventListener("click", () => {
+      saveSession();
+      byId("curation-screen").classList.add("hidden");
+      byId("setup-screen").classList.remove("hidden");
+      byId("header-state").textContent = "Session closed";
+    });
+    byId("previous-item").addEventListener("click", () => moveItem(-1));
+    byId("next-item").addEventListener("click", () => moveItem(1));
+    document.querySelectorAll(".tab").forEach(tab => tab.addEventListener("click", () => switchScreen(tab.dataset.screen)));
+    byId("step-back").addEventListener("click", () => stepFrame(-1));
+    byId("step-forward").addEventListener("click", () => stepFrame(1));
+    document.querySelectorAll(".speed").forEach(button => button.addEventListener("click", () => setPlaybackRate(Number(button.dataset.speed))));
+    const video = byId("item-video");
+    video.addEventListener("timeupdate", updateTimeReadout);
+    video.addEventListener("loadedmetadata", () => { enforceMuted(video); updateTimeReadout(); });
+    video.addEventListener("play", () => enforceMuted(video));
+    video.addEventListener("volumechange", () => { if (!video.muted || video.volume !== 0) enforceMuted(video); });
+    video.addEventListener("error", () => {
+      const item = currentItem();
+      setStatus(byId("media-status"), item ? `Video could not be opened: ${item.media_path}` : "Video could not be opened.", "error");
+      byId("media-status").classList.remove("hidden");
+    });
+  }
+
+  function initialize() {
+    bindEvents();
+    enforceMuted(byId("item-video"));
+    try {
+      const embedded = byId("manifest-data");
+      openEmbeddedManifest(embedded.textContent, embedded.dataset.sha256);
+    } catch (error) {
+      setStatus(byId("manifest-status"), error.message, "error");
+      byId("start-button").disabled = true;
+    }
+  }
+
+  if (typeof module !== "undefined" && module.exports) {
+    module.exports = {
+      SCHEMA_VERSION,
+      MANIFEST_SCHEMA_VERSION,
+      INSTRUMENT_VERSION,
+      hashString,
+      deterministicShuffle,
+      validateManifest,
+      assertCurationAuthorized,
+      blankRating,
+      validInterval,
+      validPartialInterval,
+      isCompleted,
+      markAnchorTooUncertain,
+      setPairVerdict,
+      importExportJson,
+      roundTripExport,
+      assertRatingsMatchManifest,
+      prepareImport,
+      enforceMuted
+    };
+  }
+  if (typeof window !== "undefined" && typeof document !== "undefined") window.addEventListener("DOMContentLoaded", initialize);
+  </script>
+</body>
+</html>

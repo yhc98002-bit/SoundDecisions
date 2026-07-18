@@ -1,0 +1,194 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sounddecisions.local/schemas/human-curation-round1-ratings-v1.schema.json",
+  "title": "SoundDecisions blinded Round-1 curation export",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "instrument_version",
+    "manifest_id",
+    "manifest_sha256",
+    "rater_id",
+    "started_at",
+    "exported_at",
+    "item_order",
+    "ratings"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "sounddecisions-human-curation-ratings-v1-1.0"
+    },
+    "instrument_version": {
+      "const": "human-eval-round1-curation-1.0"
+    },
+    "manifest_id": {"type": "string", "minLength": 1, "maxLength": 200},
+    "manifest_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "rater_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$"
+    },
+    "started_at": {"type": "string", "format": "date-time"},
+    "exported_at": {"type": "string", "format": "date-time"},
+    "item_order": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"type": "string", "pattern": "^HEV2-[0-9A-F]{12}$"}
+    },
+    "ratings": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/rating"}
+    }
+  },
+  "$defs": {
+    "partial_interval": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["start_s", "end_s"],
+      "properties": {
+        "start_s": {"type": ["number", "null"], "minimum": 0},
+        "end_s": {"type": ["number", "null"], "minimum": 0}
+      }
+    },
+    "event": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["description", "start_s", "end_s"],
+      "properties": {
+        "description": {"type": "string", "maxLength": 500},
+        "start_s": {"type": ["number", "null"], "minimum": 0},
+        "end_s": {"type": ["number", "null"], "minimum": 0}
+      }
+    },
+    "anchor_curation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "start_s", "end_s", "note"],
+      "properties": {
+        "status": {"enum": ["unrated", "marked", "too_uncertain"]},
+        "start_s": {"type": ["number", "null"], "minimum": 0},
+        "end_s": {"type": ["number", "null"], "minimum": 0},
+        "note": {"type": "string", "maxLength": 2000}
+      }
+    },
+    "two_event_curation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["verdict", "event_1", "event_2", "note"],
+      "properties": {
+        "verdict": {"type": ["string", "null"], "enum": ["confirm", "reject", null]},
+        "event_1": {"oneOf": [{"$ref": "#/$defs/event"}, {"type": "null"}]},
+        "event_2": {"oneOf": [{"$ref": "#/$defs/event"}, {"type": "null"}]},
+        "note": {"type": "string", "maxLength": 2000}
+      }
+    },
+    "rating": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["blind_id", "tasks", "completed"],
+      "properties": {
+        "blind_id": {"type": "string", "pattern": "^HEV2-[0-9A-F]{12}$"},
+        "tasks": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 2,
+          "uniqueItems": true,
+          "items": {"enum": ["anchor_curation", "two_event_curation"]}
+        },
+        "completed": {"type": "boolean"},
+        "anchor_curation": {"$ref": "#/$defs/anchor_curation"},
+        "two_event_curation": {"$ref": "#/$defs/two_event_curation"}
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"tasks": {"contains": {"const": "anchor_curation"}}}},
+          "then": {"required": ["anchor_curation"]},
+          "else": {"not": {"required": ["anchor_curation"]}}
+        },
+        {
+          "if": {"properties": {"tasks": {"contains": {"const": "two_event_curation"}}}},
+          "then": {"required": ["two_event_curation"]},
+          "else": {"not": {"required": ["two_event_curation"]}}
+        },
+        {
+          "if": {
+            "properties": {"completed": {"const": true}},
+            "required": ["completed"]
+          },
+          "then": {
+            "allOf": [
+              {
+                "if": {"properties": {"tasks": {"contains": {"const": "anchor_curation"}}}},
+                "then": {
+                  "properties": {
+                    "anchor_curation": {
+                      "oneOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "status": {"const": "marked"},
+                            "start_s": {"type": "number", "minimum": 0},
+                            "end_s": {"type": "number", "minimum": 0}
+                          },
+                          "required": ["status", "start_s", "end_s"]
+                        },
+                        {
+                          "type": "object",
+                          "properties": {"status": {"const": "too_uncertain"}},
+                          "required": ["status"]
+                        }
+                      ]
+                    }
+                  }
+                }
+              },
+              {
+                "if": {"properties": {"tasks": {"contains": {"const": "two_event_curation"}}}},
+                "then": {
+                  "properties": {
+                    "two_event_curation": {
+                      "oneOf": [
+                        {
+                          "type": "object",
+                          "properties": {"verdict": {"const": "reject"}},
+                          "required": ["verdict"]
+                        },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "verdict": {"const": "confirm"},
+                            "event_1": {
+                              "type": "object",
+                              "properties": {
+                                "description": {"type": "string", "minLength": 1},
+                                "start_s": {"type": "number", "minimum": 0},
+                                "end_s": {"type": "number", "minimum": 0}
+                              },
+                              "required": ["description", "start_s", "end_s"]
+                            },
+                            "event_2": {
+                              "type": "object",
+                              "properties": {
+                                "description": {"type": "string", "minLength": 1},
+                                "start_s": {"type": "number", "minimum": 0},
+                                "end_s": {"type": "number", "minimum": 0}
+                              },
+                              "required": ["description", "start_s", "end_s"]
+                            }
+                          },
+                          "required": ["verdict", "event_1", "event_2"]
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

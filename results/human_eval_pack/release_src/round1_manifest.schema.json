@@ -1,0 +1,105 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sounddecisions.local/schemas/human-curation-round1-items-v1.schema.json",
+  "title": "SoundDecisions blinded Round-1 curation manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "instrument_version",
+    "manifest_id",
+    "status",
+    "default_fps",
+    "counts",
+    "items"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "sounddecisions-human-curation-items-v1-1.0"
+    },
+    "instrument_version": {
+      "const": "human-eval-round1-curation-1.0"
+    },
+    "manifest_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "status": {
+      "const": "CURATION_AUTHORIZED"
+    },
+    "default_fps": {
+      "type": "number",
+      "exclusiveMinimum": 0
+    },
+    "counts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "anchor_curation",
+        "two_event_curation",
+        "total_tasks",
+        "unique_videos"
+      ],
+      "properties": {
+        "anchor_curation": {"type": "integer", "minimum": 0},
+        "two_event_curation": {"type": "integer", "minimum": 0},
+        "total_tasks": {"type": "integer", "minimum": 1},
+        "unique_videos": {"type": "integer", "minimum": 1}
+      }
+    },
+    "items": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/item"
+      }
+    }
+  },
+  "$defs": {
+    "item": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "blind_id",
+        "tasks",
+        "media_path",
+        "fps",
+        "duration_s",
+        "candidate_caption"
+      ],
+      "properties": {
+        "blind_id": {
+          "type": "string",
+          "pattern": "^HEV2-[0-9A-F]{12}$"
+        },
+        "tasks": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 2,
+          "uniqueItems": true,
+          "items": {
+            "enum": ["anchor_curation", "two_event_curation"]
+          }
+        },
+        "media_path": {
+          "type": "string",
+          "pattern": "^media/HEV2-[0-9A-F]{12}\\.mp4$"
+        },
+        "fps": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "duration_s": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "candidate_caption": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
+        }
+      }
+    }
+  }
+}
