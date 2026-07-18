@@ -2,7 +2,9 @@
 
 Scientific status: `NOT_SUPPORTED`. This is an exploratory multi-seed continuity replication, not event-centered v2 confirmation.
 
-At the registered pooled sustained threshold theta=0.70, the point crossing is `s=0.90`. In the 5,000-draw video bootstrap, 3,767 draws cross and 1,233 are noncrossing; among crossing draws, the conditional percentile range is `[0.75, 0.90]`. The historical estimate `s=0.346` lies outside that conditional range and is not within one sampled progress step. The registered classification is `not_reproduced`.
+At the registered all-cell pooled sustained threshold theta=0.70, the point crossing is `s=0.90`. In the 5,000-draw video bootstrap, 3,767 draws cross and 1,233 are noncrossing; among crossing draws, the conditional percentile range is `[0.75, 0.90]`. This range is not an unconditional confidence interval. The frozen classification is `not_reproduced`.
+
+The historical estimate `s=0.346` is a crossers-only mean of unsustained individual first crossings, whereas the frozen B2 decision is an all-cell pooled sustained crossing. They are different estimands. The historical value lies outside the conditional pooled range and is more than one sampled step from the pooled point, but the individual B2 evidence must be read separately below.
 
 Individual video-seed units are heterogeneous: 582/634 scorable nondetermined units cross, 52 do not, and 29 remain unscorable. Among crossers only, the mean first crossing is 0.300 and median is 0.25; noncrossers are right-censored and never imputed.
 
@@ -29,4 +31,4 @@ Individual video-seed units are heterogeneous: 582/634 scorable nondetermined un
 | 0.80 | noncrossing | 567 / 4433 | [0.90, 0.90] |
 | 0.90 | noncrossing | 2 / 4998 | [0.90, 0.90] |
 
-Nine of 48 videos are video-determined under the registered A_ind >= 0.90 rule. Detailed per-video, per-seed, crossing, noncrossing, and baseline records are included as CSV files.
+Nine of 48 videos are video-determined under the registered A_ind >= 0.90 rule. The registered pooled curve includes these cases, whose A_ind=1 commitment gain is fixed to zero; `CLASS_VIDEO_DETERMINED_SENSITIVITY.json` reports the separately labeled post-hoc exclusion sensitivity. Detailed per-video, per-seed, crossing, noncrossing, and baseline records are included as CSV files.

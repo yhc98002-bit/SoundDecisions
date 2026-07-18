@@ -1,0 +1,88 @@
+{
+  "schema": "sounddecisions.non_human_repro.v1",
+  "status": "COMPLETE",
+  "starting_commit": "a1e8f3ae324e8886379c19c5bc312d7ebc942946",
+  "execution_branch": "agent/non-human-closure",
+  "artifact_root": "/XYFS02/HDD_POOL/paratera_xy/pxy1289/HaocunYe/Research/SoundDecisions-non-human-artifacts/nhc_20260717T151345p0800_a052920",
+  "repository": "/XYFS02/HDD_POOL/paratera_xy/pxy1289/HaocunYe/Research/SoundDecisions-non-human-closure",
+  "asset_repository": "/XYFS02/HDD_POOL/paratera_xy/pxy1289/HaocunYe/Research/SoundDecisions",
+  "python": "/XYFS02/HDD_POOL/paratera_xy/pxy1289/HaocunYe/Research/SoundDecisions/.venv/bin/python",
+  "environment": {
+    "python_version": "3.10.12",
+    "numpy_version": "2.0.2",
+    "scipy_version": "1.15.3",
+    "pytest_version": "9.0.3",
+    "torch_version": "2.5.1+cu121",
+    "torchaudio_version": "2.5.1+cu121",
+    "PYTHONHASHSEED": "0",
+    "CUBLAS_WORKSPACE_CONFIG": ":4096:8",
+    "HF_HOME": "/XYFS02/HDD_POOL/paratera_xy/pxy1289/HaocunYe/Research/SoundDecisions/.hf_cache",
+    "HF_HUB_OFFLINE": "1",
+    "TRANSFORMERS_OFFLINE": "1",
+    "HF_HUB_DISABLE_XET": "1",
+    "network_downloads": "none"
+  },
+  "protocol": {
+    "final_path": "experiment/non_human_closure/PROTOCOL.json",
+    "final_sha256": "5c4fc4025995c16e355feb8cc02fbb3627891d47f6df052becde4845eaa7bd09",
+    "material_gate_sha256": "a9f2a84653495045be039b17d1113de21fe1f6e951fffc0e5b65deb925473f39",
+    "transition_commit": "86f18c583677a2ad9059e4f13503400277e3fc4b",
+    "transition_scope": "B-1 pinned asset and offline-environment contract only; Material rules unchanged"
+  },
+  "assets": {
+    "class_checkpoint": "/XYFS02/HDD_POOL/paratera_xy/pxy1289/HaocunYe/Research/SoundDecisions/weights/measurers/Cnn14_16k_mAP=0.438.pth",
+    "class_checkpoint_sha256": "e2ee543a27919542c2ea03eabaa70b24dcd4e6c8e05621de6b67a94e4c5058e6",
+    "coarse_map": "configs/coarse_class_map.json",
+    "mmaudio_root": "/XYFS02/HDD_POOL/paratera_xy/pxy1289/HaocunYe/Research/SoundDecisions/third_party/MMAudio",
+    "mmaudio_git_commit": "974010a026c731054592d8f777218bd9d85a6c24",
+    "weights_dir": "/XYFS02/HDD_POOL/paratera_xy/pxy1289/HaocunYe/Research/SoundDecisions/weights/measurers",
+    "clips_root": "/XYFS02/HDD_POOL/paratera_xy/pxy1289/HaocunYe/Research/SoundDecisions/data/FoleyBench/clips",
+    "clip_model": "apple/DFN5B-CLIP-ViT-H-14-384",
+    "clip_revision": "01b771ed0d1395ca5ffdd279897d665ebe00dfd2"
+  },
+  "compute_placement": {
+    "class_measurement": {
+      "nodes": {"an12": [4, 5, 6], "an29": [0, 1, 3, 4]},
+      "tp_width": 1,
+      "replicas": 7,
+      "justification": "Seven independent posterior shards on every GPU with sufficient observed free memory."
+    },
+    "feature_recollection": {
+      "nodes": {"an12": [4, 5, 6, 7]},
+      "tp_width": 1,
+      "replicas": 8,
+      "justification": "Two independent TP1 shards per safely free A800; an29 was fully occupied."
+    },
+    "readout": {
+      "nodes": {"an12": [4, 5, 6, 7]},
+      "tp_width": 1,
+      "replicas": 8,
+      "justification": "One independent progress shard per replica, two replicas per safely free A800."
+    }
+  },
+  "canonical_hashes": {
+    "class_inventory_manifest": "a5c5e721650e486f09fe70231d96e61f85904e0f17dc793ff3088b67646c3df2",
+    "class_merge_completion": "f2bfa420782444bc37b21f9379f535f9592b47889a625f81880abbebd620d3df",
+    "class_posterior_data": "a381e0f8e662aae482959f0cd2e7fe46f3cb1e8ef2ef7040b4e65913ff86cd1e",
+    "b1_tolerance": "2abbbae24cb249c22894d08c03a506374ce5b8a5fbf742be7e553f2220a80863",
+    "b1_heldout_completion": "96fe3e6909b84597d97617acfa27f5912a5d6d4e643b63539b7c811a46827a5c",
+    "feature_completion": "351e191a55d6d3eaa57ac0d1a1081bcf77d8df46ce331773a271275f906cf759",
+    "feature_manifest": "1aca68300a485e4831f73aae286026bf69a97d7545bca3ce9eb702e24b968c3c",
+    "readout_targets_completion": "a633a27012b5683a29f6fae03798fea81a267f947364a00d4a7ccf4b7196fa69",
+    "readout_predictions": "6463c4b23a1df34d92d89efd3161ff8ce43e65e510c7ca2130a57e96de291ca3",
+    "readout_report": "a849854be83d11a8f358cf5b06bca518de57bd9645a82f70260ad64913a7eb37",
+    "material_insufficiency": "1bf4adf7eee37766665d421312b59f819d35d4fcf88b1ae14d784ec931b82dd8",
+    "material_loudness": "94fe9dd962965580d52f2063afa25cb68c1e371eeaae7e292ac8de0657672807",
+    "video_determined_sensitivity": "fd2b02fcffbdfba320d5ee630ddf4d3369a17120b64f44004e1e140e17e8b505"
+  },
+  "commands_document": "COMMANDS.md",
+  "write_policy": "All scientific worker/reducer outputs are create-only. Reproduction commands require a new explicit output root and never overwrite the canonical artifact root.",
+  "validation_commands": [
+    "$SD_PY scripts/b2_class_closure.py validate-merge --completion $SD_ART/class/merged_v2/CLASS_POSTERIORS_MERGED.completion.json",
+    "$SD_PY scripts/b1_lineage_pilot.py validate --attempt-root $SD_ART/b1/heldout/heldout_v1 --expected-stage heldout --protocol-sha256 $SD_PROTOCOL_SHA",
+    "$SD_PY scripts/b2_feature_recollection.py validate-shard --completion <each FEATURE_SHARD_COMPLETION.json> --deep",
+    "$SD_PY scripts/class_internal_readout.py validate --kind shard --completion <each READOUT_SHARD_COMPLETION.json>",
+    "$SD_PY scripts/materialize_non_human_closure.py validate --artifact-root $SD_ART --result-dir results/non_human_closure",
+    "sha256sum -c results/non_human_closure/CHECKSUMS.sha256"
+  ]
+}

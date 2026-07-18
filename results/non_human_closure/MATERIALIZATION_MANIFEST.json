@@ -35,9 +35,9 @@
       "sha256": "aa2feee890b995c70b298f9bff8df4036c88fde7f4cb9837e33f455c0b291d24"
     },
     {
-      "bytes": 2019,
+      "bytes": 2555,
       "path": "CLASS_MULTISEED_COMMITMENT.md",
-      "sha256": "4ce7bb738fc18c7ff64a8040fc0392ad2390b52db24e973c7c592ab0765c9d99"
+      "sha256": "5916f428b623c6fe122e0672132b2e224f5b07e7add7f162418a40ad7db939c6"
     },
     {
       "bytes": 667,
@@ -60,9 +60,9 @@
       "sha256": "64f2b8dc11b0e873c43bc41812b38b307b19bb0356731f7054b02a139e2ede1c"
     },
     {
-      "bytes": 1165,
+      "bytes": 1347,
       "path": "CLASS_VARIANCE_DECOMPOSITION.md",
-      "sha256": "778e1935e9221020b955da5b9f73da5d9427d429362b7a76ee95e6453f20173c"
+      "sha256": "0bf6ace05841c602be745d9eae179e5d4eaee4f0dddde19d41ffe9d417061ba6"
     },
     {
       "bytes": 2410,

@@ -232,7 +232,9 @@ def commitment_markdown(commitment: Mapping[str, Any]) -> str:
         "",
         "Scientific status: `NOT_SUPPORTED`. This is an exploratory multi-seed continuity replication, not event-centered v2 confirmation.",
         "",
-        f"At the registered pooled sustained threshold theta=0.70, the point crossing is `s={replication['pooled_sustained_crossing_theta_0.70']:.2f}`. In the 5,000-draw video bootstrap, 3,767 draws cross and 1,233 are noncrossing; among crossing draws, the conditional percentile range is `[0.75, 0.90]`. The historical estimate `s={replication['historical_s_commit']:.3f}` lies outside that conditional range and is not within one sampled progress step. The registered classification is `not_reproduced`.",
+        f"At the registered all-cell pooled sustained threshold theta=0.70, the point crossing is `s={replication['pooled_sustained_crossing_theta_0.70']:.2f}`. In the 5,000-draw video bootstrap, 3,767 draws cross and 1,233 are noncrossing; among crossing draws, the conditional percentile range is `[0.75, 0.90]`. This range is not an unconditional confidence interval. The frozen classification is `not_reproduced`.",
+        "",
+        f"The historical estimate `s={replication['historical_s_commit']:.3f}` is a crossers-only mean of unsustained individual first crossings, whereas the frozen B2 decision is an all-cell pooled sustained crossing. They are different estimands. The historical value lies outside the conditional pooled range and is more than one sampled step from the pooled point, but the individual B2 evidence must be read separately below.",
         "",
         f"Individual video-seed units are heterogeneous: {primary['n_crossing']}/{primary['n_scorable_nondetermined_video_seed_units']} scorable nondetermined units cross, {primary['n_noncrossing']} do not, and {primary['n_unscorable']} remain unscorable. Among crossers only, the mean first crossing is {primary['mean_first_crossing_crossers']:.3f} and median is {primary['median_first_crossing_crossers']:.2f}; noncrossers are right-censored and never imputed.",
         "",
@@ -274,7 +276,7 @@ def commitment_markdown(commitment: Mapping[str, Any]) -> str:
     lines.extend(
         [
             "",
-            "Nine of 48 videos are video-determined under the registered A_ind >= 0.90 rule. Detailed per-video, per-seed, crossing, noncrossing, and baseline records are included as CSV files.",
+            "Nine of 48 videos are video-determined under the registered A_ind >= 0.90 rule. The registered pooled curve includes these cases, whose A_ind=1 commitment gain is fixed to zero; `CLASS_VIDEO_DETERMINED_SENSITIVITY.json` reports the separately labeled post-hoc exclusion sensitivity. Detailed per-video, per-seed, crossing, noncrossing, and baseline records are included as CSV files.",
         ]
     )
     return "\n".join(lines)
@@ -308,7 +310,7 @@ def variance_markdown(variance: Mapping[str, Any]) -> str:
     lines.extend(
         [
             "",
-            "The additive seed component is estimated at zero, but video-by-seed interaction is large; therefore this is not evidence that seed choice is irrelevant for a given video. Measurer repeatability is `UNRESOLVED` because each WAV was measured once. The abstention component is a subcomponent of fork Monte Carlo variance, not an independent term.",
+            "The additive seed estimate is boundary-clipped to zero; its raw method-of-moments estimate is negative at every progress stratum. Video-by-seed interaction is large, so this is not evidence that seed choice is irrelevant for a given video. The 17-final video baselines are held fixed and their finite-reference uncertainty is not separately decomposed. Measurer repeatability is `UNRESOLVED` because each WAV was measured once. The abstention component is a subcomponent of fork Monte Carlo variance, not an independent term.",
         ]
     )
     return "\n".join(lines)

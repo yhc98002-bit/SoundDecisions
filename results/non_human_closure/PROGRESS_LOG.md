@@ -198,3 +198,41 @@
   shards were launched as two replicas per GPU, with offline mode,
   deterministic CuBLAS, and four CPU threads per worker. Launch source commit:
   `b2a8687a4ec831306332cb6e837b6b5b7dd7eb8d`.
+
+## Checkpoint 8 — grouped readout completion
+
+- Status: complete.
+- All eight progress shards completed and passed ID, shape, feature-hash,
+  target-cardinality, video-group split, inner-fold, and prediction validation.
+- The canonical reducer retains 113,212 outer-fold predictions across two
+  separate targets, 11 fixed probe families, six outer video folds, and four
+  inner video folds. Prediction SHA-256 is
+  `6463c4b23a1df34d92d89efd3161ff8ce43e65e510c7ca2130a57e96de291ca3`.
+- For fork-majority, pooled MLP is the only internal family that clears the
+  registered information criterion, first at `s=0.45`; external preview first
+  clears at the same point and is numerically stronger. No internal family
+  clears conditioning-only for ODE-final, while external preview clears at
+  `s=0.45`. Internal readout earlier than external is `NOT_SUPPORTED`.
+- No representation reaches the frozen action-readout criterion. A reducer-v1
+  label bug had mapped the ODE-final pattern to the wrong permitted sentence;
+  `c276668` fixed only that label. Merged-v1 is preserved, and merged-v2 has
+  byte-identical predictions and metrics.
+
+## Checkpoint 9 — canonical evidence materialization
+
+- Status: complete.
+- Materialized the small canonical evidence bundle into
+  `results/non_human_closure`; large posterior arrays and approximately 272 GB
+  of lineage-valid tensors remain outside Git under the immutable artifact
+  root.
+- The materializer independently revalidated posterior cardinality and hashes,
+  B-1 gate isolation and tolerances, feature shard cardinalities and hashes,
+  readout targets, candidate predictions, and the fail-closed Material stop.
+- A fresh create-only smoke reproduction generated and validated all 34
+  materialized outputs in an independent result directory.
+- An independent result audit identified an estimand distinction: historical
+  `s_commit` is an individual unsustained crossing mean, while the frozen B2
+  decision uses an all-cell pooled sustained crossing. The integrated report
+  now discloses both the early individual B2 evidence and the registered
+  `NOT_SUPPORTED` decision. A post-hoc nondetermined-video sensitivity crosses
+  at `s=0.60`, so it does not alter the frozen `s≤0.45` reproduction decision.

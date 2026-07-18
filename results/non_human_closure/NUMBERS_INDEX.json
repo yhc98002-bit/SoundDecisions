@@ -1,0 +1,221 @@
+{
+  "schema": "sounddecisions.non_human_numbers_index.v1",
+  "status": "COMPLETE",
+  "evidence_scope": "exploratory clip-level continuity; no event-centered v2 PASS",
+  "protocol_sha256": "5c4fc4025995c16e355feb8cc02fbb3627891d47f6df052becde4845eaa7bd09",
+  "numbers": [
+    {
+      "id": "class_total_wavs",
+      "value": 79152,
+      "artifact": "CLASS_POSTERIOR_MEASUREMENT_REPORT.json",
+      "selector": "/record_count"
+    },
+    {
+      "id": "class_base_final_wavs",
+      "value": 816,
+      "artifact": "CLASS_POSTERIOR_MEASUREMENT_REPORT.json",
+      "selector": "/role_counts/base"
+    },
+    {
+      "id": "class_fork_final_wavs",
+      "value": 78336,
+      "artifact": "CLASS_POSTERIOR_MEASUREMENT_REPORT.json",
+      "selector": "/role_counts/fork"
+    },
+    {
+      "id": "class_design",
+      "value": {"videos": 48, "base_seeds": 17, "progress_points": 8, "forks_per_state": 12},
+      "artifact": "CLASS_POSTERIOR_MEASUREMENT_REPORT.json",
+      "selector": "/design"
+    },
+    {
+      "id": "class_registered_all_cell_crossing_theta_070",
+      "value": 0.9,
+      "artifact": "CLASS_MULTISEED_COMMITMENT.json",
+      "selector": "/replication_classification/pooled_sustained_crossing_theta_0.70",
+      "limitation": "All-cell pooled sustained estimand; includes nine video-determined cases and is not the historical individual first-crossing estimand."
+    },
+    {
+      "id": "class_theta_070_bootstrap_crossing_draws",
+      "value": 3767,
+      "artifact": "CLASS_MULTISEED_COMMITMENT.json",
+      "selector": "/pooled_crossings[theta_commit=0.7]/bootstrap_sustained_crossing_draws"
+    },
+    {
+      "id": "class_theta_070_bootstrap_noncrossing_draws",
+      "value": 1233,
+      "artifact": "CLASS_MULTISEED_COMMITMENT.json",
+      "selector": "/pooled_crossings[theta_commit=0.7]/bootstrap_noncrossing_draws"
+    },
+    {
+      "id": "class_theta_070_conditional_crossing_percentiles",
+      "value": [0.75, 0.9],
+      "artifact": "CLASS_MULTISEED_COMMITMENT.json",
+      "selector": "/pooled_crossings[theta_commit=0.7]/{sustained_crossing_bootstrap_ci_low,sustained_crossing_bootstrap_ci_high}",
+      "limitation": "Conditional on the 3,767 bootstrap draws that cross; not an unconditional crossing-time confidence interval."
+    },
+    {
+      "id": "historical_individual_first_crossing_mean",
+      "value": 0.34593023255813954,
+      "artifact": "CLASS_MULTISEED_COMMITMENT.json",
+      "selector": "/historical_comparison_inputs/0/s_commit_confident",
+      "limitation": "Crossers-only mean of unsustained individual first crossings; different from the frozen pooled sustained estimand."
+    },
+    {
+      "id": "class_frozen_replication_status",
+      "value": {"label": "not_reproduced", "scientific_status": "NOT_SUPPORTED"},
+      "artifact": "CLASS_MULTISEED_COMMITMENT.json",
+      "selector": "/{replication_label,scientific_status}"
+    },
+    {
+      "id": "class_video_determined_count",
+      "value": 9,
+      "artifact": "CLASS_MULTISEED_COMMITMENT.json",
+      "selector": "/baseline_summary/n_video_determined"
+    },
+    {
+      "id": "class_nondetermined_posthoc_sustained_crossing",
+      "value": 0.6,
+      "artifact": "CLASS_VIDEO_DETERMINED_SENSITIVITY.json",
+      "selector": "/nondetermined_only_sustained_crossing",
+      "limitation": "Post-hoc audit sensitivity without a bootstrap interval; it does not change the registered rule or status."
+    },
+    {
+      "id": "class_individual_theta_070_counts",
+      "value": {"scorable": 634, "crossing": 582, "noncrossing": 52, "unscorable": 29, "sustained": 526},
+      "artifact": "CLASS_MULTISEED_COMMITMENT.json",
+      "selector": "/theta_0.70_summary"
+    },
+    {
+      "id": "class_individual_theta_070_crossers_first_crossing",
+      "value": {"mean": 0.2997422680412371, "median": 0.25},
+      "artifact": "CLASS_MULTISEED_COMMITMENT.json",
+      "selector": "/theta_0.70_summary/{mean_first_crossing_crossers,median_first_crossing_crossers}",
+      "limitation": "Crossers only; noncrossers are right-censored and not imputed."
+    },
+    {
+      "id": "class_variance_video",
+      "value": {"variance": 0.079268387812896, "fraction": 0.4219440577086575, "ci": [0.04357748036277037, 0.10477248773047186]},
+      "artifact": "CLASS_VARIANCE_DECOMPOSITION.json",
+      "selector": "/overall_mean_components/video and associated fraction/CI"
+    },
+    {
+      "id": "class_variance_additive_seed",
+      "value": {"variance": 0.0, "fraction": 0.0, "ci": [0.0, 0.0026051019872359747]},
+      "artifact": "CLASS_VARIANCE_DECOMPOSITION.json",
+      "selector": "/overall_mean_components/base_seed and associated fraction/CI",
+      "limitation": "Boundary-clipped to zero after negative raw moments in every progress stratum."
+    },
+    {
+      "id": "class_variance_video_seed_interaction",
+      "value": {"variance": 0.07821180226158783, "fraction": 0.41631987375417095, "ci": [0.06329242866729369, 0.09240922879530693]},
+      "artifact": "CLASS_VARIANCE_DECOMPOSITION.json",
+      "selector": "/overall_mean_components/video_by_seed_interaction and associated fraction/CI"
+    },
+    {
+      "id": "class_variance_fork_monte_carlo_nonabstention",
+      "value": {"variance": 0.028044886328483527, "fraction": 0.14928237424671387, "ci": [0.023118317114490194, 0.03296764845397094]},
+      "artifact": "CLASS_VARIANCE_DECOMPOSITION.json",
+      "selector": "/overall_mean_components/fork_monte_carlo_nonabstention and associated fraction/CI"
+    },
+    {
+      "id": "class_variance_abstention_subcomponent",
+      "value": {"variance": 0.0023396093645211904, "fraction": 0.012453694290457638, "ci": [0.001819658246306574, 0.0029127213414469493]},
+      "artifact": "CLASS_VARIANCE_DECOMPOSITION.json",
+      "selector": "/overall_mean_components/abstention_within_fork_monte_carlo and associated fraction/CI",
+      "limitation": "Subcomponent of fork resampling, not an independent variance term."
+    },
+    {
+      "id": "b1_calibration_and_heldout",
+      "value": {"calibration_clips": ["3780", "1813", "3112", "1048"], "heldout_clip": "1002", "heldout_metrics": 1960, "failures": 0},
+      "artifact": "FEATURE_LINEAGE_REPORT.json",
+      "selector": "/same_forward_gate"
+    },
+    {
+      "id": "b1_lineage_gate",
+      "value": "PASS",
+      "artifact": "FEATURE_LINEAGE_REPORT.json",
+      "selector": "/same_forward_gate/status"
+    },
+    {
+      "id": "feature_recollection_cardinality",
+      "value": {"base_trajectories": 816, "state_units": 6528, "shards": 8},
+      "artifact": "FEATURE_LINEAGE_REPORT.json",
+      "selector": "/feature_recollection"
+    },
+    {
+      "id": "readout_outer_predictions",
+      "value": 113212,
+      "artifact": "CLASS_INTERNAL_READOUT_REPORT.json",
+      "selector": "/prediction_count"
+    },
+    {
+      "id": "readout_grouped_cv",
+      "value": {"outer_video_folds": 6, "inner_video_folds": 4},
+      "artifact": "CLASS_INTERNAL_READOUT_REPORT.json",
+      "selector": "/{outer_folds,inner_folds}"
+    },
+    {
+      "id": "fork_majority_pooled_mlp_information_points",
+      "value": [0.45, 0.6],
+      "artifact": "CLASS_INTERNAL_READOUT_REPORT.json",
+      "selector": "/metrics rows satisfying frozen paired criteria",
+      "limitation": "Pointwise, unadjusted, nonsustained exploratory proxy-target evidence."
+    },
+    {
+      "id": "fork_majority_s045_pooled_mlp",
+      "value": {"balanced_accuracy": 0.169757798427271, "ci": [0.1254156128213089, 0.22791493369036456], "ece": 0.42243951191306217, "coverage": 0.8208333333333333},
+      "artifact": "CLASS_INTERNAL_READOUT_REPORT.json",
+      "selector": "/metrics[target=fork_majority,progress=0.45,family=pooled_mlp]"
+    },
+    {
+      "id": "fork_majority_s045_pooled_mlp_minus_conditioning",
+      "value": {"point": 0.06690885418465418, "ci": [0.015939681038452502, 0.11700938456554727]},
+      "artifact": "CLASS_INTERNAL_READOUT_REPORT.json",
+      "selector": "/metrics[target=fork_majority,progress=0.45,family=pooled_mlp]/paired_balanced_accuracy_differences/minus_conditioning_only"
+    },
+    {
+      "id": "fork_majority_s045_pooled_mlp_minus_external",
+      "value": {"point": -0.053218141844087796, "ci": [-0.11163537628342468, 0.009697865342578332]},
+      "artifact": "CLASS_INTERNAL_READOUT_REPORT.json",
+      "selector": "/metrics[target=fork_majority,progress=0.45,family=pooled_mlp]/paired_balanced_accuracy_differences/minus_external_preview"
+    },
+    {
+      "id": "readout_earlier_than_external",
+      "value": {"fork_majority": "NOT_SUPPORTED", "ode_final": "NOT_SUPPORTED"},
+      "artifact": "CLASS_INTERNAL_READOUT_REPORT.json",
+      "selector": "/decisions"
+    },
+    {
+      "id": "readout_action_points",
+      "value": 0,
+      "artifact": "CLASS_INTERNAL_READOUT_REPORT.json",
+      "selector": "/decisions/*/families/*/action_readout_progress"
+    },
+    {
+      "id": "material_inventory",
+      "value": {"videos": 200, "cells": 6400, "surviving_subject_final_embeddings": 800},
+      "artifact": "MATERIAL_REFERENCE_INSUFFICIENCY_SUMMARY.json",
+      "selector": "/coverage plus canonical legacy inventory",
+      "scope": "legacy clip-level continuity only"
+    },
+    {
+      "id": "material_valid_coverage",
+      "value": {"videos": 3, "cells": 96, "required_videos": 20, "required_cells": 640},
+      "artifact": "MATERIAL_CONTINUITY_2AFC_REPORT.json",
+      "selector": "/reference_gate"
+    },
+    {
+      "id": "material_measurement_launched",
+      "value": false,
+      "artifact": "MATERIAL_CONTINUITY_2AFC_REPORT.json",
+      "selector": "/measurement/{candidate_previews_replayed,candidate_embeddings_measured}"
+    },
+    {
+      "id": "material_status",
+      "value": "INCOMPLETE_ARTIFACTS",
+      "artifact": "MATERIAL_CONTINUITY_2AFC_REPORT.json",
+      "selector": "/scientific_status"
+    }
+  ]
+}

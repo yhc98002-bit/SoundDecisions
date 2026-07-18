@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import json
 from pathlib import Path
 
@@ -216,18 +217,33 @@ def test_target_validator_rejects_corruption_before_science(tmp_path):
 
 def test_mlp_and_single_query_capacity_contracts():
     pytest.importorskip("sklearn")
-    pytest.importorskip("torch")
+    torch = pytest.importorskip("torch")
+    torch.set_num_threads(1)
     rng = np.random.default_rng(13)
     y = ["a"] * 12 + ["b"] * 12
     X = np.concatenate(
         (rng.normal(1, 0.1, (12, 8)), rng.normal(-1, 0.1, (12, 8))), axis=0
     ).astype(np.float32)
     pred, probability = readout.fit_mlp_predict(X, y, X[:4], ["a", "b"], 0.001, 3)
+    pred_repeat, probability_repeat = readout.fit_mlp_predict(
+        X, y, X[:4], ["a", "b"], 0.001, 3
+    )
     assert len(pred) == 4 and probability.shape == (4, 2)
+    assert pred == pred_repeat
+    assert hashlib.sha256(probability.tobytes()).digest() == hashlib.sha256(
+        probability_repeat.tobytes()
+    ).digest()
     tokens = np.repeat(X[:, None, :4], 3, axis=1)
     tokens = np.pad(tokens, ((0, 0), (0, 0), (0, 28)))
     pred, probability = readout.fit_attention_predict(
         tokens, y, tokens[:4], ["a", "b"], 0.001, 3, "cpu"
     )
+    pred_repeat, probability_repeat = readout.fit_attention_predict(
+        tokens, y, tokens[:4], ["a", "b"], 0.001, 3, "cpu"
+    )
     assert len(pred) == 4 and probability.shape == (4, 2)
     assert np.allclose(probability.sum(axis=1), 1.0)
+    assert pred == pred_repeat
+    assert hashlib.sha256(probability.tobytes()).digest() == hashlib.sha256(
+        probability_repeat.tobytes()
+    ).digest()

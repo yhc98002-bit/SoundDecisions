@@ -12,4 +12,4 @@ Progress is treated as a fixed stratum. Components use an unbalanced crossed vid
 | Fork Monte Carlo (non-abstention) | 0.028045 | [0.023118, 0.032968] | 14.93% |
 | Identifiable abstention subcomponent | 0.002340 | [0.001820, 0.002913] | 1.25% |
 
-The additive seed component is estimated at zero, but video-by-seed interaction is large; therefore this is not evidence that seed choice is irrelevant for a given video. Measurer repeatability is `UNRESOLVED` because each WAV was measured once. The abstention component is a subcomponent of fork Monte Carlo variance, not an independent term.
+The additive seed estimate is boundary-clipped to zero; its raw method-of-moments estimate is negative at every progress stratum. Video-by-seed interaction is large, so this is not evidence that seed choice is irrelevant for a given video. The 17-final video baselines are held fixed and their finite-reference uncertainty is not separately decomposed. Measurer repeatability is `UNRESOLVED` because each WAV was measured once. The abstention component is a subcomponent of fork Monte Carlo variance, not an independent term.
