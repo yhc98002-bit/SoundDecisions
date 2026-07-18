@@ -195,9 +195,9 @@
   <script id="instrument-code">
   "use strict";
 
-  const SCHEMA_VERSION = "sounddecisions-human-curation-ratings-v1-1.0";
-  const MANIFEST_SCHEMA_VERSION = "sounddecisions-human-curation-items-v1-1.0";
-  const INSTRUMENT_VERSION = "human-eval-round1-curation-1.0";
+  const SCHEMA_VERSION = "sounddecisions-human-curation-ratings-v1-1.1";
+  const MANIFEST_SCHEMA_VERSION = "sounddecisions-human-curation-items-v1-1.1";
+  const INSTRUMENT_VERSION = "human-eval-round1-curation-1.1";
   const ALLOWED_TASKS = new Set(["anchor_curation", "two_event_curation"]);
   const SCREENS = ["anchor", "pair"];
 
@@ -312,7 +312,7 @@
   function blankRating(item) {
     const rating = { blind_id: item.blind_id, tasks: Array.from(item.tasks), completed: false };
     if (item.tasks.includes("anchor_curation")) {
-      rating.anchor_curation = { status: "unrated", start_s: null, end_s: null, note: "" };
+      rating.anchor_curation = { status: "unrated", start_s: null, end_s: null, event_description: "", note: "" };
     }
     if (item.tasks.includes("two_event_curation")) {
       rating.two_event_curation = { verdict: null, event_1: null, event_2: null, note: "" };
@@ -335,7 +335,7 @@
     let complete = true;
     if (rating.tasks.includes("anchor_curation")) {
       const anchor = rating.anchor_curation;
-      complete = complete && (anchor.status === "too_uncertain" || (anchor.status === "marked" && validInterval(anchor)));
+      complete = complete && (anchor.status === "too_uncertain" || (anchor.status === "marked" && validInterval(anchor) && anchor.event_description.trim().length > 0));
     }
     if (rating.tasks.includes("two_event_curation")) {
       const pair = rating.two_event_curation;
@@ -354,8 +354,8 @@
     if (!Array.isArray(rating.tasks) || rating.tasks.length < 1 || rating.tasks.length > 2 || new Set(rating.tasks).size !== rating.tasks.length || rating.tasks.some(task => !ALLOWED_TASKS.has(task)) || typeof rating.completed !== "boolean") throw new Error(`Invalid task list for ${rating.blind_id}.`);
     if (rating.tasks.includes("anchor_curation")) {
       const anchor = rating.anchor_curation;
-      if (!hasExactFields(anchor, ["status", "start_s", "end_s", "note"]) || !["unrated", "marked", "too_uncertain"].includes(anchor.status) || !validPartialInterval(anchor) || !textWithin(anchor.note, 2000)) throw new Error(`Invalid anchor curation for ${rating.blind_id}.`);
-      if (anchor.status === "marked" && !validInterval(anchor)) throw new Error(`Marked anchor is incomplete for ${rating.blind_id}.`);
+      if (!hasExactFields(anchor, ["status", "start_s", "end_s", "event_description", "note"]) || !["unrated", "marked", "too_uncertain"].includes(anchor.status) || !validPartialInterval(anchor) || !textWithin(anchor.event_description, 500) || !textWithin(anchor.note, 2000)) throw new Error(`Invalid anchor curation for ${rating.blind_id}.`);
+      if (anchor.status === "marked" && (!validInterval(anchor) || anchor.event_description.trim().length === 0)) throw new Error(`Marked anchor is incomplete for ${rating.blind_id}.`);
     } else if ("anchor_curation" in rating) throw new Error(`Unexpected anchor curation for ${rating.blind_id}.`);
     if (rating.tasks.includes("two_event_curation")) {
       const pair = rating.two_event_curation;
@@ -569,6 +569,9 @@
     const anchor = rating.anchor_curation;
     byId("form-panel").innerHTML = `<h2>Anchor curation</h2>
       <div class="rubric"><strong>Rule:</strong> Select the first clearly visible discrete occurrence that matches the candidate caption. Mark its closed visual interval [start, end]. Choose Too uncertain when no defensible interval can be marked. Do not use audio.</div>
+      <label class="field" for="anchor-event-description">Visible event description</label>
+      <p>Describe only the visible action and object. Do not mention sound or audio.</p>
+      <textarea id="anchor-event-description" maxlength="500">${escapeHtml(anchor.event_description)}</textarea>
       ${intervalMarkup("Visible event interval", "anchor", anchor)}
       <div class="interval"><button id="too-uncertain" type="button" class="danger" aria-pressed="${anchor.status === "too_uncertain"}">Too uncertain</button></div>
       <label class="field" for="anchor-note">Optional note</label>
@@ -590,6 +593,7 @@
       saveSession();
       renderForm();
     });
+    byId("anchor-event-description").addEventListener("input", event => { anchor.event_description = event.target.value; saveSession(); });
     byId("anchor-note").addEventListener("input", event => { anchor.note = event.target.value; saveSession(); });
   }
 

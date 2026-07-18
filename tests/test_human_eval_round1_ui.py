@@ -27,15 +27,15 @@ def _item(blind_id: str = "HEV2-0123456789AB", tasks: list[str] | None = None) -
         "media_path": f"media/{blind_id}.mp4",
         "fps": 30.0,
         "duration_s": 10.0,
-        "candidate_caption": "A person taps the metal bowl twice.",
+        "candidate_caption": "A loud metallic clang as a person taps the bowl twice.",
     }
 
 
 def _manifest(status: str = "CURATION_AUTHORIZED") -> dict[str, object]:
     item = _item()
     return {
-        "schema_version": "sounddecisions-human-curation-items-v1-1.0",
-        "instrument_version": "human-eval-round1-curation-1.0",
+        "schema_version": "sounddecisions-human-curation-items-v1-1.1",
+        "instrument_version": "human-eval-round1-curation-1.1",
         "manifest_id": "round1-fixture",
         "status": status,
         "default_fps": 30.0,
@@ -52,8 +52,8 @@ def _manifest(status: str = "CURATION_AUTHORIZED") -> dict[str, object]:
 def _ratings() -> dict[str, object]:
     blind_id = "HEV2-0123456789AB"
     return {
-        "schema_version": "sounddecisions-human-curation-ratings-v1-1.0",
-        "instrument_version": "human-eval-round1-curation-1.0",
+        "schema_version": "sounddecisions-human-curation-ratings-v1-1.1",
+        "instrument_version": "human-eval-round1-curation-1.1",
         "manifest_id": "round1-fixture",
         "manifest_sha256": SHA,
         "rater_id": "lead-17",
@@ -69,6 +69,7 @@ def _ratings() -> dict[str, object]:
                     "status": "unrated",
                     "start_s": 1.0,
                     "end_s": None,
+                    "event_description": "person's hand contacts the metal bowl",
                     "note": "Draft boundary",
                 },
                 "two_event_curation": {
@@ -137,6 +138,8 @@ def test_ui_has_only_curation_tasks_caption_and_permanent_mute_guards() -> None:
 
     assert "candidate_caption" in html
     assert "first clearly visible discrete occurrence" in html
+    assert "Describe only the visible action and object" in html
+    assert "Do not mention sound or audio" in html
     assert "two separable target events" in html
     assert "anchor_curation" in html
     assert "two_event_curation" in html
@@ -196,8 +199,29 @@ def test_authorization_manifest_validation_and_blank_state_have_no_presence() ->
 
     assert result["status"] == "CURATION_AUTHORIZED"
     assert result["blank"]["anchor_curation"]["status"] == "unrated"
+    assert result["blank"]["anchor_curation"]["event_description"] == ""
     assert result["blank"]["two_event_curation"]["verdict"] is None
     assert "presence" not in result["blank"]
+
+
+def test_audio_bearing_caption_does_not_supply_required_visual_description() -> None:
+    result = _run_javascript(
+        "(() => { const manifest = api.validateManifest(input); "
+        "const rating = api.blankRating(manifest.items[0]); "
+        "rating.tasks = ['anchor_curation']; delete rating.two_event_curation; "
+        "Object.assign(rating.anchor_curation, {status: 'marked', start_s: 1.0, end_s: 1.2}); "
+        "const withoutDescription = api.isCompleted(rating); "
+        "rating.anchor_curation.event_description = 'person taps the metal bowl with one hand'; "
+        "return {caption: manifest.items[0].candidate_caption, description: rating.anchor_curation.event_description, "
+        "withoutDescription, withDescription: api.isCompleted(rating)}; })()",
+        _manifest(),
+    )
+
+    assert "clang" in result["caption"]
+    assert result["description"] == "person taps the metal bowl with one hand"
+    assert result["description"] != result["caption"]
+    assert result["withoutDescription"] is False
+    assert result["withDescription"] is True
 
 
 def test_completion_requires_valid_anchor_and_ordered_described_pair() -> None:
@@ -210,7 +234,7 @@ def test_completion_requires_valid_anchor_and_ordered_described_pair() -> None:
             "partial": _ratings()["ratings"][0],
             "complete": {
                 **_ratings()["ratings"][0],
-                "anchor_curation": {"status": "marked", "start_s": 0.5, "end_s": 0.7, "note": ""},
+                "anchor_curation": {"status": "marked", "start_s": 0.5, "end_s": 0.7, "event_description": "hand contacts bowl", "note": ""},
                 "two_event_curation": {
                     "verdict": "confirm",
                     "event_1": {"description": "first", "start_s": 1.0, "end_s": 1.1},
@@ -220,7 +244,7 @@ def test_completion_requires_valid_anchor_and_ordered_described_pair() -> None:
             },
             "reversed": {
                 **_ratings()["ratings"][0],
-                "anchor_curation": {"status": "marked", "start_s": 0.5, "end_s": 0.7, "note": ""},
+                "anchor_curation": {"status": "marked", "start_s": 0.5, "end_s": 0.7, "event_description": "hand contacts bowl", "note": ""},
                 "two_event_curation": {
                     "verdict": "confirm",
                     "event_1": {"description": "later", "start_s": 3.0, "end_s": 3.1},
@@ -230,7 +254,7 @@ def test_completion_requires_valid_anchor_and_ordered_described_pair() -> None:
             },
             "uncertain": {
                 **_ratings()["ratings"][0],
-                "anchor_curation": {"status": "too_uncertain", "start_s": 0.5, "end_s": None, "note": "occluded"},
+                "anchor_curation": {"status": "too_uncertain", "start_s": 0.5, "end_s": None, "event_description": "possible hand contact", "note": "occluded"},
                 "two_event_curation": {"verdict": "reject", "event_1": None, "event_2": None, "note": "one event"},
             },
         },
@@ -262,7 +286,7 @@ def test_uncertain_and_reject_preserve_drafts_and_mute_helper_is_fail_closed() -
         "const video = {muted: false, defaultMuted: false, volume: 1}; "
         "return {anchor, pair, muted: api.enforceMuted(video), video}; })()",
         {
-            "anchor": {"status": "marked", "start_s": 1.0, "end_s": 1.2, "note": ""},
+            "anchor": {"status": "marked", "start_s": 1.0, "end_s": 1.2, "event_description": "hand contacts bowl", "note": ""},
             "pair": {
                 "verdict": "confirm",
                 "event_1": {"description": "first", "start_s": 1.0, "end_s": 1.2},
@@ -272,7 +296,7 @@ def test_uncertain_and_reject_preserve_drafts_and_mute_helper_is_fail_closed() -
         },
     )
 
-    assert result["anchor"] == {"status": "too_uncertain", "start_s": 1.0, "end_s": 1.2, "note": ""}
+    assert result["anchor"] == {"status": "too_uncertain", "start_s": 1.0, "end_s": 1.2, "event_description": "hand contacts bowl", "note": ""}
     assert result["pair"]["verdict"] == "reject"
     assert result["pair"]["event_2"]["description"] == "second"
     assert result["muted"] is True

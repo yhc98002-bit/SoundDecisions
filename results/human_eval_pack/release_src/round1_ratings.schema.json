@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://sounddecisions.local/schemas/human-curation-round1-ratings-v1.schema.json",
+  "$id": "https://sounddecisions.local/schemas/human-curation-round1-ratings-v1.1.schema.json",
   "title": "SoundDecisions blinded Round-1 curation export",
   "type": "object",
   "additionalProperties": false,
@@ -17,10 +17,10 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "sounddecisions-human-curation-ratings-v1-1.0"
+      "const": "sounddecisions-human-curation-ratings-v1-1.1"
     },
     "instrument_version": {
-      "const": "human-eval-round1-curation-1.0"
+      "const": "human-eval-round1-curation-1.1"
     },
     "manifest_id": {"type": "string", "minLength": 1, "maxLength": 200},
     "manifest_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
@@ -65,11 +65,12 @@
     "anchor_curation": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["status", "start_s", "end_s", "note"],
+      "required": ["status", "start_s", "end_s", "event_description", "note"],
       "properties": {
         "status": {"enum": ["unrated", "marked", "too_uncertain"]},
         "start_s": {"type": ["number", "null"], "minimum": 0},
         "end_s": {"type": ["number", "null"], "minimum": 0},
+        "event_description": {"type": "string", "maxLength": 500},
         "note": {"type": "string", "maxLength": 2000}
       }
     },
@@ -130,9 +131,10 @@
                           "properties": {
                             "status": {"const": "marked"},
                             "start_s": {"type": "number", "minimum": 0},
-                            "end_s": {"type": "number", "minimum": 0}
+                            "end_s": {"type": "number", "minimum": 0},
+                            "event_description": {"type": "string", "minLength": 1}
                           },
-                          "required": ["status", "start_s", "end_s"]
+                          "required": ["status", "start_s", "end_s", "event_description"]
                         },
                         {
                           "type": "object",
