@@ -1,0 +1,4 @@
+status=ENGINEERING_FAILURE
+scope=wrapper-only; no scientific computation launched
+evidence=multiline SSH wrapper returned no output and created no destination directory
+resolution=rerun as explicit remote mkdir plus single-line immutable materialize/validate command; see MATERIALIZATION_REPRO_FINAL3_20260718.log

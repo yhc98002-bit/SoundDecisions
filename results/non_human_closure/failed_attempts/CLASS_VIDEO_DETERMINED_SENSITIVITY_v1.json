@@ -1,0 +1,101 @@
+{
+  "analysis_type": "post_hoc_audit_sensitivity",
+  "changes_registered_rule_or_status": false,
+  "interpretation": "Excluding registered video-determined cases changes the pooled sustained point estimate but still does not meet the frozen s<=0.45 reproduction cutoff.",
+  "nondetermined_only_curve": [
+    {
+      "mean_commitment_gain": 0.4212496117553694,
+      "progress": 0.05
+    },
+    {
+      "mean_commitment_gain": 0.4840530382577074,
+      "progress": 0.15
+    },
+    {
+      "mean_commitment_gain": 0.5564207736726757,
+      "progress": 0.25
+    },
+    {
+      "mean_commitment_gain": 0.6016264780863115,
+      "progress": 0.35
+    },
+    {
+      "mean_commitment_gain": 0.6491518014111628,
+      "progress": 0.45
+    },
+    {
+      "mean_commitment_gain": 0.7296303389779093,
+      "progress": 0.6
+    },
+    {
+      "mean_commitment_gain": 0.8096218459052262,
+      "progress": 0.75
+    },
+    {
+      "mean_commitment_gain": 0.9050721006779007,
+      "progress": 0.9
+    }
+  ],
+  "nondetermined_only_reproduces_by_cutoff": false,
+  "nondetermined_only_sustained_crossing": 0.6,
+  "registered_all_cell_curve": [
+    {
+      "mean_commitment_gain": 0.340303607927867,
+      "progress": 0.05
+    },
+    {
+      "mean_commitment_gain": 0.3905284303436856,
+      "progress": 0.15
+    },
+    {
+      "mean_commitment_gain": 0.4476357346983613,
+      "progress": 0.25
+    },
+    {
+      "mean_commitment_gain": 0.4851567326623928,
+      "progress": 0.35
+    },
+    {
+      "mean_commitment_gain": 0.5215778511338354,
+      "progress": 0.45
+    },
+    {
+      "mean_commitment_gain": 0.5872877216875395,
+      "progress": 0.6
+    },
+    {
+      "mean_commitment_gain": 0.6454168518061381,
+      "progress": 0.75
+    },
+    {
+      "mean_commitment_gain": 0.7182270550035463,
+      "progress": 0.9
+    }
+  ],
+  "registered_all_cell_sustained_crossing": 0.9,
+  "registered_scientific_status": "NOT_SUPPORTED",
+  "reproduction_cutoff": 0.45,
+  "schema": "sounddecisions.class_video_determined_sensitivity.v1",
+  "source": {
+    "merged_completion": "/XYFS02/HDD_POOL/paratera_xy/pxy1289/HaocunYe/Research/SoundDecisions-non-human-artifacts/nhc_20260717T151345p0800_a052920/class/merged_v2/CLASS_POSTERIORS_MERGED.completion.json",
+    "merged_completion_sha256": "f2bfa420782444bc37b21f9379f535f9592b47889a625f81880abbebd620d3df",
+    "posterior_data_sha256": "a381e0f8e662aae482959f0cd2e7fe46f3cb1e8ef2ef7040b4e65913ff86cd1e",
+    "registered_analysis": "/XYFS02/HDD_POOL/paratera_xy/pxy1289/HaocunYe/Research/SoundDecisions-non-human-closure/results/non_human_closure/CLASS_MULTISEED_COMMITMENT.json",
+    "registered_analysis_sha256": "aa2feee890b995c70b298f9bff8df4036c88fde7f4cb9837e33f455c0b291d24",
+    "script_sha256": "aa4df2fe3043083d2b939c6108bfba7d1b8ca66a0cb678d4ed5cd92c1c581173"
+  },
+  "theta": 0.7,
+  "video_count": 48,
+  "video_determined_count": 9,
+  "video_determined_ids": [
+    "1002",
+    "1956",
+    "1964",
+    "2881",
+    "3114",
+    "3912",
+    "658",
+    "662",
+    "955"
+  ]
+}

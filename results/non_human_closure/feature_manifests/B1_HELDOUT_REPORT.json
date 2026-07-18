@@ -1,0 +1,34 @@
+{
+  "calibration_authority": {
+    "calibration_attempt": "/XYFS02/HDD_POOL/paratera_xy/pxy1289/HaocunYe/Research/SoundDecisions-non-human-artifacts/nhc_20260717T151345p0800_a052920/b1/calibration/calibration_v1",
+    "calibration_completion_sha256": "26a498c969c145405f548d84ee159f6718059668b2a3b5318a1934d1abd5bd19",
+    "protocol_sha256": "5c4fc4025995c16e355feb8cc02fbb3627891d47f6df052becde4845eaa7bd09",
+    "tolerance_sha256": "2abbbae24cb249c22894d08c03a506374ce5b8a5fbf742be7e553f2220a80863"
+  },
+  "created_utc": "2026-07-17T11:53:41.150540Z",
+  "evaluated_metrics": 1960,
+  "failure_count": 0,
+  "failures": [],
+  "heldout_clip": "1002",
+  "progress_points": [
+    0.05,
+    0.15,
+    0.25,
+    0.35,
+    0.45,
+    0.6,
+    0.75,
+    0.9
+  ],
+  "protocol_sha256": "5c4fc4025995c16e355feb8cc02fbb3627891d47f6df052becde4845eaa7bd09",
+  "schema": "sounddecisions_b1_same_forward_heldout_v1",
+  "source_replay_attempts": [
+    "/XYFS02/HDD_POOL/paratera_xy/pxy1289/HaocunYe/Research/SoundDecisions-non-human-artifacts/nhc_20260717T151345p0800_a052920/b1/replay/heldout_replay_a_v2",
+    "/XYFS02/HDD_POOL/paratera_xy/pxy1289/HaocunYe/Research/SoundDecisions-non-human-artifacts/nhc_20260717T151345p0800_a052920/b1/replay/heldout_replay_b_v2"
+  ],
+  "source_replay_units": 16,
+  "status": "PASS",
+  "tolerance_path": "/XYFS02/HDD_POOL/paratera_xy/pxy1289/HaocunYe/Research/SoundDecisions-non-human-artifacts/nhc_20260717T151345p0800_a052920/b1/calibration/calibration_v1/TOLERANCE.json",
+  "tolerance_sha256": "2abbbae24cb249c22894d08c03a506374ce5b8a5fbf742be7e553f2220a80863",
+  "tolerance_unchanged": true
+}

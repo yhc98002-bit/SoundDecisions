@@ -1,0 +1,80 @@
+{
+  "schema": "sounddecisions.non_human_test_run.v1",
+  "status": "PASS",
+  "node": "an12",
+  "environment": {
+    "python": "/XYFS02/HDD_POOL/paratera_xy/pxy1289/HaocunYe/Research/SoundDecisions/.venv/bin/python",
+    "OMP_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1",
+    "MKL_NUM_THREADS": "1",
+    "PYTHONHASHSEED": "0",
+    "CUBLAS_WORKSPACE_CONFIG": ":4096:8"
+  },
+  "runs": [
+    {
+      "id": "full_closure_tests",
+      "command": "python -m pytest -q tests/test_b1_lineage.py tests/test_b2_class_closure.py tests/test_b2_feature_recollection.py tests/test_b2_inventory_merge.py tests/test_class_internal_readout.py tests/test_class_video_determined_sensitivity.py tests/test_class_probes.py tests/test_material_reference_feasibility.py tests/test_materialize_non_human_closure.py tests/test_validate_non_human_closure_bundle.py",
+      "result": "95 passed, 2 expected MLP convergence warnings",
+      "log": "FULL_CLOSURE_TESTS_FINAL4_20260718.log",
+      "log_sha256": "11fd36a615cf37c8e7d06a89edc70d826f0cf84b86e9b6a6a9f910ae318d2102"
+    },
+    {
+      "id": "final_repair_tests",
+      "command": "python -m pytest -q tests/test_materialize_non_human_closure.py tests/test_validate_non_human_closure_bundle.py",
+      "result": "7 passed",
+      "log": "FINAL_REPAIR_TESTS_20260718.log",
+      "log_sha256": "8f819b75940eb4b1dc61404cc16ea2a90c4db443899f846744ae5a24ffbdc6f6"
+    },
+    {
+      "id": "final_validator_repair_tests",
+      "command": "python -m pytest -q tests/test_validate_non_human_closure_bundle.py tests/test_materialize_non_human_closure.py",
+      "result": "8 passed",
+      "log": "FINAL_VALIDATOR_REPAIR2_TESTS_20260718.log",
+      "log_sha256": "c513a336404899b0e4e59540faac60f730d81e38e236b1b942334605c26575ed"
+    },
+    {
+      "id": "fresh_materialization_reproduction",
+      "command": "scripts/materialize_non_human_closure.py materialize and validate into immutable deliverable_smoke_v4",
+      "result": "PASS; 38 files created, 37 manifest outputs validated",
+      "log": "MATERIALIZATION_REPRO_FINAL3_20260718.log",
+      "log_sha256": "c0ca57f65cd289d82da2bab30df34345d729b1275062dbebd58153b1900bc1ea"
+    },
+    {
+      "id": "canonical_fresh_materialization_comparison",
+      "command": "compare sorted path/size/SHA rows from canonical and immutable deliverable_smoke_v4 materialization manifests",
+      "result": "PASS; all 37 output rows are byte/hash identical",
+      "log": "MATERIALIZATION_MAP_COMPARISON_20260718.log",
+      "log_sha256": "a8ea601ecc04e3a7a7baea2949ac7ef9827c752d992b9a1aa3c9c0c513c2029b"
+    },
+    {
+      "id": "canonical_artifact_validation",
+      "command": "scripts/materialize_non_human_closure.py validate against the immutable scientific artifact root and canonical committed result directory",
+      "result": "PASS; 37 materialized outputs validated",
+      "log": "ARTIFACT_VALIDATION_FINAL2_20260718.log",
+      "log_sha256": "171b807450719ea77f5d9d2122d25a3265fccfbb8cc5d5fbe3f85f4d775719e4"
+    },
+    {
+      "id": "feature_and_sensitivity_validation",
+      "command": "verify feature checksums, reproduce video-determined sensitivity into a new immutable output, and compare bytes",
+      "result": "PASS; 14 feature files and sensitivity reproduction validated",
+      "log": "ARTIFACT_VALIDATION_FINAL_20260718.log",
+      "log_sha256": "dd19dc1ee70372f4d1b6a1f4af94cd2afb46763908cbe145c051ead4c9ad5cfc"
+    }
+  ],
+  "failed_attempts": [
+    {
+      "id": "multiline_ssh_materialization_wrapper",
+      "scientific_effect": "none",
+      "resolution": "rerun with explicit remote directory creation and a single-line immutable command",
+      "log": "MATERIALIZATION_REPRO_FINAL2_20260718.log",
+      "log_sha256": "7fc6e9e10de261feca89e0ad5f57259027c7f3633152aba4b86ec1f3a08c64da"
+    },
+    {
+      "id": "bundle_validator_probability_sum_threshold",
+      "scientific_effect": "none",
+      "resolution": "enforce 15 values in [0,1] and replace fixed 1e-8 with min(1e-6 producer gate, component-count-scaled float32 epsilon)",
+      "log": "BUNDLE_VALIDATION_ATTEMPT1_20260718.log",
+      "log_sha256": "6d530a4079197291c693ae0d14d08260738bb029fa78f5a4fba55c9edc03bfee"
+    }
+  ]
+}

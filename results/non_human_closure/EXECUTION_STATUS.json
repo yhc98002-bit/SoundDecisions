@@ -1,0 +1,53 @@
+{
+  "schema": "sounddecisions_non_human_closure_status_v1",
+  "status": "COMPLETE",
+  "evidence_tier": "exploratory_continuity",
+  "starting_commit": "a1e8f3ae324e8886379c19c5bc312d7ebc942946",
+  "branch": "agent/non-human-closure",
+  "sealed_confirmatory_cohort_used": false,
+  "b6_used": false,
+  "human_blocked_axis_v2_pass_allowed": false,
+  "workstreams": {
+    "class_multiseed": {
+      "artifact_status": "COMPLETE",
+      "scientific_status": "NOT_SUPPORTED",
+      "replication_label": "not_reproduced",
+      "scope": "exploratory clip-level coarse Class continuity"
+    },
+    "class_variance_decomposition": {
+      "artifact_status": "COMPLETE",
+      "scientific_status": "SUPPORTED_EXPLORATORILY"
+    },
+    "b1_same_forward_identity": {
+      "artifact_status": "COMPLETE",
+      "engineering_gate": "PASS",
+      "scientific_status": "NOT_TESTED"
+    },
+    "b1_feature_recollection": {
+      "artifact_status": "COMPLETE",
+      "scientific_status": "NOT_TESTED"
+    },
+    "class_internal_information_readout": {
+      "artifact_status": "COMPLETE",
+      "fork_majority_signal": "SUPPORTED_EXPLORATORILY",
+      "ode_final_signal": "NOT_SUPPORTED",
+      "earlier_than_external": "NOT_SUPPORTED",
+      "action_readout": "NOT_SUPPORTED"
+    },
+    "material_continuity_2afc": {
+      "artifact_status": "INCOMPLETE_ARTIFACTS",
+      "scientific_status": "INCOMPLETE_ARTIFACTS",
+      "measurement_status": "NOT_TESTED",
+      "distinct_material_window": "UNRESOLVED"
+    },
+    "human_blocked_axes": {
+      "presence": "NOT_TESTED",
+      "timing": "NOT_TESTED",
+      "event_centered_class": "NOT_TESTED",
+      "event_centered_material": "NOT_TESTED",
+      "binding": "NOT_TESTED"
+    }
+  },
+  "current_checkpoint": "integrated_closure_complete_pending_pi_review",
+  "updated_at": "2026-07-18T18:06:03Z"
+}

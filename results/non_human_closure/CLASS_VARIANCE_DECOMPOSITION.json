@@ -1,0 +1,565 @@
+{
+  "by_progress": [
+    {
+      "abstention_increment_variance_mean": 0.003756351152482427,
+      "abstention_is_subcomponent_of_fork_monte_carlo": true,
+      "complete_crossed_table": false,
+      "component_fractions": {
+        "abstention_within_fork_monte_carlo": 0.02362703712690854,
+        "base_seed": 0.0,
+        "fork_monte_carlo_nonabstention": 0.2621318060779141,
+        "video": 0.29055082605478944,
+        "video_by_seed_interaction": 0.4236903307403878
+      },
+      "component_total": 0.1589852816629456,
+      "component_video_bootstrap_ci": {
+        "abstention_within_fork_monte_carlo": {
+          "ci_high": 0.004903983547258658,
+          "ci_low": 0.0027555132895144803,
+          "valid_draws": 5000
+        },
+        "base_seed": {
+          "ci_high": 0.004318499175366505,
+          "ci_low": 0.0,
+          "valid_draws": 5000
+        },
+        "fork_monte_carlo_nonabstention": {
+          "ci_high": 0.049344125955709896,
+          "ci_low": 0.033714472922905594,
+          "valid_draws": 5000
+        },
+        "video": {
+          "ci_high": 0.05961367233977815,
+          "ci_low": 0.03128109767764065,
+          "valid_draws": 5000
+        },
+        "video_by_seed_interaction": {
+          "ci_high": 0.08583655353184702,
+          "ci_low": 0.04605627346351507,
+          "valid_draws": 5000
+        }
+      },
+      "components": {
+        "abstention_within_fork_monte_carlo": 0.003756351152482427,
+        "base_seed": 0.0,
+        "fork_monte_carlo_nonabstention": 0.041675099022113804,
+        "video": 0.04619330491772221,
+        "video_by_seed_interaction": 0.06736052657062713
+      },
+      "fork_bootstrap_draws": 5000,
+      "fork_bootstrap_scorable_fraction_mean": 0.9318779411764705,
+      "fork_conditional_confident_label_variance_mean": 0.04361655065658185,
+      "fork_monte_carlo_total": 0.04543145017459623,
+      "fork_monte_carlo_variance_mean": 0.04543145017459623,
+      "interaction_plus_measurement_residual": 0.11279197674522336,
+      "measurer_repeatability_identifiability": "not identifiable from one deterministic posterior measurement per WAV",
+      "measurer_repeatability_variance": null,
+      "method": "unbalanced_crossed_pair_covariance_moments",
+      "n_scorable": 765,
+      "n_total": 816,
+      "progress": 0.05,
+      "raw_base_seed_component": -0.0014701726038110863,
+      "raw_video_component": 0.04619330491772221,
+      "scientific_status": "SUPPORTED_EXPLORATORILY",
+      "video_cluster_bootstrap_draws": 5000,
+      "video_cluster_bootstrap_seed": 20260717
+    },
+    {
+      "abstention_increment_variance_mean": 0.0032212639463195807,
+      "abstention_is_subcomponent_of_fork_monte_carlo": true,
+      "complete_crossed_table": false,
+      "component_fractions": {
+        "abstention_within_fork_monte_carlo": 0.018344959594863004,
+        "base_seed": 0.0,
+        "fork_monte_carlo_nonabstention": 0.22343706970688001,
+        "video": 0.2910540475000981,
+        "video_by_seed_interaction": 0.46716392319815886
+      },
+      "component_total": 0.17559395155177154,
+      "component_video_bootstrap_ci": {
+        "abstention_within_fork_monte_carlo": {
+          "ci_high": 0.004063452753150777,
+          "ci_low": 0.0024358318277445763,
+          "valid_draws": 5000
+        },
+        "base_seed": {
+          "ci_high": 0.0047130939688742185,
+          "ci_low": 0.0,
+          "valid_draws": 5000
+        },
+        "fork_monte_carlo_nonabstention": {
+          "ci_high": 0.04750736503015268,
+          "ci_low": 0.03140186529457731,
+          "valid_draws": 5000
+        },
+        "video": {
+          "ci_high": 0.06716475156741734,
+          "ci_low": 0.032269318221343685,
+          "valid_draws": 5000
+        },
+        "video_by_seed_interaction": {
+          "ci_high": 0.098534410270606,
+          "ci_low": 0.06364740982766842,
+          "valid_draws": 5000
+        }
+      },
+      "components": {
+        "abstention_within_fork_monte_carlo": 0.0032212639463195807,
+        "base_seed": 0.0,
+        "fork_monte_carlo_nonabstention": 0.03923419799297969,
+        "video": 0.05110733031567924,
+        "video_by_seed_interaction": 0.08203115929679303
+      },
+      "fork_bootstrap_draws": 5000,
+      "fork_bootstrap_scorable_fraction_mean": 0.930095588235294,
+      "fork_conditional_confident_label_variance_mean": 0.041230954607158636,
+      "fork_monte_carlo_total": 0.04245546193929927,
+      "fork_monte_carlo_variance_mean": 0.04245546193929927,
+      "interaction_plus_measurement_residual": 0.1244866212360923,
+      "measurer_repeatability_identifiability": "not identifiable from one deterministic posterior measurement per WAV",
+      "measurer_repeatability_variance": null,
+      "method": "unbalanced_crossed_pair_covariance_moments",
+      "n_scorable": 766,
+      "n_total": 816,
+      "progress": 0.15,
+      "raw_base_seed_component": -0.0017316521841966726,
+      "raw_video_component": 0.05110733031567924,
+      "scientific_status": "SUPPORTED_EXPLORATORILY",
+      "video_cluster_bootstrap_draws": 5000,
+      "video_cluster_bootstrap_seed": 20260717
+    },
+    {
+      "abstention_increment_variance_mean": 0.002811902593058839,
+      "abstention_is_subcomponent_of_fork_monte_carlo": true,
+      "complete_crossed_table": false,
+      "component_fractions": {
+        "abstention_within_fork_monte_carlo": 0.01488291492781184,
+        "base_seed": 0.0,
+        "fork_monte_carlo_nonabstention": 0.1773037225887406,
+        "video": 0.31735449712749325,
+        "video_by_seed_interaction": 0.4904588653559544
+      },
+      "component_total": 0.18893493691912533,
+      "component_video_bootstrap_ci": {
+        "abstention_within_fork_monte_carlo": {
+          "ci_high": 0.003580975446243868,
+          "ci_low": 0.002100485863705029,
+          "valid_draws": 5000
+        },
+        "base_seed": {
+          "ci_high": 0.005552351169965616,
+          "ci_low": 0.0,
+          "valid_draws": 5000
+        },
+        "fork_monte_carlo_nonabstention": {
+          "ci_high": 0.04015690345464909,
+          "ci_low": 0.026957568893114674,
+          "valid_draws": 5000
+        },
+        "video": {
+          "ci_high": 0.0811662772910163,
+          "ci_low": 0.03517587633686054,
+          "valid_draws": 5000
+        },
+        "video_by_seed_interaction": {
+          "ci_high": 0.10935696564018271,
+          "ci_low": 0.07357111119974341,
+          "valid_draws": 5000
+        }
+      },
+      "components": {
+        "abstention_within_fork_monte_carlo": 0.002811902593058839,
+        "base_seed": 0.0,
+        "fork_monte_carlo_nonabstention": 0.033498867642829805,
+        "video": 0.05995935189578368,
+        "video_by_seed_interaction": 0.09266481478745303
+      },
+      "fork_bootstrap_draws": 5000,
+      "fork_bootstrap_scorable_fraction_mean": 0.9215355392156862,
+      "fork_conditional_confident_label_variance_mean": 0.036040939478326435,
+      "fork_monte_carlo_total": 0.03631077023588864,
+      "fork_monte_carlo_variance_mean": 0.03631077023588864,
+      "interaction_plus_measurement_residual": 0.12897558502334167,
+      "measurer_repeatability_identifiability": "not identifiable from one deterministic posterior measurement per WAV",
+      "measurer_repeatability_variance": null,
+      "method": "unbalanced_crossed_pair_covariance_moments",
+      "n_scorable": 757,
+      "n_total": 816,
+      "progress": 0.25,
+      "raw_base_seed_component": -0.0015889887644310113,
+      "raw_video_component": 0.05995935189578368,
+      "scientific_status": "SUPPORTED_EXPLORATORILY",
+      "video_cluster_bootstrap_draws": 5000,
+      "video_cluster_bootstrap_seed": 20260717
+    },
+    {
+      "abstention_increment_variance_mean": 0.0026663229167751567,
+      "abstention_is_subcomponent_of_fork_monte_carlo": true,
+      "complete_crossed_table": false,
+      "component_fractions": {
+        "abstention_within_fork_monte_carlo": 0.013667520962023533,
+        "base_seed": 0.0,
+        "fork_monte_carlo_nonabstention": 0.15996545804755888,
+        "video": 0.33017598766167267,
+        "video_by_seed_interaction": 0.4961910333287449
+      },
+      "component_total": 0.1950846041636798,
+      "component_video_bootstrap_ci": {
+        "abstention_within_fork_monte_carlo": {
+          "ci_high": 0.0034175333097887554,
+          "ci_low": 0.0019879990604963547,
+          "valid_draws": 5000
+        },
+        "base_seed": {
+          "ci_high": 0.004160185951722307,
+          "ci_low": 0.0,
+          "valid_draws": 5000
+        },
+        "fork_monte_carlo_nonabstention": {
+          "ci_high": 0.03789721547879058,
+          "ci_low": 0.024823675614061163,
+          "valid_draws": 5000
+        },
+        "video": {
+          "ci_high": 0.0872948311162,
+          "ci_low": 0.03583411520925575,
+          "valid_draws": 5000
+        },
+        "video_by_seed_interaction": {
+          "ci_high": 0.11395984101150987,
+          "ci_low": 0.07852142009145444,
+          "valid_draws": 5000
+        }
+      },
+      "components": {
+        "abstention_within_fork_monte_carlo": 0.0026663229167751567,
+        "base_seed": 0.0,
+        "fork_monte_carlo_nonabstention": 0.031206798063069748,
+        "video": 0.06441225185732943,
+        "video_by_seed_interaction": 0.09679923132650545
+      },
+      "fork_bootstrap_draws": 5000,
+      "fork_bootstrap_scorable_fraction_mean": 0.9159686274509804,
+      "fork_conditional_confident_label_variance_mean": 0.03340783622765755,
+      "fork_monte_carlo_total": 0.033873120979844906,
+      "fork_monte_carlo_variance_mean": 0.033873120979844906,
+      "interaction_plus_measurement_residual": 0.13067235230635035,
+      "measurer_repeatability_identifiability": "not identifiable from one deterministic posterior measurement per WAV",
+      "measurer_repeatability_variance": null,
+      "method": "unbalanced_crossed_pair_covariance_moments",
+      "n_scorable": 749,
+      "n_total": 816,
+      "progress": 0.35,
+      "raw_base_seed_component": -0.0028328836322733426,
+      "raw_video_component": 0.06441225185732943,
+      "scientific_status": "SUPPORTED_EXPLORATORILY",
+      "video_cluster_bootstrap_draws": 5000,
+      "video_cluster_bootstrap_seed": 20260717
+    },
+    {
+      "abstention_increment_variance_mean": 0.002201651177797634,
+      "abstention_is_subcomponent_of_fork_monte_carlo": true,
+      "complete_crossed_table": false,
+      "component_fractions": {
+        "abstention_within_fork_monte_carlo": 0.011146711383122633,
+        "base_seed": 0.0,
+        "fork_monte_carlo_nonabstention": 0.15260038531083273,
+        "video": 0.35658378393328566,
+        "video_by_seed_interaction": 0.47966911937275897
+      },
+      "component_total": 0.19751576066921228,
+      "component_video_bootstrap_ci": {
+        "abstention_within_fork_monte_carlo": {
+          "ci_high": 0.0027923981177320487,
+          "ci_low": 0.0016592081217644801,
+          "valid_draws": 5000
+        },
+        "base_seed": {
+          "ci_high": 0.004000035257242128,
+          "ci_low": 0.0,
+          "valid_draws": 5000
+        },
+        "fork_monte_carlo_nonabstention": {
+          "ci_high": 0.0358351272242583,
+          "ci_low": 0.024467212897102467,
+          "valid_draws": 5000
+        },
+        "video": {
+          "ci_high": 0.09628894997740553,
+          "ci_low": 0.036664825562360885,
+          "valid_draws": 5000
+        },
+        "video_by_seed_interaction": {
+          "ci_high": 0.1109079109660941,
+          "ci_low": 0.07760843446676273,
+          "valid_draws": 5000
+        }
+      },
+      "components": {
+        "abstention_within_fork_monte_carlo": 0.002201651177797634,
+        "base_seed": 0.0,
+        "fork_monte_carlo_nonabstention": 0.030140981183084014,
+        "video": 0.07043091732588895,
+        "video_by_seed_interaction": 0.09474221098244168
+      },
+      "fork_bootstrap_draws": 5000,
+      "fork_bootstrap_scorable_fraction_mean": 0.9102487745098038,
+      "fork_conditional_confident_label_variance_mean": 0.03231115801084458,
+      "fork_monte_carlo_total": 0.03234263236088165,
+      "fork_monte_carlo_variance_mean": 0.03234263236088165,
+      "interaction_plus_measurement_residual": 0.12708484334332332,
+      "measurer_repeatability_identifiability": "not identifiable from one deterministic posterior measurement per WAV",
+      "measurer_repeatability_variance": null,
+      "method": "unbalanced_crossed_pair_covariance_moments",
+      "n_scorable": 748,
+      "n_total": 816,
+      "progress": 0.45,
+      "raw_base_seed_component": -0.0027969637757403196,
+      "raw_video_component": 0.07043091732588895,
+      "scientific_status": "SUPPORTED_EXPLORATORILY",
+      "video_cluster_bootstrap_draws": 5000,
+      "video_cluster_bootstrap_seed": 20260717
+    },
+    {
+      "abstention_increment_variance_mean": 0.0018790713973945012,
+      "abstention_is_subcomponent_of_fork_monte_carlo": true,
+      "complete_crossed_table": false,
+      "component_fractions": {
+        "abstention_within_fork_monte_carlo": 0.009393531833581506,
+        "base_seed": 0.0,
+        "fork_monte_carlo_nonabstention": 0.11268706316205888,
+        "video": 0.4385278410832482,
+        "video_by_seed_interaction": 0.4393915639211115
+      },
+      "component_total": 0.20003885979040334,
+      "component_video_bootstrap_ci": {
+        "abstention_within_fork_monte_carlo": {
+          "ci_high": 0.002382879412628096,
+          "ci_low": 0.0014067451123643876,
+          "valid_draws": 5000
+        },
+        "base_seed": {
+          "ci_high": 0.0033895313347646026,
+          "ci_low": 0.0,
+          "valid_draws": 5000
+        },
+        "fork_monte_carlo_nonabstention": {
+          "ci_high": 0.027745708451209262,
+          "ci_low": 0.017531185622681904,
+          "valid_draws": 5000
+        },
+        "video": {
+          "ci_high": 0.12073645322161287,
+          "ci_low": 0.042982567408702294,
+          "valid_draws": 5000
+        },
+        "video_by_seed_interaction": {
+          "ci_high": 0.10489533087637491,
+          "ci_low": 0.07072286879420817,
+          "valid_draws": 5000
+        }
+      },
+      "components": {
+        "abstention_within_fork_monte_carlo": 0.0018790713973945012,
+        "base_seed": 0.0,
+        "fork_monte_carlo_nonabstention": 0.022541791628067423,
+        "video": 0.08772260931664017,
+        "video_by_seed_interaction": 0.08789538744830128
+      },
+      "fork_bootstrap_draws": 5000,
+      "fork_bootstrap_scorable_fraction_mean": 0.8989926470588235,
+      "fork_conditional_confident_label_variance_mean": 0.02454616126864056,
+      "fork_monte_carlo_total": 0.024420863025461925,
+      "fork_monte_carlo_variance_mean": 0.024420863025461925,
+      "interaction_plus_measurement_residual": 0.1123162504737632,
+      "measurer_repeatability_identifiability": "not identifiable from one deterministic posterior measurement per WAV",
+      "measurer_repeatability_variance": null,
+      "method": "unbalanced_crossed_pair_covariance_moments",
+      "n_scorable": 733,
+      "n_total": 816,
+      "progress": 0.6,
+      "raw_base_seed_component": -0.002847121765424319,
+      "raw_video_component": 0.08772260931664017,
+      "scientific_status": "SUPPORTED_EXPLORATORILY",
+      "video_cluster_bootstrap_draws": 5000,
+      "video_cluster_bootstrap_seed": 20260717
+    },
+    {
+      "abstention_increment_variance_mean": 0.0013527504088403685,
+      "abstention_is_subcomponent_of_fork_monte_carlo": true,
+      "complete_crossed_table": false,
+      "component_fractions": {
+        "abstention_within_fork_monte_carlo": 0.006843575742695831,
+        "base_seed": 0.0,
+        "fork_monte_carlo_nonabstention": 0.08460463123853094,
+        "video": 0.5705449585556164,
+        "video_by_seed_interaction": 0.3380068344631569
+      },
+      "component_total": 0.19766719324823182,
+      "component_video_bootstrap_ci": {
+        "abstention_within_fork_monte_carlo": {
+          "ci_high": 0.0018558753729692597,
+          "ci_low": 0.0009203646009755322,
+          "valid_draws": 5000
+        },
+        "base_seed": {
+          "ci_high": 0.002747020946623669,
+          "ci_low": 0.0,
+          "valid_draws": 5000
+        },
+        "fork_monte_carlo_nonabstention": {
+          "ci_high": 0.020929751928589566,
+          "ci_low": 0.01278958181579279,
+          "valid_draws": 5000
+        },
+        "video": {
+          "ci_high": 0.15145893052237788,
+          "ci_low": 0.05699347693002883,
+          "valid_draws": 5000
+        },
+        "video_by_seed_interaction": {
+          "ci_high": 0.08486876541366059,
+          "ci_low": 0.050911473759794115,
+          "valid_draws": 5000
+        }
+      },
+      "components": {
+        "abstention_within_fork_monte_carlo": 0.0013527504088403685,
+        "base_seed": 0.0,
+        "fork_monte_carlo_nonabstention": 0.016723559992722088,
+        "video": 0.11277802057961743,
+        "video_by_seed_interaction": 0.06681286226705194
+      },
+      "fork_bootstrap_draws": 5000,
+      "fork_bootstrap_scorable_fraction_mean": 0.8761742647058824,
+      "fork_conditional_confident_label_variance_mean": 0.018587758137787944,
+      "fork_monte_carlo_total": 0.018076310401562455,
+      "fork_monte_carlo_variance_mean": 0.018076310401562455,
+      "interaction_plus_measurement_residual": 0.08488917266861438,
+      "measurer_repeatability_identifiability": "not identifiable from one deterministic posterior measurement per WAV",
+      "measurer_repeatability_variance": null,
+      "method": "unbalanced_crossed_pair_covariance_moments",
+      "n_scorable": 710,
+      "n_total": 816,
+      "progress": 0.75,
+      "raw_base_seed_component": -0.0032123446685561685,
+      "raw_video_component": 0.11277802057961743,
+      "scientific_status": "SUPPORTED_EXPLORATORILY",
+      "video_cluster_bootstrap_draws": 5000,
+      "video_cluster_bootstrap_seed": 20260717
+    },
+    {
+      "abstention_increment_variance_mean": 0.0008275613235010164,
+      "abstention_is_subcomponent_of_fork_monte_carlo": true,
+      "complete_crossed_table": false,
+      "component_fractions": {
+        "abstention_within_fork_monte_carlo": 0.004376387617486055,
+        "base_seed": 0.0,
+        "fork_monte_carlo_nonabstention": 0.0493810062201971,
+        "video": 0.7485226764206445,
+        "video_by_seed_interaction": 0.1977199297416725
+      },
+      "component_total": 0.18909689813453856,
+      "component_video_bootstrap_ci": {
+        "abstention_within_fork_monte_carlo": {
+          "ci_high": 0.001181927232063688,
+          "ci_low": 0.0005224590385348742,
+          "valid_draws": 5000
+        },
+        "base_seed": {
+          "ci_high": 0.0007222045660754458,
+          "ci_low": 0.0,
+          "valid_draws": 5000
+        },
+        "fork_monte_carlo_nonabstention": {
+          "ci_high": 0.012356133624871632,
+          "ci_low": 0.006474817729504222,
+          "valid_draws": 5000
+        },
+        "video": {
+          "ci_high": 0.18885075302504623,
+          "ci_low": 0.06811931941942027,
+          "valid_draws": 5000
+        },
+        "video_by_seed_interaction": {
+          "ci_high": 0.05448046799294873,
+          "ci_low": 0.023359859927418333,
+          "valid_draws": 5000
+        }
+      },
+      "components": {
+        "abstention_within_fork_monte_carlo": 0.0008275613235010164,
+        "base_seed": 0.0,
+        "fork_monte_carlo_nonabstention": 0.009337795103001626,
+        "video": 0.14154331629450678,
+        "video_by_seed_interaction": 0.037388225413529166
+      },
+      "fork_bootstrap_draws": 5000,
+      "fork_bootstrap_scorable_fraction_mean": 0.8462286764705883,
+      "fork_conditional_confident_label_variance_mean": 0.010384895830738825,
+      "fork_monte_carlo_total": 0.010165356426502643,
+      "fork_monte_carlo_variance_mean": 0.010165356426502643,
+      "interaction_plus_measurement_residual": 0.047553581840031806,
+      "measurer_repeatability_identifiability": "not identifiable from one deterministic posterior measurement per WAV",
+      "measurer_repeatability_variance": null,
+      "method": "unbalanced_crossed_pair_covariance_moments",
+      "n_scorable": 683,
+      "n_total": 816,
+      "progress": 0.9,
+      "raw_base_seed_component": -0.0036597331361697817,
+      "raw_video_component": 0.14154331629450678,
+      "scientific_status": "SUPPORTED_EXPLORATORILY",
+      "video_cluster_bootstrap_draws": 5000,
+      "video_cluster_bootstrap_seed": 20260717
+    }
+  ],
+  "fork_variance_method": "within-cell nonparametric fork bootstrap; abstention increment is full-label bootstrap variance minus fixed-confident-count label bootstrap variance",
+  "measurement_limit": "posterior inference was run once per immutable WAV; repeat-inference or cross-device measurement variance is not identifiable",
+  "measurer_repeatability_variance": null,
+  "model": "progress-stratified crossed random-effects method-of-moments",
+  "overall_mean_component_fractions": {
+    "abstention_within_fork_monte_carlo": 0.012453694290457638,
+    "base_seed": 0.0,
+    "fork_monte_carlo_nonabstention": 0.14928237424671387,
+    "video": 0.4219440577086575,
+    "video_by_seed_interaction": 0.41631987375417095
+  },
+  "overall_mean_component_video_bootstrap_ci": {
+    "abstention_within_fork_monte_carlo": {
+      "ci_high": 0.0029127213414469493,
+      "ci_low": 0.001819658246306574,
+      "valid_draws": 5000
+    },
+    "base_seed": {
+      "ci_high": 0.0026051019872359747,
+      "ci_low": 0.0,
+      "valid_draws": 5000
+    },
+    "fork_monte_carlo_nonabstention": {
+      "ci_high": 0.03296764845397094,
+      "ci_low": 0.023118317114490194,
+      "valid_draws": 5000
+    },
+    "video": {
+      "ci_high": 0.10477248773047186,
+      "ci_low": 0.04357748036277037,
+      "valid_draws": 5000
+    },
+    "video_by_seed_interaction": {
+      "ci_high": 0.09240922879530693,
+      "ci_low": 0.06329242866729369,
+      "valid_draws": 5000
+    }
+  },
+  "overall_mean_components": {
+    "abstention_within_fork_monte_carlo": 0.0023396093645211904,
+    "base_seed": 0.0,
+    "fork_monte_carlo_nonabstention": 0.028044886328483527,
+    "video": 0.079268387812896,
+    "video_by_seed_interaction": 0.07821180226158783
+  },
+  "progress_treated_as_fixed_stratum": true,
+  "variance_component_uncertainty": "video-cluster percentile bootstrap; all base seeds retained within sampled video",
+  "video_cluster_bootstrap_draws": 5000,
+  "video_cluster_bootstrap_seed": 20260717
+}

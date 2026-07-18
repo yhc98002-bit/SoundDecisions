@@ -1,0 +1,6 @@
+theta_commit,n_scorable_progress_points,status,first_crossing,first_crossing_bootstrap_ci_low,first_crossing_bootstrap_ci_high,sustained_crossing,sustained_crossing_bootstrap_ci_low,sustained_crossing_bootstrap_ci_high,bootstrap_draws,bootstrap_unscorable_draws,bootstrap_noncrossing_draws,bootstrap_sustained_crossing_draws,noncrossing_draws_not_numerically_imputed
+0.5,8,CROSSING,0.45,0.25,0.6,0.45,0.25,0.6,5000,0,0,5000,True
+0.6,8,CROSSING,0.75,0.45,0.9,0.75,0.45,0.9,5000,0,43,4957,True
+0.7,8,CROSSING,0.9,0.75,0.9,0.9,0.75,0.9,5000,0,1233,3767,True
+0.8,8,NONCROSSING,,0.9,0.9,,0.9,0.9,5000,0,4433,567,True
+0.9,8,NONCROSSING,,0.9,0.9,,0.9,0.9,5000,0,4998,2,True

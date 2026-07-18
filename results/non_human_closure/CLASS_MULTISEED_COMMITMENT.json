@@ -1,0 +1,2960 @@
+{
+  "base_seed_crossings": [
+    {
+      "base_seed": 0,
+      "first_crossing": 0.6,
+      "n_scorable_progress_points": 8,
+      "status": "CROSSING",
+      "sustained_crossing": 0.6,
+      "theta_commit": 0.5
+    },
+    {
+      "base_seed": 1,
+      "first_crossing": 0.45,
+      "n_scorable_progress_points": 8,
+      "status": "CROSSING",
+      "sustained_crossing": 0.45,
+      "theta_commit": 0.5
+    },
+    {
+      "base_seed": 2,
+      "first_crossing": 0.6,
+      "n_scorable_progress_points": 8,
+      "status": "CROSSING",
+      "sustained_crossing": 0.6,
+      "theta_commit": 0.5
+    },
+    {
+      "base_seed": 3,
+      "first_crossing": 0.25,
+      "n_scorable_progress_points": 8,
+      "status": "CROSSING",
+      "sustained_crossing": 0.45,
+      "theta_commit": 0.5
+    },
+    {
+      "base_seed": 4,
+      "first_crossing": 0.45,
+      "n_scorable_progress_points": 8,
+      "status": "CROSSING",
+      "sustained_crossing": 0.45,
+      "theta_commit": 0.5
+    },
+    {
+      "base_seed": 5,
+      "first_crossing": 0.6,
+      "n_scorable_progress_points": 8,
+      "status": "CROSSING",
+      "sustained_crossing": 0.6,
+      "theta_commit": 0.5
+    },
+    {
+      "base_seed": 6,
+      "first_crossing": 0.35,
+      "n_scorable_progress_points": 8,
+      "status": "CROSSING",
+      "sustained_crossing": 0.35,
+      "theta_commit": 0.5
+    },
+    {
+      "base_seed": 7,
+      "first_crossing": 0.6,
+      "n_scorable_progress_points": 8,
+      "status": "CROSSING",
+      "sustained_crossing": 0.6,
+      "theta_commit": 0.5
+    },
+    {
+      "base_seed": 8,
+      "first_crossing": 0.35,
+      "n_scorable_progress_points": 8,
+      "status": "CROSSING",
+      "sustained_crossing": 0.35,
+      "theta_commit": 0.5
+    },
+    {
+      "base_seed": 9,
+      "first_crossing": 0.45,
+      "n_scorable_progress_points": 8,
+      "status": "CROSSING",
+      "sustained_crossing": 0.45,
+      "theta_commit": 0.5
+    },
+    {
+      "base_seed": 10,
+      "first_crossing": 0.25,
+      "n_scorable_progress_points": 8,
+      "status": "CROSSING",
+      "sustained_crossing": 0.25,
+      "theta_commit": 0.5
+    },
+    {
+      "base_seed": 11,
+      "first_crossing": 0.45,
+      "n_scorable_progress_points": 8,
+      "status": "CROSSING",
+      "sustained_crossing": 0.45,
+      "theta_commit": 0.5
+    },
+    {
+      "base_seed": 12,
+      "first_crossing": 0.45,
+      "n_scorable_progress_points": 8,
+      "status": "CROSSING",
+      "sustained_crossing": 0.45,
+      "theta_commit": 0.5
+    },
+    {
+      "base_seed": 13,
+      "first_crossing": 0.6,
+      "n_scorable_progress_points": 8,
+      "status": "CROSSING",
+      "sustained_crossing": 0.6,
+      "theta_commit": 0.5
+    },
+    {
+      "base_seed": 14,
+      "first_crossing": 0.25,
+      "n_scorable_progress_points": 8,
+      "status": "CROSSING",
+      "sustained_crossing": 0.25,
+      "theta_commit": 0.5
+    },
+    {
+      "base_seed": 15,
+      "first_crossing": 0.35,
+      "n_scorable_progress_points": 8,
+      "status": "CROSSING",
+      "sustained_crossing": 0.35,
+      "theta_commit": 0.5
+    },
+    {
+      "base_seed": 16,
+      "first_crossing": 0.45,
+      "n_scorable_progress_points": 8,
+      "status": "CROSSING",
+      "sustained_crossing": 0.45,
+      "theta_commit": 0.5
+    },
+    {
+      "base_seed": 0,
+      "first_crossing": 0.75,
+      "n_scorable_progress_points": 8,
+      "status": "CROSSING",
+      "sustained_crossing": 0.75,
+      "theta_commit": 0.6
+    },
+    {
+      "base_seed": 1,
+      "first_crossing": 0.75,
+      "n_scorable_progress_points": 8,
+      "status": "CROSSING",
+      "sustained_crossing": 0.75,
+      "theta_commit": 0.6
+    },
+    {
+      "base_seed": 2,
+      "first_crossing": 0.6,
+      "n_scorable_progress_points": 8,
+      "status": "CROSSING",
+      "sustained_crossing": 0.6,
+      "theta_commit": 0.6
+    },
+    {
+      "base_seed": 3,
+      "first_crossing": 0.75,
+      "n_scorable_progress_points": 8,
+      "status": "CROSSING",
+      "sustained_crossing": 0.75,
+      "theta_commit": 0.6
+    },
+    {
+      "base_seed": 4,
+      "first_crossing": 0.6,
+      "n_scorable_progress_points": 8,
+      "status": "CROSSING",
+      "sustained_crossing": 0.6,
+      "theta_commit": 0.6
+    },
+    {
+      "base_seed": 5,
+      "first_crossing": 0.75,
+      "n_scorable_progress_points": 8,
+      "status": "CROSSING",
+      "sustained_crossing": 0.75,
+      "theta_commit": 0.6
+    },
+    {
+      "base_seed": 6,
+      "first_crossing": 0.6,
+      "n_scorable_progress_points": 8,
+      "status": "CROSSING",
+      "sustained_crossing": 0.6,
+      "theta_commit": 0.6
+    },
+    {
+      "base_seed": 7,
+      "first_crossing": 0.75,
+      "n_scorable_progress_points": 8,
+      "status": "CROSSING",
+      "sustained_crossing": 0.75,
+      "theta_commit": 0.6
+    },
+    {
+      "base_seed": 8,
+      "first_crossing": 0.6,
+      "n_scorable_progress_points": 8,
+      "status": "CROSSING",
+      "sustained_crossing": 0.6,
+      "theta_commit": 0.6
+    },
+    {
+      "base_seed": 9,
+      "first_crossing": 0.75,
+      "n_scorable_progress_points": 8,
+      "status": "CROSSING",
+      "sustained_crossing": 0.75,
+      "theta_commit": 0.6
+    },
+    {
+      "base_seed": 10,
+      "first_crossing": 0.45,
+      "n_scorable_progress_points": 8,
+      "status": "CROSSING",
+      "sustained_crossing": 0.45,
+      "theta_commit": 0.6
+    },
+    {
+      "base_seed": 11,
+      "first_crossing": 0.6,
+      "n_scorable_progress_points": 8,
+      "status": "CROSSING",
+      "sustained_crossing": 0.6,
+      "theta_commit": 0.6
+    },
+    {
+      "base_seed": 12,
+      "first_crossing": 0.6,
+      "n_scorable_progress_points": 8,
+      "status": "CROSSING",
+      "sustained_crossing": 0.6,
+      "theta_commit": 0.6
+    },
+    {
+      "base_seed": 13,
+      "first_crossing": 0.75,
+      "n_scorable_progress_points": 8,
+      "status": "CROSSING",
+      "sustained_crossing": 0.75,
+      "theta_commit": 0.6
+    },
+    {
+      "base_seed": 14,
+      "first_crossing": 0.6,
+      "n_scorable_progress_points": 8,
+      "status": "CROSSING",
+      "sustained_crossing": 0.9,
+      "theta_commit": 0.6
+    },
+    {
+      "base_seed": 15,
+      "first_crossing": 0.9,
+      "n_scorable_progress_points": 8,
+      "status": "CROSSING",
+      "sustained_crossing": 0.9,
+      "theta_commit": 0.6
+    },
+    {
+      "base_seed": 16,
+      "first_crossing": 0.75,
+      "n_scorable_progress_points": 8,
+      "status": "CROSSING",
+      "sustained_crossing": 0.75,
+      "theta_commit": 0.6
+    },
+    {
+      "base_seed": 0,
+      "first_crossing": 0.9,
+      "n_scorable_progress_points": 8,
+      "status": "CROSSING",
+      "sustained_crossing": 0.9,
+      "theta_commit": 0.7
+    },
+    {
+      "base_seed": 1,
+      "first_crossing": 0.9,
+      "n_scorable_progress_points": 8,
+      "status": "CROSSING",
+      "sustained_crossing": 0.9,
+      "theta_commit": 0.7
+    },
+    {
+      "base_seed": 2,
+      "first_crossing": 0.9,
+      "n_scorable_progress_points": 8,
+      "status": "CROSSING",
+      "sustained_crossing": 0.9,
+      "theta_commit": 0.7
+    },
+    {
+      "base_seed": 3,
+      "first_crossing": 0.9,
+      "n_scorable_progress_points": 8,
+      "status": "CROSSING",
+      "sustained_crossing": 0.9,
+      "theta_commit": 0.7
+    },
+    {
+      "base_seed": 4,
+      "first_crossing": 0.9,
+      "n_scorable_progress_points": 8,
+      "status": "CROSSING",
+      "sustained_crossing": 0.9,
+      "theta_commit": 0.7
+    },
+    {
+      "base_seed": 5,
+      "first_crossing": 0.9,
+      "n_scorable_progress_points": 8,
+      "status": "CROSSING",
+      "sustained_crossing": 0.9,
+      "theta_commit": 0.7
+    },
+    {
+      "base_seed": 6,
+      "first_crossing": 0.9,
+      "n_scorable_progress_points": 8,
+      "status": "CROSSING",
+      "sustained_crossing": 0.9,
+      "theta_commit": 0.7
+    },
+    {
+      "base_seed": 7,
+      "first_crossing": null,
+      "n_scorable_progress_points": 8,
+      "status": "NONCROSSING",
+      "sustained_crossing": null,
+      "theta_commit": 0.7
+    },
+    {
+      "base_seed": 8,
+      "first_crossing": 0.9,
+      "n_scorable_progress_points": 8,
+      "status": "CROSSING",
+      "sustained_crossing": 0.9,
+      "theta_commit": 0.7
+    },
+    {
+      "base_seed": 9,
+      "first_crossing": 0.75,
+      "n_scorable_progress_points": 8,
+      "status": "CROSSING",
+      "sustained_crossing": null,
+      "theta_commit": 0.7
+    },
+    {
+      "base_seed": 10,
+      "first_crossing": 0.9,
+      "n_scorable_progress_points": 8,
+      "status": "CROSSING",
+      "sustained_crossing": 0.9,
+      "theta_commit": 0.7
+    },
+    {
+      "base_seed": 11,
+      "first_crossing": null,
+      "n_scorable_progress_points": 8,
+      "status": "NONCROSSING",
+      "sustained_crossing": null,
+      "theta_commit": 0.7
+    },
+    {
+      "base_seed": 12,
+      "first_crossing": 0.9,
+      "n_scorable_progress_points": 8,
+      "status": "CROSSING",
+      "sustained_crossing": 0.9,
+      "theta_commit": 0.7
+    },
+    {
+      "base_seed": 13,
+      "first_crossing": 0.9,
+      "n_scorable_progress_points": 8,
+      "status": "CROSSING",
+      "sustained_crossing": 0.9,
+      "theta_commit": 0.7
+    },
+    {
+      "base_seed": 14,
+      "first_crossing": 0.9,
+      "n_scorable_progress_points": 8,
+      "status": "CROSSING",
+      "sustained_crossing": 0.9,
+      "theta_commit": 0.7
+    },
+    {
+      "base_seed": 15,
+      "first_crossing": null,
+      "n_scorable_progress_points": 8,
+      "status": "NONCROSSING",
+      "sustained_crossing": null,
+      "theta_commit": 0.7
+    },
+    {
+      "base_seed": 16,
+      "first_crossing": 0.9,
+      "n_scorable_progress_points": 8,
+      "status": "CROSSING",
+      "sustained_crossing": 0.9,
+      "theta_commit": 0.7
+    },
+    {
+      "base_seed": 0,
+      "first_crossing": null,
+      "n_scorable_progress_points": 8,
+      "status": "NONCROSSING",
+      "sustained_crossing": null,
+      "theta_commit": 0.8
+    },
+    {
+      "base_seed": 1,
+      "first_crossing": null,
+      "n_scorable_progress_points": 8,
+      "status": "NONCROSSING",
+      "sustained_crossing": null,
+      "theta_commit": 0.8
+    },
+    {
+      "base_seed": 2,
+      "first_crossing": null,
+      "n_scorable_progress_points": 8,
+      "status": "NONCROSSING",
+      "sustained_crossing": null,
+      "theta_commit": 0.8
+    },
+    {
+      "base_seed": 3,
+      "first_crossing": null,
+      "n_scorable_progress_points": 8,
+      "status": "NONCROSSING",
+      "sustained_crossing": null,
+      "theta_commit": 0.8
+    },
+    {
+      "base_seed": 4,
+      "first_crossing": null,
+      "n_scorable_progress_points": 8,
+      "status": "NONCROSSING",
+      "sustained_crossing": null,
+      "theta_commit": 0.8
+    },
+    {
+      "base_seed": 5,
+      "first_crossing": null,
+      "n_scorable_progress_points": 8,
+      "status": "NONCROSSING",
+      "sustained_crossing": null,
+      "theta_commit": 0.8
+    },
+    {
+      "base_seed": 6,
+      "first_crossing": null,
+      "n_scorable_progress_points": 8,
+      "status": "NONCROSSING",
+      "sustained_crossing": null,
+      "theta_commit": 0.8
+    },
+    {
+      "base_seed": 7,
+      "first_crossing": null,
+      "n_scorable_progress_points": 8,
+      "status": "NONCROSSING",
+      "sustained_crossing": null,
+      "theta_commit": 0.8
+    },
+    {
+      "base_seed": 8,
+      "first_crossing": null,
+      "n_scorable_progress_points": 8,
+      "status": "NONCROSSING",
+      "sustained_crossing": null,
+      "theta_commit": 0.8
+    },
+    {
+      "base_seed": 9,
+      "first_crossing": null,
+      "n_scorable_progress_points": 8,
+      "status": "NONCROSSING",
+      "sustained_crossing": null,
+      "theta_commit": 0.8
+    },
+    {
+      "base_seed": 10,
+      "first_crossing": null,
+      "n_scorable_progress_points": 8,
+      "status": "NONCROSSING",
+      "sustained_crossing": null,
+      "theta_commit": 0.8
+    },
+    {
+      "base_seed": 11,
+      "first_crossing": null,
+      "n_scorable_progress_points": 8,
+      "status": "NONCROSSING",
+      "sustained_crossing": null,
+      "theta_commit": 0.8
+    },
+    {
+      "base_seed": 12,
+      "first_crossing": null,
+      "n_scorable_progress_points": 8,
+      "status": "NONCROSSING",
+      "sustained_crossing": null,
+      "theta_commit": 0.8
+    },
+    {
+      "base_seed": 13,
+      "first_crossing": null,
+      "n_scorable_progress_points": 8,
+      "status": "NONCROSSING",
+      "sustained_crossing": null,
+      "theta_commit": 0.8
+    },
+    {
+      "base_seed": 14,
+      "first_crossing": null,
+      "n_scorable_progress_points": 8,
+      "status": "NONCROSSING",
+      "sustained_crossing": null,
+      "theta_commit": 0.8
+    },
+    {
+      "base_seed": 15,
+      "first_crossing": null,
+      "n_scorable_progress_points": 8,
+      "status": "NONCROSSING",
+      "sustained_crossing": null,
+      "theta_commit": 0.8
+    },
+    {
+      "base_seed": 16,
+      "first_crossing": null,
+      "n_scorable_progress_points": 8,
+      "status": "NONCROSSING",
+      "sustained_crossing": null,
+      "theta_commit": 0.8
+    },
+    {
+      "base_seed": 0,
+      "first_crossing": null,
+      "n_scorable_progress_points": 8,
+      "status": "NONCROSSING",
+      "sustained_crossing": null,
+      "theta_commit": 0.9
+    },
+    {
+      "base_seed": 1,
+      "first_crossing": null,
+      "n_scorable_progress_points": 8,
+      "status": "NONCROSSING",
+      "sustained_crossing": null,
+      "theta_commit": 0.9
+    },
+    {
+      "base_seed": 2,
+      "first_crossing": null,
+      "n_scorable_progress_points": 8,
+      "status": "NONCROSSING",
+      "sustained_crossing": null,
+      "theta_commit": 0.9
+    },
+    {
+      "base_seed": 3,
+      "first_crossing": null,
+      "n_scorable_progress_points": 8,
+      "status": "NONCROSSING",
+      "sustained_crossing": null,
+      "theta_commit": 0.9
+    },
+    {
+      "base_seed": 4,
+      "first_crossing": null,
+      "n_scorable_progress_points": 8,
+      "status": "NONCROSSING",
+      "sustained_crossing": null,
+      "theta_commit": 0.9
+    },
+    {
+      "base_seed": 5,
+      "first_crossing": null,
+      "n_scorable_progress_points": 8,
+      "status": "NONCROSSING",
+      "sustained_crossing": null,
+      "theta_commit": 0.9
+    },
+    {
+      "base_seed": 6,
+      "first_crossing": null,
+      "n_scorable_progress_points": 8,
+      "status": "NONCROSSING",
+      "sustained_crossing": null,
+      "theta_commit": 0.9
+    },
+    {
+      "base_seed": 7,
+      "first_crossing": null,
+      "n_scorable_progress_points": 8,
+      "status": "NONCROSSING",
+      "sustained_crossing": null,
+      "theta_commit": 0.9
+    },
+    {
+      "base_seed": 8,
+      "first_crossing": null,
+      "n_scorable_progress_points": 8,
+      "status": "NONCROSSING",
+      "sustained_crossing": null,
+      "theta_commit": 0.9
+    },
+    {
+      "base_seed": 9,
+      "first_crossing": null,
+      "n_scorable_progress_points": 8,
+      "status": "NONCROSSING",
+      "sustained_crossing": null,
+      "theta_commit": 0.9
+    },
+    {
+      "base_seed": 10,
+      "first_crossing": null,
+      "n_scorable_progress_points": 8,
+      "status": "NONCROSSING",
+      "sustained_crossing": null,
+      "theta_commit": 0.9
+    },
+    {
+      "base_seed": 11,
+      "first_crossing": null,
+      "n_scorable_progress_points": 8,
+      "status": "NONCROSSING",
+      "sustained_crossing": null,
+      "theta_commit": 0.9
+    },
+    {
+      "base_seed": 12,
+      "first_crossing": null,
+      "n_scorable_progress_points": 8,
+      "status": "NONCROSSING",
+      "sustained_crossing": null,
+      "theta_commit": 0.9
+    },
+    {
+      "base_seed": 13,
+      "first_crossing": null,
+      "n_scorable_progress_points": 8,
+      "status": "NONCROSSING",
+      "sustained_crossing": null,
+      "theta_commit": 0.9
+    },
+    {
+      "base_seed": 14,
+      "first_crossing": null,
+      "n_scorable_progress_points": 8,
+      "status": "NONCROSSING",
+      "sustained_crossing": null,
+      "theta_commit": 0.9
+    },
+    {
+      "base_seed": 15,
+      "first_crossing": null,
+      "n_scorable_progress_points": 8,
+      "status": "NONCROSSING",
+      "sustained_crossing": null,
+      "theta_commit": 0.9
+    },
+    {
+      "base_seed": 16,
+      "first_crossing": null,
+      "n_scorable_progress_points": 8,
+      "status": "NONCROSSING",
+      "sustained_crossing": null,
+      "theta_commit": 0.9
+    }
+  ],
+  "baseline": "video-conditioned confident pairwise agreement across 17 base finals",
+  "baseline_summary": {
+    "mean_a_independent": 0.546006579986555,
+    "mean_base_abstention_rate": 0.29411764705882354,
+    "n_video_determined": 9
+  },
+  "cardinality": {
+    "base_seeds": 17,
+    "progress_points": 8,
+    "video_seed_progress_cells": 6528,
+    "videos": 48
+  },
+  "commitment_gain": "clip((A_fork-A_ind)/(1-A_ind),0,1)",
+  "curves_by_base_seed": [
+    {
+      "base_seed": 0,
+      "mean_a_fork_confident": 0.6542889209555877,
+      "mean_commitment_gain": 0.3252573217530573,
+      "mean_fork_abstention_rate": 0.3368055555555556,
+      "n_scorable": 44,
+      "n_videos": 48,
+      "progress": 0.05
+    },
+    {
+      "base_seed": 0,
+      "mean_a_fork_confident": 0.660926030491248,
+      "mean_commitment_gain": 0.3596424299074225,
+      "mean_fork_abstention_rate": 0.3055555555555556,
+      "n_scorable": 45,
+      "n_videos": 48,
+      "progress": 0.15
+    },
+    {
+      "base_seed": 0,
+      "mean_a_fork_confident": 0.7378450155045898,
+      "mean_commitment_gain": 0.4246084131997804,
+      "mean_fork_abstention_rate": 0.2951388888888889,
+      "n_scorable": 46,
+      "n_videos": 48,
+      "progress": 0.25
+    },
+    {
+      "base_seed": 0,
+      "mean_a_fork_confident": 0.7462209395542729,
+      "mean_commitment_gain": 0.4228325173278667,
+      "mean_fork_abstention_rate": 0.3038194444444445,
+      "n_scorable": 45,
+      "n_videos": 48,
+      "progress": 0.35
+    },
+    {
+      "base_seed": 0,
+      "mean_a_fork_confident": 0.768674320848234,
+      "mean_commitment_gain": 0.4612998565791639,
+      "mean_fork_abstention_rate": 0.3194444444444445,
+      "n_scorable": 46,
+      "n_videos": 48,
+      "progress": 0.45
+    },
+    {
+      "base_seed": 0,
+      "mean_a_fork_confident": 0.8244359176177358,
+      "mean_commitment_gain": 0.5588666834066183,
+      "mean_fork_abstention_rate": 0.3142361111111111,
+      "n_scorable": 44,
+      "n_videos": 48,
+      "progress": 0.6
+    },
+    {
+      "base_seed": 0,
+      "mean_a_fork_confident": 0.8785301999587715,
+      "mean_commitment_gain": 0.6172227109541184,
+      "mean_fork_abstention_rate": 0.3489583333333333,
+      "n_scorable": 42,
+      "n_videos": 48,
+      "progress": 0.75
+    },
+    {
+      "base_seed": 0,
+      "mean_a_fork_confident": 0.9775324675324676,
+      "mean_commitment_gain": 0.7394805194805195,
+      "mean_fork_abstention_rate": 0.3229166666666667,
+      "n_scorable": 40,
+      "n_videos": 48,
+      "progress": 0.9
+    },
+    {
+      "base_seed": 1,
+      "mean_a_fork_confident": 0.6508953168044077,
+      "mean_commitment_gain": 0.30233573981374023,
+      "mean_fork_abstention_rate": 0.3159722222222222,
+      "n_scorable": 44,
+      "n_videos": 48,
+      "progress": 0.05
+    },
+    {
+      "base_seed": 1,
+      "mean_a_fork_confident": 0.7104225484660267,
+      "mean_commitment_gain": 0.43873742595585186,
+      "mean_fork_abstention_rate": 0.3177083333333333,
+      "n_scorable": 45,
+      "n_videos": 48,
+      "progress": 0.15
+    },
+    {
+      "base_seed": 1,
+      "mean_a_fork_confident": 0.767408557625949,
+      "mean_commitment_gain": 0.4635955265939991,
+      "mean_fork_abstention_rate": 0.2795138888888889,
+      "n_scorable": 45,
+      "n_videos": 48,
+      "progress": 0.25
+    },
+    {
+      "base_seed": 1,
+      "mean_a_fork_confident": 0.7813548180214848,
+      "mean_commitment_gain": 0.4826122661548707,
+      "mean_fork_abstention_rate": 0.3038194444444444,
+      "n_scorable": 45,
+      "n_videos": 48,
+      "progress": 0.35
+    },
+    {
+      "base_seed": 1,
+      "mean_a_fork_confident": 0.7942895857530006,
+      "mean_commitment_gain": 0.5067504309485221,
+      "mean_fork_abstention_rate": 0.3177083333333333,
+      "n_scorable": 41,
+      "n_videos": 48,
+      "progress": 0.45
+    },
+    {
+      "base_seed": 1,
+      "mean_a_fork_confident": 0.8411616161616161,
+      "mean_commitment_gain": 0.565603558872452,
+      "mean_fork_abstention_rate": 0.3229166666666667,
+      "n_scorable": 42,
+      "n_videos": 48,
+      "progress": 0.6
+    },
+    {
+      "base_seed": 1,
+      "mean_a_fork_confident": 0.8974853060218912,
+      "mean_commitment_gain": 0.6290255469462733,
+      "mean_fork_abstention_rate": 0.3125,
+      "n_scorable": 41,
+      "n_videos": 48,
+      "progress": 0.75
+    },
+    {
+      "base_seed": 1,
+      "mean_a_fork_confident": 0.9521145521145521,
+      "mean_commitment_gain": 0.722339738255406,
+      "mean_fork_abstention_rate": 0.3298611111111111,
+      "n_scorable": 39,
+      "n_videos": 48,
+      "progress": 0.9
+    },
+    {
+      "base_seed": 2,
+      "mean_a_fork_confident": 0.6707923389741571,
+      "mean_commitment_gain": 0.320131136822537,
+      "mean_fork_abstention_rate": 0.32986111111111116,
+      "n_scorable": 44,
+      "n_videos": 48,
+      "progress": 0.05
+    },
+    {
+      "base_seed": 2,
+      "mean_a_fork_confident": 0.7435347261434219,
+      "mean_commitment_gain": 0.4151508770309601,
+      "mean_fork_abstention_rate": 0.2951388888888889,
+      "n_scorable": 45,
+      "n_videos": 48,
+      "progress": 0.15
+    },
+    {
+      "base_seed": 2,
+      "mean_a_fork_confident": 0.78001924001924,
+      "mean_commitment_gain": 0.4883261942091025,
+      "mean_fork_abstention_rate": 0.32291666666666663,
+      "n_scorable": 44,
+      "n_videos": 48,
+      "progress": 0.25
+    },
+    {
+      "base_seed": 2,
+      "mean_a_fork_confident": 0.7787894821228155,
+      "mean_commitment_gain": 0.44188136507883874,
+      "mean_fork_abstention_rate": 0.29340277777777773,
+      "n_scorable": 44,
+      "n_videos": 48,
+      "progress": 0.35
+    },
+    {
+      "base_seed": 2,
+      "mean_a_fork_confident": 0.8061519961519963,
+      "mean_commitment_gain": 0.4848853194212403,
+      "mean_fork_abstention_rate": 0.2743055555555556,
+      "n_scorable": 44,
+      "n_videos": 48,
+      "progress": 0.45
+    },
+    {
+      "base_seed": 2,
+      "mean_a_fork_confident": 0.88642266824085,
+      "mean_commitment_gain": 0.6151691982553608,
+      "mean_fork_abstention_rate": 0.2725694444444445,
+      "n_scorable": 43,
+      "n_videos": 48,
+      "progress": 0.6
+    },
+    {
+      "base_seed": 2,
+      "mean_a_fork_confident": 0.9081271902700474,
+      "mean_commitment_gain": 0.6688964527330901,
+      "mean_fork_abstention_rate": 0.3038194444444445,
+      "n_scorable": 42,
+      "n_videos": 48,
+      "progress": 0.75
+    },
+    {
+      "base_seed": 2,
+      "mean_a_fork_confident": 0.9531024531024531,
+      "mean_commitment_gain": 0.7306734975876015,
+      "mean_fork_abstention_rate": 0.2951388888888889,
+      "n_scorable": 42,
+      "n_videos": 48,
+      "progress": 0.9
+    },
+    {
+      "base_seed": 3,
+      "mean_a_fork_confident": 0.7037646304312972,
+      "mean_commitment_gain": 0.3575115469270357,
+      "mean_fork_abstention_rate": 0.3368055555555555,
+      "n_scorable": 44,
+      "n_videos": 48,
+      "progress": 0.05
+    },
+    {
+      "base_seed": 3,
+      "mean_a_fork_confident": 0.7367344541763146,
+      "mean_commitment_gain": 0.3966839259818635,
+      "mean_fork_abstention_rate": 0.3072916666666667,
+      "n_scorable": 43,
+      "n_videos": 48,
+      "progress": 0.15
+    },
+    {
+      "base_seed": 3,
+      "mean_a_fork_confident": 0.8305178771845438,
+      "mean_commitment_gain": 0.550564624631253,
+      "mean_fork_abstention_rate": 0.2864583333333333,
+      "n_scorable": 45,
+      "n_videos": 48,
+      "progress": 0.25
+    },
+    {
+      "base_seed": 3,
+      "mean_a_fork_confident": 0.8101436442345533,
+      "mean_commitment_gain": 0.4998103364436978,
+      "mean_fork_abstention_rate": 0.2829861111111111,
+      "n_scorable": 43,
+      "n_videos": 48,
+      "progress": 0.35
+    },
+    {
+      "base_seed": 3,
+      "mean_a_fork_confident": 0.8573432740099406,
+      "mean_commitment_gain": 0.555166691193053,
+      "mean_fork_abstention_rate": 0.2673611111111111,
+      "n_scorable": 45,
+      "n_videos": 48,
+      "progress": 0.45
+    },
+    {
+      "base_seed": 3,
+      "mean_a_fork_confident": 0.879004329004329,
+      "mean_commitment_gain": 0.5806077412634432,
+      "mean_fork_abstention_rate": 0.2552083333333333,
+      "n_scorable": 43,
+      "n_videos": 48,
+      "progress": 0.6
+    },
+    {
+      "base_seed": 3,
+      "mean_a_fork_confident": 0.91991341991342,
+      "mean_commitment_gain": 0.6708376995313229,
+      "mean_fork_abstention_rate": 0.2552083333333333,
+      "n_scorable": 44,
+      "n_videos": 48,
+      "progress": 0.75
+    },
+    {
+      "base_seed": 3,
+      "mean_a_fork_confident": 0.936413973623276,
+      "mean_commitment_gain": 0.7049965085168285,
+      "mean_fork_abstention_rate": 0.23090277777777776,
+      "n_scorable": 43,
+      "n_videos": 48,
+      "progress": 0.9
+    },
+    {
+      "base_seed": 4,
+      "mean_a_fork_confident": 0.6959810874704493,
+      "mean_commitment_gain": 0.3094837313854579,
+      "mean_fork_abstention_rate": 0.2552083333333333,
+      "n_scorable": 46,
+      "n_videos": 48,
+      "progress": 0.05
+    },
+    {
+      "base_seed": 4,
+      "mean_a_fork_confident": 0.6177609427609428,
+      "mean_commitment_gain": 0.2697281910911178,
+      "mean_fork_abstention_rate": 0.2777777777777778,
+      "n_scorable": 47,
+      "n_videos": 48,
+      "progress": 0.15
+    },
+    {
+      "base_seed": 4,
+      "mean_a_fork_confident": 0.7417165576740045,
+      "mean_commitment_gain": 0.40914116020926966,
+      "mean_fork_abstention_rate": 0.24826388888888887,
+      "n_scorable": 46,
+      "n_videos": 48,
+      "progress": 0.25
+    },
+    {
+      "base_seed": 4,
+      "mean_a_fork_confident": 0.8003896103896104,
+      "mean_commitment_gain": 0.4467962027319933,
+      "mean_fork_abstention_rate": 0.28125,
+      "n_scorable": 44,
+      "n_videos": 48,
+      "progress": 0.35
+    },
+    {
+      "base_seed": 4,
+      "mean_a_fork_confident": 0.8286862127771218,
+      "mean_commitment_gain": 0.5023096927486408,
+      "mean_fork_abstention_rate": 0.2829861111111111,
+      "n_scorable": 43,
+      "n_videos": 48,
+      "progress": 0.45
+    },
+    {
+      "base_seed": 4,
+      "mean_a_fork_confident": 0.8869223799456358,
+      "mean_commitment_gain": 0.6035153457387565,
+      "mean_fork_abstention_rate": 0.2743055555555556,
+      "n_scorable": 42,
+      "n_videos": 48,
+      "progress": 0.6
+    },
+    {
+      "base_seed": 4,
+      "mean_a_fork_confident": 0.8997933884297521,
+      "mean_commitment_gain": 0.6256335469203627,
+      "mean_fork_abstention_rate": 0.2586805555555556,
+      "n_scorable": 43,
+      "n_videos": 48,
+      "progress": 0.75
+    },
+    {
+      "base_seed": 4,
+      "mean_a_fork_confident": 0.9675213675213675,
+      "mean_commitment_gain": 0.745186136071887,
+      "mean_fork_abstention_rate": 0.2708333333333333,
+      "n_scorable": 38,
+      "n_videos": 48,
+      "progress": 0.9
+    },
+    {
+      "base_seed": 5,
+      "mean_a_fork_confident": 0.6190989257655924,
+      "mean_commitment_gain": 0.25991711206740736,
+      "mean_fork_abstention_rate": 0.3246527777777778,
+      "n_scorable": 44,
+      "n_videos": 48,
+      "progress": 0.05
+    },
+    {
+      "base_seed": 5,
+      "mean_a_fork_confident": 0.7103036443461975,
+      "mean_commitment_gain": 0.38308786844238263,
+      "mean_fork_abstention_rate": 0.2881944444444444,
+      "n_scorable": 46,
+      "n_videos": 48,
+      "progress": 0.15
+    },
+    {
+      "base_seed": 5,
+      "mean_a_fork_confident": 0.7167043101825711,
+      "mean_commitment_gain": 0.4011540287431093,
+      "mean_fork_abstention_rate": 0.3246527777777778,
+      "n_scorable": 45,
+      "n_videos": 48,
+      "progress": 0.25
+    },
+    {
+      "base_seed": 5,
+      "mean_a_fork_confident": 0.7815738554374918,
+      "mean_commitment_gain": 0.4661459281132164,
+      "mean_fork_abstention_rate": 0.3107638888888889,
+      "n_scorable": 43,
+      "n_videos": 48,
+      "progress": 0.35
+    },
+    {
+      "base_seed": 5,
+      "mean_a_fork_confident": 0.7818887285553952,
+      "mean_commitment_gain": 0.44938891877403525,
+      "mean_fork_abstention_rate": 0.3142361111111111,
+      "n_scorable": 44,
+      "n_videos": 48,
+      "progress": 0.45
+    },
+    {
+      "base_seed": 5,
+      "mean_a_fork_confident": 0.8103912501639775,
+      "mean_commitment_gain": 0.5199874332796276,
+      "mean_fork_abstention_rate": 0.3055555555555556,
+      "n_scorable": 43,
+      "n_videos": 48,
+      "progress": 0.6
+    },
+    {
+      "base_seed": 5,
+      "mean_a_fork_confident": 0.8835548172757475,
+      "mean_commitment_gain": 0.6248978972999785,
+      "mean_fork_abstention_rate": 0.29687499999999994,
+      "n_scorable": 42,
+      "n_videos": 48,
+      "progress": 0.75
+    },
+    {
+      "base_seed": 5,
+      "mean_a_fork_confident": 0.9445954562233633,
+      "mean_commitment_gain": 0.7074829931972789,
+      "mean_fork_abstention_rate": 0.2829861111111111,
+      "n_scorable": 42,
+      "n_videos": 48,
+      "progress": 0.9
+    },
+    {
+      "base_seed": 6,
+      "mean_a_fork_confident": 0.6884191458659543,
+      "mean_commitment_gain": 0.3798793461469259,
+      "mean_fork_abstention_rate": 0.3020833333333333,
+      "n_scorable": 46,
+      "n_videos": 48,
+      "progress": 0.05
+    },
+    {
+      "base_seed": 6,
+      "mean_a_fork_confident": 0.702648709315376,
+      "mean_commitment_gain": 0.39568781532890823,
+      "mean_fork_abstention_rate": 0.328125,
+      "n_scorable": 45,
+      "n_videos": 48,
+      "progress": 0.15
+    },
+    {
+      "base_seed": 6,
+      "mean_a_fork_confident": 0.7573640127987954,
+      "mean_commitment_gain": 0.4783856688326914,
+      "mean_fork_abstention_rate": 0.3003472222222222,
+      "n_scorable": 46,
+      "n_videos": 48,
+      "progress": 0.25
+    },
+    {
+      "base_seed": 6,
+      "mean_a_fork_confident": 0.7777312810646143,
+      "mean_commitment_gain": 0.508162619653678,
+      "mean_fork_abstention_rate": 0.2760416666666667,
+      "n_scorable": 45,
+      "n_videos": 48,
+      "progress": 0.35
+    },
+    {
+      "base_seed": 6,
+      "mean_a_fork_confident": 0.8025076158409492,
+      "mean_commitment_gain": 0.5243542659515076,
+      "mean_fork_abstention_rate": 0.296875,
+      "n_scorable": 45,
+      "n_videos": 48,
+      "progress": 0.45
+    },
+    {
+      "base_seed": 6,
+      "mean_a_fork_confident": 0.8511303511303511,
+      "mean_commitment_gain": 0.601246290153518,
+      "mean_fork_abstention_rate": 0.2673611111111111,
+      "n_scorable": 45,
+      "n_videos": 48,
+      "progress": 0.6
+    },
+    {
+      "base_seed": 6,
+      "mean_a_fork_confident": 0.9049302549302548,
+      "mean_commitment_gain": 0.676493927554094,
+      "mean_fork_abstention_rate": 0.28125,
+      "n_scorable": 42,
+      "n_videos": 48,
+      "progress": 0.75
+    },
+    {
+      "base_seed": 6,
+      "mean_a_fork_confident": 0.9528608342561832,
+      "mean_commitment_gain": 0.7226828446241995,
+      "mean_fork_abstention_rate": 0.21701388888888887,
+      "n_scorable": 43,
+      "n_videos": 48,
+      "progress": 0.9
+    },
+    {
+      "base_seed": 7,
+      "mean_a_fork_confident": 0.6879540749105967,
+      "mean_commitment_gain": 0.4173512273944699,
+      "mean_fork_abstention_rate": 0.35590277777777785,
+      "n_scorable": 45,
+      "n_videos": 48,
+      "progress": 0.05
+    },
+    {
+      "base_seed": 7,
+      "mean_a_fork_confident": 0.7001882175795219,
+      "mean_commitment_gain": 0.39083608466176367,
+      "mean_fork_abstention_rate": 0.34722222222222227,
+      "n_scorable": 45,
+      "n_videos": 48,
+      "progress": 0.15
+    },
+    {
+      "base_seed": 7,
+      "mean_a_fork_confident": 0.724335891381346,
+      "mean_commitment_gain": 0.4114608760465625,
+      "mean_fork_abstention_rate": 0.3541666666666667,
+      "n_scorable": 44,
+      "n_videos": 48,
+      "progress": 0.25
+    },
+    {
+      "base_seed": 7,
+      "mean_a_fork_confident": 0.7455611307884035,
+      "mean_commitment_gain": 0.459079902802709,
+      "mean_fork_abstention_rate": 0.3350694444444444,
+      "n_scorable": 44,
+      "n_videos": 48,
+      "progress": 0.35
+    },
+    {
+      "base_seed": 7,
+      "mean_a_fork_confident": 0.7487247894224639,
+      "mean_commitment_gain": 0.4963048907472033,
+      "mean_fork_abstention_rate": 0.3385416666666667,
+      "n_scorable": 43,
+      "n_videos": 48,
+      "progress": 0.45
+    },
+    {
+      "base_seed": 7,
+      "mean_a_fork_confident": 0.8255968778696051,
+      "mean_commitment_gain": 0.5525064422927316,
+      "mean_fork_abstention_rate": 0.3107638888888889,
+      "n_scorable": 44,
+      "n_videos": 48,
+      "progress": 0.6
+    },
+    {
+      "base_seed": 7,
+      "mean_a_fork_confident": 0.9363210863210863,
+      "mean_commitment_gain": 0.6747007177288284,
+      "mean_fork_abstention_rate": 0.34027777777777773,
+      "n_scorable": 39,
+      "n_videos": 48,
+      "progress": 0.75
+    },
+    {
+      "base_seed": 7,
+      "mean_a_fork_confident": 0.9599867724867726,
+      "mean_commitment_gain": 0.6842818428184282,
+      "mean_fork_abstention_rate": 0.34027777777777785,
+      "n_scorable": 36,
+      "n_videos": 48,
+      "progress": 0.9
+    },
+    {
+      "base_seed": 8,
+      "mean_a_fork_confident": 0.6955251270468662,
+      "mean_commitment_gain": 0.382237356267243,
+      "mean_fork_abstention_rate": 0.3107638888888889,
+      "n_scorable": 45,
+      "n_videos": 48,
+      "progress": 0.05
+    },
+    {
+      "base_seed": 8,
+      "mean_a_fork_confident": 0.7328000501913546,
+      "mean_commitment_gain": 0.3736142086772752,
+      "mean_fork_abstention_rate": 0.3263888888888889,
+      "n_scorable": 45,
+      "n_videos": 48,
+      "progress": 0.15
+    },
+    {
+      "base_seed": 8,
+      "mean_a_fork_confident": 0.762460149669452,
+      "mean_commitment_gain": 0.4699167274649643,
+      "mean_fork_abstention_rate": 0.3350694444444445,
+      "n_scorable": 43,
+      "n_videos": 48,
+      "progress": 0.25
+    },
+    {
+      "base_seed": 8,
+      "mean_a_fork_confident": 0.8041371507280598,
+      "mean_commitment_gain": 0.5260643015066285,
+      "mean_fork_abstention_rate": 0.375,
+      "n_scorable": 44,
+      "n_videos": 48,
+      "progress": 0.35
+    },
+    {
+      "base_seed": 8,
+      "mean_a_fork_confident": 0.8433789724487398,
+      "mean_commitment_gain": 0.5614399124498326,
+      "mean_fork_abstention_rate": 0.3194444444444445,
+      "n_scorable": 43,
+      "n_videos": 48,
+      "progress": 0.45
+    },
+    {
+      "base_seed": 8,
+      "mean_a_fork_confident": 0.8975589225589227,
+      "mean_commitment_gain": 0.6543127052587263,
+      "mean_fork_abstention_rate": 0.33159722222222227,
+      "n_scorable": 42,
+      "n_videos": 48,
+      "progress": 0.6
+    },
+    {
+      "base_seed": 8,
+      "mean_a_fork_confident": 0.8853968253968254,
+      "mean_commitment_gain": 0.6231115340436041,
+      "mean_fork_abstention_rate": 0.3541666666666667,
+      "n_scorable": 39,
+      "n_videos": 48,
+      "progress": 0.75
+    },
+    {
+      "base_seed": 8,
+      "mean_a_fork_confident": 0.9623809523809523,
+      "mean_commitment_gain": 0.7456157039086821,
+      "mean_fork_abstention_rate": 0.34722222222222215,
+      "n_scorable": 40,
+      "n_videos": 48,
+      "progress": 0.9
+    },
+    {
+      "base_seed": 9,
+      "mean_a_fork_confident": 0.6851402220967437,
+      "mean_commitment_gain": 0.3344030229426707,
+      "mean_fork_abstention_rate": 0.3194444444444445,
+      "n_scorable": 45,
+      "n_videos": 48,
+      "progress": 0.05
+    },
+    {
+      "base_seed": 9,
+      "mean_a_fork_confident": 0.670609824957651,
+      "mean_commitment_gain": 0.33430788775264353,
+      "mean_fork_abstention_rate": 0.3177083333333333,
+      "n_scorable": 45,
+      "n_videos": 48,
+      "progress": 0.15
+    },
+    {
+      "base_seed": 9,
+      "mean_a_fork_confident": 0.7014364423455333,
+      "mean_commitment_gain": 0.37802576855595454,
+      "mean_fork_abstention_rate": 0.3107638888888889,
+      "n_scorable": 44,
+      "n_videos": 48,
+      "progress": 0.25
+    },
+    {
+      "base_seed": 9,
+      "mean_a_fork_confident": 0.773466810966811,
+      "mean_commitment_gain": 0.46478295030446354,
+      "mean_fork_abstention_rate": 0.3055555555555555,
+      "n_scorable": 44,
+      "n_videos": 48,
+      "progress": 0.35
+    },
+    {
+      "base_seed": 9,
+      "mean_a_fork_confident": 0.8138692115964843,
+      "mean_commitment_gain": 0.5485761576027778,
+      "mean_fork_abstention_rate": 0.3177083333333333,
+      "n_scorable": 44,
+      "n_videos": 48,
+      "progress": 0.45
+    },
+    {
+      "base_seed": 9,
+      "mean_a_fork_confident": 0.8404510218463707,
+      "mean_commitment_gain": 0.5574037464631941,
+      "mean_fork_abstention_rate": 0.3194444444444445,
+      "n_scorable": 43,
+      "n_videos": 48,
+      "progress": 0.6
+    },
+    {
+      "base_seed": 9,
+      "mean_a_fork_confident": 0.9319339575153529,
+      "mean_commitment_gain": 0.7072503566523786,
+      "mean_fork_abstention_rate": 0.3142361111111111,
+      "n_scorable": 43,
+      "n_videos": 48,
+      "progress": 0.75
+    },
+    {
+      "base_seed": 9,
+      "mean_a_fork_confident": 0.9341491841491841,
+      "mean_commitment_gain": 0.6715567765567766,
+      "mean_fork_abstention_rate": 0.3368055555555556,
+      "n_scorable": 39,
+      "n_videos": 48,
+      "progress": 0.9
+    },
+    {
+      "base_seed": 10,
+      "mean_a_fork_confident": 0.7112377745711078,
+      "mean_commitment_gain": 0.356840113866116,
+      "mean_fork_abstention_rate": 0.3246527777777778,
+      "n_scorable": 44,
+      "n_videos": 48,
+      "progress": 0.05
+    },
+    {
+      "base_seed": 10,
+      "mean_a_fork_confident": 0.7667634133543224,
+      "mean_commitment_gain": 0.48067215549208037,
+      "mean_fork_abstention_rate": 0.31249999999999994,
+      "n_scorable": 43,
+      "n_videos": 48,
+      "progress": 0.15
+    },
+    {
+      "base_seed": 10,
+      "mean_a_fork_confident": 0.8000491932310113,
+      "mean_commitment_gain": 0.5011581428846327,
+      "mean_fork_abstention_rate": 0.2899305555555556,
+      "n_scorable": 43,
+      "n_videos": 48,
+      "progress": 0.25
+    },
+    {
+      "base_seed": 10,
+      "mean_a_fork_confident": 0.8543434343434343,
+      "mean_commitment_gain": 0.5797151499431418,
+      "mean_fork_abstention_rate": 0.2934027777777778,
+      "n_scorable": 44,
+      "n_videos": 48,
+      "progress": 0.35
+    },
+    {
+      "base_seed": 10,
+      "mean_a_fork_confident": 0.854001924001924,
+      "mean_commitment_gain": 0.6025023595664347,
+      "mean_fork_abstention_rate": 0.3055555555555556,
+      "n_scorable": 44,
+      "n_videos": 48,
+      "progress": 0.45
+    },
+    {
+      "base_seed": 10,
+      "mean_a_fork_confident": 0.8705562114653024,
+      "mean_commitment_gain": 0.6183844914402445,
+      "mean_fork_abstention_rate": 0.26909722222222227,
+      "n_scorable": 44,
+      "n_videos": 48,
+      "progress": 0.6
+    },
+    {
+      "base_seed": 10,
+      "mean_a_fork_confident": 0.9153164296021439,
+      "mean_commitment_gain": 0.6780735635303675,
+      "mean_fork_abstention_rate": 0.2829861111111111,
+      "n_scorable": 42,
+      "n_videos": 48,
+      "progress": 0.75
+    },
+    {
+      "base_seed": 10,
+      "mean_a_fork_confident": 0.9628478664192951,
+      "mean_commitment_gain": 0.708102626459335,
+      "mean_fork_abstention_rate": 0.2708333333333333,
+      "n_scorable": 41,
+      "n_videos": 48,
+      "progress": 0.9
+    },
+    {
+      "base_seed": 11,
+      "mean_a_fork_confident": 0.6714838353136227,
+      "mean_commitment_gain": 0.33442679260304525,
+      "mean_fork_abstention_rate": 0.3229166666666667,
+      "n_scorable": 46,
+      "n_videos": 48,
+      "progress": 0.05
+    },
+    {
+      "base_seed": 11,
+      "mean_a_fork_confident": 0.7113020081770082,
+      "mean_commitment_gain": 0.38486626899508275,
+      "mean_fork_abstention_rate": 0.3211805555555555,
+      "n_scorable": 47,
+      "n_videos": 48,
+      "progress": 0.15
+    },
+    {
+      "base_seed": 11,
+      "mean_a_fork_confident": 0.7437825459564591,
+      "mean_commitment_gain": 0.42745962923111214,
+      "mean_fork_abstention_rate": 0.32465277777777773,
+      "n_scorable": 46,
+      "n_videos": 48,
+      "progress": 0.25
+    },
+    {
+      "base_seed": 11,
+      "mean_a_fork_confident": 0.7658638052255072,
+      "mean_commitment_gain": 0.46598794348309724,
+      "mean_fork_abstention_rate": 0.2881944444444445,
+      "n_scorable": 47,
+      "n_videos": 48,
+      "progress": 0.35
+    },
+    {
+      "base_seed": 11,
+      "mean_a_fork_confident": 0.8488997113997112,
+      "mean_commitment_gain": 0.5746144477642022,
+      "mean_fork_abstention_rate": 0.2829861111111111,
+      "n_scorable": 44,
+      "n_videos": 48,
+      "progress": 0.45
+    },
+    {
+      "base_seed": 11,
+      "mean_a_fork_confident": 0.9009379509379509,
+      "mean_commitment_gain": 0.6518368210454404,
+      "mean_fork_abstention_rate": 0.2899305555555556,
+      "n_scorable": 45,
+      "n_videos": 48,
+      "progress": 0.6
+    },
+    {
+      "base_seed": 11,
+      "mean_a_fork_confident": 0.9039867109634552,
+      "mean_commitment_gain": 0.6469793212348824,
+      "mean_fork_abstention_rate": 0.2951388888888889,
+      "n_scorable": 43,
+      "n_videos": 48,
+      "progress": 0.75
+    },
+    {
+      "base_seed": 11,
+      "mean_a_fork_confident": 0.919404761904762,
+      "mean_commitment_gain": 0.6792380338281222,
+      "mean_fork_abstention_rate": 0.3211805555555556,
+      "n_scorable": 40,
+      "n_videos": 48,
+      "progress": 0.9
+    },
+    {
+      "base_seed": 12,
+      "mean_a_fork_confident": 0.6895899993726081,
+      "mean_commitment_gain": 0.34978714489652046,
+      "mean_fork_abstention_rate": 0.2951388888888889,
+      "n_scorable": 46,
+      "n_videos": 48,
+      "progress": 0.05
+    },
+    {
+      "base_seed": 12,
+      "mean_a_fork_confident": 0.7161157024793388,
+      "mean_commitment_gain": 0.4074481464329398,
+      "mean_fork_abstention_rate": 0.3333333333333333,
+      "n_scorable": 44,
+      "n_videos": 48,
+      "progress": 0.15
+    },
+    {
+      "base_seed": 12,
+      "mean_a_fork_confident": 0.7605601469237833,
+      "mean_commitment_gain": 0.49356433337741995,
+      "mean_fork_abstention_rate": 0.3177083333333333,
+      "n_scorable": 44,
+      "n_videos": 48,
+      "progress": 0.25
+    },
+    {
+      "base_seed": 12,
+      "mean_a_fork_confident": 0.7740226182086647,
+      "mean_commitment_gain": 0.4723701976941912,
+      "mean_fork_abstention_rate": 0.3003472222222222,
+      "n_scorable": 43,
+      "n_videos": 48,
+      "progress": 0.35
+    },
+    {
+      "base_seed": 12,
+      "mean_a_fork_confident": 0.8033051604480176,
+      "mean_commitment_gain": 0.5123490815821444,
+      "mean_fork_abstention_rate": 0.3142361111111111,
+      "n_scorable": 42,
+      "n_videos": 48,
+      "progress": 0.45
+    },
+    {
+      "base_seed": 12,
+      "mean_a_fork_confident": 0.85829069919979,
+      "mean_commitment_gain": 0.6166589977321414,
+      "mean_fork_abstention_rate": 0.28472222222222227,
+      "n_scorable": 44,
+      "n_videos": 48,
+      "progress": 0.6
+    },
+    {
+      "base_seed": 12,
+      "mean_a_fork_confident": 0.8879526977087953,
+      "mean_commitment_gain": 0.6453529130889487,
+      "mean_fork_abstention_rate": 0.3194444444444445,
+      "n_scorable": 41,
+      "n_videos": 48,
+      "progress": 0.75
+    },
+    {
+      "base_seed": 12,
+      "mean_a_fork_confident": 0.9556517556517556,
+      "mean_commitment_gain": 0.7367751797352684,
+      "mean_fork_abstention_rate": 0.28125,
+      "n_scorable": 42,
+      "n_videos": 48,
+      "progress": 0.9
+    },
+    {
+      "base_seed": 13,
+      "mean_a_fork_confident": 0.6685978324276196,
+      "mean_commitment_gain": 0.3228615566683803,
+      "mean_fork_abstention_rate": 0.30034722222222227,
+      "n_scorable": 46,
+      "n_videos": 48,
+      "progress": 0.05
+    },
+    {
+      "base_seed": 13,
+      "mean_a_fork_confident": 0.7281510759771629,
+      "mean_commitment_gain": 0.3698096263094033,
+      "mean_fork_abstention_rate": 0.2986111111111111,
+      "n_scorable": 45,
+      "n_videos": 48,
+      "progress": 0.15
+    },
+    {
+      "base_seed": 13,
+      "mean_a_fork_confident": 0.6908998802615822,
+      "mean_commitment_gain": 0.3428578510423569,
+      "mean_fork_abstention_rate": 0.3072916666666667,
+      "n_scorable": 46,
+      "n_videos": 48,
+      "progress": 0.25
+    },
+    {
+      "base_seed": 13,
+      "mean_a_fork_confident": 0.8104010888101797,
+      "mean_commitment_gain": 0.45838420642411787,
+      "mean_fork_abstention_rate": 0.28472222222222227,
+      "n_scorable": 43,
+      "n_videos": 48,
+      "progress": 0.35
+    },
+    {
+      "base_seed": 13,
+      "mean_a_fork_confident": 0.8070921985815602,
+      "mean_commitment_gain": 0.4665763688304363,
+      "mean_fork_abstention_rate": 0.2916666666666667,
+      "n_scorable": 46,
+      "n_videos": 48,
+      "progress": 0.45
+    },
+    {
+      "base_seed": 13,
+      "mean_a_fork_confident": 0.8469319040747612,
+      "mean_commitment_gain": 0.5211133912706477,
+      "mean_fork_abstention_rate": 0.3038194444444445,
+      "n_scorable": 41,
+      "n_videos": 48,
+      "progress": 0.6
+    },
+    {
+      "base_seed": 13,
+      "mean_a_fork_confident": 0.9332199546485261,
+      "mean_commitment_gain": 0.6611244894006365,
+      "mean_fork_abstention_rate": 0.26909722222222227,
+      "n_scorable": 41,
+      "n_videos": 48,
+      "progress": 0.75
+    },
+    {
+      "base_seed": 13,
+      "mean_a_fork_confident": 0.973170731707317,
+      "mean_commitment_gain": 0.75,
+      "mean_fork_abstention_rate": 0.2881944444444445,
+      "n_scorable": 40,
+      "n_videos": 48,
+      "progress": 0.9
+    },
+    {
+      "base_seed": 14,
+      "mean_a_fork_confident": 0.7522146935190414,
+      "mean_commitment_gain": 0.43984470313861385,
+      "mean_fork_abstention_rate": 0.296875,
+      "n_scorable": 45,
+      "n_videos": 48,
+      "progress": 0.05
+    },
+    {
+      "base_seed": 14,
+      "mean_a_fork_confident": 0.7420251143655398,
+      "mean_commitment_gain": 0.41725838328176423,
+      "mean_fork_abstention_rate": 0.3038194444444445,
+      "n_scorable": 46,
+      "n_videos": 48,
+      "progress": 0.15
+    },
+    {
+      "base_seed": 14,
+      "mean_a_fork_confident": 0.7726400214772309,
+      "mean_commitment_gain": 0.5103540225753077,
+      "mean_fork_abstention_rate": 0.30034722222222227,
+      "n_scorable": 42,
+      "n_videos": 48,
+      "progress": 0.25
+    },
+    {
+      "base_seed": 14,
+      "mean_a_fork_confident": 0.8056790123456791,
+      "mean_commitment_gain": 0.5512920569537327,
+      "mean_fork_abstention_rate": 0.3142361111111111,
+      "n_scorable": 45,
+      "n_videos": 48,
+      "progress": 0.35
+    },
+    {
+      "base_seed": 14,
+      "mean_a_fork_confident": 0.8077056277056277,
+      "mean_commitment_gain": 0.5402471283596678,
+      "mean_fork_abstention_rate": 0.3020833333333333,
+      "n_scorable": 45,
+      "n_videos": 48,
+      "progress": 0.45
+    },
+    {
+      "base_seed": 14,
+      "mean_a_fork_confident": 0.873794422631632,
+      "mean_commitment_gain": 0.6499092422763547,
+      "mean_fork_abstention_rate": 0.3194444444444444,
+      "n_scorable": 43,
+      "n_videos": 48,
+      "progress": 0.6
+    },
+    {
+      "base_seed": 14,
+      "mean_a_fork_confident": 0.8301587301587302,
+      "mean_commitment_gain": 0.5931594045964277,
+      "mean_fork_abstention_rate": 0.3194444444444444,
+      "n_scorable": 42,
+      "n_videos": 48,
+      "progress": 0.75
+    },
+    {
+      "base_seed": 14,
+      "mean_a_fork_confident": 0.9714285714285713,
+      "mean_commitment_gain": 0.7334292669472725,
+      "mean_fork_abstention_rate": 0.3819444444444445,
+      "n_scorable": 38,
+      "n_videos": 48,
+      "progress": 0.9
+    },
+    {
+      "base_seed": 15,
+      "mean_a_fork_confident": 0.6765416065416066,
+      "mean_commitment_gain": 0.32711870636667423,
+      "mean_fork_abstention_rate": 0.3020833333333333,
+      "n_scorable": 45,
+      "n_videos": 48,
+      "progress": 0.05
+    },
+    {
+      "base_seed": 15,
+      "mean_a_fork_confident": 0.7856341189674524,
+      "mean_commitment_gain": 0.45994386886028954,
+      "mean_fork_abstention_rate": 0.3368055555555555,
+      "n_scorable": 45,
+      "n_videos": 48,
+      "progress": 0.15
+    },
+    {
+      "base_seed": 15,
+      "mean_a_fork_confident": 0.7759920634920635,
+      "mean_commitment_gain": 0.44833785472909965,
+      "mean_fork_abstention_rate": 0.3107638888888889,
+      "n_scorable": 44,
+      "n_videos": 48,
+      "progress": 0.25
+    },
+    {
+      "base_seed": 15,
+      "mean_a_fork_confident": 0.8321453740058391,
+      "mean_commitment_gain": 0.5301023252868163,
+      "mean_fork_abstention_rate": 0.3020833333333333,
+      "n_scorable": 43,
+      "n_videos": 48,
+      "progress": 0.35
+    },
+    {
+      "base_seed": 15,
+      "mean_a_fork_confident": 0.8297054394880482,
+      "mean_commitment_gain": 0.5590985496973293,
+      "mean_fork_abstention_rate": 0.3072916666666667,
+      "n_scorable": 45,
+      "n_videos": 48,
+      "progress": 0.45
+    },
+    {
+      "base_seed": 15,
+      "mean_a_fork_confident": 0.820323988181131,
+      "mean_commitment_gain": 0.5251608533064891,
+      "mean_fork_abstention_rate": 0.3211805555555555,
+      "n_scorable": 42,
+      "n_videos": 48,
+      "progress": 0.6
+    },
+    {
+      "base_seed": 15,
+      "mean_a_fork_confident": 0.8045404208194906,
+      "mean_commitment_gain": 0.5408797710231907,
+      "mean_fork_abstention_rate": 0.3298611111111111,
+      "n_scorable": 43,
+      "n_videos": 48,
+      "progress": 0.75
+    },
+    {
+      "base_seed": 15,
+      "mean_a_fork_confident": 0.9015098722415795,
+      "mean_commitment_gain": 0.6419580868472793,
+      "mean_fork_abstention_rate": 0.3125,
+      "n_scorable": 41,
+      "n_videos": 48,
+      "progress": 0.9
+    },
+    {
+      "base_seed": 16,
+      "mean_a_fork_confident": 0.6646809712027103,
+      "mean_commitment_gain": 0.26490041971027295,
+      "mean_fork_abstention_rate": 0.3194444444444445,
+      "n_scorable": 46,
+      "n_videos": 48,
+      "progress": 0.05
+    },
+    {
+      "base_seed": 16,
+      "mean_a_fork_confident": 0.6914718614718616,
+      "mean_commitment_gain": 0.3713560087037498,
+      "mean_fork_abstention_rate": 0.3263888888888889,
+      "n_scorable": 45,
+      "n_videos": 48,
+      "progress": 0.15
+    },
+    {
+      "base_seed": 16,
+      "mean_a_fork_confident": 0.7456152433425159,
+      "mean_commitment_gain": 0.4209031426088601,
+      "mean_fork_abstention_rate": 0.3020833333333333,
+      "n_scorable": 44,
+      "n_videos": 48,
+      "progress": 0.25
+    },
+    {
+      "base_seed": 16,
+      "mean_a_fork_confident": 0.781923890063425,
+      "mean_commitment_gain": 0.47212675794930553,
+      "mean_fork_abstention_rate": 0.3125,
+      "n_scorable": 43,
+      "n_videos": 48,
+      "progress": 0.35
+    },
+    {
+      "base_seed": 16,
+      "mean_a_fork_confident": 0.7996687655778565,
+      "mean_commitment_gain": 0.5225590531029809,
+      "mean_fork_abstention_rate": 0.2916666666666667,
+      "n_scorable": 44,
+      "n_videos": 48,
+      "progress": 0.45
+    },
+    {
+      "base_seed": 16,
+      "mean_a_fork_confident": 0.8372260814121278,
+      "mean_commitment_gain": 0.5849295324887777,
+      "mean_fork_abstention_rate": 0.3072916666666667,
+      "n_scorable": 43,
+      "n_videos": 48,
+      "progress": 0.6
+    },
+    {
+      "base_seed": 16,
+      "mean_a_fork_confident": 0.9314151972688558,
+      "mean_commitment_gain": 0.6902344452731843,
+      "mean_fork_abstention_rate": 0.3125,
+      "n_scorable": 41,
+      "n_videos": 48,
+      "progress": 0.75
+    },
+    {
+      "base_seed": 16,
+      "mean_a_fork_confident": 0.97008547008547,
+      "mean_commitment_gain": 0.7872405372405372,
+      "mean_fork_abstention_rate": 0.2743055555555556,
+      "n_scorable": 39,
+      "n_videos": 48,
+      "progress": 0.9
+    }
+  ],
+  "curves_by_progress": [
+    {
+      "a_fork_confident_ci_high": 0.7447478093862351,
+      "a_fork_confident_ci_low": 0.6231720661831531,
+      "commitment_gain_ci_high": 0.4196913684267444,
+      "commitment_gain_ci_low": 0.2802950286133324,
+      "fork_abstention_rate_ci_high": 0.37919219771241824,
+      "fork_abstention_rate_ci_low": 0.24928257761437905,
+      "mean_a_fork_confident": 0.6817009959867103,
+      "mean_commitment_gain": 0.340303607927867,
+      "mean_fork_abstention_rate": 0.31464460784313725,
+      "n_scorable_cells": 765,
+      "n_video_seed_cells": 816,
+      "progress": 0.05
+    },
+    {
+      "a_fork_confident_ci_high": 0.7683085467772968,
+      "a_fork_confident_ci_low": 0.6598256978927934,
+      "commitment_gain_ci_high": 0.4713296899881547,
+      "commitment_gain_ci_low": 0.3271216359607493,
+      "fork_abstention_rate_ci_high": 0.3769429125816993,
+      "fork_abstention_rate_ci_low": 0.25081444035947714,
+      "mean_a_fork_confident": 0.7128724817028159,
+      "mean_commitment_gain": 0.3905284303436856,
+      "mean_fork_abstention_rate": 0.31433823529411764,
+      "n_scorable_cells": 766,
+      "n_video_seed_cells": 816,
+      "progress": 0.15
+    },
+    {
+      "a_fork_confident_ci_high": 0.8013690430252165,
+      "a_fork_confident_ci_low": 0.7036920659309599,
+      "commitment_gain_ci_high": 0.5354410251606043,
+      "commitment_gain_ci_low": 0.38126409474294637,
+      "fork_abstention_rate_ci_high": 0.37040441176470584,
+      "fork_abstention_rate_ci_low": 0.24243515114379086,
+      "mean_a_fork_confident": 0.7531615878674703,
+      "mean_commitment_gain": 0.4476357346983613,
+      "mean_fork_abstention_rate": 0.3064746732026144,
+      "n_scorable_cells": 757,
+      "n_video_seed_cells": 816,
+      "progress": 0.25
+    },
+    {
+      "a_fork_confident_ci_high": 0.8323884941119108,
+      "a_fork_confident_ci_low": 0.7500416508738791,
+      "commitment_gain_ci_high": 0.5682369029668122,
+      "commitment_gain_ci_low": 0.4114804859733565,
+      "fork_abstention_rate_ci_high": 0.36703431372549017,
+      "fork_abstention_rate_ci_low": 0.24039777369281046,
+      "mean_a_fork_confident": 0.7895349903959176,
+      "mean_commitment_gain": 0.4851567326623928,
+      "mean_fork_abstention_rate": 0.30371732026143794,
+      "n_scorable_cells": 749,
+      "n_video_seed_cells": 816,
+      "progress": 0.35
+    },
+    {
+      "a_fork_confident_ci_high": 0.8503160215028731,
+      "a_fork_confident_ci_low": 0.7758686561138635,
+      "commitment_gain_ci_high": 0.6101031739934945,
+      "commitment_gain_ci_low": 0.4484833391152543,
+      "fork_abstention_rate_ci_high": 0.3659109477124183,
+      "fork_abstention_rate_ci_low": 0.2394786560457516,
+      "mean_a_fork_confident": 0.8116251564527426,
+      "mean_commitment_gain": 0.5215778511338354,
+      "mean_fork_abstention_rate": 0.30259395424836605,
+      "n_scorable_cells": 748,
+      "n_video_seed_cells": 816,
+      "progress": 0.45
+    },
+    {
+      "a_fork_confident_ci_high": 0.8873324287432168,
+      "a_fork_confident_ci_low": 0.8282965801681007,
+      "commitment_gain_ci_high": 0.6801638449382066,
+      "commitment_gain_ci_low": 0.5040966616376621,
+      "fork_abstention_rate_ci_high": 0.36254340277777786,
+      "fork_abstention_rate_ci_low": 0.2344720179738562,
+      "mean_a_fork_confident": 0.8560321566419127,
+      "mean_commitment_gain": 0.5872877216875395,
+      "mean_fork_abstention_rate": 0.29820261437908496,
+      "n_scorable_cells": 733,
+      "n_video_seed_cells": 816,
+      "progress": 0.6
+    },
+    {
+      "a_fork_confident_ci_high": 0.9238717924882414,
+      "a_fork_confident_ci_low": 0.8750882747893455,
+      "commitment_gain_ci_high": 0.7504818749665553,
+      "commitment_gain_ci_low": 0.5607936720026608,
+      "fork_abstention_rate_ci_high": 0.36989379084967317,
+      "fork_abstention_rate_ci_low": 0.24244025735294117,
+      "mean_a_fork_confident": 0.8970238600490702,
+      "mean_commitment_gain": 0.6454168518061381,
+      "mean_fork_abstention_rate": 0.3055555555555555,
+      "n_scorable_cells": 710,
+      "n_video_seed_cells": 816,
+      "progress": 0.75
+    },
+    {
+      "a_fork_confident_ci_high": 0.9670099588960649,
+      "a_fork_confident_ci_low": 0.9402029987759154,
+      "commitment_gain_ci_high": 0.8346868368673276,
+      "commitment_gain_ci_low": 0.6283609367002929,
+      "fork_abstention_rate_ci_high": 0.3640752655228757,
+      "fork_abstention_rate_ci_low": 0.23702256944444441,
+      "mean_a_fork_confident": 0.9524062626682714,
+      "mean_commitment_gain": 0.7182270550035463,
+      "mean_fork_abstention_rate": 0.3002450980392157,
+      "n_scorable_cells": 683,
+      "n_video_seed_cells": 816,
+      "progress": 0.9
+    }
+  ],
+  "first_crossing_rule": "earliest sampled progress meeting theta",
+  "historical_comparison_inputs": [
+    {
+      "b2_curve_differences": [
+        {
+          "b2_minus_historical_commitment_gain": -0.011321342669462664,
+          "progress": 0.05
+        },
+        {
+          "b2_minus_historical_commitment_gain": -0.007337536803453448,
+          "progress": 0.15
+        },
+        {
+          "b2_minus_historical_commitment_gain": 0.0067826202100084165,
+          "progress": 0.25
+        },
+        {
+          "b2_minus_historical_commitment_gain": -0.04460166797537235,
+          "progress": 0.35
+        },
+        {
+          "b2_minus_historical_commitment_gain": -0.07826146538677647,
+          "progress": 0.45
+        },
+        {
+          "b2_minus_historical_commitment_gain": -0.0811880925919396,
+          "progress": 0.6
+        },
+        {
+          "b2_minus_historical_commitment_gain": -0.125124474179081,
+          "progress": 0.75
+        },
+        {
+          "b2_minus_historical_commitment_gain": -0.10870362421158852,
+          "progress": 0.9
+        }
+      ],
+      "curve_by_progress": [
+        {
+          "a_fork_confident": 0.5671317965734209,
+          "abstain_rate": 0.29083333333333333,
+          "commitment_gain_confident": 0.3516249505973297,
+          "progress": 0.05
+        },
+        {
+          "a_fork_confident": 0.595400618854227,
+          "abstain_rate": 0.3095833333333333,
+          "commitment_gain_confident": 0.39786596714713907,
+          "progress": 0.15
+        },
+        {
+          "a_fork_confident": 0.644014926046176,
+          "abstain_rate": 0.30541666666666667,
+          "commitment_gain_confident": 0.4408531144883529,
+          "progress": 0.25
+        },
+        {
+          "a_fork_confident": 0.7086888227513227,
+          "abstain_rate": 0.31083333333333335,
+          "commitment_gain_confident": 0.5297584006377651,
+          "progress": 0.35
+        },
+        {
+          "a_fork_confident": 0.7617283119873794,
+          "abstain_rate": 0.2970833333333333,
+          "commitment_gain_confident": 0.5998393165206118,
+          "progress": 0.45
+        },
+        {
+          "a_fork_confident": 0.8083202849160296,
+          "abstain_rate": 0.2975,
+          "commitment_gain_confident": 0.6684758142794791,
+          "progress": 0.6
+        },
+        {
+          "a_fork_confident": 0.878489475500345,
+          "abstain_rate": 0.2925,
+          "commitment_gain_confident": 0.7705413259852191,
+          "progress": 0.75
+        },
+        {
+          "a_fork_confident": 0.9178890950319523,
+          "abstain_rate": 0.295,
+          "commitment_gain_confident": 0.8269306792151349,
+          "progress": 0.9
+        }
+      ],
+      "max_abs_delta": 0.0,
+      "n_crossing_confident": 172,
+      "path": "/XYFS02/HDD_POOL/paratera_xy/pxy1289/HaocunYe/Research/SoundDecisions-non-human-closure/results/arc4_wpA2/class_reconstruction.json",
+      "reproduces_committed_csv": true,
+      "s_commit_confident": 0.34593023255813954,
+      "sha256": "4d191b1c53ce21c4e9b68b9c36e385b0fc7ea2edd607fc528e2e034047773bc0",
+      "theta_commit": 0.7
+    }
+  ],
+  "legacy_decision_rule": "legacy_event_top1_cross_group_margin_delta_0.05_v1",
+  "limitations": [
+    "posterior inference repeatability variance is not identifiable from one measurement per WAV",
+    "fork bootstrap quantifies finite K=12 Monte Carlo uncertainty, not semantic label validity",
+    "abstention variance is an identifiable subcomponent of fork resampling, not an independent measurer repeat"
+  ],
+  "pooled_crossings": [
+    {
+      "bootstrap_draws": 5000,
+      "bootstrap_noncrossing_draws": 0,
+      "bootstrap_sustained_crossing_draws": 5000,
+      "bootstrap_unscorable_draws": 0,
+      "first_crossing": 0.45,
+      "first_crossing_bootstrap_ci_high": 0.6,
+      "first_crossing_bootstrap_ci_low": 0.25,
+      "n_scorable_progress_points": 8,
+      "noncrossing_draws_not_numerically_imputed": true,
+      "status": "CROSSING",
+      "sustained_crossing": 0.45,
+      "sustained_crossing_bootstrap_ci_high": 0.6,
+      "sustained_crossing_bootstrap_ci_low": 0.25,
+      "theta_commit": 0.5
+    },
+    {
+      "bootstrap_draws": 5000,
+      "bootstrap_noncrossing_draws": 43,
+      "bootstrap_sustained_crossing_draws": 4957,
+      "bootstrap_unscorable_draws": 0,
+      "first_crossing": 0.75,
+      "first_crossing_bootstrap_ci_high": 0.9,
+      "first_crossing_bootstrap_ci_low": 0.45,
+      "n_scorable_progress_points": 8,
+      "noncrossing_draws_not_numerically_imputed": true,
+      "status": "CROSSING",
+      "sustained_crossing": 0.75,
+      "sustained_crossing_bootstrap_ci_high": 0.9,
+      "sustained_crossing_bootstrap_ci_low": 0.45,
+      "theta_commit": 0.6
+    },
+    {
+      "bootstrap_draws": 5000,
+      "bootstrap_noncrossing_draws": 1233,
+      "bootstrap_sustained_crossing_draws": 3767,
+      "bootstrap_unscorable_draws": 0,
+      "first_crossing": 0.9,
+      "first_crossing_bootstrap_ci_high": 0.9,
+      "first_crossing_bootstrap_ci_low": 0.75,
+      "n_scorable_progress_points": 8,
+      "noncrossing_draws_not_numerically_imputed": true,
+      "status": "CROSSING",
+      "sustained_crossing": 0.9,
+      "sustained_crossing_bootstrap_ci_high": 0.9,
+      "sustained_crossing_bootstrap_ci_low": 0.75,
+      "theta_commit": 0.7
+    },
+    {
+      "bootstrap_draws": 5000,
+      "bootstrap_noncrossing_draws": 4433,
+      "bootstrap_sustained_crossing_draws": 567,
+      "bootstrap_unscorable_draws": 0,
+      "first_crossing": null,
+      "first_crossing_bootstrap_ci_high": 0.9,
+      "first_crossing_bootstrap_ci_low": 0.9,
+      "n_scorable_progress_points": 8,
+      "noncrossing_draws_not_numerically_imputed": true,
+      "status": "NONCROSSING",
+      "sustained_crossing": null,
+      "sustained_crossing_bootstrap_ci_high": 0.9,
+      "sustained_crossing_bootstrap_ci_low": 0.9,
+      "theta_commit": 0.8
+    },
+    {
+      "bootstrap_draws": 5000,
+      "bootstrap_noncrossing_draws": 4998,
+      "bootstrap_sustained_crossing_draws": 2,
+      "bootstrap_unscorable_draws": 0,
+      "first_crossing": null,
+      "first_crossing_bootstrap_ci_high": 0.9,
+      "first_crossing_bootstrap_ci_low": 0.9,
+      "n_scorable_progress_points": 8,
+      "noncrossing_draws_not_numerically_imputed": true,
+      "status": "NONCROSSING",
+      "sustained_crossing": null,
+      "sustained_crossing_bootstrap_ci_high": 0.9,
+      "sustained_crossing_bootstrap_ci_low": 0.9,
+      "theta_commit": 0.9
+    }
+  ],
+  "protocol": "/XYFS02/HDD_POOL/paratera_xy/pxy1289/HaocunYe/Research/SoundDecisions-non-human-closure/experiment/non_human_closure/PROTOCOL.json",
+  "protocol_sha256": "5c4fc4025995c16e355feb8cc02fbb3627891d47f6df052becde4845eaa7bd09",
+  "registered_sustained_rule": "earliest sampled progress meeting theta and all later scorable finite points; unscorable later points are ignored and remain reported missing",
+  "replication_classification": {
+    "historical_s_commit": 0.34593023255813954,
+    "historical_within_one_sampled_step_of_point_estimate": false,
+    "historical_within_pooled_bootstrap_interval": false,
+    "pooled_sustained_crossing_theta_0.70": 0.9,
+    "replication_label": "not_reproduced",
+    "rule_id": "protocol.class_measurement.exploratory_replication_labels.v1",
+    "scientific_status": "NOT_SUPPORTED",
+    "seed_curves_sustained_crossing_by_0.45_fraction": 0.0,
+    "seed_variance": 0.0,
+    "seed_variance_fraction_identifiable_total": 0.0,
+    "video_variance": 0.079268387812896
+  },
+  "replication_label": "not_reproduced",
+  "schema_version": "sounddecisions.b2_class_multiseed.v1",
+  "scientific_scope": "clip-level legacy Class continuity; not event-centered v2 PASS",
+  "scientific_status": "NOT_SUPPORTED",
+  "theta_0.70_summary": {
+    "crossing_fraction": 0.917981072555205,
+    "crossing_fraction_ci_high": 0.9441930618401206,
+    "crossing_fraction_ci_low": 0.891640866873065,
+    "mean_first_crossing_crossers": 0.2997422680412371,
+    "median_first_crossing_crossers": 0.25,
+    "n_crossing": 582,
+    "n_noncrossing": 52,
+    "n_nondetermined_video_seed_units": 663,
+    "n_scorable_nondetermined_video_seed_units": 634,
+    "n_sustained_crossing": 526,
+    "n_unscorable": 29,
+    "n_video_determined": 9,
+    "n_video_seed_units": 816,
+    "n_videos": 48,
+    "noncrossers_are_right_censored_without_numeric_imputation": true,
+    "noncrossing_fraction": 0.082018927444795,
+    "noncrossing_fraction_ci_high": 0.10835913312693501,
+    "noncrossing_fraction_ci_low": 0.05580693815987936,
+    "registered_sustained_crossing_fraction": 0.8296529968454258,
+    "theta_commit": 0.7,
+    "video_determined_fraction": 0.1875
+  },
+  "threshold_sensitivity": [
+    {
+      "crossing_fraction": 0.9511041009463722,
+      "crossing_fraction_ci_high": 0.9690402476780183,
+      "crossing_fraction_ci_low": 0.9349845201238388,
+      "mean_first_crossing_crossers": 0.25024875621890547,
+      "median_first_crossing_crossers": 0.15,
+      "n_crossing": 603,
+      "n_noncrossing": 31,
+      "n_nondetermined_video_seed_units": 663,
+      "n_scorable_nondetermined_video_seed_units": 634,
+      "n_sustained_crossing": 540,
+      "n_unscorable": 29,
+      "n_video_determined": 9,
+      "n_video_seed_units": 816,
+      "n_videos": 48,
+      "noncrossers_are_right_censored_without_numeric_imputation": true,
+      "noncrossing_fraction": 0.04889589905362779,
+      "noncrossing_fraction_ci_high": 0.06501547987616119,
+      "noncrossing_fraction_ci_low": 0.03095975232198167,
+      "registered_sustained_crossing_fraction": 0.8517350157728707,
+      "theta_commit": 0.5,
+      "video_determined_fraction": 0.1875
+    },
+    {
+      "crossing_fraction": 0.9258675078864353,
+      "crossing_fraction_ci_high": 0.9495959922430508,
+      "crossing_fraction_ci_low": 0.90345786963434,
+      "mean_first_crossing_crossers": 0.2701022146507666,
+      "median_first_crossing_crossers": 0.15,
+      "n_crossing": 587,
+      "n_noncrossing": 47,
+      "n_nondetermined_video_seed_units": 663,
+      "n_scorable_nondetermined_video_seed_units": 634,
+      "n_sustained_crossing": 530,
+      "n_unscorable": 29,
+      "n_video_determined": 9,
+      "n_video_seed_units": 816,
+      "n_videos": 48,
+      "noncrossers_are_right_censored_without_numeric_imputation": true,
+      "noncrossing_fraction": 0.07413249211356465,
+      "noncrossing_fraction_ci_high": 0.09654213036565983,
+      "noncrossing_fraction_ci_low": 0.05040400775694899,
+      "registered_sustained_crossing_fraction": 0.8359621451104101,
+      "theta_commit": 0.6,
+      "video_determined_fraction": 0.1875
+    },
+    {
+      "crossing_fraction": 0.917981072555205,
+      "crossing_fraction_ci_high": 0.9441930618401206,
+      "crossing_fraction_ci_low": 0.891640866873065,
+      "mean_first_crossing_crossers": 0.2997422680412371,
+      "median_first_crossing_crossers": 0.25,
+      "n_crossing": 582,
+      "n_noncrossing": 52,
+      "n_nondetermined_video_seed_units": 663,
+      "n_scorable_nondetermined_video_seed_units": 634,
+      "n_sustained_crossing": 526,
+      "n_unscorable": 29,
+      "n_video_determined": 9,
+      "n_video_seed_units": 816,
+      "n_videos": 48,
+      "noncrossers_are_right_censored_without_numeric_imputation": true,
+      "noncrossing_fraction": 0.082018927444795,
+      "noncrossing_fraction_ci_high": 0.10835913312693501,
+      "noncrossing_fraction_ci_low": 0.05580693815987936,
+      "registered_sustained_crossing_fraction": 0.8296529968454258,
+      "theta_commit": 0.7,
+      "video_determined_fraction": 0.1875
+    },
+    {
+      "crossing_fraction": 0.9069400630914827,
+      "crossing_fraction_ci_high": 0.9366515837104071,
+      "crossing_fraction_ci_low": 0.8791396600220128,
+      "mean_first_crossing_crossers": 0.3197391304347826,
+      "median_first_crossing_crossers": 0.25,
+      "n_crossing": 575,
+      "n_noncrossing": 59,
+      "n_nondetermined_video_seed_units": 663,
+      "n_scorable_nondetermined_video_seed_units": 634,
+      "n_sustained_crossing": 522,
+      "n_unscorable": 29,
+      "n_video_determined": 9,
+      "n_video_seed_units": 816,
+      "n_videos": 48,
+      "noncrossers_are_right_censored_without_numeric_imputation": true,
+      "noncrossing_fraction": 0.09305993690851733,
+      "noncrossing_fraction_ci_high": 0.12086033997798669,
+      "noncrossing_fraction_ci_low": 0.06334841628959287,
+      "registered_sustained_crossing_fraction": 0.8233438485804416,
+      "theta_commit": 0.8,
+      "video_determined_fraction": 0.1875
+    },
+    {
+      "crossing_fraction": 0.9069400630914827,
+      "crossing_fraction_ci_high": 0.9378174603174602,
+      "crossing_fraction_ci_low": 0.8777089783281733,
+      "mean_first_crossing_crossers": 0.32182608695652176,
+      "median_first_crossing_crossers": 0.25,
+      "n_crossing": 575,
+      "n_noncrossing": 59,
+      "n_nondetermined_video_seed_units": 663,
+      "n_scorable_nondetermined_video_seed_units": 634,
+      "n_sustained_crossing": 522,
+      "n_unscorable": 29,
+      "n_video_determined": 9,
+      "n_video_seed_units": 816,
+      "n_videos": 48,
+      "noncrossers_are_right_censored_without_numeric_imputation": true,
+      "noncrossing_fraction": 0.09305993690851733,
+      "noncrossing_fraction_ci_high": 0.1222910216718267,
+      "noncrossing_fraction_ci_low": 0.0621825396825398,
+      "registered_sustained_crossing_fraction": 0.8233438485804416,
+      "theta_commit": 0.9,
+      "video_determined_fraction": 0.1875
+    }
+  ],
+  "thresholds": [
+    0.5,
+    0.6,
+    0.7,
+    0.8,
+    0.9
+  ],
+  "variance_decomposition": {
+    "by_progress": [
+      {
+        "abstention_increment_variance_mean": 0.003756351152482427,
+        "abstention_is_subcomponent_of_fork_monte_carlo": true,
+        "complete_crossed_table": false,
+        "component_fractions": {
+          "abstention_within_fork_monte_carlo": 0.02362703712690854,
+          "base_seed": 0.0,
+          "fork_monte_carlo_nonabstention": 0.2621318060779141,
+          "video": 0.29055082605478944,
+          "video_by_seed_interaction": 0.4236903307403878
+        },
+        "component_total": 0.1589852816629456,
+        "component_video_bootstrap_ci": {
+          "abstention_within_fork_monte_carlo": {
+            "ci_high": 0.004903983547258658,
+            "ci_low": 0.0027555132895144803,
+            "valid_draws": 5000
+          },
+          "base_seed": {
+            "ci_high": 0.004318499175366505,
+            "ci_low": 0.0,
+            "valid_draws": 5000
+          },
+          "fork_monte_carlo_nonabstention": {
+            "ci_high": 0.049344125955709896,
+            "ci_low": 0.033714472922905594,
+            "valid_draws": 5000
+          },
+          "video": {
+            "ci_high": 0.05961367233977815,
+            "ci_low": 0.03128109767764065,
+            "valid_draws": 5000
+          },
+          "video_by_seed_interaction": {
+            "ci_high": 0.08583655353184702,
+            "ci_low": 0.04605627346351507,
+            "valid_draws": 5000
+          }
+        },
+        "components": {
+          "abstention_within_fork_monte_carlo": 0.003756351152482427,
+          "base_seed": 0.0,
+          "fork_monte_carlo_nonabstention": 0.041675099022113804,
+          "video": 0.04619330491772221,
+          "video_by_seed_interaction": 0.06736052657062713
+        },
+        "fork_bootstrap_draws": 5000,
+        "fork_bootstrap_scorable_fraction_mean": 0.9318779411764705,
+        "fork_conditional_confident_label_variance_mean": 0.04361655065658185,
+        "fork_monte_carlo_total": 0.04543145017459623,
+        "fork_monte_carlo_variance_mean": 0.04543145017459623,
+        "interaction_plus_measurement_residual": 0.11279197674522336,
+        "measurer_repeatability_identifiability": "not identifiable from one deterministic posterior measurement per WAV",
+        "measurer_repeatability_variance": null,
+        "method": "unbalanced_crossed_pair_covariance_moments",
+        "n_scorable": 765,
+        "n_total": 816,
+        "progress": 0.05,
+        "raw_base_seed_component": -0.0014701726038110863,
+        "raw_video_component": 0.04619330491772221,
+        "scientific_status": "SUPPORTED_EXPLORATORILY",
+        "video_cluster_bootstrap_draws": 5000,
+        "video_cluster_bootstrap_seed": 20260717
+      },
+      {
+        "abstention_increment_variance_mean": 0.0032212639463195807,
+        "abstention_is_subcomponent_of_fork_monte_carlo": true,
+        "complete_crossed_table": false,
+        "component_fractions": {
+          "abstention_within_fork_monte_carlo": 0.018344959594863004,
+          "base_seed": 0.0,
+          "fork_monte_carlo_nonabstention": 0.22343706970688001,
+          "video": 0.2910540475000981,
+          "video_by_seed_interaction": 0.46716392319815886
+        },
+        "component_total": 0.17559395155177154,
+        "component_video_bootstrap_ci": {
+          "abstention_within_fork_monte_carlo": {
+            "ci_high": 0.004063452753150777,
+            "ci_low": 0.0024358318277445763,
+            "valid_draws": 5000
+          },
+          "base_seed": {
+            "ci_high": 0.0047130939688742185,
+            "ci_low": 0.0,
+            "valid_draws": 5000
+          },
+          "fork_monte_carlo_nonabstention": {
+            "ci_high": 0.04750736503015268,
+            "ci_low": 0.03140186529457731,
+            "valid_draws": 5000
+          },
+          "video": {
+            "ci_high": 0.06716475156741734,
+            "ci_low": 0.032269318221343685,
+            "valid_draws": 5000
+          },
+          "video_by_seed_interaction": {
+            "ci_high": 0.098534410270606,
+            "ci_low": 0.06364740982766842,
+            "valid_draws": 5000
+          }
+        },
+        "components": {
+          "abstention_within_fork_monte_carlo": 0.0032212639463195807,
+          "base_seed": 0.0,
+          "fork_monte_carlo_nonabstention": 0.03923419799297969,
+          "video": 0.05110733031567924,
+          "video_by_seed_interaction": 0.08203115929679303
+        },
+        "fork_bootstrap_draws": 5000,
+        "fork_bootstrap_scorable_fraction_mean": 0.930095588235294,
+        "fork_conditional_confident_label_variance_mean": 0.041230954607158636,
+        "fork_monte_carlo_total": 0.04245546193929927,
+        "fork_monte_carlo_variance_mean": 0.04245546193929927,
+        "interaction_plus_measurement_residual": 0.1244866212360923,
+        "measurer_repeatability_identifiability": "not identifiable from one deterministic posterior measurement per WAV",
+        "measurer_repeatability_variance": null,
+        "method": "unbalanced_crossed_pair_covariance_moments",
+        "n_scorable": 766,
+        "n_total": 816,
+        "progress": 0.15,
+        "raw_base_seed_component": -0.0017316521841966726,
+        "raw_video_component": 0.05110733031567924,
+        "scientific_status": "SUPPORTED_EXPLORATORILY",
+        "video_cluster_bootstrap_draws": 5000,
+        "video_cluster_bootstrap_seed": 20260717
+      },
+      {
+        "abstention_increment_variance_mean": 0.002811902593058839,
+        "abstention_is_subcomponent_of_fork_monte_carlo": true,
+        "complete_crossed_table": false,
+        "component_fractions": {
+          "abstention_within_fork_monte_carlo": 0.01488291492781184,
+          "base_seed": 0.0,
+          "fork_monte_carlo_nonabstention": 0.1773037225887406,
+          "video": 0.31735449712749325,
+          "video_by_seed_interaction": 0.4904588653559544
+        },
+        "component_total": 0.18893493691912533,
+        "component_video_bootstrap_ci": {
+          "abstention_within_fork_monte_carlo": {
+            "ci_high": 0.003580975446243868,
+            "ci_low": 0.002100485863705029,
+            "valid_draws": 5000
+          },
+          "base_seed": {
+            "ci_high": 0.005552351169965616,
+            "ci_low": 0.0,
+            "valid_draws": 5000
+          },
+          "fork_monte_carlo_nonabstention": {
+            "ci_high": 0.04015690345464909,
+            "ci_low": 0.026957568893114674,
+            "valid_draws": 5000
+          },
+          "video": {
+            "ci_high": 0.0811662772910163,
+            "ci_low": 0.03517587633686054,
+            "valid_draws": 5000
+          },
+          "video_by_seed_interaction": {
+            "ci_high": 0.10935696564018271,
+            "ci_low": 0.07357111119974341,
+            "valid_draws": 5000
+          }
+        },
+        "components": {
+          "abstention_within_fork_monte_carlo": 0.002811902593058839,
+          "base_seed": 0.0,
+          "fork_monte_carlo_nonabstention": 0.033498867642829805,
+          "video": 0.05995935189578368,
+          "video_by_seed_interaction": 0.09266481478745303
+        },
+        "fork_bootstrap_draws": 5000,
+        "fork_bootstrap_scorable_fraction_mean": 0.9215355392156862,
+        "fork_conditional_confident_label_variance_mean": 0.036040939478326435,
+        "fork_monte_carlo_total": 0.03631077023588864,
+        "fork_monte_carlo_variance_mean": 0.03631077023588864,
+        "interaction_plus_measurement_residual": 0.12897558502334167,
+        "measurer_repeatability_identifiability": "not identifiable from one deterministic posterior measurement per WAV",
+        "measurer_repeatability_variance": null,
+        "method": "unbalanced_crossed_pair_covariance_moments",
+        "n_scorable": 757,
+        "n_total": 816,
+        "progress": 0.25,
+        "raw_base_seed_component": -0.0015889887644310113,
+        "raw_video_component": 0.05995935189578368,
+        "scientific_status": "SUPPORTED_EXPLORATORILY",
+        "video_cluster_bootstrap_draws": 5000,
+        "video_cluster_bootstrap_seed": 20260717
+      },
+      {
+        "abstention_increment_variance_mean": 0.0026663229167751567,
+        "abstention_is_subcomponent_of_fork_monte_carlo": true,
+        "complete_crossed_table": false,
+        "component_fractions": {
+          "abstention_within_fork_monte_carlo": 0.013667520962023533,
+          "base_seed": 0.0,
+          "fork_monte_carlo_nonabstention": 0.15996545804755888,
+          "video": 0.33017598766167267,
+          "video_by_seed_interaction": 0.4961910333287449
+        },
+        "component_total": 0.1950846041636798,
+        "component_video_bootstrap_ci": {
+          "abstention_within_fork_monte_carlo": {
+            "ci_high": 0.0034175333097887554,
+            "ci_low": 0.0019879990604963547,
+            "valid_draws": 5000
+          },
+          "base_seed": {
+            "ci_high": 0.004160185951722307,
+            "ci_low": 0.0,
+            "valid_draws": 5000
+          },
+          "fork_monte_carlo_nonabstention": {
+            "ci_high": 0.03789721547879058,
+            "ci_low": 0.024823675614061163,
+            "valid_draws": 5000
+          },
+          "video": {
+            "ci_high": 0.0872948311162,
+            "ci_low": 0.03583411520925575,
+            "valid_draws": 5000
+          },
+          "video_by_seed_interaction": {
+            "ci_high": 0.11395984101150987,
+            "ci_low": 0.07852142009145444,
+            "valid_draws": 5000
+          }
+        },
+        "components": {
+          "abstention_within_fork_monte_carlo": 0.0026663229167751567,
+          "base_seed": 0.0,
+          "fork_monte_carlo_nonabstention": 0.031206798063069748,
+          "video": 0.06441225185732943,
+          "video_by_seed_interaction": 0.09679923132650545
+        },
+        "fork_bootstrap_draws": 5000,
+        "fork_bootstrap_scorable_fraction_mean": 0.9159686274509804,
+        "fork_conditional_confident_label_variance_mean": 0.03340783622765755,
+        "fork_monte_carlo_total": 0.033873120979844906,
+        "fork_monte_carlo_variance_mean": 0.033873120979844906,
+        "interaction_plus_measurement_residual": 0.13067235230635035,
+        "measurer_repeatability_identifiability": "not identifiable from one deterministic posterior measurement per WAV",
+        "measurer_repeatability_variance": null,
+        "method": "unbalanced_crossed_pair_covariance_moments",
+        "n_scorable": 749,
+        "n_total": 816,
+        "progress": 0.35,
+        "raw_base_seed_component": -0.0028328836322733426,
+        "raw_video_component": 0.06441225185732943,
+        "scientific_status": "SUPPORTED_EXPLORATORILY",
+        "video_cluster_bootstrap_draws": 5000,
+        "video_cluster_bootstrap_seed": 20260717
+      },
+      {
+        "abstention_increment_variance_mean": 0.002201651177797634,
+        "abstention_is_subcomponent_of_fork_monte_carlo": true,
+        "complete_crossed_table": false,
+        "component_fractions": {
+          "abstention_within_fork_monte_carlo": 0.011146711383122633,
+          "base_seed": 0.0,
+          "fork_monte_carlo_nonabstention": 0.15260038531083273,
+          "video": 0.35658378393328566,
+          "video_by_seed_interaction": 0.47966911937275897
+        },
+        "component_total": 0.19751576066921228,
+        "component_video_bootstrap_ci": {
+          "abstention_within_fork_monte_carlo": {
+            "ci_high": 0.0027923981177320487,
+            "ci_low": 0.0016592081217644801,
+            "valid_draws": 5000
+          },
+          "base_seed": {
+            "ci_high": 0.004000035257242128,
+            "ci_low": 0.0,
+            "valid_draws": 5000
+          },
+          "fork_monte_carlo_nonabstention": {
+            "ci_high": 0.0358351272242583,
+            "ci_low": 0.024467212897102467,
+            "valid_draws": 5000
+          },
+          "video": {
+            "ci_high": 0.09628894997740553,
+            "ci_low": 0.036664825562360885,
+            "valid_draws": 5000
+          },
+          "video_by_seed_interaction": {
+            "ci_high": 0.1109079109660941,
+            "ci_low": 0.07760843446676273,
+            "valid_draws": 5000
+          }
+        },
+        "components": {
+          "abstention_within_fork_monte_carlo": 0.002201651177797634,
+          "base_seed": 0.0,
+          "fork_monte_carlo_nonabstention": 0.030140981183084014,
+          "video": 0.07043091732588895,
+          "video_by_seed_interaction": 0.09474221098244168
+        },
+        "fork_bootstrap_draws": 5000,
+        "fork_bootstrap_scorable_fraction_mean": 0.9102487745098038,
+        "fork_conditional_confident_label_variance_mean": 0.03231115801084458,
+        "fork_monte_carlo_total": 0.03234263236088165,
+        "fork_monte_carlo_variance_mean": 0.03234263236088165,
+        "interaction_plus_measurement_residual": 0.12708484334332332,
+        "measurer_repeatability_identifiability": "not identifiable from one deterministic posterior measurement per WAV",
+        "measurer_repeatability_variance": null,
+        "method": "unbalanced_crossed_pair_covariance_moments",
+        "n_scorable": 748,
+        "n_total": 816,
+        "progress": 0.45,
+        "raw_base_seed_component": -0.0027969637757403196,
+        "raw_video_component": 0.07043091732588895,
+        "scientific_status": "SUPPORTED_EXPLORATORILY",
+        "video_cluster_bootstrap_draws": 5000,
+        "video_cluster_bootstrap_seed": 20260717
+      },
+      {
+        "abstention_increment_variance_mean": 0.0018790713973945012,
+        "abstention_is_subcomponent_of_fork_monte_carlo": true,
+        "complete_crossed_table": false,
+        "component_fractions": {
+          "abstention_within_fork_monte_carlo": 0.009393531833581506,
+          "base_seed": 0.0,
+          "fork_monte_carlo_nonabstention": 0.11268706316205888,
+          "video": 0.4385278410832482,
+          "video_by_seed_interaction": 0.4393915639211115
+        },
+        "component_total": 0.20003885979040334,
+        "component_video_bootstrap_ci": {
+          "abstention_within_fork_monte_carlo": {
+            "ci_high": 0.002382879412628096,
+            "ci_low": 0.0014067451123643876,
+            "valid_draws": 5000
+          },
+          "base_seed": {
+            "ci_high": 0.0033895313347646026,
+            "ci_low": 0.0,
+            "valid_draws": 5000
+          },
+          "fork_monte_carlo_nonabstention": {
+            "ci_high": 0.027745708451209262,
+            "ci_low": 0.017531185622681904,
+            "valid_draws": 5000
+          },
+          "video": {
+            "ci_high": 0.12073645322161287,
+            "ci_low": 0.042982567408702294,
+            "valid_draws": 5000
+          },
+          "video_by_seed_interaction": {
+            "ci_high": 0.10489533087637491,
+            "ci_low": 0.07072286879420817,
+            "valid_draws": 5000
+          }
+        },
+        "components": {
+          "abstention_within_fork_monte_carlo": 0.0018790713973945012,
+          "base_seed": 0.0,
+          "fork_monte_carlo_nonabstention": 0.022541791628067423,
+          "video": 0.08772260931664017,
+          "video_by_seed_interaction": 0.08789538744830128
+        },
+        "fork_bootstrap_draws": 5000,
+        "fork_bootstrap_scorable_fraction_mean": 0.8989926470588235,
+        "fork_conditional_confident_label_variance_mean": 0.02454616126864056,
+        "fork_monte_carlo_total": 0.024420863025461925,
+        "fork_monte_carlo_variance_mean": 0.024420863025461925,
+        "interaction_plus_measurement_residual": 0.1123162504737632,
+        "measurer_repeatability_identifiability": "not identifiable from one deterministic posterior measurement per WAV",
+        "measurer_repeatability_variance": null,
+        "method": "unbalanced_crossed_pair_covariance_moments",
+        "n_scorable": 733,
+        "n_total": 816,
+        "progress": 0.6,
+        "raw_base_seed_component": -0.002847121765424319,
+        "raw_video_component": 0.08772260931664017,
+        "scientific_status": "SUPPORTED_EXPLORATORILY",
+        "video_cluster_bootstrap_draws": 5000,
+        "video_cluster_bootstrap_seed": 20260717
+      },
+      {
+        "abstention_increment_variance_mean": 0.0013527504088403685,
+        "abstention_is_subcomponent_of_fork_monte_carlo": true,
+        "complete_crossed_table": false,
+        "component_fractions": {
+          "abstention_within_fork_monte_carlo": 0.006843575742695831,
+          "base_seed": 0.0,
+          "fork_monte_carlo_nonabstention": 0.08460463123853094,
+          "video": 0.5705449585556164,
+          "video_by_seed_interaction": 0.3380068344631569
+        },
+        "component_total": 0.19766719324823182,
+        "component_video_bootstrap_ci": {
+          "abstention_within_fork_monte_carlo": {
+            "ci_high": 0.0018558753729692597,
+            "ci_low": 0.0009203646009755322,
+            "valid_draws": 5000
+          },
+          "base_seed": {
+            "ci_high": 0.002747020946623669,
+            "ci_low": 0.0,
+            "valid_draws": 5000
+          },
+          "fork_monte_carlo_nonabstention": {
+            "ci_high": 0.020929751928589566,
+            "ci_low": 0.01278958181579279,
+            "valid_draws": 5000
+          },
+          "video": {
+            "ci_high": 0.15145893052237788,
+            "ci_low": 0.05699347693002883,
+            "valid_draws": 5000
+          },
+          "video_by_seed_interaction": {
+            "ci_high": 0.08486876541366059,
+            "ci_low": 0.050911473759794115,
+            "valid_draws": 5000
+          }
+        },
+        "components": {
+          "abstention_within_fork_monte_carlo": 0.0013527504088403685,
+          "base_seed": 0.0,
+          "fork_monte_carlo_nonabstention": 0.016723559992722088,
+          "video": 0.11277802057961743,
+          "video_by_seed_interaction": 0.06681286226705194
+        },
+        "fork_bootstrap_draws": 5000,
+        "fork_bootstrap_scorable_fraction_mean": 0.8761742647058824,
+        "fork_conditional_confident_label_variance_mean": 0.018587758137787944,
+        "fork_monte_carlo_total": 0.018076310401562455,
+        "fork_monte_carlo_variance_mean": 0.018076310401562455,
+        "interaction_plus_measurement_residual": 0.08488917266861438,
+        "measurer_repeatability_identifiability": "not identifiable from one deterministic posterior measurement per WAV",
+        "measurer_repeatability_variance": null,
+        "method": "unbalanced_crossed_pair_covariance_moments",
+        "n_scorable": 710,
+        "n_total": 816,
+        "progress": 0.75,
+        "raw_base_seed_component": -0.0032123446685561685,
+        "raw_video_component": 0.11277802057961743,
+        "scientific_status": "SUPPORTED_EXPLORATORILY",
+        "video_cluster_bootstrap_draws": 5000,
+        "video_cluster_bootstrap_seed": 20260717
+      },
+      {
+        "abstention_increment_variance_mean": 0.0008275613235010164,
+        "abstention_is_subcomponent_of_fork_monte_carlo": true,
+        "complete_crossed_table": false,
+        "component_fractions": {
+          "abstention_within_fork_monte_carlo": 0.004376387617486055,
+          "base_seed": 0.0,
+          "fork_monte_carlo_nonabstention": 0.0493810062201971,
+          "video": 0.7485226764206445,
+          "video_by_seed_interaction": 0.1977199297416725
+        },
+        "component_total": 0.18909689813453856,
+        "component_video_bootstrap_ci": {
+          "abstention_within_fork_monte_carlo": {
+            "ci_high": 0.001181927232063688,
+            "ci_low": 0.0005224590385348742,
+            "valid_draws": 5000
+          },
+          "base_seed": {
+            "ci_high": 0.0007222045660754458,
+            "ci_low": 0.0,
+            "valid_draws": 5000
+          },
+          "fork_monte_carlo_nonabstention": {
+            "ci_high": 0.012356133624871632,
+            "ci_low": 0.006474817729504222,
+            "valid_draws": 5000
+          },
+          "video": {
+            "ci_high": 0.18885075302504623,
+            "ci_low": 0.06811931941942027,
+            "valid_draws": 5000
+          },
+          "video_by_seed_interaction": {
+            "ci_high": 0.05448046799294873,
+            "ci_low": 0.023359859927418333,
+            "valid_draws": 5000
+          }
+        },
+        "components": {
+          "abstention_within_fork_monte_carlo": 0.0008275613235010164,
+          "base_seed": 0.0,
+          "fork_monte_carlo_nonabstention": 0.009337795103001626,
+          "video": 0.14154331629450678,
+          "video_by_seed_interaction": 0.037388225413529166
+        },
+        "fork_bootstrap_draws": 5000,
+        "fork_bootstrap_scorable_fraction_mean": 0.8462286764705883,
+        "fork_conditional_confident_label_variance_mean": 0.010384895830738825,
+        "fork_monte_carlo_total": 0.010165356426502643,
+        "fork_monte_carlo_variance_mean": 0.010165356426502643,
+        "interaction_plus_measurement_residual": 0.047553581840031806,
+        "measurer_repeatability_identifiability": "not identifiable from one deterministic posterior measurement per WAV",
+        "measurer_repeatability_variance": null,
+        "method": "unbalanced_crossed_pair_covariance_moments",
+        "n_scorable": 683,
+        "n_total": 816,
+        "progress": 0.9,
+        "raw_base_seed_component": -0.0036597331361697817,
+        "raw_video_component": 0.14154331629450678,
+        "scientific_status": "SUPPORTED_EXPLORATORILY",
+        "video_cluster_bootstrap_draws": 5000,
+        "video_cluster_bootstrap_seed": 20260717
+      }
+    ],
+    "fork_variance_method": "within-cell nonparametric fork bootstrap; abstention increment is full-label bootstrap variance minus fixed-confident-count label bootstrap variance",
+    "measurement_limit": "posterior inference was run once per immutable WAV; repeat-inference or cross-device measurement variance is not identifiable",
+    "measurer_repeatability_variance": null,
+    "model": "progress-stratified crossed random-effects method-of-moments",
+    "overall_mean_component_fractions": {
+      "abstention_within_fork_monte_carlo": 0.012453694290457638,
+      "base_seed": 0.0,
+      "fork_monte_carlo_nonabstention": 0.14928237424671387,
+      "video": 0.4219440577086575,
+      "video_by_seed_interaction": 0.41631987375417095
+    },
+    "overall_mean_component_video_bootstrap_ci": {
+      "abstention_within_fork_monte_carlo": {
+        "ci_high": 0.0029127213414469493,
+        "ci_low": 0.001819658246306574,
+        "valid_draws": 5000
+      },
+      "base_seed": {
+        "ci_high": 0.0026051019872359747,
+        "ci_low": 0.0,
+        "valid_draws": 5000
+      },
+      "fork_monte_carlo_nonabstention": {
+        "ci_high": 0.03296764845397094,
+        "ci_low": 0.023118317114490194,
+        "valid_draws": 5000
+      },
+      "video": {
+        "ci_high": 0.10477248773047186,
+        "ci_low": 0.04357748036277037,
+        "valid_draws": 5000
+      },
+      "video_by_seed_interaction": {
+        "ci_high": 0.09240922879530693,
+        "ci_low": 0.06329242866729369,
+        "valid_draws": 5000
+      }
+    },
+    "overall_mean_components": {
+      "abstention_within_fork_monte_carlo": 0.0023396093645211904,
+      "base_seed": 0.0,
+      "fork_monte_carlo_nonabstention": 0.028044886328483527,
+      "video": 0.079268387812896,
+      "video_by_seed_interaction": 0.07821180226158783
+    },
+    "progress_treated_as_fixed_stratum": true,
+    "variance_component_uncertainty": "video-cluster percentile bootstrap; all base seeds retained within sampled video",
+    "video_cluster_bootstrap_draws": 5000,
+    "video_cluster_bootstrap_seed": 20260717
+  },
+  "video_cluster_bootstrap": {
+    "cluster": "video; all seeds retained together",
+    "confidence_interval": "percentile 95%",
+    "draws": 5000,
+    "seed": 20260717
+  },
+  "video_determined_rule": "A_ind >= 0.90"
+}
