@@ -34,8 +34,8 @@ def _item(blind_id: str = "HEV2-0123456789AB", tasks: list[str] | None = None) -
 def _manifest(status: str = "CURATION_AUTHORIZED") -> dict[str, object]:
     item = _item()
     return {
-        "schema_version": "sounddecisions-human-curation-items-v1-1.1",
-        "instrument_version": "human-eval-round1-curation-1.1",
+        "schema_version": "sounddecisions-human-curation-items-v1-1.2",
+        "instrument_version": "human-eval-round1-curation-1.2",
         "manifest_id": "round1-fixture",
         "status": status,
         "default_fps": 30.0,
@@ -52,8 +52,8 @@ def _manifest(status: str = "CURATION_AUTHORIZED") -> dict[str, object]:
 def _ratings() -> dict[str, object]:
     blind_id = "HEV2-0123456789AB"
     return {
-        "schema_version": "sounddecisions-human-curation-ratings-v1-1.1",
-        "instrument_version": "human-eval-round1-curation-1.1",
+        "schema_version": "sounddecisions-human-curation-ratings-v1-1.2",
+        "instrument_version": "human-eval-round1-curation-1.2",
         "manifest_id": "round1-fixture",
         "manifest_sha256": SHA,
         "rater_id": "lead-17",
@@ -140,6 +140,9 @@ def test_ui_has_only_curation_tasks_caption_and_permanent_mute_guards() -> None:
     assert "first clearly visible discrete occurrence" in html
     assert "Describe only the visible action and object" in html
     assert "Do not mention sound or audio" in html
+    assert "Describe each event using only the visible action and object" in html
+    assert "Event 1 visual-only description" in html
+    assert "Event 2 visual-only description" in html
     assert "two separable target events" in html
     assert "anchor_curation" in html
     assert "two_event_curation" in html

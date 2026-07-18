@@ -42,6 +42,7 @@ def _sha(path: Path) -> str:
 
 
 def _round1_fixture(tmp_path: Path) -> tuple[Path, Path, dict, dict]:
+    tmp_path.mkdir(parents=True, exist_ok=True)
     ids = [f"HEV2-{index:012X}" for index in range(1, 6)]
     tasks = [
         ["anchor_curation"],
@@ -51,8 +52,8 @@ def _round1_fixture(tmp_path: Path) -> tuple[Path, Path, dict, dict]:
         ["anchor_curation", "two_event_curation"],
     ]
     manifest = {
-        "schema_version": "sounddecisions-human-curation-items-v1-1.1",
-        "instrument_version": "human-eval-round1-curation-1.1",
+        "schema_version": "sounddecisions-human-curation-items-v1-1.2",
+        "instrument_version": "human-eval-round1-curation-1.2",
         "manifest_id": "round1-test",
         "status": "CURATION_AUTHORIZED",
         "default_fps": 25.0,
@@ -74,12 +75,18 @@ def _round1_fixture(tmp_path: Path) -> tuple[Path, Path, dict, dict]:
             for index, (blind_id, item_tasks) in enumerate(zip(ids, tasks), start=1)
         ],
     }
+    manifest["items"][2]["candidate_caption"] = (
+        "Audio-bearing caption: a loud boom and two impacts are audible."
+    )
+    manifest["items"][4]["candidate_caption"] = (
+        "Audio-bearing caption: footsteps and background music can be heard."
+    )
     manifest_path = tmp_path / "round1_manifest.json"
     _write_json(manifest_path, manifest)
 
     ratings = {
-        "schema_version": "sounddecisions-human-curation-ratings-v1-1.1",
-        "instrument_version": "human-eval-round1-curation-1.1",
+        "schema_version": "sounddecisions-human-curation-ratings-v1-1.2",
+        "instrument_version": "human-eval-round1-curation-1.2",
         "manifest_id": manifest["manifest_id"],
         "manifest_sha256": _sha(manifest_path),
         "rater_id": "curator-1",
@@ -164,6 +171,67 @@ def test_round1_exact_join_emits_fixed_events_and_explicit_noneligible_states(tm
     ]
     assert by_id[ids[4]]["events"][0]["description"] == "overlap anchor"
     assert by_id[ids[4]]["events"][1]["description"] == "pair one"
+    pair_captions = {
+        item["candidate_caption"].strip()
+        for item in _round1_fixture(tmp_path / "caption_check")[2]["items"]
+        if "two_event_curation" in item["tasks"]
+    }
+    pair_descriptions = {
+        event["description"]
+        for item in catalog["items"]
+        for event in item["events"]
+        if event["event_id"].endswith(("-P1", "-P2"))
+    }
+    assert pair_descriptions == {"first contact", "second contact", "pair one", "pair two"}
+    assert pair_descriptions.isdisjoint(pair_captions)
+
+
+@pytest.mark.parametrize(
+    "case,match",
+    [
+        ("id_prefix", "event ID prefix/suffix"),
+        ("suffix_source", "suffix does not match event_source"),
+        ("description", "description"),
+        ("bounds", "outside the video bounds"),
+        ("eligible_pair", "eligible pair must contain P1 and P2"),
+        ("unresolved", "unresolved anchor must have a null anchor"),
+        ("rejected_pair", "rejected pair must contain no events"),
+        ("flattened", "flattened events do not equal"),
+        ("counts", "counts do not match"),
+    ],
+)
+def test_round2_catalog_semantics_fail_closed_on_cross_field_mutations(
+    tmp_path: Path, case: str, match: str
+) -> None:
+    _, catalog = _catalog(tmp_path)
+    broken = copy.deepcopy(catalog)
+    if case == "id_prefix":
+        broken["items"][0]["events"][0]["event_id"] = "HEV2-000000000005-A1"
+    elif case == "suffix_source":
+        broken["items"][0]["events"][0]["event_source"] = "two_event_curation"
+    elif case == "description":
+        broken["items"][0]["anchor_curation"]["description"] = ""
+        broken["items"][0]["events"][0]["description"] = ""
+    elif case == "bounds":
+        broken["items"][0]["anchor_curation"]["anchor"]["end_s"] = 11.0
+        broken["items"][0]["events"][0]["anchor"]["end_s"] = 11.0
+    elif case == "eligible_pair":
+        broken["items"][2]["two_event_curation"]["events"].pop()
+    elif case == "unresolved":
+        broken["items"][1]["anchor_curation"]["anchor"] = {
+            "start_s": 2.0,
+            "end_s": 2.5,
+        }
+    elif case == "rejected_pair":
+        broken["items"][3]["two_event_curation"]["events"] = [
+            copy.deepcopy(broken["items"][2]["two_event_curation"]["events"][0])
+        ]
+    elif case == "flattened":
+        broken["items"][4]["events"].pop()
+    elif case == "counts":
+        broken["counts"]["events_eligible"] += 1
+    with pytest.raises(ValueError, match=match):
+        BUILD.build_manifest(broken, "a" * 64)
 
 
 @pytest.mark.parametrize("mutation,match", [

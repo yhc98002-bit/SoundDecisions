@@ -195,9 +195,9 @@
   <script id="instrument-code">
   "use strict";
 
-  const SCHEMA_VERSION = "sounddecisions-human-curation-ratings-v1-1.1";
-  const MANIFEST_SCHEMA_VERSION = "sounddecisions-human-curation-items-v1-1.1";
-  const INSTRUMENT_VERSION = "human-eval-round1-curation-1.1";
+  const SCHEMA_VERSION = "sounddecisions-human-curation-ratings-v1-1.2";
+  const MANIFEST_SCHEMA_VERSION = "sounddecisions-human-curation-items-v1-1.2";
+  const INSTRUMENT_VERSION = "human-eval-round1-curation-1.2";
   const ALLOWED_TASKS = new Set(["anchor_curation", "two_event_curation"]);
   const SCREENS = ["anchor", "pair"];
 
@@ -600,16 +600,16 @@
   function renderPairForm(rating) {
     const pair = rating.two_event_curation;
     byId("form-panel").innerHTML = `<h2>Two-event curation</h2>
-      <div class="rubric"><strong>Rule:</strong> Confirm only when two separable target events are clearly visible. Describe each event and mark both closed visual intervals in chronological order. Otherwise reject.</div>
+      <div class="rubric"><strong>Rule:</strong> Confirm only when two separable target events are clearly visible. Describe each event using only the visible action and object; do not mention any sound or audio. Mark both closed visual intervals in chronological order. Otherwise reject.</div>
       <fieldset><legend>Do two separable target events exist?</legend>
         <label class="choice"><input type="radio" name="pair-verdict" value="confirm" ${pair.verdict === "confirm" ? "checked" : ""}> Confirm</label>
         <label class="choice"><input type="radio" name="pair-verdict" value="reject" ${pair.verdict === "reject" ? "checked" : ""}> Reject</label>
       </fieldset>
       <div id="pair-details" class="${pair.verdict === "confirm" ? "" : "hidden"}">
-        <label class="field" for="event-1-description">Event 1 description</label>
+        <label class="field" for="event-1-description">Event 1 visual-only description</label>
         <textarea id="event-1-description" maxlength="500">${escapeHtml(pair.event_1 && pair.event_1.description || "")}</textarea>
         ${intervalMarkup("Event 1 interval", "event-1", pair.event_1)}
-        <label class="field" for="event-2-description">Event 2 description</label>
+        <label class="field" for="event-2-description">Event 2 visual-only description</label>
         <textarea id="event-2-description" maxlength="500">${escapeHtml(pair.event_2 && pair.event_2.description || "")}</textarea>
         ${intervalMarkup("Event 2 interval", "event-2", pair.event_2)}
       </div>

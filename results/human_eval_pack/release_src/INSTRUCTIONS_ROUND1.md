@@ -11,7 +11,8 @@ caption names the candidate visible action, not a scientific conclusion.
    mention any sound or audio. Use **Too uncertain** when no defensible interval
    can be marked.
 4. For **Two-event curation**, confirm only when two separable target events are
-   visible. Describe and mark both intervals; otherwise reject the item.
+   visible. Describe each event using only the visible action and object; do not
+   mention any sound or audio. Mark both intervals; otherwise reject the item.
 5. Use the frame-step and playback-speed controls when needed. Notes are
    optional.
 6. Progress autosaves in this browser. Use the large **Export ratings JSON**

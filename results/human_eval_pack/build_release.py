@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 """Build the deterministic, blinded Round-1 human-curation release.
 
-The builder reads source-video metadata only. It never opens generated audio,
-runs a measurer, or includes source/model/condition fields in rater artifacts.
-All joins, source checksums, and video probes complete before publication.
+The builder verifies each source video, remuxes only its first video stream, and
+never opens generated audio or runs a measurer. Rater artifacts contain no
+source/model/condition fields. All joins and media checks complete before
+publication.
 """
 
 from __future__ import annotations
@@ -23,15 +24,17 @@ from pathlib import Path
 from typing import Any
 
 
-SCHEMA_VERSION = "sounddecisions-human-curation-items-v1-1.0"
-INSTRUMENT_VERSION = "human-eval-round1-curation-1.0"
-MANIFEST_ID = "axis-spec-v2-round1-curation-2026-07"
-RELEASE_ID = "round1_curation_v1"
+SCHEMA_VERSION = "sounddecisions-human-curation-items-v1-1.2"
+INSTRUMENT_VERSION = "human-eval-round1-curation-1.2"
+MANIFEST_ID = "axis-spec-v2-round1-curation-2026-07-v3"
+RELEASE_ID = "round1_curation_v3"
 RELEASE_STATUS = "CURATION_AUTHORIZED"
 EXPECTED_ANCHOR_TASKS = 30
 EXPECTED_TWO_EVENT_TASKS = 60
 EXPECTED_UNIQUE_VIDEOS = 82
 FIXED_ZIP_TIMESTAMP = (2026, 7, 19, 0, 0, 0)
+SEALED_MAP_FORMAT = "sounddecisions-human-curation-sealed-map-v3"
+SEALED_MAP_ITERATIONS = 200_000
 
 
 def _sha256(path: Path) -> str:
@@ -44,6 +47,12 @@ def _sha256(path: Path) -> str:
 
 def _canonical_json(payload: object) -> bytes:
     return (json.dumps(payload, indent=2, ensure_ascii=False) + "\n").encode("utf-8")
+
+
+def _canonical_private_json(payload: object) -> bytes:
+    return (
+        json.dumps(payload, indent=2, ensure_ascii=False, sort_keys=True) + "\n"
+    ).encode("utf-8")
 
 
 def _atomic_write_bytes(destination: Path, content: bytes) -> None:
@@ -74,19 +83,131 @@ def _read_key(path: Path) -> bytes:
     return key
 
 
-def _sealed_map_sha256(path: Path, key: bytes) -> str:
-    if not path.is_file():
-        raise RuntimeError(f"sealed unblinding map is missing: {path}")
-    try:
-        envelope = json.loads(path.read_text(encoding="utf-8"))
-    except (OSError, json.JSONDecodeError) as error:
-        raise RuntimeError(f"sealed unblinding map is unreadable: {path}") from error
+def _decrypt_sealed_envelope(envelope: dict[str, Any], key_file: Path) -> dict[str, Any]:
+    key = _read_key(key_file)
     expected_key_id = hashlib.sha256(key).hexdigest()[:16]
-    if envelope.get("format") != "sounddecisions-sealed-map-v1":
-        raise RuntimeError(f"unrecognized sealed unblinding map format: {path}")
-    if envelope.get("key_id") != expected_key_id:
-        raise RuntimeError("sealed unblinding map does not match the Round-1 blinding key")
-    return _sha256(path)
+    required = {
+        "format": SEALED_MAP_FORMAT,
+        "cipher": "AES-256-CBC",
+        "kdf": "PBKDF2",
+        "iterations": SEALED_MAP_ITERATIONS,
+        "key_id": expected_key_id,
+        "manifest_id": MANIFEST_ID,
+    }
+    for field, expected in required.items():
+        if envelope.get(field) != expected:
+            raise RuntimeError(f"sealed map {field} mismatch: expected {expected!r}")
+    ciphertext = envelope.get("ciphertext_base64")
+    plaintext_sha256 = envelope.get("plaintext_sha256")
+    if not isinstance(ciphertext, str) or not isinstance(plaintext_sha256, str):
+        raise RuntimeError("sealed map envelope is incomplete")
+    command = [
+        "openssl",
+        "enc",
+        "-d",
+        "-aes-256-cbc",
+        "-a",
+        "-A",
+        "-pbkdf2",
+        "-iter",
+        str(SEALED_MAP_ITERATIONS),
+        "-pass",
+        f"file:{key_file}",
+    ]
+    try:
+        proc = subprocess.run(
+            command, input=ciphertext.encode("ascii"), check=True, capture_output=True
+        )
+    except (UnicodeEncodeError, subprocess.CalledProcessError) as error:
+        raise RuntimeError("sealed map decryption failed") from error
+    if hashlib.sha256(proc.stdout).hexdigest() != plaintext_sha256:
+        raise RuntimeError("sealed map plaintext checksum mismatch")
+    try:
+        payload = json.loads(proc.stdout.decode("utf-8"))
+    except (UnicodeDecodeError, json.JSONDecodeError) as error:
+        raise RuntimeError("sealed map plaintext is not valid JSON") from error
+    if not isinstance(payload, dict):
+        raise RuntimeError("sealed map plaintext must be a JSON object")
+    return payload
+
+
+def _assert_private_mapping_matches(
+    actual: dict[str, Any], expected: dict[str, Any]
+) -> None:
+    if actual.get("manifest_id") != MANIFEST_ID:
+        raise RuntimeError("sealed map manifest ID mismatch")
+    actual_items = actual.get("items")
+    expected_items = expected.get("items")
+    if not isinstance(actual_items, list) or not isinstance(expected_items, list):
+        raise RuntimeError("sealed map item registry is invalid")
+    actual_by_id = {row.get("blind_id"): row for row in actual_items if isinstance(row, dict)}
+    expected_by_id = {row["blind_id"]: row for row in expected_items}
+    if set(actual_by_id) != set(expected_by_id):
+        raise RuntimeError("sealed map blind-ID set mismatch")
+    if actual.get("source_contract_sha256") != expected.get("source_contract_sha256"):
+        raise RuntimeError("sealed map source-contract hashes mismatch")
+    for blind_id, expected_item in expected_by_id.items():
+        actual_item = actual_by_id[blind_id]
+        for field in ("source_sha256", "delivered_media_sha256"):
+            if actual_item.get(field) != expected_item[field]:
+                raise RuntimeError(f"sealed map {field} mismatch for {blind_id}")
+    if actual != expected:
+        raise RuntimeError("sealed map plaintext differs from the exact Round-1 v3 registry")
+
+
+def _stage_sealed_mapping(
+    mapping: dict[str, Any],
+    staged_destination: Path,
+    existing_destination: Path,
+    key_file: Path,
+) -> str:
+    plaintext = _canonical_private_json(mapping)
+    plaintext_sha256 = hashlib.sha256(plaintext).hexdigest()
+    key = _read_key(key_file)
+    key_id = hashlib.sha256(key).hexdigest()[:16]
+    if existing_destination.exists():
+        try:
+            envelope = json.loads(existing_destination.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError) as error:
+            raise RuntimeError("existing Round-1 v3 sealed map is unreadable") from error
+        actual = _decrypt_sealed_envelope(envelope, key_file)
+        _assert_private_mapping_matches(actual, mapping)
+        if envelope.get("plaintext_sha256") != plaintext_sha256:
+            raise RuntimeError("existing Round-1 v3 sealed map plaintext hash differs")
+        shutil.copyfile(existing_destination, staged_destination)
+        staged_destination.chmod(0o600)
+        return _sha256(staged_destination)
+
+    command = [
+        "openssl",
+        "enc",
+        "-aes-256-cbc",
+        "-a",
+        "-A",
+        "-salt",
+        "-pbkdf2",
+        "-iter",
+        str(SEALED_MAP_ITERATIONS),
+        "-pass",
+        f"file:{key_file}",
+    ]
+    proc = subprocess.run(command, input=plaintext, check=True, capture_output=True)
+    envelope = {
+        "format": SEALED_MAP_FORMAT,
+        "cipher": "AES-256-CBC",
+        "kdf": "PBKDF2",
+        "iterations": SEALED_MAP_ITERATIONS,
+        "key_id": key_id,
+        "manifest_id": MANIFEST_ID,
+        "plaintext_sha256": plaintext_sha256,
+        "ciphertext_base64": proc.stdout.decode("ascii"),
+    }
+    _atomic_write_bytes(staged_destination, _canonical_private_json(envelope))
+    staged_destination.chmod(0o600)
+    _assert_private_mapping_matches(
+        _decrypt_sealed_envelope(envelope, key_file), mapping
+    )
+    return _sha256(staged_destination)
 
 
 def _blind_id(clip_id: str, key: bytes) -> str:
@@ -168,6 +289,35 @@ def _probe_video(path: Path) -> tuple[float, float]:
     return fps, duration
 
 
+def _verify_video_only(path: Path) -> tuple[float, float]:
+    command = [
+        "ffprobe",
+        "-v",
+        "error",
+        "-show_entries",
+        "stream=codec_type,avg_frame_rate:format=duration",
+        "-of",
+        "json",
+        str(path),
+    ]
+    proc = subprocess.run(command, check=True, capture_output=True, text=True)
+    payload = json.loads(proc.stdout)
+    streams = payload.get("streams", [])
+    video_streams = [stream for stream in streams if stream.get("codec_type") == "video"]
+    audio_streams = [stream for stream in streams if stream.get("codec_type") == "audio"]
+    if len(video_streams) != 1:
+        raise RuntimeError(f"delivered media must have exactly one video stream: {path.name}")
+    if audio_streams:
+        raise RuntimeError(f"delivered media contains an audio stream: {path.name}")
+    if len(streams) != 1:
+        raise RuntimeError(f"delivered media contains a non-video stream: {path.name}")
+    fps = float(Fraction(video_streams[0]["avg_frame_rate"]))
+    duration = float(payload["format"]["duration"])
+    if fps <= 0 or duration <= 0:
+        raise RuntimeError(f"delivered media has invalid video metadata: {path.name}")
+    return fps, duration
+
+
 def _preflight(
     tasks_by_clip: dict[str, list[str]],
     index: dict[str, dict[str, str]],
@@ -204,6 +354,7 @@ def _preflight(
                         prepared.append(
                             {
                                 "blind_id": blind_id,
+                                "source_clip_id": clip_id,
                                 "tasks": list(tasks),
                                 "source": source,
                                 "source_sha256": metadata["sha256"],
@@ -247,14 +398,39 @@ def _render_html(template_path: Path, manifest_bytes: bytes, manifest_sha256: st
     return rendered.encode("utf-8")
 
 
-def _copy_verified(source: Path, destination: Path, expected_sha256: str) -> None:
+def _remux_video_only(source: Path, destination: Path) -> str:
+    if source.absolute() == destination.absolute():
+        raise RuntimeError("delivered media path must differ from its source")
     destination.parent.mkdir(parents=True, exist_ok=True)
-    shutil.copyfile(source, destination)
+    command = [
+        "ffmpeg",
+        "-v",
+        "error",
+        "-nostdin",
+        "-y",
+        "-i",
+        str(source),
+        "-map",
+        "0:v:0",
+        "-c:v",
+        "copy",
+        "-an",
+        "-map_metadata",
+        "-1",
+        "-map_metadata:s",
+        "-1",
+        "-map_chapters",
+        "-1",
+        "-fflags",
+        "+bitexact",
+        str(destination),
+    ]
+    subprocess.run(command, check=True, capture_output=True)
     destination.chmod(0o644)
-    if _sha256(destination) != expected_sha256:
-        raise RuntimeError(f"release media copy failed checksum verification: {destination.name}")
+    _verify_video_only(destination)
     if os.path.samefile(source, destination):
         raise RuntimeError(f"release media is not an independent copy: {destination.name}")
+    return _sha256(destination)
 
 
 def _directory_digest(root: Path) -> str:
@@ -303,7 +479,14 @@ def _publish_immutable_directory(staged: Path, destination: Path) -> None:
     os.replace(staged, destination)
 
 
-def _assert_publishable(staged_dir: Path, staged_zip: Path, release_dir: Path, zip_path: Path) -> None:
+def _assert_publishable(
+    staged_dir: Path,
+    staged_zip: Path,
+    staged_sealed_map: Path,
+    release_dir: Path,
+    zip_path: Path,
+    sealed_map_path: Path,
+) -> None:
     if release_dir.exists() and (
         not release_dir.is_dir() or _directory_digest(staged_dir) != _directory_digest(release_dir)
     ):
@@ -312,13 +495,17 @@ def _assert_publishable(staged_dir: Path, staged_zip: Path, release_dir: Path, z
         not zip_path.is_file() or _sha256(staged_zip) != _sha256(zip_path)
     ):
         raise RuntimeError(f"refusing to overwrite non-identical release artifact: {zip_path}")
+    if sealed_map_path.exists() and (
+        not sealed_map_path.is_file()
+        or _sha256(staged_sealed_map) != _sha256(sealed_map_path)
+    ):
+        raise RuntimeError(f"refusing to overwrite non-identical sealed map: {sealed_map_path}")
 
 
 def build(args: argparse.Namespace) -> dict[str, Any]:
     tasks_by_clip = _load_candidate_tasks(args.anchor_csv, args.two_event_json)
     index = _load_clip_index(args.clips_index)
     key = _read_key(args.key_file)
-    sealed_map_sha256 = _sealed_map_sha256(args.sealed_map, key)
     prepared = _preflight(tasks_by_clip, index, key)
 
     items = [
@@ -350,6 +537,12 @@ def build(args: argparse.Namespace) -> dict[str, Any]:
     manifest_bytes = _canonical_json(manifest)
     manifest_sha256 = hashlib.sha256(manifest_bytes).hexdigest()
     rate_html = _render_html(args.html_template, manifest_bytes, manifest_sha256)
+    private_source_contract = {
+        "anchor_candidates": _sha256(args.anchor_csv),
+        "two_event_candidates": _sha256(args.two_event_json),
+        "clips_index": _sha256(args.clips_index),
+        "public_manifest": manifest_sha256,
+    }
 
     release_parent = args.release_dir.parent.resolve()
     release_parent.mkdir(parents=True, exist_ok=True)
@@ -359,6 +552,12 @@ def build(args: argparse.Namespace) -> dict[str, Any]:
     )
     os.close(zip_descriptor)
     staged_zip = Path(zip_temporary_name)
+    sealed_descriptor, sealed_temporary_name = tempfile.mkstemp(
+        prefix=f".{RELEASE_ID}.", suffix=".sealed.tmp", dir=release_parent
+    )
+    os.close(sealed_descriptor)
+    staged_sealed_map = Path(sealed_temporary_name)
+    staged_sealed_map.unlink()
     try:
         _atomic_write_bytes(staging / "blinded_items.json", manifest_bytes)
         _atomic_write_bytes(staging / "rate.html", rate_html)
@@ -371,10 +570,36 @@ def build(args: argparse.Namespace) -> dict[str, Any]:
             staging / "ratings.schema.json",
         ):
             path.chmod(0o644)
+        private_items = []
         for row in prepared:
-            _copy_verified(
-                row["source"], staging / "media" / f"{row['blind_id']}.mp4", row["source_sha256"]
+            delivered_path = staging / "media" / f"{row['blind_id']}.mp4"
+            delivered_sha256 = _remux_video_only(row["source"], delivered_path)
+            private_items.append(
+                {
+                    "blind_id": row["blind_id"],
+                    "tasks": row["tasks"],
+                    "source_clip_id": row["source_clip_id"],
+                    "source_path": str(row["source"]),
+                    "source_sha256": row["source_sha256"],
+                    "delivered_media_path": f"media/{row['blind_id']}.mp4",
+                    "delivered_media_sha256": delivered_sha256,
+                }
             )
+
+        private_mapping = {
+            "schema_version": "sounddecisions-human-curation-unblinding-v3-1.0",
+            "manifest_id": MANIFEST_ID,
+            "manifest_sha256": manifest_sha256,
+            "source_contract_sha256": private_source_contract,
+            "items": private_items,
+        }
+        sealed_destination = args.sealed_map.resolve()
+        sealed_map_sha256 = _stage_sealed_mapping(
+            private_mapping,
+            staged_sealed_map,
+            sealed_destination,
+            args.key_file,
+        )
 
         checksum_rows = []
         for path in sorted(candidate for candidate in staging.rglob("*") if candidate.is_file()):
@@ -387,19 +612,28 @@ def build(args: argparse.Namespace) -> dict[str, Any]:
         release_digest = _directory_digest(staging)
         release_destination = args.release_dir.resolve()
         zip_destination = args.zip_path.resolve()
-        _assert_publishable(staging, staged_zip, release_destination, zip_destination)
+        _assert_publishable(
+            staging,
+            staged_zip,
+            staged_sealed_map,
+            release_destination,
+            zip_destination,
+            sealed_destination,
+        )
         _publish_immutable_directory(staging, release_destination)
         _publish_immutable_file(staged_zip, zip_destination)
+        _publish_immutable_file(staged_sealed_map, sealed_destination)
     finally:
         if staging.exists():
             shutil.rmtree(staging)
         staged_zip.unlink(missing_ok=True)
+        staged_sealed_map.unlink(missing_ok=True)
 
     public_manifest_path = args.public_manifest.resolve()
     release_record_path = args.release_record.resolve()
     _atomic_write_bytes(public_manifest_path, manifest_bytes)
     release_record = {
-        "schema_version": "sounddecisions-human-curation-release-v1",
+        "schema_version": "sounddecisions-human-curation-release-v3",
         "release_id": RELEASE_ID,
         "status": RELEASE_STATUS,
         "counts": manifest["counts"],
@@ -418,9 +652,7 @@ def build(args: argparse.Namespace) -> dict[str, Any]:
         },
         "release_directory_sha256": release_digest,
         "source_contract_sha256": {
-            "anchor_candidates": _sha256(args.anchor_csv),
-            "two_event_candidates": _sha256(args.two_event_json),
-            "clips_index": _sha256(args.clips_index),
+            **private_source_contract,
             "html_template": _sha256(args.html_template),
             "instructions": _sha256(args.instructions),
             "manifest_schema": _sha256(args.manifest_schema),
@@ -448,7 +680,9 @@ def main() -> int:
         default=Path.home() / ".config/sounddecisions/human_eval_pack.key",
     )
     parser.add_argument(
-        "--sealed-map", type=Path, default=pack_dir / "unblinding_map.sealed.json"
+        "--sealed-map",
+        type=Path,
+        default=pack_dir / "round1_v3_unblinding_map.sealed.json",
     )
     parser.add_argument("--html-template", type=Path, default=source_dir / "round1_rate.template.html")
     parser.add_argument("--instructions", type=Path, default=source_dir / "INSTRUCTIONS_ROUND1.md")
@@ -456,8 +690,12 @@ def main() -> int:
     parser.add_argument("--ratings-schema", type=Path, default=source_dir / "round1_ratings.schema.json")
     parser.add_argument("--release-dir", type=Path, default=release_dir)
     parser.add_argument("--zip-path", type=Path, default=release_dir.with_suffix(".zip"))
-    parser.add_argument("--public-manifest", type=Path, default=pack_dir / "round1_blinded_items.json")
-    parser.add_argument("--release-record", type=Path, default=pack_dir / "ROUND1_RELEASE.json")
+    parser.add_argument(
+        "--public-manifest", type=Path, default=pack_dir / "round1_v3_blinded_items.json"
+    )
+    parser.add_argument(
+        "--release-record", type=Path, default=pack_dir / "ROUND1_V3_RELEASE.json"
+    )
     args = parser.parse_args()
     print(json.dumps(build(args), indent=2))
     return 0
