@@ -8,10 +8,10 @@
   "b6_used": false,
   "human_blocked_axis_v2_pass_allowed": false,
   "workstreams": {
-    "class_multiseed": "NOT_TESTED",
-    "feature_lineage_and_internal_readout": "NOT_TESTED",
+    "class_multiseed": "NOT_SUPPORTED",
+    "feature_lineage_and_internal_readout": "UNRESOLVED",
     "material_continuity_2afc": "INCOMPLETE_ARTIFACTS"
   },
-  "current_checkpoint": "prelaunch_code_repairs_and_parallel_b2_inventory",
-  "updated_at": "2026-07-17T15:48:00+08:00"
+  "current_checkpoint": "nested_grouped_class_readout_running",
+  "updated_at": "2026-07-17T16:14:00+08:00"
 }

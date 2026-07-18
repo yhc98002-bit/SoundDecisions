@@ -137,3 +137,63 @@
   module. Neither attempt has a root completion, neither will enter tolerance
   calibration, and clip `1002` remains unreplayed. Fresh attempts will launch
   only from the next clean commit.
+
+## Checkpoint 6 — Class result and same-forward lineage gate
+
+- Status: complete.
+- The canonical Class merge revalidated the exact 79,152-record B2 union.
+  Completion SHA-256 is
+  `f2bfa420782444bc37b21f9379f535f9592b47889a625f81880abbebd620d3df`;
+  posterior-data SHA-256 is
+  `a381e0f8e662aae482959f0cd2e7fe46f3cb1e8ef2ef7040b4e65913ff86cd1e`.
+- Under the registered pooled sustained commitment criterion (theta 0.70),
+  the crossing is `s=0.90`, with video-bootstrap interval `[0.75, 0.90]`.
+  The historical `s≈0.35` result therefore did not reproduce and is assigned
+  `NOT_SUPPORTED` in this exploratory multi-seed replication. Individual
+  crossings remain heterogeneous and often early; they are not collapsed into
+  a first-crossing mean.
+- The registered variance decomposition attributes 42.19% to video, 0% to an
+  additive base-seed component, 41.63% to video-by-seed interaction, 14.93% to
+  fork Monte Carlo non-abstention variance, and 1.25% to the identifiable
+  abstention subcomponent. Measurer repeatability is not identifiable from one
+  measurement per WAV.
+- The four calibration clips produced the tolerance artifact without access to
+  clip `1002`; tolerance completion SHA-256 is
+  `26a498c969c145405f548d84ee159f6718059668b2a3b5318a1934d1abd5bd19`.
+  Two held-out launch attempts then failed before model load because the pinned
+  environment omitted `HF_HUB_DISABLE_XET=1`; both logs are retained and the
+  scientific tolerance was unchanged.
+- Two fresh, independent held-out replays of clip `1002` passed all 1,960
+  frozen same-forward equivalence checks. Held-out completion SHA-256 is
+  `96fe3e6909b84597d97617acfa27f5912a5d6d4e643b63539b7c811a46827a5c`.
+  The B-1 identity gate therefore passed and full feature recollection was
+  authorized.
+
+## Checkpoint 7 — full feature recollection and readout launch
+
+- Status: active; full features and targets are complete, nested-CV fits are
+  running without a scientific conclusion at this checkpoint.
+- Eight immutable feature workers on `an12` GPUs 4--7 produced 816 base
+  trajectories / 6,528 state units. The shards are disjoint, complete, and
+  bound to collector SHA-256
+  `4de307abb9b5241a1ca2dc7f83ef2f3bcd18730a16b23c79b9dfa04d83f2d5a7`.
+  All `an29` GPUs were occupied at launch, so they were not used.
+- A serial merge attempt was intentionally terminated before output creation
+  because immutable-shard validation was needlessly sequential. The reducer
+  now validates shards concurrently while preserving input order; the focused
+  recollection/readout suites pass 15/15. No scientific rule changed.
+- The canonical merge contains 6,528 units, 816 trajectories, 48 videos, and
+  all eight progress points. Completion SHA-256 is
+  `351e191a55d6d3eaa57ac0d1a1081bcf77d8df46ce331773a271275f906cf759`;
+  manifest SHA-256 is
+  `1aca68300a485e4831f73aae286026bf69a97d7545bca3ce9eb702e24b968c3c`.
+- The immutable target manifest contains 6,528 candidates. Fork-majority
+  observed counts by progress are 709, 729, 717, 723, 720, 712, 699, and 675;
+  ODE-final coverage is 576/816 at every progress. Missing targets remain
+  explicit and are never imputed. Target completion SHA-256 is
+  `a633a27012b5683a29f6fae03798fea81a267f947364a00d4a7ccf4b7196fa69`.
+- Occupancy was re-queried immediately before fitting: `an12` GPUs 4--7 each
+  had 81,226 MiB free and no compute process. Eight independent TP1 progress
+  shards were launched as two replicas per GPU, with offline mode,
+  deterministic CuBLAS, and four CPU threads per worker. Launch source commit:
+  `b2a8687a4ec831306332cb6e837b6b5b7dd7eb8d`.
