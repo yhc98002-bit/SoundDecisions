@@ -34,8 +34,8 @@ def _item(blind_id: str = "HEV2-0123456789AB", tasks: list[str] | None = None) -
 def _manifest(status: str = "CURATION_AUTHORIZED") -> dict[str, object]:
     item = _item()
     return {
-        "schema_version": "sounddecisions-human-curation-items-v1-1.2",
-        "instrument_version": "human-eval-round1-curation-1.2",
+        "schema_version": "sounddecisions-human-curation-items-v1-1.3",
+        "instrument_version": "human-eval-round1-curation-1.3",
         "manifest_id": "round1-fixture",
         "status": status,
         "default_fps": 30.0,
@@ -52,8 +52,8 @@ def _manifest(status: str = "CURATION_AUTHORIZED") -> dict[str, object]:
 def _ratings() -> dict[str, object]:
     blind_id = "HEV2-0123456789AB"
     return {
-        "schema_version": "sounddecisions-human-curation-ratings-v1-1.2",
-        "instrument_version": "human-eval-round1-curation-1.2",
+        "schema_version": "sounddecisions-human-curation-ratings-v1-1.3",
+        "instrument_version": "human-eval-round1-curation-1.3",
         "manifest_id": "round1-fixture",
         "manifest_sha256": SHA,
         "rater_id": "lead-17",
@@ -309,8 +309,59 @@ def test_uncertain_and_reject_preserve_drafts_and_mute_helper_is_fail_closed() -
 def test_ui_persists_and_exports_without_network_or_build_runtime() -> None:
     html = HTML.read_text(encoding="utf-8")
 
-    assert "localStorage.setItem" in html
-    assert "localStorage.getItem" in html
+    assert "storage-warning" in html
+    assert "Progress is retained only in this open page" in html
+    assert "writeSessionStorage" in html
+    assert "readSessionStorage" in html
     assert "ratings_${payload.rater_id}.json" in html
     assert "URL.createObjectURL" in html
+    assert "scheduleObjectUrlRevocation(objectUrl)" in html
+    assert "URL.revokeObjectURL(link.href)" not in html
     assert "DOMContentLoaded" in html
+
+
+def test_storage_exceptions_fall_back_to_in_memory_session_with_warning() -> None:
+    result = _run_javascript(
+        "(() => { let setCalls = 0; let getCalls = 0; "
+        "const broken = {setItem() { setCalls += 1; throw new Error('quota'); }, "
+        "getItem() { getCalls += 1; throw new Error('denied'); }}; "
+        "const persisted = api.writeSessionStorage('saved-session', input.value, broken); "
+        "const recovered = api.readSessionStorage('saved-session', broken); "
+        "const absent = api.readSessionStorage('missing-session', broken); "
+        "return {persisted, recovered, absent, setCalls, getCalls, warning: api.hasStorageWarning(), "
+        "warningText: api.STORAGE_WARNING}; })()",
+        {"value": '{"draft":true}'},
+    )
+
+    assert result == {
+        "persisted": False,
+        "recovered": '{"draft":true}',
+        "absent": None,
+        "setCalls": 1,
+        "getCalls": 1,
+        "warning": True,
+        "warningText": (
+            "Browser storage is unavailable. Progress is retained only in this open page; "
+            "export JSON regularly because refreshing or closing the page will discard unexported work."
+        ),
+    }
+
+
+def test_export_object_url_cleanup_is_delayed() -> None:
+    result = _run_javascript(
+        "(() => { let callback = null; let delay = null; const revoked = []; "
+        "const timer = api.scheduleObjectUrlRevocation('blob:round1', (fn, milliseconds) => { "
+        "callback = fn; delay = milliseconds; return 'timer-1'; }, "
+        "{revokeObjectURL(url) { revoked.push(url); }}); "
+        "const before = revoked.slice(); callback(); "
+        "return {timer, delay, configuredDelay: api.OBJECT_URL_REVOKE_DELAY_MS, before, after: revoked}; })()",
+        {},
+    )
+
+    assert result == {
+        "timer": "timer-1",
+        "delay": 1000,
+        "configuredDelay": 1000,
+        "before": [],
+        "after": ["blob:round1"],
+    }

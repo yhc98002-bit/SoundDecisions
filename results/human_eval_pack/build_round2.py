@@ -21,10 +21,14 @@ HERE = Path(__file__).resolve().parent
 SOURCE_DIR = HERE / "release_src"
 CATALOG_SCHEMA_PATH = HERE / "event_catalog.schema.json"
 MANIFEST_SCHEMA_PATH = SOURCE_DIR / "round2_manifest.schema.json"
+AUDIO_MEDIA_REGISTRY_SCHEMA_PATH = SOURCE_DIR / "audio_media_registry.schema.json"
 RATINGS_SCHEMA_PATH = SOURCE_DIR / "round2_ratings.schema.json"
 SUMMARY_SCHEMA_PATH = SOURCE_DIR / "round2_summary.schema.json"
 HTML_TEMPLATE_PATH = SOURCE_DIR / "rate_round2.html"
 INSTRUCTIONS_PATH = SOURCE_DIR / "INSTRUCTIONS_ROUND2.md"
+ROUND1_RELEASE_ID = "round1_curation_v4"
+ROUND1_RELEASE_SCHEMA = "sounddecisions-human-curation-release-v4"
+COMPLETION_MARKER = "COMPLETE.json"
 RUBRIC = (
     "For one specified visible event, determine whether a corresponding audio event "
     "occurs near its anchor: present, absent, or uncertain. Salient unrelated background "
@@ -37,6 +41,13 @@ def _load_json(path: Path) -> Any:
         return json.loads(path.read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError) as exc:
         raise ValueError(f"{path}: cannot read JSON: {exc}") from exc
+
+
+def _parse_json_bytes(payload: bytes, context: str) -> Any:
+    try:
+        return json.loads(payload.decode("utf-8"))
+    except (UnicodeDecodeError, json.JSONDecodeError) as exc:
+        raise ValueError(f"{context}: cannot parse UTF-8 JSON: {exc}") from exc
 
 
 def _canonical_bytes(payload: Any) -> bytes:
@@ -60,7 +71,11 @@ def _normalized_rater_hash(rater_id: str) -> str:
 
 
 def _validate(payload: Any, schema_path: Path, context: str) -> None:
-    schema = _load_json(schema_path)
+    _validate_with_schema(payload, schema_path.read_bytes(), context)
+
+
+def _validate_with_schema(payload: Any, schema_bytes: bytes, context: str) -> None:
+    schema = _parse_json_bytes(schema_bytes, f"{context} schema")
     Draft202012Validator.check_schema(schema)
     errors = sorted(
         Draft202012Validator(schema, format_checker=FormatChecker()).iter_errors(payload),
@@ -73,6 +88,28 @@ def _validate(payload: Any, schema_path: Path, context: str) -> None:
             for part in error.absolute_path
         )
         raise ValueError(f"{context}: schema validation failed at {location}: {error.message}")
+
+
+def _snapshot_files(paths: Mapping[str, Path]) -> dict[str, tuple[Path, bytes]]:
+    snapshots: dict[str, tuple[Path, bytes]] = {}
+    for name, path in paths.items():
+        try:
+            snapshots[name] = (path, path.read_bytes())
+        except OSError as exc:
+            raise ValueError(f"{path}: cannot snapshot required input: {exc}") from exc
+    return snapshots
+
+
+def _assert_snapshots_unchanged(
+    snapshots: Mapping[str, tuple[Path, bytes]],
+) -> None:
+    for name, (path, expected) in snapshots.items():
+        try:
+            current = path.read_bytes()
+        except OSError as exc:
+            raise RuntimeError(f"snapshotted input disappeared before publish: {name}: {path}") from exc
+        if current != expected:
+            raise RuntimeError(f"snapshotted input changed before publish: {name}: {path}")
 
 
 def _catalog_interval(value: Any, duration_s: float, context: str) -> dict[str, float]:
@@ -150,6 +187,11 @@ def validate_catalog_semantics(catalog: Mapping[str, Any]) -> None:
         if not isinstance(blind_id, str) or blind_id in seen_blind_ids:
             raise ValueError(f"duplicate or invalid blind_id: {blind_id}")
         seen_blind_ids.add(blind_id)
+        expected_media_path = f"media/{blind_id}.mp4"
+        if item.get("media_path") != expected_media_path:
+            raise ValueError(
+                f"{blind_id}: media_path must equal {expected_media_path}"
+            )
         duration = item.get("duration_s")
         if (
             not isinstance(duration, (int, float))
@@ -258,7 +300,99 @@ def validate_catalog_semantics(catalog: Mapping[str, Any]) -> None:
         raise ValueError("catalog counts do not match semantic item totals")
 
 
-def build_manifest(catalog: Mapping[str, Any], catalog_sha256: str) -> dict[str, Any]:
+def validate_audio_media_registry(
+    registry: Mapping[str, Any], catalog: Mapping[str, Any]
+) -> dict[str, dict[str, str]]:
+    """Bind the operator registry to the exact Round-1 manifest and blind-ID set."""
+
+    if registry.get("manifest_id") != catalog.get("source_manifest_id"):
+        raise ValueError("audio-media registry manifest_id does not match the event catalog")
+    if registry.get("manifest_sha256") != catalog.get("source_manifest_sha256"):
+        raise ValueError("audio-media registry manifest_sha256 does not match the event catalog")
+
+    rows = registry.get("items")
+    if not isinstance(rows, list):
+        raise ValueError("audio-media registry items must be an array")
+    by_id: dict[str, dict[str, str]] = {}
+    for row in rows:
+        if not isinstance(row, Mapping):
+            raise ValueError("audio-media registry item must be an object")
+        blind_id = row.get("blind_id")
+        if not isinstance(blind_id, str) or blind_id in by_id:
+            raise ValueError(f"audio-media registry has duplicate or invalid blind_id: {blind_id}")
+        expected_path = f"media/{blind_id}.mp4"
+        if row.get("media_path") != expected_path:
+            raise ValueError(
+                f"audio-media registry path for {blind_id} must equal {expected_path}"
+            )
+        by_id[blind_id] = dict(row)
+
+    catalog_ids = {item["blind_id"] for item in catalog["items"]}
+    if set(by_id) != catalog_ids:
+        raise ValueError("audio-media registry blind-ID set does not match the event catalog")
+    return by_id
+
+
+def validate_round1_release_record(
+    record: Mapping[str, Any],
+    registry: Mapping[str, Any],
+    registry_sha256: str,
+    catalog: Mapping[str, Any],
+) -> None:
+    """Anchor the mutable private inputs to the tracked Round-1 v4 release record."""
+
+    if not isinstance(record, Mapping):
+        raise ValueError("Round-1 v4 release record must be a JSON object")
+    if record.get("schema_version") != ROUND1_RELEASE_SCHEMA:
+        raise ValueError("Round-1 release record is not the v4 release schema")
+    if record.get("release_id") != ROUND1_RELEASE_ID:
+        raise ValueError("Round-1 release record is not round1_curation_v4")
+    if record.get("status") != "CURATION_AUTHORIZED":
+        raise ValueError("Round-1 v4 release record is not curation-authorized")
+    manifest_record = record.get("manifest")
+    registry_record = record.get("audio_media_registry")
+    source_contract = record.get("source_contract_sha256")
+    if not isinstance(manifest_record, Mapping):
+        raise ValueError("Round-1 v4 release record has no manifest binding")
+    if not isinstance(registry_record, Mapping):
+        raise ValueError("Round-1 v4 release record has no audio registry binding")
+    if not isinstance(source_contract, Mapping):
+        raise ValueError("Round-1 v4 release record has no source-contract binding")
+    if manifest_record.get("path") != "round1_v4_blinded_items.json":
+        raise ValueError("Round-1 v4 release record has the wrong manifest path")
+    expected_registry_keys = {"storage", "sha256", "item_count"}
+    if set(registry_record) != expected_registry_keys:
+        raise ValueError(
+            "Round-1 v4 release record audio registry must contain exactly "
+            "storage, sha256, and item_count"
+        )
+    if registry_record.get("storage") != "operator_private":
+        raise ValueError("Round-1 v4 release record audio registry is not operator-private")
+    if registry_record.get("item_count") != len(registry.get("items", [])):
+        raise ValueError("Round-1 v4 release record audio registry item_count does not match")
+
+    manifest_sha256 = manifest_record.get("sha256")
+    if manifest_sha256 != registry.get("manifest_sha256"):
+        raise ValueError("Round-1 release record manifest SHA does not match the registry")
+    if manifest_sha256 != catalog.get("source_manifest_sha256"):
+        raise ValueError("Round-1 release record manifest SHA does not match the event catalog")
+    if registry.get("manifest_id") != catalog.get("source_manifest_id"):
+        raise ValueError("Round-1 release record manifest identity does not match the catalog")
+    if registry_record.get("sha256") != registry_sha256:
+        raise ValueError("Round-1 release record audio registry SHA does not match")
+    if source_contract.get("public_manifest") != manifest_sha256:
+        raise ValueError("Round-1 release source contract does not bind the public manifest")
+    if source_contract.get("audio_media_registry") != registry_sha256:
+        raise ValueError("Round-1 release source contract does not bind the audio registry")
+
+
+def build_manifest(
+    catalog: Mapping[str, Any],
+    catalog_sha256: str,
+    audio_media_registry_sha256: str,
+    round1_release_record_sha256: str = "0" * 64,
+    manifest_schema_bytes: bytes | None = None,
+) -> dict[str, Any]:
     validate_catalog_semantics(catalog)
     items: list[dict[str, Any]] = []
     seen: set[str] = set()
@@ -288,6 +422,11 @@ def build_manifest(catalog: Mapping[str, Any], catalog_sha256: str) -> dict[str,
         "status": "RATING_AUTHORIZED_SINGLE_RATER",
         "source_catalog_id": catalog["catalog_id"],
         "source_catalog_sha256": catalog_sha256,
+        "source_round1_release_id": ROUND1_RELEASE_ID,
+        "source_round1_release_record_sha256": round1_release_record_sha256,
+        "source_round1_manifest_id": catalog["source_manifest_id"],
+        "source_round1_manifest_sha256": catalog["source_manifest_sha256"],
+        "source_audio_media_registry_sha256": audio_media_registry_sha256,
         "curator_rater_id_sha256": _normalized_rater_hash(catalog["curator_id"]),
         "counts": {
             "events": len(items),
@@ -296,7 +435,14 @@ def build_manifest(catalog: Mapping[str, Any], catalog_sha256: str) -> dict[str,
         "rubric": RUBRIC,
         "items": items,
     }
-    _validate(manifest, MANIFEST_SCHEMA_PATH, "generated Round-2 manifest")
+    if manifest_schema_bytes is None:
+        _validate(manifest, MANIFEST_SCHEMA_PATH, "generated Round-2 manifest")
+    else:
+        _validate_with_schema(
+            manifest,
+            manifest_schema_bytes,
+            "generated Round-2 manifest",
+        )
     return manifest
 
 
@@ -305,21 +451,8 @@ def _write(path: Path, content: bytes) -> None:
     path.write_bytes(content)
 
 
-def _copy_verified(source: Path, target: Path) -> None:
-    """Copy one blinded video without sharing an inode and verify stable bytes."""
-
-    target.parent.mkdir(parents=True, exist_ok=True)
-    expected = _sha256(source)
-    partial = target.with_name(f".{target.name}.partial")
-    shutil.copyfile(source, partial)
-    if _sha256(source) != expected or _sha256(partial) != expected:
-        partial.unlink(missing_ok=True)
-        raise OSError(f"media changed or failed hash verification while copying: {source}")
-    os.replace(partial, target)
-
-
-def _probe_media_streams(source: Path) -> tuple[int, int]:
-    """Return video/audio stream counts, failing closed when ffprobe cannot inspect input."""
+def _probe_media(source: Path) -> dict[str, Any]:
+    """Inspect streams, chapters, and tags with ffprobe."""
 
     executable = shutil.which("ffprobe")
     if executable is None:
@@ -328,7 +461,9 @@ def _probe_media_streams(source: Path) -> tuple[int, int]:
         [
             executable,
             "-v", "error",
-            "-show_entries", "stream=codec_type",
+            "-show_streams",
+            "-show_format",
+            "-show_chapters",
             "-of", "json",
             str(source),
         ],
@@ -339,27 +474,202 @@ def _probe_media_streams(source: Path) -> tuple[int, int]:
     if completed.returncode != 0:
         raise ValueError(f"ffprobe could not inspect {source}: {completed.stderr.strip()}")
     try:
-        streams = json.loads(completed.stdout).get("streams", [])
+        payload = json.loads(completed.stdout)
     except json.JSONDecodeError as exc:
         raise ValueError(f"ffprobe returned invalid JSON for {source}") from exc
+    if not isinstance(payload, dict) or not isinstance(payload.get("streams"), list):
+        raise ValueError(f"ffprobe returned an invalid media description for {source}")
+    return payload
+
+
+def _stream_counts(probe: Mapping[str, Any]) -> tuple[int, int, int]:
+    streams = probe.get("streams", [])
     video_count = sum(stream.get("codec_type") == "video" for stream in streams)
     audio_count = sum(stream.get("codec_type") == "audio" for stream in streams)
+    return video_count, audio_count, len(streams)
+
+
+def _probe_media_streams(source: Path) -> tuple[int, int]:
+    """Compatibility wrapper used by narrow callers and tests."""
+
+    video_count, audio_count, _ = _stream_counts(_probe_media(source))
     return video_count, audio_count
 
 
-def build_package(catalog_path: Path, output_dir: Path, media_root: Path) -> dict[str, Any]:
+def _verify_sanitized_media(path: Path) -> None:
+    probe = _probe_media(path)
+    video_count, audio_count, total_count = _stream_counts(probe)
+    if (video_count, audio_count, total_count) != (1, 1, 2):
+        raise ValueError(
+            f"sanitized Round-2 media must contain exactly one video and one audio "
+            f"stream: {path} (video={video_count}, audio={audio_count}, total={total_count})"
+        )
+    if probe.get("chapters"):
+        raise ValueError(f"sanitized Round-2 media still contains chapters: {path}")
+
+    # MP4 muxers necessarily add structural brands and stream handlers. No other
+    # descriptive tags may survive the metadata-stripping remux.
+    allowed_format_tags = {"major_brand", "minor_version", "compatible_brands"}
+    allowed_stream_tags = {"language", "handler_name", "vendor_id"}
+    format_tags = probe.get("format", {}).get("tags", {})
+    if not isinstance(format_tags, Mapping) or set(format_tags) - allowed_format_tags:
+        raise ValueError(f"sanitized Round-2 media still contains format metadata: {path}")
+    for stream in probe["streams"]:
+        tags = stream.get("tags", {})
+        if not isinstance(tags, Mapping) or set(tags) - allowed_stream_tags:
+            raise ValueError(f"sanitized Round-2 media still contains stream metadata: {path}")
+
+
+def _remux_sanitized_media(
+    source: Path,
+    target: Path,
+    expected_source_sha256: str,
+) -> str:
+    """Select first video/audio streams, strip metadata, and bind both byte sets."""
+
+    if _sha256(source) != expected_source_sha256:
+        raise ValueError(f"audio-media registry checksum mismatch: {source}")
+    source_probe = _probe_media(source)
+    video_count, audio_count, _ = _stream_counts(source_probe)
+    if video_count < 1 or audio_count < 1:
+        raise ValueError(
+            f"Round-2 source must contain video and audio streams: {source} "
+            f"(video={video_count}, audio={audio_count})"
+        )
+
+    executable = shutil.which("ffmpeg")
+    if executable is None:
+        raise RuntimeError("ffmpeg is required to sanitize Round-2 audio-bearing media")
+    target.parent.mkdir(parents=True, exist_ok=True)
+    partial = target.with_name(f".{target.name}.partial.mp4")
+    completed = subprocess.run(
+        [
+            executable,
+            "-v", "error",
+            "-nostdin",
+            "-y",
+            "-i", str(source),
+            "-map", "0:v:0",
+            "-map", "0:a:0",
+            "-c", "copy",
+            "-map_metadata", "-1",
+            "-map_metadata:s", "-1",
+            "-map_chapters", "-1",
+            "-fflags", "+bitexact",
+            str(partial),
+        ],
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    if completed.returncode != 0:
+        partial.unlink(missing_ok=True)
+        raise ValueError(f"ffmpeg could not sanitize {source}: {completed.stderr.strip()}")
+    try:
+        if _sha256(source) != expected_source_sha256:
+            raise OSError(f"media changed while sanitizing: {source}")
+        _verify_sanitized_media(partial)
+        os.replace(partial, target)
+    except BaseException:
+        partial.unlink(missing_ok=True)
+        raise
+    return _sha256(target)
+
+
+def _publish_staged_directory(staging: Path, output_dir: Path) -> None:
+    """Claim the final name without replacement; publish completion marker last."""
+
+    try:
+        output_dir.mkdir(mode=0o755)
+    except FileExistsError as exc:
+        raise FileExistsError(
+            f"refusing to overwrite concurrently created output directory: {output_dir}"
+        ) from exc
+
+    marker = staging / COMPLETION_MARKER
+    if not marker.is_file():
+        raise RuntimeError("staged Round-2 package has no completion marker")
+    try:
+        for child in sorted(staging.iterdir(), key=lambda value: value.name):
+            if child == marker:
+                continue
+            child.rename(output_dir / child.name)
+        marker.rename(output_dir / marker.name)
+        staging.rmdir()
+    except BaseException:
+        # Preserve an incomplete, marker-free directory as crash/race evidence. A
+        # later run must use a new output path rather than overwrite it.
+        raise
+
+
+def build_package(
+    catalog_path: Path,
+    output_dir: Path,
+    media_root: Path,
+    audio_media_registry_path: Path,
+    round1_release_record_path: Path,
+) -> dict[str, Any]:
     """Build a new package directory without overwriting any prior output."""
 
     if output_dir.exists():
         raise FileExistsError(f"refusing to overwrite existing output directory: {output_dir}")
-    catalog = _load_json(catalog_path)
-    _validate(catalog, CATALOG_SCHEMA_PATH, str(catalog_path))
-    catalog_sha256 = _sha256(catalog_path)
-    manifest = build_manifest(catalog, catalog_sha256)
+
+    snapshots = _snapshot_files(
+        {
+            "event_catalog": catalog_path,
+            "audio_media_registry": audio_media_registry_path,
+            "round1_release_record": round1_release_record_path,
+            "event_catalog_schema": CATALOG_SCHEMA_PATH,
+            "audio_media_registry_schema": AUDIO_MEDIA_REGISTRY_SCHEMA_PATH,
+            "round2_manifest_schema": MANIFEST_SCHEMA_PATH,
+            "round2_ratings_schema": RATINGS_SCHEMA_PATH,
+            "round2_summary_schema": SUMMARY_SCHEMA_PATH,
+            "round2_html_template": HTML_TEMPLATE_PATH,
+            "round2_instructions": INSTRUCTIONS_PATH,
+        }
+    )
+    get_bytes = lambda name: snapshots[name][1]
+    catalog = _parse_json_bytes(get_bytes("event_catalog"), str(catalog_path))
+    _validate_with_schema(
+        catalog,
+        get_bytes("event_catalog_schema"),
+        str(catalog_path),
+    )
+    catalog_sha256 = _sha256_bytes(get_bytes("event_catalog"))
+    audio_media_registry = _parse_json_bytes(
+        get_bytes("audio_media_registry"), str(audio_media_registry_path)
+    )
+    _validate_with_schema(
+        audio_media_registry,
+        get_bytes("audio_media_registry_schema"),
+        str(audio_media_registry_path),
+    )
+    audio_media_by_id = validate_audio_media_registry(audio_media_registry, catalog)
+    audio_media_registry_sha256 = _sha256_bytes(get_bytes("audio_media_registry"))
+    round1_release_record = _parse_json_bytes(
+        get_bytes("round1_release_record"), str(round1_release_record_path)
+    )
+    round1_release_record_sha256 = _sha256_bytes(get_bytes("round1_release_record"))
+    validate_round1_release_record(
+        round1_release_record,
+        audio_media_registry,
+        audio_media_registry_sha256,
+        catalog,
+    )
+    manifest = build_manifest(
+        catalog,
+        catalog_sha256,
+        audio_media_registry_sha256,
+        round1_release_record_sha256,
+        get_bytes("round2_manifest_schema"),
+    )
     manifest_bytes = _canonical_bytes(manifest)
     manifest_sha256 = _sha256_bytes(manifest_bytes)
 
-    template = HTML_TEMPLATE_PATH.read_text(encoding="utf-8")
+    try:
+        template = get_bytes("round2_html_template").decode("utf-8")
+    except UnicodeDecodeError as exc:
+        raise ValueError("Round-2 HTML template is not valid UTF-8") from exc
     for marker in ("__ROUND2_MANIFEST_JSON__", "__ROUND2_MANIFEST_SHA256__"):
         if template.count(marker) != 1:
             raise ValueError(f"HTML template must contain exactly one {marker} marker")
@@ -374,12 +684,13 @@ def build_package(catalog_path: Path, output_dir: Path, media_root: Path) -> dic
     try:
         _write(temporary / "round2_manifest.json", manifest_bytes)
         _write(temporary / "rate.html", html.encode("utf-8"))
-        for source, destination in (
-            (RATINGS_SCHEMA_PATH, "ratings.schema.json"),
-            (SUMMARY_SCHEMA_PATH, "summary.schema.json"),
-            (INSTRUCTIONS_PATH, "INSTRUCTIONS.md"),
+        for snapshot_name, destination in (
+            ("round2_manifest_schema", "manifest.schema.json"),
+            ("round2_ratings_schema", "ratings.schema.json"),
+            ("round2_summary_schema", "summary.schema.json"),
+            ("round2_instructions", "INSTRUCTIONS.md"),
         ):
-            _write(temporary / destination, source.read_bytes())
+            _write(temporary / destination, get_bytes(snapshot_name))
 
         copied_media: set[str] = set()
         for item in manifest["items"]:
@@ -389,23 +700,32 @@ def build_package(catalog_path: Path, output_dir: Path, media_root: Path) -> dic
             source = media_root / relative
             if not source.is_file():
                 raise FileNotFoundError(f"required blinded video is missing: {source}")
-            video_count, audio_count = _probe_media_streams(source)
-            if video_count < 1 or audio_count < 1:
-                raise ValueError(
-                    f"Round-2 source must contain video and audio streams: {source} "
-                    f"(video={video_count}, audio={audio_count})"
-                )
-            _copy_verified(source, temporary / relative)
+            expected_sha256 = audio_media_by_id[item["blind_id"]]["sha256"]
+            _remux_sanitized_media(
+                source,
+                temporary / relative,
+                expected_sha256,
+            )
             copied_media.add(relative)
 
+        completion = {
+            "schema_version": "sounddecisions-human-presence-package-complete-v1",
+            "manifest_sha256": manifest_sha256,
+            "source_round1_release_record_sha256": round1_release_record_sha256,
+            "source_audio_media_registry_sha256": audio_media_registry_sha256,
+            "media_files": len(copied_media),
+        }
+        _write(temporary / COMPLETION_MARKER, _canonical_bytes(completion))
         sums: dict[str, str] = {}
         for path in sorted(temporary.rglob("*")):
             if path.is_file() and path.name != "SHA256SUMS.json":
                 sums[path.relative_to(temporary).as_posix()] = _sha256(path)
         _write(temporary / "SHA256SUMS.json", _canonical_bytes(sums))
-        temporary.rename(output_dir)
+        _assert_snapshots_unchanged(snapshots)
+        _publish_staged_directory(temporary, output_dir)
     except BaseException:
-        shutil.rmtree(temporary, ignore_errors=True)
+        if temporary.exists():
+            shutil.rmtree(temporary, ignore_errors=True)
         raise
     return manifest
 
@@ -423,8 +743,26 @@ def main() -> int:
             "paths; do not use the silent Round-1 release"
         ),
     )
+    parser.add_argument(
+        "--audio-media-registry",
+        type=Path,
+        required=True,
+        help="operator-only Round-1 v4 registry binding blind IDs to source-media hashes",
+    )
+    parser.add_argument(
+        "--round1-release-record",
+        type=Path,
+        required=True,
+        help="tracked ROUND1_V4_RELEASE.json that anchors the private registry",
+    )
     args = parser.parse_args()
-    manifest = build_package(args.event_catalog, args.output_dir, args.media_root)
+    manifest = build_package(
+        args.event_catalog,
+        args.output_dir,
+        args.media_root,
+        args.audio_media_registry,
+        args.round1_release_record,
+    )
     print(json.dumps(manifest["counts"], sort_keys=True))
     return 0
 

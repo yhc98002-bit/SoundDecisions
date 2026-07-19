@@ -14,7 +14,9 @@ Choose `target-present`, `absent`, or `uncertain`. Set the unrelated-background 
 salient unrelated audio is present, whether or not the target is present. Notes are
 optional. Progress is saved in this browser. Use **Export ratings JSON** before leaving;
 the exported file is the rating record. Import restores a previous export for the same
-package and evaluator.
+package and evaluator. **Import JSON is available before Start**. If browser storage is
+unavailable or contains a damaged save, a validated import continues in memory without
+overwriting the damaged record; export again before closing the page.
 
 This is a single-rater semantic audit. Its output supports descriptive counts only; it
 does not establish inter-rater agreement or AC1. A future second independent rating can
@@ -29,8 +31,16 @@ export PYTHONHASHSEED=0
 .venv/bin/python results/human_eval_pack/build_round2.py \
   --event-catalog event_catalog_v2.json \
   --media-root results/human_eval_pack \
+  --audio-media-registry results/human_eval_pack/private/round1_v4_audio_media_registry.json \
+  --round1-release-record results/human_eval_pack/ROUND1_V4_RELEASE.json \
   --output-dir results/human_eval_pack/releases/round2_presence_v2
 ```
+
+The builder verifies both private inputs against the tracked Round-1 v4 release record,
+then remuxes only the first video and first audio stream with metadata and chapters
+removed. `SHA256SUMS.json` binds every delivered file. Deliver only a directory that
+contains `COMPLETE.json`; a directory without that marker is an interrupted build and
+must not be repaired or reused.
 
 After receiving two or more independent exports, compute AC1 with the fixed response
 scales:

@@ -11,8 +11,11 @@ from __future__ import annotations
 
 import argparse
 import csv
+import ctypes
+import errno
 import hashlib
 import hmac
+import io
 import json
 import os
 import shutil
@@ -24,17 +27,23 @@ from pathlib import Path
 from typing import Any
 
 
-SCHEMA_VERSION = "sounddecisions-human-curation-items-v1-1.2"
-INSTRUMENT_VERSION = "human-eval-round1-curation-1.2"
-MANIFEST_ID = "axis-spec-v2-round1-curation-2026-07-v3"
-RELEASE_ID = "round1_curation_v3"
+SCHEMA_VERSION = "sounddecisions-human-curation-items-v1-1.3"
+INSTRUMENT_VERSION = "human-eval-round1-curation-1.3"
+MANIFEST_ID = "axis-spec-v2-round1-curation-2026-07-v4"
+RELEASE_ID = "round1_curation_v4"
 RELEASE_STATUS = "CURATION_AUTHORIZED"
+AUDIO_MEDIA_REGISTRY_SCHEMA_VERSION = (
+    "sounddecisions-human-curation-audio-media-registry-v4-1.0"
+)
+AUDIO_MEDIA_REGISTRY_FILENAME = "round1_v4_audio_media_registry.json"
 EXPECTED_ANCHOR_TASKS = 30
 EXPECTED_TWO_EVENT_TASKS = 60
 EXPECTED_UNIQUE_VIDEOS = 82
 FIXED_ZIP_TIMESTAMP = (2026, 7, 19, 0, 0, 0)
-SEALED_MAP_FORMAT = "sounddecisions-human-curation-sealed-map-v3"
+SEALED_MAP_FORMAT = "sounddecisions-human-curation-sealed-map-v4"
 SEALED_MAP_ITERATIONS = 200_000
+_AT_FDCWD = -100
+_RENAME_NOREPLACE = 1
 
 
 def _sha256(path: Path) -> str:
@@ -70,6 +79,93 @@ def _atomic_write_bytes(destination: Path, content: bytes) -> None:
         os.replace(temporary, destination)
     finally:
         temporary.unlink(missing_ok=True)
+
+
+def _rename_noreplace(source: Path, destination: Path) -> bool:
+    """Atomically rename without replacement, or return False if unsupported.
+
+    Linux ``renameat2(RENAME_NOREPLACE)`` closes the exists-check/rename race.
+    Callers use creation-exclusive fallbacks when the kernel or libc does not
+    expose it; they must never fall back to ``os.replace``.
+    """
+
+    libc = ctypes.CDLL(None, use_errno=True)
+    renameat2 = getattr(libc, "renameat2", None)
+    if renameat2 is None:
+        return False
+    renameat2.argtypes = [
+        ctypes.c_int,
+        ctypes.c_char_p,
+        ctypes.c_int,
+        ctypes.c_char_p,
+        ctypes.c_uint,
+    ]
+    renameat2.restype = ctypes.c_int
+    result = renameat2(
+        _AT_FDCWD,
+        os.fsencode(source),
+        _AT_FDCWD,
+        os.fsencode(destination),
+        _RENAME_NOREPLACE,
+    )
+    if result == 0:
+        return True
+    error_number = ctypes.get_errno()
+    if error_number == errno.EEXIST:
+        raise FileExistsError(error_number, os.strerror(error_number), destination)
+    if error_number in {errno.ENOSYS, errno.EINVAL, errno.ENOTSUP}:
+        return False
+    raise OSError(error_number, os.strerror(error_number), destination)
+
+
+def _copy_file_exclusive(source: Path, destination: Path) -> None:
+    """Creation-exclusive cross-filesystem fallback for a staged file."""
+
+    descriptor = os.open(destination, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+    try:
+        with source.open("rb") as input_handle, os.fdopen(
+            descriptor, "wb", closefd=True
+        ) as output_handle:
+            descriptor = -1
+            shutil.copyfileobj(input_handle, output_handle, length=1024 * 1024)
+            output_handle.flush()
+            os.fsync(output_handle.fileno())
+        destination.chmod(source.stat().st_mode & 0o777)
+    except BaseException:
+        if descriptor >= 0:
+            os.close(descriptor)
+        destination.unlink(missing_ok=True)
+        raise
+    source.unlink()
+
+
+def _copy_directory_exclusive(source: Path, destination: Path) -> None:
+    """Reserve a destination then copy when renameat2 is unavailable.
+
+    The directory may be briefly incomplete, but no file is overwritten and
+    the release record is not published until this copy has completed.
+    """
+
+    destination.mkdir(mode=source.stat().st_mode & 0o777)
+    try:
+        for path in sorted(source.rglob("*")):
+            relative = path.relative_to(source)
+            target = destination / relative
+            if path.is_dir():
+                target.mkdir(mode=path.stat().st_mode & 0o777)
+            elif path.is_file():
+                target.parent.mkdir(parents=True, exist_ok=True)
+                with path.open("rb") as input_handle, target.open("xb") as output_handle:
+                    shutil.copyfileobj(input_handle, output_handle, length=1024 * 1024)
+                    output_handle.flush()
+                    os.fsync(output_handle.fileno())
+                target.chmod(path.stat().st_mode & 0o777)
+            else:
+                raise RuntimeError(f"unsupported staged release entry: {path}")
+    except BaseException:
+        shutil.rmtree(destination, ignore_errors=True)
+        raise
+    shutil.rmtree(source)
 
 
 def _read_key(path: Path) -> bytes:
@@ -152,7 +248,7 @@ def _assert_private_mapping_matches(
             if actual_item.get(field) != expected_item[field]:
                 raise RuntimeError(f"sealed map {field} mismatch for {blind_id}")
     if actual != expected:
-        raise RuntimeError("sealed map plaintext differs from the exact Round-1 v3 registry")
+        raise RuntimeError("sealed map plaintext differs from the exact Round-1 v4 registry")
 
 
 def _stage_sealed_mapping(
@@ -169,11 +265,11 @@ def _stage_sealed_mapping(
         try:
             envelope = json.loads(existing_destination.read_text(encoding="utf-8"))
         except (OSError, json.JSONDecodeError) as error:
-            raise RuntimeError("existing Round-1 v3 sealed map is unreadable") from error
+            raise RuntimeError("existing Round-1 v4 sealed map is unreadable") from error
         actual = _decrypt_sealed_envelope(envelope, key_file)
         _assert_private_mapping_matches(actual, mapping)
         if envelope.get("plaintext_sha256") != plaintext_sha256:
-            raise RuntimeError("existing Round-1 v3 sealed map plaintext hash differs")
+            raise RuntimeError("existing Round-1 v4 sealed map plaintext hash differs")
         shutil.copyfile(existing_destination, staged_destination)
         staged_destination.chmod(0o600)
         return _sha256(staged_destination)
@@ -215,9 +311,8 @@ def _blind_id(clip_id: str, key: bytes) -> str:
     return f"HEV2-{digest.hexdigest()[:12].upper()}"
 
 
-def _load_clip_index(path: Path) -> dict[str, dict[str, str]]:
-    with path.open(newline="", encoding="utf-8") as handle:
-        rows = list(csv.DictReader(handle))
+def _load_clip_index(content: bytes, path: Path) -> dict[str, dict[str, str]]:
+    rows = list(csv.DictReader(io.StringIO(content.decode("utf-8"), newline="")))
     required = {"key", "path", "sha256", "caption"}
     if not rows or not required.issubset(rows[0]):
         raise RuntimeError(f"clips index lacks required columns {sorted(required)}: {path}")
@@ -227,10 +322,16 @@ def _load_clip_index(path: Path) -> dict[str, dict[str, str]]:
     return result
 
 
-def _load_candidate_tasks(anchor_csv: Path, two_event_json: Path) -> dict[str, list[str]]:
-    with anchor_csv.open(newline="", encoding="utf-8") as handle:
-        anchor_rows = list(csv.DictReader(handle))
-    two_payload = json.loads(two_event_json.read_text(encoding="utf-8"))
+def _load_candidate_tasks(
+    anchor_content: bytes,
+    two_event_content: bytes,
+    anchor_csv: Path,
+    two_event_json: Path,
+) -> dict[str, list[str]]:
+    anchor_rows = list(
+        csv.DictReader(io.StringIO(anchor_content.decode("utf-8"), newline=""))
+    )
+    two_payload = json.loads(two_event_content.decode("utf-8"))
     two_ids = [str(value) for value in two_payload.get("clips", [])]
 
     if len(anchor_rows) != EXPECTED_ANCHOR_TASKS:
@@ -376,17 +477,17 @@ def _preflight(
     return sorted(prepared, key=lambda row: row["blind_id"])
 
 
-def _validate_json(instance: object, schema_path: Path) -> None:
+def _validate_json(instance: object, schema_bytes: bytes) -> None:
     try:
         import jsonschema
     except ImportError as error:  # pragma: no cover - dependency failure path
         raise RuntimeError("jsonschema is required to build the human-eval release") from error
-    schema = json.loads(schema_path.read_text(encoding="utf-8"))
+    schema = json.loads(schema_bytes.decode("utf-8"))
     jsonschema.Draft202012Validator(schema).validate(instance)
 
 
-def _render_html(template_path: Path, manifest_bytes: bytes, manifest_sha256: str) -> bytes:
-    template = template_path.read_text(encoding="utf-8")
+def _render_html(template_bytes: bytes, manifest_bytes: bytes, manifest_sha256: str) -> bytes:
+    template = template_bytes.decode("utf-8")
     json_marker = "__ROUND1_MANIFEST_JSON__"
     sha_marker = "__ROUND1_MANIFEST_SHA256__"
     if template.count(json_marker) != 1 or template.count(sha_marker) != 1:
@@ -396,6 +497,35 @@ def _render_html(template_path: Path, manifest_bytes: bytes, manifest_sha256: st
     if json_marker in rendered or sha_marker in rendered:
         raise RuntimeError("Round-1 HTML template markers were not fully replaced")
     return rendered.encode("utf-8")
+
+
+def _snapshot_contract_files(paths: dict[str, Path]) -> tuple[dict[str, bytes], dict[str, str]]:
+    snapshots: dict[str, bytes] = {}
+    hashes: dict[str, str] = {}
+    for label, path in paths.items():
+        try:
+            content = path.read_bytes()
+        except OSError as error:
+            raise RuntimeError(f"release contract file is unreadable ({label}): {path}") from error
+        snapshots[label] = content
+        hashes[label] = hashlib.sha256(content).hexdigest()
+    return snapshots, hashes
+
+
+def _assert_contract_files_unchanged(
+    paths: dict[str, Path], expected_hashes: dict[str, str]
+) -> None:
+    for label, path in paths.items():
+        try:
+            actual = _sha256(path)
+        except OSError as error:
+            raise RuntimeError(
+                f"release contract file changed during build ({label}): {path}"
+            ) from error
+        if actual != expected_hashes[label]:
+            raise RuntimeError(
+                f"release contract file changed during build ({label}): {path}"
+            )
 
 
 def _remux_video_only(source: Path, destination: Path) -> str:
@@ -460,32 +590,48 @@ def _write_deterministic_zip(source_dir: Path, destination: Path) -> None:
 
 
 def _publish_immutable_file(staged: Path, destination: Path) -> None:
-    if destination.exists():
-        if not destination.is_file() or _sha256(staged) != _sha256(destination):
-            raise RuntimeError(f"refusing to overwrite non-identical release artifact: {destination}")
-        staged.unlink()
-        return
     destination.parent.mkdir(parents=True, exist_ok=True)
-    os.replace(staged, destination)
+    try:
+        if not _rename_noreplace(staged, destination):
+            _copy_file_exclusive(staged, destination)
+        return
+    except FileExistsError:
+        pass
+    if not destination.is_file() or _sha256(staged) != _sha256(destination):
+        raise RuntimeError(f"refusing to overwrite non-identical release artifact: {destination}")
+    staged.unlink()
 
 
 def _publish_immutable_directory(staged: Path, destination: Path) -> None:
-    if destination.exists():
-        if not destination.is_dir() or _directory_digest(staged) != _directory_digest(destination):
-            raise RuntimeError(f"refusing to overwrite non-identical release directory: {destination}")
-        shutil.rmtree(staged)
-        return
     destination.parent.mkdir(parents=True, exist_ok=True)
-    os.replace(staged, destination)
+    try:
+        if not _rename_noreplace(staged, destination):
+            _copy_directory_exclusive(staged, destination)
+        return
+    except FileExistsError:
+        pass
+    if not destination.is_dir() or _directory_digest(staged) != _directory_digest(destination):
+        raise RuntimeError(f"refusing to overwrite non-identical release directory: {destination}")
+    shutil.rmtree(staged)
+
+
+def _publication_checkpoint(label: str) -> None:
+    """Test hook for proving that partial publication never commits a release."""
 
 
 def _assert_publishable(
     staged_dir: Path,
     staged_zip: Path,
     staged_sealed_map: Path,
+    staged_audio_registry: Path,
     release_dir: Path,
     zip_path: Path,
     sealed_map_path: Path,
+    audio_registry_path: Path,
+    public_manifest_path: Path,
+    release_record_path: Path,
+    staged_public_manifest: Path,
+    staged_release_record: Path,
 ) -> None:
     if release_dir.exists() and (
         not release_dir.is_dir() or _directory_digest(staged_dir) != _directory_digest(release_dir)
@@ -500,11 +646,48 @@ def _assert_publishable(
         or _sha256(staged_sealed_map) != _sha256(sealed_map_path)
     ):
         raise RuntimeError(f"refusing to overwrite non-identical sealed map: {sealed_map_path}")
+    if audio_registry_path.exists() and (
+        not audio_registry_path.is_file()
+        or _sha256(staged_audio_registry) != _sha256(audio_registry_path)
+    ):
+        raise RuntimeError(
+            f"refusing to overwrite non-identical audio-media registry: {audio_registry_path}"
+        )
+    if public_manifest_path.exists() and (
+        not public_manifest_path.is_file()
+        or _sha256(staged_public_manifest) != _sha256(public_manifest_path)
+    ):
+        raise RuntimeError(
+            f"refusing to overwrite non-identical public manifest: {public_manifest_path}"
+        )
+    if release_record_path.exists() and (
+        not release_record_path.is_file()
+        or _sha256(staged_release_record) != _sha256(release_record_path)
+    ):
+        raise RuntimeError(
+            f"refusing to overwrite non-identical release record: {release_record_path}"
+        )
 
 
 def build(args: argparse.Namespace) -> dict[str, Any]:
-    tasks_by_clip = _load_candidate_tasks(args.anchor_csv, args.two_event_json)
-    index = _load_clip_index(args.clips_index)
+    contract_paths = {
+        "anchor_candidates": args.anchor_csv,
+        "two_event_candidates": args.two_event_json,
+        "clips_index": args.clips_index,
+        "html_template": args.html_template,
+        "instructions": args.instructions,
+        "manifest_schema": args.manifest_schema,
+        "ratings_schema": args.ratings_schema,
+        "audio_media_registry_schema": args.audio_media_registry_schema,
+    }
+    contract_bytes, contract_hashes = _snapshot_contract_files(contract_paths)
+    tasks_by_clip = _load_candidate_tasks(
+        contract_bytes["anchor_candidates"],
+        contract_bytes["two_event_candidates"],
+        args.anchor_csv,
+        args.two_event_json,
+    )
+    index = _load_clip_index(contract_bytes["clips_index"], args.clips_index)
     key = _read_key(args.key_file)
     prepared = _preflight(tasks_by_clip, index, key)
 
@@ -533,15 +716,37 @@ def build(args: argparse.Namespace) -> dict[str, Any]:
         },
         "items": items,
     }
-    _validate_json(manifest, args.manifest_schema)
+    _validate_json(manifest, contract_bytes["manifest_schema"])
     manifest_bytes = _canonical_json(manifest)
     manifest_sha256 = hashlib.sha256(manifest_bytes).hexdigest()
-    rate_html = _render_html(args.html_template, manifest_bytes, manifest_sha256)
+    rate_html = _render_html(
+        contract_bytes["html_template"], manifest_bytes, manifest_sha256
+    )
+    audio_media_registry = {
+        "schema_version": AUDIO_MEDIA_REGISTRY_SCHEMA_VERSION,
+        "manifest_id": MANIFEST_ID,
+        "manifest_sha256": manifest_sha256,
+        "items": [
+            {
+                "blind_id": row["blind_id"],
+                "media_path": f"media/{row['blind_id']}.mp4",
+                "sha256": row["source_sha256"],
+            }
+            for row in prepared
+        ],
+    }
+    _validate_json(
+        audio_media_registry, contract_bytes["audio_media_registry_schema"]
+    )
+    audio_registry_bytes = _canonical_json(audio_media_registry)
+    audio_registry_sha256 = hashlib.sha256(audio_registry_bytes).hexdigest()
     private_source_contract = {
-        "anchor_candidates": _sha256(args.anchor_csv),
-        "two_event_candidates": _sha256(args.two_event_json),
-        "clips_index": _sha256(args.clips_index),
+        "anchor_candidates": contract_hashes["anchor_candidates"],
+        "two_event_candidates": contract_hashes["two_event_candidates"],
+        "clips_index": contract_hashes["clips_index"],
         "public_manifest": manifest_sha256,
+        "audio_media_registry": audio_registry_sha256,
+        "audio_media_registry_schema": contract_hashes["audio_media_registry_schema"],
     }
 
     release_parent = args.release_dir.parent.resolve()
@@ -558,12 +763,35 @@ def build(args: argparse.Namespace) -> dict[str, Any]:
     os.close(sealed_descriptor)
     staged_sealed_map = Path(sealed_temporary_name)
     staged_sealed_map.unlink()
+    registry_descriptor, registry_temporary_name = tempfile.mkstemp(
+        prefix=f".{RELEASE_ID}.", suffix=".audio-registry.tmp", dir=release_parent
+    )
+    os.close(registry_descriptor)
+    staged_audio_registry = Path(registry_temporary_name)
+    _atomic_write_bytes(staged_audio_registry, audio_registry_bytes)
+    staged_audio_registry.chmod(0o600)
+    manifest_descriptor, manifest_temporary_name = tempfile.mkstemp(
+        prefix=f".{RELEASE_ID}.", suffix=".manifest.tmp", dir=release_parent
+    )
+    os.close(manifest_descriptor)
+    staged_public_manifest = Path(manifest_temporary_name)
+    _atomic_write_bytes(staged_public_manifest, manifest_bytes)
+    record_descriptor, record_temporary_name = tempfile.mkstemp(
+        prefix=f".{RELEASE_ID}.", suffix=".record.tmp", dir=release_parent
+    )
+    os.close(record_descriptor)
+    staged_release_record = Path(record_temporary_name)
+    release_record: dict[str, Any]
     try:
         _atomic_write_bytes(staging / "blinded_items.json", manifest_bytes)
         _atomic_write_bytes(staging / "rate.html", rate_html)
-        shutil.copyfile(args.instructions, staging / "INSTRUCTIONS.md")
-        shutil.copyfile(args.manifest_schema, staging / "blinded_items.schema.json")
-        shutil.copyfile(args.ratings_schema, staging / "ratings.schema.json")
+        _atomic_write_bytes(staging / "INSTRUCTIONS.md", contract_bytes["instructions"])
+        _atomic_write_bytes(
+            staging / "blinded_items.schema.json", contract_bytes["manifest_schema"]
+        )
+        _atomic_write_bytes(
+            staging / "ratings.schema.json", contract_bytes["ratings_schema"]
+        )
         for path in (
             staging / "INSTRUCTIONS.md",
             staging / "blinded_items.schema.json",
@@ -573,7 +801,15 @@ def build(args: argparse.Namespace) -> dict[str, Any]:
         private_items = []
         for row in prepared:
             delivered_path = staging / "media" / f"{row['blind_id']}.mp4"
+            if _sha256(row["source"]) != row["source_sha256"]:
+                raise RuntimeError(
+                    f"source video changed before remux: {row['blind_id']}"
+                )
             delivered_sha256 = _remux_video_only(row["source"], delivered_path)
+            if _sha256(row["source"]) != row["source_sha256"]:
+                raise RuntimeError(
+                    f"source video changed during remux: {row['blind_id']}"
+                )
             private_items.append(
                 {
                     "blind_id": row["blind_id"],
@@ -587,7 +823,7 @@ def build(args: argparse.Namespace) -> dict[str, Any]:
             )
 
         private_mapping = {
-            "schema_version": "sounddecisions-human-curation-unblinding-v3-1.0",
+            "schema_version": "sounddecisions-human-curation-unblinding-v4-1.0",
             "manifest_id": MANIFEST_ID,
             "manifest_sha256": manifest_sha256,
             "source_contract_sha256": private_source_contract,
@@ -612,54 +848,77 @@ def build(args: argparse.Namespace) -> dict[str, Any]:
         release_digest = _directory_digest(staging)
         release_destination = args.release_dir.resolve()
         zip_destination = args.zip_path.resolve()
+        audio_registry_destination = args.audio_media_registry.resolve()
+        public_manifest_path = args.public_manifest.resolve()
+        release_record_path = args.release_record.resolve()
+        release_record = {
+            "schema_version": "sounddecisions-human-curation-release-v4",
+            "release_id": RELEASE_ID,
+            "status": RELEASE_STATUS,
+            "counts": manifest["counts"],
+            "manifest": {
+                "path": public_manifest_path.name,
+                "sha256": manifest_sha256,
+            },
+            "sealed_unblinding_map": {
+                "path": args.sealed_map.name,
+                "sha256": sealed_map_sha256,
+            },
+            "audio_media_registry": {
+                "storage": "operator_private",
+                "sha256": audio_registry_sha256,
+                "item_count": len(audio_media_registry["items"]),
+            },
+            "zip": {
+                "path": f"releases/{args.zip_path.name}",
+                "sha256": zip_sha256,
+                "size_bytes": zip_size_bytes,
+            },
+            "release_directory_sha256": release_digest,
+            "source_contract_sha256": {
+                **private_source_contract,
+                "html_template": contract_hashes["html_template"],
+                "instructions": contract_hashes["instructions"],
+                "manifest_schema": contract_hashes["manifest_schema"],
+                "ratings_schema": contract_hashes["ratings_schema"],
+            },
+        }
+        _atomic_write_bytes(staged_release_record, _canonical_json(release_record))
+        _assert_contract_files_unchanged(contract_paths, contract_hashes)
         _assert_publishable(
             staging,
             staged_zip,
             staged_sealed_map,
+            staged_audio_registry,
             release_destination,
             zip_destination,
             sealed_destination,
+            audio_registry_destination,
+            public_manifest_path,
+            release_record_path,
+            staged_public_manifest,
+            staged_release_record,
         )
-        _publish_immutable_directory(staging, release_destination)
-        _publish_immutable_file(staged_zip, zip_destination)
+        _publication_checkpoint("audio_media_registry")
+        _publish_immutable_file(staged_audio_registry, audio_registry_destination)
+        _publication_checkpoint("sealed_unblinding_map")
         _publish_immutable_file(staged_sealed_map, sealed_destination)
+        _publication_checkpoint("release_directory")
+        _publish_immutable_directory(staging, release_destination)
+        _publication_checkpoint("zip")
+        _publish_immutable_file(staged_zip, zip_destination)
+        _publication_checkpoint("public_manifest")
+        _publish_immutable_file(staged_public_manifest, public_manifest_path)
+        _publication_checkpoint("release_record")
+        _publish_immutable_file(staged_release_record, release_record_path)
     finally:
         if staging.exists():
             shutil.rmtree(staging)
         staged_zip.unlink(missing_ok=True)
         staged_sealed_map.unlink(missing_ok=True)
-
-    public_manifest_path = args.public_manifest.resolve()
-    release_record_path = args.release_record.resolve()
-    _atomic_write_bytes(public_manifest_path, manifest_bytes)
-    release_record = {
-        "schema_version": "sounddecisions-human-curation-release-v3",
-        "release_id": RELEASE_ID,
-        "status": RELEASE_STATUS,
-        "counts": manifest["counts"],
-        "manifest": {
-            "path": public_manifest_path.name,
-            "sha256": manifest_sha256,
-        },
-        "sealed_unblinding_map": {
-            "path": args.sealed_map.name,
-            "sha256": sealed_map_sha256,
-        },
-        "zip": {
-            "path": f"releases/{args.zip_path.name}",
-            "sha256": zip_sha256,
-            "size_bytes": zip_size_bytes,
-        },
-        "release_directory_sha256": release_digest,
-        "source_contract_sha256": {
-            **private_source_contract,
-            "html_template": _sha256(args.html_template),
-            "instructions": _sha256(args.instructions),
-            "manifest_schema": _sha256(args.manifest_schema),
-            "ratings_schema": _sha256(args.ratings_schema),
-        },
-    }
-    _atomic_write_bytes(release_record_path, _canonical_json(release_record))
+        staged_audio_registry.unlink(missing_ok=True)
+        staged_public_manifest.unlink(missing_ok=True)
+        staged_release_record.unlink(missing_ok=True)
     return release_record
 
 
@@ -682,19 +941,29 @@ def main() -> int:
     parser.add_argument(
         "--sealed-map",
         type=Path,
-        default=pack_dir / "round1_v3_unblinding_map.sealed.json",
+        default=pack_dir / "round1_v4_unblinding_map.sealed.json",
     )
     parser.add_argument("--html-template", type=Path, default=source_dir / "round1_rate.template.html")
     parser.add_argument("--instructions", type=Path, default=source_dir / "INSTRUCTIONS_ROUND1.md")
     parser.add_argument("--manifest-schema", type=Path, default=source_dir / "round1_manifest.schema.json")
     parser.add_argument("--ratings-schema", type=Path, default=source_dir / "round1_ratings.schema.json")
+    parser.add_argument(
+        "--audio-media-registry-schema",
+        type=Path,
+        default=source_dir / "audio_media_registry.schema.json",
+    )
     parser.add_argument("--release-dir", type=Path, default=release_dir)
     parser.add_argument("--zip-path", type=Path, default=release_dir.with_suffix(".zip"))
     parser.add_argument(
-        "--public-manifest", type=Path, default=pack_dir / "round1_v3_blinded_items.json"
+        "--public-manifest", type=Path, default=pack_dir / "round1_v4_blinded_items.json"
     )
     parser.add_argument(
-        "--release-record", type=Path, default=pack_dir / "ROUND1_V3_RELEASE.json"
+        "--audio-media-registry",
+        type=Path,
+        default=pack_dir / "private" / AUDIO_MEDIA_REGISTRY_FILENAME,
+    )
+    parser.add_argument(
+        "--release-record", type=Path, default=pack_dir / "ROUND1_V4_RELEASE.json"
     )
     args = parser.parse_args()
     print(json.dumps(build(args), indent=2))

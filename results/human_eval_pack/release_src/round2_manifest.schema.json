@@ -11,6 +11,11 @@
     "status",
     "source_catalog_id",
     "source_catalog_sha256",
+    "source_round1_release_id",
+    "source_round1_release_record_sha256",
+    "source_round1_manifest_id",
+    "source_round1_manifest_sha256",
+    "source_audio_media_registry_sha256",
     "curator_rater_id_sha256",
     "counts",
     "rubric",
@@ -23,6 +28,20 @@
     "status": {"const": "RATING_AUTHORIZED_SINGLE_RATER"},
     "source_catalog_id": {"type": "string", "minLength": 1, "maxLength": 240},
     "source_catalog_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "source_round1_release_id": {"const": "round1_curation_v4"},
+    "source_round1_release_record_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "source_round1_manifest_id": {"type": "string", "minLength": 1, "maxLength": 200},
+    "source_round1_manifest_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "source_audio_media_registry_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
     "curator_rater_id_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
     "counts": {
       "type": "object",

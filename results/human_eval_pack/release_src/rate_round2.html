@@ -49,6 +49,16 @@
     </div>
   </section>
 
+  <section id="restore" class="panel">
+    <h2>Restore an exported rating file</h2>
+    <p class="muted">Import is available before Start and does not require browser storage.</p>
+    <div class="row">
+      <button id="import-button">Import JSON</button>
+      <input id="import-file" type="file" accept="application/json,.json" hidden>
+      <span id="import-status" role="status"></span>
+    </div>
+  </section>
+
   <section id="session">
     <div class="panel">
       <div class="row spread"><strong id="progress-text"></strong><span id="autosave">Saved locally</span></div>
@@ -88,8 +98,6 @@
     <div class="panel row spread">
       <div class="row"><button id="previous">Previous</button><button id="next" class="primary">Save &amp; next</button></div>
       <div class="row">
-        <button id="import-button">Import JSON</button>
-        <input id="import-file" type="file" accept="application/json,.json" hidden>
         <button id="export-button" class="export">Export ratings JSON</button>
       </div>
     </div>
@@ -155,14 +163,99 @@
   return Object.freeze({ sha256Hex });
 });
 </script>
+<script id="round2-storage-code">
+(function (root, factory) {
+  const api = factory();
+  if (typeof module !== "undefined" && module.exports) module.exports = api;
+  else root.Round2Storage = api;
+})(typeof globalThis !== "undefined" ? globalThis : this, function () {
+  "use strict";
+  const savedKeys = ["index", "order", "ratings", "startedAt"];
+
+  function isRfc3339(value) {
+    if (typeof value !== "string") return false;
+    const match = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})(?:\.\d+)?(?:Z|[+-](\d{2}):(\d{2}))$/.exec(value);
+    if (!match) return false;
+    const [year, month, day, hour, minute, second] = match.slice(1, 7).map(Number);
+    const offsetHour = match[7] === undefined ? 0 : Number(match[7]);
+    const offsetMinute = match[8] === undefined ? 0 : Number(match[8]);
+    if (month < 1 || month > 12 || hour > 23 || minute > 59 || second > 59 || offsetHour > 23 || offsetMinute > 59) return false;
+    const check = new Date(Date.UTC(year, month - 1, day));
+    return check.getUTCFullYear() === year && check.getUTCMonth() === month - 1 && check.getUTCDate() === day;
+  }
+
+  function resolveStorage(root) {
+    try {
+      return { status: "available", value: root.localStorage, message: "" };
+    } catch (_) {
+      return { status: "unavailable", value: null, message: "Local storage is unavailable; continue in memory and export before closing." };
+    }
+  }
+
+  function readStoredState(storage, key) {
+    let raw;
+    try {
+      raw = storage.getItem(key);
+    } catch (_) {
+      return { status: "unavailable", value: null, message: "Local storage is unavailable; continue in memory and export before closing." };
+    }
+    if (raw === null) return { status: "missing", value: null };
+
+    let saved;
+    try {
+      saved = JSON.parse(raw);
+    } catch (_) {
+      return { status: "malformed", value: null, message: "Existing local progress is malformed. It was not overwritten; import a valid export or use a new evaluator ID." };
+    }
+    const keys = saved && typeof saved === "object" && !Array.isArray(saved)
+      ? Object.keys(saved).sort()
+      : [];
+    if (
+      keys.join(",") !== savedKeys.join(",") ||
+      !isRfc3339(saved.startedAt) ||
+      !Array.isArray(saved.order) ||
+      !saved.ratings ||
+      typeof saved.ratings !== "object" ||
+      Array.isArray(saved.ratings) ||
+      !Number.isInteger(saved.index)
+    ) {
+      return { status: "invalid", value: null, message: "Existing local progress is invalid. It was not overwritten; import a valid export or use a new evaluator ID." };
+    }
+    return { status: "loaded", value: saved };
+  }
+
+  return Object.freeze({ isRfc3339, readStoredState, resolveStorage });
+});
+</script>
 <script>
 (() => {
   "use strict";
   const manifestNode = document.getElementById("round2-manifest");
   const manifest = JSON.parse(manifestNode.textContent);
   const manifestSha = manifestNode.dataset.sha256;
+  const manifestKeys = [
+    "counts", "curator_rater_id_sha256", "instrument_version", "items",
+    "manifest_id", "rubric", "schema_version",
+    "source_audio_media_registry_sha256", "source_catalog_id",
+    "source_catalog_sha256", "source_round1_manifest_id",
+    "source_round1_manifest_sha256", "source_round1_release_id",
+    "source_round1_release_record_sha256", "status"
+  ];
+  if (!manifest || typeof manifest !== "object" || Array.isArray(manifest) ||
+      Object.keys(manifest).sort().join(",") !== manifestKeys.sort().join(",")) {
+    throw new Error("Round-2 manifest fields are invalid.");
+  }
+  if (!/^[0-9a-f]{64}$/.test(manifestSha || "")) {
+    throw new Error("Round-2 manifest checksum is invalid.");
+  }
+  if (!/^[0-9a-f]{64}$/.test(manifest.source_audio_media_registry_sha256 || "")) {
+    throw new Error("Round-2 manifest is missing its audio-media registry binding.");
+  }
   const byId = id => document.getElementById(id);
-  const state = { raterId: null, startedAt: null, order: [], ratings: {}, index: 0 };
+  const state = {
+    raterId: null, startedAt: null, order: [], ratings: {}, index: 0,
+    storageWritable: true
+  };
   const raterPattern = /^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$/;
 
   function fnv1a(text) {
@@ -187,23 +280,41 @@
   function blankRating(eventId) { return { event_id: eventId, completed: false, presence: { verdict: null, unrelated_background: null, note: "" } }; }
   function itemById(eventId) { return manifest.items.find(item => item.event_id === eventId); }
   function saveLocal() {
+    if (!state.storageWritable) {
+      byId("autosave").textContent = "Memory only; export JSON before closing.";
+      return;
+    }
     try {
       localStorage.setItem(storageKey(), JSON.stringify({ startedAt: state.startedAt, order: state.order, ratings: state.ratings, index: state.index }));
       byId("autosave").textContent = `Saved locally at ${new Date().toLocaleTimeString()}`;
     } catch (_) {
-      byId("autosave").textContent = "Local save unavailable; export JSON now.";
+      state.storageWritable = false;
+      byId("autosave").textContent = "Local save unavailable; continuing in memory. Export JSON now.";
     }
   }
   function loadLocal() {
-    try {
-      const raw = localStorage.getItem(storageKey()); if (!raw) return false;
-      const saved = JSON.parse(raw);
-      if (!saved || typeof saved !== "object" || typeof saved.startedAt !== "string" || !saved.ratings || typeof saved.ratings !== "object" || Array.isArray(saved.ratings)) return false;
-      const ratings = validateRatingSet(saved.order, Object.values(saved.ratings));
-      state.startedAt = saved.startedAt; state.order = saved.order.slice(); state.ratings = ratings;
-      state.index = Number.isInteger(saved.index) ? Math.min(Math.max(saved.index, 0), state.order.length - 1) : 0;
-      return true;
-    } catch (_) { return false; }
+    const storageAccess = Round2Storage.resolveStorage(window);
+    if (storageAccess.status === "unavailable") {
+      state.storageWritable = false;
+      byId("start-status").textContent = storageAccess.message;
+      return false;
+    }
+    const result = Round2Storage.readStoredState(storageAccess.value, storageKey());
+    if (result.status === "missing") return false;
+    if (result.status === "unavailable") {
+      state.storageWritable = false;
+      byId("start-status").textContent = result.message;
+      return false;
+    }
+    if (result.status !== "loaded") throw new Error(result.message);
+    const saved = result.value;
+    const ratings = validateRatingSet(saved.order, Object.values(saved.ratings));
+    if (saved.index < 0 || saved.index >= saved.order.length) {
+      throw new Error("Existing local progress has an invalid position. It was not overwritten; recover it or use a new evaluator ID.");
+    }
+    state.startedAt = saved.startedAt; state.order = saved.order.slice(); state.ratings = ratings;
+    state.index = saved.index;
+    return true;
   }
   function syncRating() {
     if (!state.order.length) return;
@@ -260,12 +371,15 @@
     }
     return ratings;
   }
-  function validateImport(payload) {
+  function validateImport(payload, expectedRaterId = null) {
     const keys = ["schema_version","instrument_version","manifest_id","manifest_sha256","rater_id","started_at","exported_at","item_order","ratings"];
-    if (!payload || typeof payload !== "object" || Object.keys(payload).sort().join(",") !== keys.slice().sort().join(",")) throw new Error("Invalid Round-2 export.");
+    if (!payload || typeof payload !== "object" || Array.isArray(payload) || Object.keys(payload).sort().join(",") !== keys.slice().sort().join(",")) throw new Error("Invalid Round-2 export.");
     if (payload.schema_version !== "sounddecisions-human-presence-ratings-v1-1.0" || payload.instrument_version !== manifest.instrument_version) throw new Error("Export schema or instrument version mismatch.");
     if (payload.manifest_id !== manifest.manifest_id || payload.manifest_sha256 !== manifestSha) throw new Error("Export belongs to a different manifest.");
-    if (payload.rater_id !== state.raterId) throw new Error("Export evaluator ID does not match this session.");
+    if (!raterPattern.test(payload.rater_id || "")) throw new Error("Export evaluator ID is invalid.");
+    assertDifferentRater(payload.rater_id);
+    if (expectedRaterId !== null && payload.rater_id !== expectedRaterId) throw new Error("Export evaluator ID does not match this session.");
+    if (!Round2Storage.isRfc3339(payload.started_at) || !Round2Storage.isRfc3339(payload.exported_at)) throw new Error("Export timestamps must be valid RFC3339 date-times.");
     return validateRatingSet(payload.item_order, payload.ratings);
   }
   function startSession() {
@@ -290,7 +404,30 @@
   byId("step-forward").addEventListener("click", () => { const item = itemById(state.order[state.index]); byId("video").currentTime = Math.min(item.duration_s, byId("video").currentTime + 1 / item.fps); });
   byId("export-button").addEventListener("click", () => { const blob = new Blob([JSON.stringify(exportPayload(), null, 2) + "\n"], {type:"application/json"}); const link = document.createElement("a"); link.href = URL.createObjectURL(blob); link.download = `presence_ratings_${state.raterId}.json`; link.click(); setTimeout(() => URL.revokeObjectURL(link.href), 1000); });
   byId("import-button").addEventListener("click", () => byId("import-file").click());
-  byId("import-file").addEventListener("change", async event => { try { const file = event.target.files[0]; if (!file) return; const payload = JSON.parse(await file.text()); assertDifferentRater(payload.rater_id || ""); const ratings = validateImport(payload); state.startedAt = payload.started_at; state.order = payload.item_order.slice(); state.ratings = ratings; state.index = 0; saveLocal(); render(); byId("status").textContent = "Import restored."; } catch (error) { byId("status").textContent = error.message; } finally { event.target.value = ""; } });
+  byId("import-file").addEventListener("change", async event => {
+    try {
+      const file = event.target.files[0]; if (!file) return;
+      const payload = JSON.parse(await file.text());
+      const ratings = validateImport(payload, state.raterId);
+      state.raterId = payload.rater_id;
+      state.startedAt = payload.started_at;
+      state.order = payload.item_order.slice();
+      state.ratings = ratings;
+      const firstIncomplete = state.order.findIndex(eventId => !state.ratings[eventId].completed);
+      state.index = firstIncomplete < 0 ? 0 : firstIncomplete;
+      state.storageWritable = false;
+      byId("rater-id").value = state.raterId;
+      byId("start").style.display = "none";
+      byId("session").style.display = "block";
+      render();
+      byId("autosave").textContent = "Imported in memory; export JSON before closing.";
+      byId("import-status").textContent = "Validated import restored in memory.";
+    } catch (error) {
+      byId("import-status").textContent = error.message;
+    } finally {
+      event.target.value = "";
+    }
+  });
 })();
 </script>
 </body>

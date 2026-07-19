@@ -19,9 +19,9 @@ from score_ac1 import gwet_ac1  # noqa: E402
 from score_round2 import (  # noqa: E402
     MANIFEST_SCHEMA_PATH,
     RATINGS_SCHEMA_PATH,
-    _load_json,
-    _sha256,
+    _load_json_snapshot,
     _validate,
+    _write_new_json,
     validate_export,
 )
 
@@ -36,25 +36,24 @@ def compute_report(
 ) -> dict[str, Any]:
     if len(ratings_paths) < 2:
         raise ValueError("Round-2 AC1 requires at least two rating exports")
-    manifest = _load_json(manifest_path)
+    manifest, manifest_sha256 = _load_json_snapshot(manifest_path)
     _validate(manifest, MANIFEST_SCHEMA_PATH, str(manifest_path))
-    manifest_sha256 = _sha256(manifest_path)
 
-    exports: list[tuple[Path, dict[str, Any]]] = []
+    exports: list[tuple[Path, dict[str, Any], str]] = []
     normalized_raters: set[str] = set()
     for path in ratings_paths:
-        ratings = _load_json(path)
+        ratings, ratings_sha256 = _load_json_snapshot(path)
         _validate(ratings, RATINGS_SCHEMA_PATH, str(path))
         validate_export(manifest, ratings, manifest_sha256)
         normalized = ratings["rater_id"].strip().lower()
         if normalized in normalized_raters:
             raise ValueError("Round-2 AC1 requires distinct unique rater IDs")
         normalized_raters.add(normalized)
-        exports.append((path, ratings))
+        exports.append((path, ratings, ratings_sha256))
 
     verdict_by_item: dict[str, list[str]] = defaultdict(list)
     background_by_item: dict[str, list[bool]] = defaultdict(list)
-    for _, ratings in exports:
+    for _, ratings, _ in exports:
         for rating in ratings["ratings"]:
             if not rating["completed"]:
                 continue
@@ -65,8 +64,8 @@ def compute_report(
 
     source_exports = sorted(
         (
-            {"rater_id": ratings["rater_id"], "sha256": _sha256(path)}
-            for path, ratings in exports
+            {"rater_id": ratings["rater_id"], "sha256": ratings_sha256}
+            for _, ratings, ratings_sha256 in exports
         ),
         key=lambda row: row["rater_id"].lower(),
     )
@@ -96,10 +95,7 @@ def compute_report(
 
 def score(manifest_path: Path, ratings_paths: list[Path], output_path: Path) -> dict[str, Any]:
     report = compute_report(manifest_path, ratings_paths)
-    if output_path.exists():
-        raise FileExistsError(f"refusing to overwrite existing output: {output_path}")
-    output_path.parent.mkdir(parents=True, exist_ok=True)
-    output_path.write_text(json.dumps(report, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    _write_new_json(output_path, report)
     return report
 
 

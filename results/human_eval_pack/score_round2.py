@@ -19,15 +19,31 @@ RATINGS_SCHEMA_PATH = HERE / "release_src" / "round2_ratings.schema.json"
 SUMMARY_SCHEMA_PATH = HERE / "release_src" / "round2_summary.schema.json"
 
 
-def _load_json(path: Path) -> Any:
+def _load_json_snapshot(path: Path) -> tuple[Any, str]:
     try:
-        return json.loads(path.read_text(encoding="utf-8"))
-    except (OSError, json.JSONDecodeError) as exc:
+        snapshot = path.read_bytes()
+        payload = json.loads(snapshot.decode("utf-8"))
+    except (OSError, UnicodeDecodeError, json.JSONDecodeError) as exc:
         raise ValueError(f"{path}: cannot read JSON: {exc}") from exc
+    return payload, hashlib.sha256(snapshot).hexdigest()
+
+
+def _load_json(path: Path) -> Any:
+    return _load_json_snapshot(path)[0]
 
 
 def _sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def _write_new_json(path: Path, payload: Mapping[str, Any]) -> None:
+    serialized = (json.dumps(payload, indent=2, sort_keys=True) + "\n").encode("utf-8")
+    path.parent.mkdir(parents=True, exist_ok=True)
+    try:
+        with path.open("xb") as handle:
+            handle.write(serialized)
+    except FileExistsError as exc:
+        raise FileExistsError(f"refusing to overwrite existing output: {path}") from exc
 
 
 def _rater_hash(value: str) -> str:
@@ -111,21 +127,18 @@ def summarize(
 
 
 def score(manifest_path: Path, ratings_path: Path, output_path: Path) -> dict[str, Any]:
-    manifest = _load_json(manifest_path)
-    ratings = _load_json(ratings_path)
+    manifest, manifest_sha256 = _load_json_snapshot(manifest_path)
+    ratings, ratings_sha256 = _load_json_snapshot(ratings_path)
     _validate(manifest, MANIFEST_SCHEMA_PATH, str(manifest_path))
     _validate(ratings, RATINGS_SCHEMA_PATH, str(ratings_path))
     summary = summarize(
         manifest,
         ratings,
-        manifest_sha256=_sha256(manifest_path),
-        export_sha256=_sha256(ratings_path),
+        manifest_sha256=manifest_sha256,
+        export_sha256=ratings_sha256,
     )
     _validate(summary, SUMMARY_SCHEMA_PATH, "generated summary")
-    if output_path.exists():
-        raise FileExistsError(f"refusing to overwrite existing output: {output_path}")
-    output_path.parent.mkdir(parents=True, exist_ok=True)
-    output_path.write_text(json.dumps(summary, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    _write_new_json(output_path, summary)
     return summary
 
 

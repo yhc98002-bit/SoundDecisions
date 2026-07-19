@@ -23,10 +23,99 @@ assert BUILD_SPEC is not None and BUILD_SPEC.loader is not None
 BUILDER = importlib.util.module_from_spec(BUILD_SPEC)
 BUILD_SPEC.loader.exec_module(BUILDER)
 SOURCE_DIR = ROOT / "results" / "human_eval_pack" / "release_src"
+PACK_DIR = ROOT / "results" / "human_eval_pack"
 
 
 def _sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def test_audio_registry_default_is_private_untracked_and_ignored() -> None:
+    private_registry = PACK_DIR / "private" / BUILDER.AUDIO_MEDIA_REGISTRY_FILENAME
+    relative = private_registry.relative_to(ROOT)
+    assert private_registry.parent == PACK_DIR / "private"
+    assert (private_registry.parent / ".gitignore").read_text(encoding="utf-8") == (
+        "*\n!.gitignore\n"
+    )
+    assert subprocess.run(
+        ["git", "ls-files", "--error-unmatch", str(relative)],
+        cwd=ROOT,
+        capture_output=True,
+    ).returncode != 0
+    assert subprocess.run(
+        ["git", "check-ignore", "-q", str(relative)], cwd=ROOT
+    ).returncode == 0
+    assert not private_registry.exists() or subprocess.run(
+        ["git", "check-ignore", "-q", str(relative)], cwd=ROOT
+    ).returncode == 0
+
+
+def test_committed_v4_registry_matches_tracked_release_contract() -> None:
+    registry = json.loads(
+        (PACK_DIR / "ROUND1_V4_SHA256SUMS.json").read_text(encoding="utf-8")
+    )
+    record = json.loads((PACK_DIR / "ROUND1_V4_RELEASE.json").read_text(encoding="utf-8"))
+
+    assert registry["release_id"] == record["release_id"] == "round1_curation_v4"
+    assert record["status"] == "CURATION_AUTHORIZED"
+    assert (
+        registry["files"]["results/human_eval_pack/releases/round1_curation_v4.zip"]
+        == record["zip"]["sha256"]
+    )
+    assert (
+        registry["files"]["results/human_eval_pack/round1_v4_blinded_items.json"]
+        == record["manifest"]["sha256"]
+    )
+    assert (
+        registry["files"][
+            "results/human_eval_pack/round1_v4_unblinding_map.sealed.json"
+        ]
+        == record["sealed_unblinding_map"]["sha256"]
+    )
+    assert record["audio_media_registry"]["storage"] == "operator_private"
+    assert record["audio_media_registry"]["item_count"] == 82
+    assert not any("audio_media_registry" in path for path in registry["files"])
+
+    for relative, expected in registry["files"].items():
+        path = ROOT / relative
+        if relative.endswith("round1_curation_v4.zip") and not path.exists():
+            continue  # Large reviewer media are intentionally absent from GitHub.
+        assert path.is_file(), relative
+        assert _sha256(path) == expected, relative
+
+    private_registry = PACK_DIR / "private" / BUILDER.AUDIO_MEDIA_REGISTRY_FILENAME
+    tracked = subprocess.run(
+        ["git", "ls-files", "--error-unmatch", str(private_registry.relative_to(ROOT))],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+    )
+    ignored = subprocess.run(
+        ["git", "check-ignore", "-q", str(private_registry.relative_to(ROOT))],
+        cwd=ROOT,
+    )
+    assert tracked.returncode != 0
+    assert not private_registry.exists() or ignored.returncode == 0
+    if private_registry.exists():
+        assert _sha256(private_registry) == record["audio_media_registry"]["sha256"]
+
+
+def test_retirement_registry_preserves_tracked_audit_hashes() -> None:
+    registry = json.loads((PACK_DIR / "RETIRED_RELEASES.json").read_text(encoding="utf-8"))
+
+    assert registry["current_release"] == "round1_curation_v4"
+    assert {row["release_id"] for row in registry["retired"]} == {
+        "round1_curation_v1",
+        "round1_curation_v2",
+        "round1_curation_v3",
+    }
+    for row in registry["retired"]:
+        assert row["status"] == "RETIRED_BEFORE_DELIVERY"
+        builder = PACK_DIR / row["builder_record"]["path"]
+        assert _sha256(builder) == row["builder_record"]["sha256"]
+        archive = PACK_DIR / row["zip"]["path"]
+        if archive.exists():
+            assert _sha256(archive) == row["zip"]["sha256"]
 
 
 def _fixture(tmp_path: Path) -> tuple[argparse.Namespace, list[str]]:
@@ -63,7 +152,7 @@ def _fixture(tmp_path: Path) -> tuple[argparse.Namespace, list[str]]:
     key_file = tmp_path / "human_eval.key"
     key_file.write_text("fixture-blinding-key\n", encoding="ascii")
     key_file.chmod(0o600)
-    sealed_map = tmp_path / "round1_v3_unblinding_map.sealed.json"
+    sealed_map = tmp_path / "round1_v4_unblinding_map.sealed.json"
     template = tmp_path / "rate.template.html"
     template.write_text(
         '<script id="manifest-data" type="application/json" '
@@ -85,10 +174,12 @@ def _fixture(tmp_path: Path) -> tuple[argparse.Namespace, list[str]]:
         instructions=instructions,
         manifest_schema=SOURCE_DIR / "round1_manifest.schema.json",
         ratings_schema=SOURCE_DIR / "round1_ratings.schema.json",
+        audio_media_registry_schema=SOURCE_DIR / "audio_media_registry.schema.json",
         release_dir=out / "release",
         zip_path=out / "release.zip",
-        public_manifest=out / "round1_v3_blinded_items.json",
-        release_record=out / "ROUND1_V3_RELEASE.json",
+        public_manifest=out / "round1_v4_blinded_items.json",
+        audio_media_registry=out / "private" / "round1_v4_audio_media_registry.json",
+        release_record=out / "ROUND1_V4_RELEASE.json",
     )
     return args, all_ids
 
@@ -143,12 +234,41 @@ def test_release_is_authorized_blinded_and_contains_independent_media(
     assert all(source_id not in serialized for source_id in source_ids)
     assert record["manifest"]["sha256"] == _sha256(args.public_manifest)
     assert record["sealed_unblinding_map"]["sha256"] == _sha256(args.sealed_map)
+    assert record["audio_media_registry"]["sha256"] == _sha256(
+        args.audio_media_registry
+    )
+    assert record["audio_media_registry"] == {
+        "storage": "operator_private",
+        "sha256": _sha256(args.audio_media_registry),
+        "item_count": 82,
+    }
+    assert args.audio_media_registry.stat().st_mode & 0o077 == 0
+    audio_registry = json.loads(args.audio_media_registry.read_text(encoding="utf-8"))
+    assert set(audio_registry) == {
+        "schema_version",
+        "manifest_id",
+        "manifest_sha256",
+        "items",
+    }
+    assert audio_registry["manifest_id"] == BUILDER.MANIFEST_ID
+    assert audio_registry["manifest_sha256"] == _sha256(args.public_manifest)
+    assert len(audio_registry["items"]) == 82
+    assert all(set(row) == {"blind_id", "media_path", "sha256"} for row in audio_registry["items"])
+    assert _all_json_keys(audio_registry).isdisjoint(
+        {"source_clip_id", "source_path", "caption", "model", "condition", "cfg", "seed"}
+    )
+    source_sha256 = _sha256(Path(next(csv.DictReader(args.clips_index.open()))["path"]))
+    assert all(row["sha256"] == source_sha256 for row in audio_registry["items"])
     envelope = json.loads(args.sealed_map.read_text(encoding="utf-8"))
     private_mapping = BUILDER._decrypt_sealed_envelope(envelope, args.key_file)
     assert private_mapping["manifest_id"] == BUILDER.MANIFEST_ID
     assert private_mapping["manifest_sha256"] == _sha256(args.public_manifest)
     assert {row["source_clip_id"] for row in private_mapping["items"]} == set(source_ids)
     assert len(private_mapping["items"]) == 82
+    assert (
+        private_mapping["source_contract_sha256"]["audio_media_registry"]
+        == _sha256(args.audio_media_registry)
+    )
     for row in private_mapping["items"]:
         assert _sha256(args.release_dir / row["delivered_media_path"]) == row[
             "delivered_media_sha256"
@@ -166,8 +286,10 @@ def test_release_is_authorized_blinded_and_contains_independent_media(
     assert f'data-sha256="{_sha256(args.public_manifest)}"' in html
 
     first_sealed_bytes = args.sealed_map.read_bytes()
+    first_registry_bytes = args.audio_media_registry.read_bytes()
     BUILDER.build(args)
     assert args.sealed_map.read_bytes() == first_sealed_bytes
+    assert args.audio_media_registry.read_bytes() == first_registry_bytes
 
 
 def test_zip_is_byte_deterministic_with_fixed_metadata(
@@ -181,13 +303,17 @@ def test_zip_is_byte_deterministic_with_fixed_metadata(
     second_args = argparse.Namespace(**vars(args))
     second_args.release_dir = tmp_path / "second" / "release"
     second_args.zip_path = tmp_path / "second" / "release.zip"
-    second_args.sealed_map = tmp_path / "second" / "round1_v3_unblinding_map.sealed.json"
-    second_args.public_manifest = tmp_path / "second" / "round1_v3_blinded_items.json"
-    second_args.release_record = tmp_path / "second" / "ROUND1_V3_RELEASE.json"
+    second_args.sealed_map = tmp_path / "second" / "round1_v4_unblinding_map.sealed.json"
+    second_args.public_manifest = tmp_path / "second" / "round1_v4_blinded_items.json"
+    second_args.audio_media_registry = (
+        tmp_path / "second" / "private" / "round1_v4_audio_media_registry.json"
+    )
+    second_args.release_record = tmp_path / "second" / "ROUND1_V4_RELEASE.json"
     second = BUILDER.build(second_args)
 
     assert _sha256(second_args.zip_path) == first_zip_sha
     assert first["zip"]["sha256"] == second["zip"]["sha256"] == first_zip_sha
+    assert args.audio_media_registry.read_bytes() == second_args.audio_media_registry.read_bytes()
     with zipfile.ZipFile(args.zip_path) as archive:
         infos = archive.infolist()
         names = [info.filename for info in infos]
@@ -201,6 +327,7 @@ def test_zip_is_byte_deterministic_with_fixed_metadata(
         assert "SHA256SUMS.txt" in names
         assert len([name for name in names if name.startswith("media/")]) == 82
         assert all("sealed" not in name.lower() and "unblind" not in name.lower() for name in names)
+        assert all("audio_media_registry" not in name for name in names)
 
 
 @pytest.mark.parametrize(
@@ -243,7 +370,63 @@ def test_preflight_failure_publishes_nothing(
     assert not args.release_dir.exists()
     assert not args.zip_path.exists()
     assert not args.public_manifest.exists()
+    assert not args.audio_media_registry.exists()
     assert not args.release_record.exists()
+
+
+def test_contract_file_mutation_during_remux_publishes_nothing(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    args, _ = _fixture(tmp_path)
+    monkeypatch.setattr(BUILDER, "_probe_video", lambda _: (24.0, 10.0))
+    monkeypatch.setattr(BUILDER, "SEALED_MAP_ITERATIONS", 1_000)
+    mutated = False
+
+    def remux(source: Path, destination: Path) -> str:
+        nonlocal mutated
+        if not mutated:
+            args.instructions.write_text("mutated during remux\n", encoding="utf-8")
+            mutated = True
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        destination.write_bytes(b"video-only-fixture\n" + source.read_bytes())
+        return _sha256(destination)
+
+    monkeypatch.setattr(BUILDER, "_remux_video_only", remux)
+
+    with pytest.raises(RuntimeError, match="contract file changed during build.*instructions"):
+        BUILDER.build(args)
+
+    assert not args.release_dir.exists()
+    assert not args.zip_path.exists()
+    assert not args.sealed_map.exists()
+    assert not args.public_manifest.exists()
+    assert not args.audio_media_registry.exists()
+    assert not args.release_record.exists()
+
+
+def test_source_video_mutation_during_remux_publishes_nothing(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    args, _ = _fixture(tmp_path)
+    monkeypatch.setattr(BUILDER, "_probe_video", lambda _: (24.0, 10.0))
+    source = Path(next(csv.DictReader(args.clips_index.open()))["path"])
+
+    def remux(source_path: Path, destination: Path) -> str:
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        destination.write_bytes(b"video-only-fixture\n" + source_path.read_bytes())
+        source_path.write_bytes(b"mutated source media")
+        return _sha256(destination)
+
+    monkeypatch.setattr(BUILDER, "_remux_video_only", remux)
+
+    with pytest.raises(RuntimeError, match="source video changed during remux"):
+        BUILDER.build(args)
+
+    assert source.read_bytes() == b"mutated source media"
+    assert not args.release_dir.exists()
+    assert not args.zip_path.exists()
+    assert not args.sealed_map.exists()
+    assert not args.audio_media_registry.exists()
 
 
 def test_existing_nonidentical_release_is_never_overwritten(
@@ -277,6 +460,20 @@ def test_existing_sealed_map_is_decrypted_and_fail_closed(
         BUILDER.build(args)
 
     assert args.zip_path.read_bytes() == original_zip
+
+
+def test_existing_audio_registry_is_never_overwritten(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    args, _ = _fixture(tmp_path)
+    _install_fake_video_pipeline(monkeypatch)
+    BUILDER.build(args)
+    args.audio_media_registry.write_text("tampered registry\n", encoding="utf-8")
+
+    with pytest.raises(RuntimeError, match="non-identical audio-media registry"):
+        BUILDER.build(args)
+
+    assert args.audio_media_registry.read_text(encoding="utf-8") == "tampered registry\n"
 
 
 def test_remux_strips_audio_and_metadata_and_is_byte_deterministic(tmp_path: Path) -> None:
@@ -356,4 +553,125 @@ def test_template_markers_are_required_exactly_once(tmp_path: Path) -> None:
     template = tmp_path / "bad.html"
     template.write_text("__ROUND1_MANIFEST_JSON__", encoding="utf-8")
     with pytest.raises(RuntimeError, match="each manifest marker exactly once"):
-        BUILDER._render_html(template, b"{}\n", "a" * 64)
+        BUILDER._render_html(template.read_bytes(), b"{}\n", "a" * 64)
+
+
+@pytest.mark.parametrize("kind", ["file", "directory"])
+def test_racing_nonidentical_destination_is_never_overwritten(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, kind: str
+) -> None:
+    destination = tmp_path / "published"
+    staged = tmp_path / "staged"
+    if kind == "file":
+        staged.write_bytes(b"builder-content")
+    else:
+        staged.mkdir()
+        (staged / "payload.txt").write_bytes(b"builder-content")
+
+    def racing_publish(_source: Path, raced_destination: Path) -> bool:
+        if kind == "file":
+            raced_destination.write_bytes(b"racer-content")
+        else:
+            raced_destination.mkdir()
+            (raced_destination / "payload.txt").write_bytes(b"racer-content")
+        raise FileExistsError(raced_destination)
+
+    monkeypatch.setattr(BUILDER, "_rename_noreplace", racing_publish)
+    publisher = (
+        BUILDER._publish_immutable_file
+        if kind == "file"
+        else BUILDER._publish_immutable_directory
+    )
+    with pytest.raises(RuntimeError, match="refusing to overwrite non-identical"):
+        publisher(staged, destination)
+
+    if kind == "file":
+        assert destination.read_bytes() == b"racer-content"
+    else:
+        assert (destination / "payload.txt").read_bytes() == b"racer-content"
+    assert staged.exists()
+
+
+@pytest.mark.parametrize("kind", ["file", "directory"])
+def test_creation_exclusive_fallback_publishes_without_replace(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, kind: str
+) -> None:
+    destination = tmp_path / "published"
+    staged = tmp_path / "staged"
+    if kind == "file":
+        staged.write_bytes(b"builder-content")
+    else:
+        staged.mkdir()
+        (staged / "payload.txt").write_bytes(b"builder-content")
+    monkeypatch.setattr(BUILDER, "_rename_noreplace", lambda *_: False)
+
+    if kind == "file":
+        BUILDER._publish_immutable_file(staged, destination)
+        assert destination.read_bytes() == b"builder-content"
+    else:
+        BUILDER._publish_immutable_directory(staged, destination)
+        assert (destination / "payload.txt").read_bytes() == b"builder-content"
+    assert not staged.exists()
+
+
+def test_partial_publication_has_no_commit_record_and_rerun_completes(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    args, _ = _fixture(tmp_path)
+    _install_fake_video_pipeline(monkeypatch)
+    checkpoints: list[str] = []
+
+    def fail_before_record(label: str) -> None:
+        checkpoints.append(label)
+        if label == "release_record":
+            raise RuntimeError("injected publication failure")
+
+    monkeypatch.setattr(BUILDER, "_publication_checkpoint", fail_before_record)
+    with pytest.raises(RuntimeError, match="injected publication failure"):
+        BUILDER.build(args)
+
+    assert checkpoints[-2:] == ["public_manifest", "release_record"]
+    assert args.public_manifest.is_file()
+    assert args.release_dir.is_dir()
+    assert args.zip_path.is_file()
+    assert args.sealed_map.is_file()
+    assert args.audio_media_registry.is_file()
+    assert not args.release_record.exists()
+
+    artifact_hashes = {
+        path: _sha256(path)
+        for path in (
+            args.public_manifest,
+            args.zip_path,
+            args.sealed_map,
+            args.audio_media_registry,
+        )
+    }
+    monkeypatch.setattr(BUILDER, "_publication_checkpoint", lambda _label: None)
+    record = BUILDER.build(args)
+    assert args.release_record.is_file()
+    assert json.loads(args.release_record.read_text(encoding="utf-8")) == record
+    assert all(_sha256(path) == expected for path, expected in artifact_hashes.items())
+
+
+def test_identical_rerun_keeps_every_published_byte(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    args, _ = _fixture(tmp_path)
+    _install_fake_video_pipeline(monkeypatch)
+    first = BUILDER.build(args)
+    paths = (
+        args.public_manifest,
+        args.release_record,
+        args.zip_path,
+        args.sealed_map,
+        args.audio_media_registry,
+    )
+    first_bytes = {path: path.read_bytes() for path in paths}
+    first_directory_digest = BUILDER._directory_digest(args.release_dir)
+
+    second = BUILDER.build(args)
+
+    assert second == first
+    assert {path: path.read_bytes() for path in paths} == first_bytes
+    assert BUILDER._directory_digest(args.release_dir) == first_directory_digest

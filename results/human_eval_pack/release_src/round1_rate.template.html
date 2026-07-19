@@ -135,6 +135,7 @@
     <span id="header-state">Offline instrument</span>
   </header>
   <main>
+    <div id="storage-warning" class="status warn hidden" role="alert"></div>
     <section id="setup-screen" class="panel setup">
       <h2>Open curation session</h2>
       <p>Enter the assigned lead-curator ID. Existing progress for the same ID resumes from this browser.</p>
@@ -195,11 +196,15 @@
   <script id="instrument-code">
   "use strict";
 
-  const SCHEMA_VERSION = "sounddecisions-human-curation-ratings-v1-1.2";
-  const MANIFEST_SCHEMA_VERSION = "sounddecisions-human-curation-items-v1-1.2";
-  const INSTRUMENT_VERSION = "human-eval-round1-curation-1.2";
+  const SCHEMA_VERSION = "sounddecisions-human-curation-ratings-v1-1.3";
+  const MANIFEST_SCHEMA_VERSION = "sounddecisions-human-curation-items-v1-1.3";
+  const INSTRUMENT_VERSION = "human-eval-round1-curation-1.3";
   const ALLOWED_TASKS = new Set(["anchor_curation", "two_event_curation"]);
   const SCREENS = ["anchor", "pair"];
+  const OBJECT_URL_REVOKE_DELAY_MS = 1000;
+  const STORAGE_WARNING = "Browser storage is unavailable. Progress is retained only in this open page; export JSON regularly because refreshing or closing the page will discard unexported work.";
+  const memorySessionStorage = new Map();
+  let storageWarningActive = false;
 
   function hashString(text) {
     let hash = 0x811c9dc5;
@@ -426,6 +431,65 @@
     return `sounddecisions:${INSTRUMENT_VERSION}:${manifestId}:${raterId}`;
   }
 
+  function showStorageWarning() {
+    storageWarningActive = true;
+    if (typeof document === "undefined") return;
+    const element = byId("storage-warning");
+    if (!element) return;
+    setStatus(element, STORAGE_WARNING, "warn");
+    element.classList.remove("hidden");
+  }
+
+  function resolveBrowserStorage(storageOverride) {
+    if (storageOverride !== undefined) return storageOverride;
+    if (typeof window === "undefined") return null;
+    try {
+      return window.localStorage;
+    } catch (error) {
+      showStorageWarning();
+      return null;
+    }
+  }
+
+  function writeSessionStorage(key, value, storageOverride) {
+    memorySessionStorage.set(key, value);
+    const storage = resolveBrowserStorage(storageOverride);
+    if (!storage) {
+      showStorageWarning();
+      return false;
+    }
+    try {
+      storage.setItem(key, value);
+      return true;
+    } catch (error) {
+      showStorageWarning();
+      return false;
+    }
+  }
+
+  function readSessionStorage(key, storageOverride) {
+    if (memorySessionStorage.has(key)) return memorySessionStorage.get(key);
+    const storage = resolveBrowserStorage(storageOverride);
+    if (!storage) {
+      showStorageWarning();
+      return null;
+    }
+    try {
+      const value = storage.getItem(key);
+      if (value !== null) memorySessionStorage.set(key, value);
+      return value;
+    } catch (error) {
+      showStorageWarning();
+      return memorySessionStorage.get(key) || null;
+    }
+  }
+
+  function hasStorageWarning() { return storageWarningActive; }
+
+  function scheduleObjectUrlRevocation(objectUrl, scheduler = setTimeout, urlApi = URL) {
+    return scheduler(() => urlApi.revokeObjectURL(objectUrl), OBJECT_URL_REVOKE_DELAY_MS);
+  }
+
   function openEmbeddedManifest(text, sha256) {
     if (!/^[0-9a-f]{64}$/.test(sha256)) throw new Error("Embedded manifest SHA256 is invalid.");
     const manifest = validateManifest(JSON.parse(text));
@@ -456,11 +520,14 @@
     if (!app.session || !app.manifest) return;
     app.session.ratings.forEach(rating => { rating.completed = isCompleted(rating); });
     const stored = { ...app.session, indices: app.indices, screen: app.screen };
-    try {
-      localStorage.setItem(sessionStorageKey(app.manifest.manifest_id, app.session.rater_id), JSON.stringify(stored));
+    const persisted = writeSessionStorage(
+      sessionStorageKey(app.manifest.manifest_id, app.session.rater_id),
+      JSON.stringify(stored)
+    );
+    if (persisted) {
       byId("save-state").textContent = `Saved locally at ${new Date().toLocaleTimeString()}`;
-    } catch (error) {
-      byId("save-state").textContent = `Local save failed: ${error.message}`;
+    } else {
+      byId("save-state").textContent = "Held in page memory; export JSON before closing or refreshing.";
     }
     renderProgress();
   }
@@ -469,7 +536,7 @@
     try {
       assertCurationAuthorized(app.manifest);
       const raterId = cleanRaterId(byId("rater-id").value);
-      const savedText = localStorage.getItem(sessionStorageKey(app.manifest.manifest_id, raterId));
+      const savedText = readSessionStorage(sessionStorageKey(app.manifest.manifest_id, raterId));
       const saved = savedText ? JSON.parse(savedText) : newSession(raterId);
       const savedIndices = saved.indices;
       const savedScreen = saved.screen;
@@ -727,12 +794,13 @@
       const payload = buildExport();
       const blob = new Blob([`${JSON.stringify(payload, null, 2)}\n`], { type: "application/json" });
       const link = document.createElement("a");
-      link.href = URL.createObjectURL(blob);
+      const objectUrl = URL.createObjectURL(blob);
+      link.href = objectUrl;
       link.download = `ratings_${payload.rater_id}.json`;
       document.body.appendChild(link);
       link.click();
       link.remove();
-      URL.revokeObjectURL(link.href);
+      scheduleObjectUrlRevocation(objectUrl);
       const remaining = payload.ratings.filter(rating => !rating.completed).length;
       setStatus(byId("app-status"), remaining ? `Exported; ${remaining} item(s) remain incomplete.` : "Exported; every assignment is complete.", remaining ? "warn" : "ok");
       byId("app-status").classList.remove("hidden");
@@ -745,7 +813,10 @@
   function importRatingsText(text) {
     const payload = prepareImport(text, app.manifest, app.manifestSha256);
     byId("rater-id").value = payload.rater_id;
-    localStorage.setItem(sessionStorageKey(payload.manifest_id, payload.rater_id), JSON.stringify({ ...payload, indices: { anchor: 0, pair: 0 }, screen: "anchor" }));
+    writeSessionStorage(
+      sessionStorageKey(payload.manifest_id, payload.rater_id),
+      JSON.stringify({ ...payload, indices: { anchor: 0, pair: 0 }, screen: "anchor" })
+    );
     startSession();
   }
 
@@ -815,7 +886,13 @@
       roundTripExport,
       assertRatingsMatchManifest,
       prepareImport,
-      enforceMuted
+      enforceMuted,
+      OBJECT_URL_REVOKE_DELAY_MS,
+      STORAGE_WARNING,
+      writeSessionStorage,
+      readSessionStorage,
+      hasStorageWarning,
+      scheduleObjectUrlRevocation
     };
   }
   if (typeof window !== "undefined" && typeof document !== "undefined") window.addEventListener("DOMContentLoaded", initialize);

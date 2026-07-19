@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://sounddecisions.local/schemas/human-curation-round1-ratings-v1.2.schema.json",
+  "$id": "https://sounddecisions.local/schemas/human-curation-round1-ratings-v1.3.schema.json",
   "title": "SoundDecisions blinded Round-1 curation export",
   "type": "object",
   "additionalProperties": false,
@@ -17,10 +17,10 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "sounddecisions-human-curation-ratings-v1-1.2"
+      "const": "sounddecisions-human-curation-ratings-v1-1.3"
     },
     "instrument_version": {
-      "const": "human-eval-round1-curation-1.2"
+      "const": "human-eval-round1-curation-1.3"
     },
     "manifest_id": {"type": "string", "minLength": 1, "maxLength": 200},
     "manifest_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
