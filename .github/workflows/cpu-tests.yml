@@ -8,13 +8,18 @@ on:
 jobs:
   artifact-independent:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
           cache: pip
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Install media probe
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg
       - name: Install CPU test dependencies
         run: python -m pip install -r requirements.txt
       - name: Run artifact-independent suite
@@ -34,6 +39,9 @@ jobs:
           tests/test_determination.py
           tests/test_human_eval_html.py
           tests/test_human_eval_build.py
+          tests/test_human_eval_release_builder.py
+          tests/test_human_eval_round1_ui.py
+          tests/test_human_eval_round_processing.py
           tests/test_human_eval_schema.py
           tests/test_human_eval_scoring.py
           tests/test_phase2_readout_aggregate.py

@@ -1,0 +1,23 @@
+{
+  "schema_version": "sounddecisions-human-eval-release-checksums-v1",
+  "release_id": "round1_curation_v3",
+  "files": {
+    ".github/workflows/cpu-tests.yml": "e20f4aaf629384b6ddff5ad857a037b7ca8af7736a070b9c9286ae156ed9d755",
+    "results/human_eval_pack/ROUND1_V3_RELEASE.json": "3f2d4fb495c62eccaaa8c3f64f85cc75cf6b04d03b407f03916ea52b848c7549",
+    "results/human_eval_pack/build_release.py": "7b7f176b56ac844d5779eff942a53f78642c469f33692677a4d365e79bd3d355",
+    "results/human_eval_pack/build_round2.py": "0acc1570fa5f5e97881c53a42b8594a85c24a086d2cad63c8246db82e0abfeca",
+    "results/human_eval_pack/curate_round1.py": "6fd116cf7c530954e297c875e8fdac2c22c3a41d79b2d8bc9a9e1ccf7258f630",
+    "results/human_eval_pack/event_catalog.schema.json": "cd23a709c553c5b077ec4a964d8aa4c5247efe7c9c8bf588e73f8c11f0f5908a",
+    "results/human_eval_pack/release_src/INSTRUCTIONS_ROUND1.md": "40ec2b12220ceadb86d02497519888011155b882a2aad516390cdb77245da3e1",
+    "results/human_eval_pack/release_src/INSTRUCTIONS_ROUND2.md": "e1c02a5859a21b6c8e07ad8fe437d761cff4f8ac2431766447495488dccf7df0",
+    "results/human_eval_pack/release_src/rate_round2.html": "3917b74748880783a14ac56d9b011dfe2a782071991199ce739aa5b247d7ff78",
+    "results/human_eval_pack/release_src/round1_manifest.schema.json": "e525224028ccdb5bc219079768a7647b0f397c109e2966e189235d5c0469d349",
+    "results/human_eval_pack/release_src/round1_rate.template.html": "895411e4fc64547403a79c2b7a18436c19279d76bf81c4228fe316dc1c2f0e46",
+    "results/human_eval_pack/release_src/round1_ratings.schema.json": "0109543b94ac38463aa20d30b6effc1abe4e5cf91ff420d7f5a2ea3c6060e3b7",
+    "results/human_eval_pack/releases/round1_curation_v3.zip": "d9030caf46c6c4da32d0d5cb43e043cb9605198b7bae8e7b5c82d54db23828bc",
+    "results/human_eval_pack/round1_v3_blinded_items.json": "bcf937b26e21bb7085ef69754722084a0d78c43e13269cd2f6f08ec2e70c901e",
+    "results/human_eval_pack/round1_v3_unblinding_map.sealed.json": "761005ba44d2df44a768e95d5adff8dc261425df34b5f9f9e823b999380cd7d6",
+    "results/human_eval_pack/score_round2.py": "ac3103da1a7f6ea78d609ae2b5e712c37c80a551593edd21be98ec20fbc5601f",
+    "results/human_eval_pack/score_round2_ac1.py": "d1fb7bc07f50d6ba10148b19551d30f1d8a716b4cf58c7a4edc572c39f30ecfd"
+  }
+}

@@ -1,0 +1,56 @@
+{
+  "schema_version": "sounddecisions-human-eval-retirements-v1",
+  "current_release": "round1_curation_v4",
+  "retired": [
+    {
+      "release_id": "round1_curation_v1",
+      "status": "RETIRED_BEFORE_DELIVERY",
+      "reason": "The archive retained audio streams despite a muted UI, and anchor responses did not persist curator-authored visual-only event descriptions.",
+      "zip": {
+        "path": "releases/retired/round1_curation_v1.zip",
+        "sha256": "885c623dc8fe26a8fa16aa4a1e63f970215d5fb8d992ded35cab2a570e83eae4",
+        "size_bytes": 81530850
+      },
+      "builder_record": {
+        "path": "retired/ROUND1_V1_BUILDER_RECORD.json",
+        "sha256": "9e77cd178358e54f3eac34c7b0c417570b1d77ab16e29a95c939435de40078de"
+      },
+      "public_manifest_sha256": "4b09407c03c2f7d1e4ae08f1c6162771596e579a5408cea9d3205286dff7ad0b",
+      "sealed_map_sha256": "ebdba8ad3d4d4b266394b183ec4da9b83a134c1d48a1fe8aa41ae0a7d447c4c5"
+    },
+    {
+      "release_id": "round1_curation_v2",
+      "status": "RETIRED_BEFORE_DELIVERY",
+      "reason": "Pair-event descriptions lacked the visual-only/no-audio instruction. A concurrent source edit also made the builder record cite instructions SHA 40ec2b12... while the immutable archive contains instructions SHA 5132bad3....",
+      "zip": {
+        "path": "releases/retired/round1_curation_v2.zip",
+        "sha256": "1e3719433780d62438a0a5355d85c548a1e46d3688911c4e47e243e9db175690",
+        "size_bytes": 68692463
+      },
+      "builder_record": {
+        "path": "retired/ROUND1_V2_BUILDER_RECORD.json",
+        "sha256": "da8e0ce7dda10208cb6aa61efe7892fb25f34f35f84413b91aead23005b63fb0"
+      },
+      "public_manifest_sha256": "ee6d296c1e042118b0574aa85726e2defe085821f46c850f9ea21c38b3b1ed11",
+      "sealed_map_sha256": "3fdbbe2080a2db318fe4f63d6b5eed1cc9fef6aad159d5394a517d8d9e154136",
+      "packaged_instructions_sha256": "5132bad3c9bc129d536cc6a7fd69116362aac2f98cbc1b812e07290206f36cb8",
+      "builder_record_instructions_sha256": "40ec2b12220ceadb86d02497519888011155b882a2aad516390cdb77245da3e1"
+    },
+    {
+      "release_id": "round1_curation_v3",
+      "status": "RETIRED_BEFORE_DELIVERY",
+      "reason": "Fail-closed review found that unavailable localStorage aborted session start/import and that immediate Blob-URL revocation could cancel an export. The associated Round-2 builder also lacked a strict media-path join. No ratings were collected.",
+      "zip": {
+        "path": "releases/retired/round1_curation_v3.zip",
+        "sha256": "d9030caf46c6c4da32d0d5cb43e043cb9605198b7bae8e7b5c82d54db23828bc",
+        "size_bytes": 68692647
+      },
+      "builder_record": {
+        "path": "retired/ROUND1_V3_BUILDER_RECORD.json",
+        "sha256": "3f2d4fb495c62eccaaa8c3f64f85cc75cf6b04d03b407f03916ea52b848c7549"
+      },
+      "public_manifest_sha256": "bcf937b26e21bb7085ef69754722084a0d78c43e13269cd2f6f08ec2e70c901e",
+      "sealed_map_sha256": "761005ba44d2df44a768e95d5adff8dc261425df34b5f9f9e823b999380cd7d6"
+    }
+  ]
+}

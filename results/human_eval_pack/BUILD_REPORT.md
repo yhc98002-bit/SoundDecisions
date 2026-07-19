@@ -1,3 +1,5 @@
+> **SUPERSEDED (2026-07-19).** This report describes the locked pre-release instrument. The authorized curator delivery is documented in `ROUND1_RELEASE_REPORT.md`.
+
 # Blinded human-evaluation package report
 
 Status: **INCOMPLETE_ARTIFACTS; INSTRUMENT BUILT AND LOCKED; RATING NOT AUTHORIZED.**

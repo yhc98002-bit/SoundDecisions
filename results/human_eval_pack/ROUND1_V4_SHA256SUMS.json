@@ -1,0 +1,23 @@
+{
+  "schema_version": "sounddecisions-human-curation-checksums-v4",
+  "release_id": "round1_curation_v4",
+  "files": {
+    "results/human_eval_pack/ROUND1_V4_RELEASE.json": "81becc0def741edc16fe7e8617e1c8e63e5f5055b714c90f68607bf56d755039",
+    "results/human_eval_pack/build_release.py": "f1ba1f3fa35e40541f4a7887fa16ba9c377b9dfc694b2a315d72268993e5b227",
+    "results/human_eval_pack/private/.gitignore": "240a3e0d37d2e86b614063f5347eb02d4f99ca6c254de6b82871ff8d95532a7d",
+    "results/human_eval_pack/release_src/INSTRUCTIONS_ROUND1.md": "40ec2b12220ceadb86d02497519888011155b882a2aad516390cdb77245da3e1",
+    "results/human_eval_pack/release_src/round1_manifest.schema.json": "e29f1c07ca2e65855a8bbf209b84357d9e9f410f6e6062fb83097ccc6af44d72",
+    "results/human_eval_pack/release_src/round1_rate.template.html": "937d393ab3cee88b13221b9e47631a6995c08d57f93a01abb557fb059e55ef0a",
+    "results/human_eval_pack/release_src/round1_ratings.schema.json": "5238f321bc555fbbd4d7d18295d92d8df4b6138d9d49bb919087bcbcc6801148",
+    "results/human_eval_pack/releases/round1_curation_v4.zip": "f2af52d17c916be234acb1e8e83470e8a25d2b3725dc6b98554ebc7826eec71b",
+    "results/human_eval_pack/round1_v4_blinded_items.json": "f9892840226dee50484a38f6606ad1606ec1b67256dc2a5da3658cdca47bad8a",
+    "results/human_eval_pack/round1_v4_unblinding_map.sealed.json": "dea79eaaa0b31ea891a101e45df5e56509f91bfd4dda20f825f24f314438b533"
+  },
+  "private_artifacts": {
+    "audio_media_registry": {
+      "storage": "operator_private_gitignored",
+      "sha256": "fdcbf28c08a3054dcf55c87db30ded8af1b9387f6b7a7e596fcd24deb8d0de27",
+      "item_count": 82
+    }
+  }
+}

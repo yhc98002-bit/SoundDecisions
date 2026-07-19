@@ -1,0 +1,42 @@
+{
+  "schema_version": "sounddecisions-human-curation-release-v4",
+  "release_id": "round1_curation_v4",
+  "status": "CURATION_AUTHORIZED",
+  "counts": {
+    "anchor_curation": 30,
+    "two_event_curation": 60,
+    "total_tasks": 90,
+    "unique_videos": 82
+  },
+  "manifest": {
+    "path": "round1_v4_blinded_items.json",
+    "sha256": "f9892840226dee50484a38f6606ad1606ec1b67256dc2a5da3658cdca47bad8a"
+  },
+  "sealed_unblinding_map": {
+    "path": "round1_v4_unblinding_map.sealed.json",
+    "sha256": "dea79eaaa0b31ea891a101e45df5e56509f91bfd4dda20f825f24f314438b533"
+  },
+  "audio_media_registry": {
+    "storage": "operator_private",
+    "sha256": "fdcbf28c08a3054dcf55c87db30ded8af1b9387f6b7a7e596fcd24deb8d0de27",
+    "item_count": 82
+  },
+  "zip": {
+    "path": "releases/round1_curation_v4.zip",
+    "sha256": "f2af52d17c916be234acb1e8e83470e8a25d2b3725dc6b98554ebc7826eec71b",
+    "size_bytes": 68695051
+  },
+  "release_directory_sha256": "72ed7717e8cc207099f949404ea3619fe1beabb0685d48212a9efb018b0b6285",
+  "source_contract_sha256": {
+    "anchor_candidates": "5939334f09f4c532cc15e28e32e5cb2ba7865574ab17edeeac30e76e5d0cff69",
+    "two_event_candidates": "9331f384e51c6cdfbb559e5c11e24ceb5ab9cf464c4636825247fe5fddf28ea0",
+    "clips_index": "695b5a93e3d52ea8fcb406a95aa7b6891c60f09fff93f6299f5359e739e5216f",
+    "public_manifest": "f9892840226dee50484a38f6606ad1606ec1b67256dc2a5da3658cdca47bad8a",
+    "audio_media_registry": "fdcbf28c08a3054dcf55c87db30ded8af1b9387f6b7a7e596fcd24deb8d0de27",
+    "audio_media_registry_schema": "1d76c63f09128a199cef70d1d65276e2abcd57ed42daaf14ce70d91a71ed7419",
+    "html_template": "937d393ab3cee88b13221b9e47631a6995c08d57f93a01abb557fb059e55ef0a",
+    "instructions": "40ec2b12220ceadb86d02497519888011155b882a2aad516390cdb77245da3e1",
+    "manifest_schema": "e29f1c07ca2e65855a8bbf209b84357d9e9f410f6e6062fb83097ccc6af44d72",
+    "ratings_schema": "5238f321bc555fbbd4d7d18295d92d8df4b6138d9d49bb919087bcbcc6801148"
+  }
+}
