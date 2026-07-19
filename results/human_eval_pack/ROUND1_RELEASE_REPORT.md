@@ -131,7 +131,9 @@ media files as exactly one video stream with no audio or auxiliary stream.
 Focused tests passed under both hash seeds: **83 passed** with
 `PYTHONHASHSEED=0` and **83 passed** with `PYTHONHASHSEED=1`. The full
 artifact-bearing node suite passed with **1175 passed, 3 skipped, 0 failed**.
-Fresh artifact-free checkout result: **PENDING FINAL GATE**.
+An independent artifact-free detached checkout of commit `3eacb23` also passed
+with **1175 passed, 3 skipped, 0 failed**. That checkout contained no release
+ZIP, media directory, private audio registry, or key.
 
 The package has static and executed Node tests for its offline helpers, state
 transitions, deterministic shuffle, strict import, and export round trip. An
